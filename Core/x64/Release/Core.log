@@ -1,0 +1,13 @@
+﻿  main.cpp
+  Generating code
+  1 of 24 functions ( 4.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+graphics.obj : warning LNK4049: locally defined symbol glfwWindowShouldClose imported
+graphics.obj : warning LNK4049: locally defined symbol glfwSetErrorCallback imported
+graphics.obj : warning LNK4049: locally defined symbol glfwInit imported
+graphics.obj : warning LNK4049: locally defined symbol glfwGetFramebufferSize imported
+graphics.obj : warning LNK4049: locally defined symbol glfwGetTime imported
+graphics.obj : warning LNK4049: locally defined symbol glfwSwapInterval imported
+  Core.vcxproj -> D:\vikto\Documents\Visual Studio 2017\Projects\NextGengine\x64\Release\Core.exe
