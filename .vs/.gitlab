@@ -1,0 +1,11 @@
+{
+  "User": {
+    "id": 1,
+    "username": "turbotage",
+    "name": "TurboTage",
+    "email": "viktor.vigrennaslund@tasetek.com",
+    "new_portrait": null,
+    "host": "http://94.198.66.59:16700",
+    "two_factor_enabled": false
+  }
+}

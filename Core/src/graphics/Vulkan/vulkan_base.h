@@ -1,55 +1,52 @@
 #pragma once
 
-#include <GLFW\glfw3.h>
-#include <vulkan\vulkan.h>
+#include <vulkan\vulkan.hpp>
 #include "../../def.h"
 #include <vector>
 
 namespace ng {
 	namespace graphics {
 		namespace vulkan {
-
-			struct LayerProperties {
-				VkLayerProperties properties;
-				std::vector<VkExtensionProperties> extensions;
+			
+			struct PhysicalDevice {
+				vk::PhysicalDevice device;
+				std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> deviceExtensions;
+				std::vector<vk::LayerProperties, std::allocator<vk::LayerProperties>> deviceLayers;
+				std::vector<const char*> validationLayers;
 			};
 
-			struct GPU {
-				VkPhysicalDevice physicalDevice;
-				VkPhysicalDeviceProperties properties;
-				VkPhysicalDeviceMemoryProperties memoryProperties;
-				VkQueueFamilyProperties queueProperties;
+			struct GraphicsUnit {
+				vk::Device device;
+				vk::Queue graphicsQueue;
+				vk::DeviceCreateInfo createInfo;
 			};
 
-			struct VulkanBase {
+			struct ComputeUnit {
+				vk::Device device;
+				vk::Queue computeQueue;
+				vk::DeviceCreateInfo createInfo;
+			};
+			
 
-				GLFWwindow* window;
-				VkSurfaceKHR surface;
+			class VulkanBase {
+				//Instance Extensions
+				std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> installedExtensions;
+				std::vector<const char*> extensions;
 
-				bool useStagingBuffer;
+				//Instance Layers
+				std::vector<vk::LayerProperties, std::allocator<vk::LayerProperties>> installedLayers;
+				std::vector<const char*> layers;
 
-				std::vector<const char*> instanceLayerNames;
-				std::vector<const char*> instanceExtensionNames;
-				std::vector<LayerProperties> instanceLayerProperties;
-				std::vector<VkExtensionProperties> instanceExtensionProperties;
-				VkInstance instance;
+				vk::ApplicationInfo appInfo;
+
+				vk::Instance instance;
+
+				std::vector<PhysicalDevice> physicalDevices;
 				
-				std::vector<const char*> deviceExtensionNames;
-				std::vector<VkExtensionProperties> deviceExtensionProperties;
+				GraphicsUnit graphicsUnit;
+				ComputeUnit computeUnit;
 
-				std::vector<GPU> gpus;
-				
 
-				VkDevice device;
-				
-				VkQueue graphicsQueue;
-				VkQueue presentQueue;
-				VkQueue computeQueue;
-
-				uint graphicsQueue;
-
-				VkFramebuffer* framebuffers;
-				
 
 			};
 

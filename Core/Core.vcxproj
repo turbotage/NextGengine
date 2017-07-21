@@ -23,50 +23,34 @@
     <ClCompile Include="src\math\dyn_vec.cpp" />
     <ClCompile Include="src\math\quaternion.cpp" />
     <ClCompile Include="src\objects\model.cpp" />
-    <ClCompile Include="src\graphics\material.cpp" />
-    <ClCompile Include="src\graphics\index_buffer.cpp" />
     <ClCompile Include="src\objects\mesh.cpp" />
     <ClCompile Include="src\objects\entity.cpp" />
-    <ClCompile Include="src\graphics\shader.cpp" />
-    <ClCompile Include="src\graphics\scene.cpp" />
     <ClCompile Include="src\debug.cpp" />
-    <ClCompile Include="src\graphics\graphics.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\math\mat4.cpp" />
     <ClCompile Include="src\math\vec3.cpp" />
     <ClCompile Include="src\math\vec4.cpp" />
     <ClCompile Include="src\math\vec2.cpp" />
     <ClCompile Include="src\graphics\vertex.cpp" />
-    <ClCompile Include="src\graphics\vertex_array.cpp" />
-    <ClCompile Include="src\graphics\vertex_buffer.cpp" />
+    <ClCompile Include="src\graphics\Vulkan\vulkan_base.cpp" />
+    <ClCompile Include="src\graphics\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\math\dyn_mat.h" />
     <ClInclude Include="src\math\dyn_vec.h" />
     <ClInclude Include="src\math\quaternion.h" />
     <ClInclude Include="src\objects\model.h" />
-    <ClInclude Include="src\graphics\material.h" />
-    <ClInclude Include="src\graphics\index_buffer.h" />
     <ClInclude Include="src\objects\mesh.h" />
     <ClInclude Include="src\objects\entity.h" />
-    <ClInclude Include="src\graphics\shader.h" />
-    <ClInclude Include="src\graphics\scene.h" />
     <ClInclude Include="src\debug.h" />
-    <ClInclude Include="src\graphics\graphics.h" />
-    <ClInclude Include="src\graphics\window.h" />
     <ClInclude Include="src\math\mat4.h" />
     <ClInclude Include="src\math\vec3.h" />
     <ClInclude Include="src\math\vec4.h" />
     <ClInclude Include="src\def.h" />
     <ClInclude Include="src\math\vec2.h" />
     <ClInclude Include="src\graphics\vertex.h" />
-    <ClInclude Include="src\graphics\vertex_array.h" />
-    <ClInclude Include="src\graphics\vertex_buffer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\graphics\shaders\fragment.h" />
-    <None Include="src\graphics\shaders\vertex.h" />
+    <ClInclude Include="src\graphics\Vulkan\vulkan_base.h" />
+    <ClInclude Include="src\graphics\window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{f74a2ef4-f86c-4507-ae3e-3486ec8f1626}</ProjectGuid>
@@ -138,6 +122,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\C++\Libraries\WSIWindow;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +135,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\Program\VulkanSDK\1.0.37.0\Include;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\glm;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\glfw\include;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\glew\include;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\C++\Libraries\WSIWindow;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -168,6 +153,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\C++\Libraries\WSIWindow;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -184,7 +170,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\Program\VulkanSDK\1.0.37.0\Include;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\glm;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\glfw\include;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\glew\include;C:\Users\vikto\Documents\Visual Studio 2017\Libraries\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\C++\Libraries\WSIWindow;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
