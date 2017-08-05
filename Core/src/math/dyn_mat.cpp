@@ -68,13 +68,14 @@ ng::math::DynMat ng::math::DynMat::mul(const DynMat & other)
 {
 	if (height != other.width) {
 		setNaN();
+		return *this;
 	}
 	DynMat ret(height, other.width);
 	DynVec otherMul(other.height);
 	for (unsigned short i = 0; i < height; ++i) {
 		for (unsigned short j = 0; j < other.width; ++j) {
 			for (unsigned short k = 0; k < height; ) {
-				otherMul.mul[k] = other.rows[k].elements[j];
+				otherMul.elements[k] = other.rows[k].elements[j];
 			}
 			ret.rows[i].elements[j] = rows[i].dot(otherMul);
 		}

@@ -18,7 +18,7 @@ void ng::math::DynVec::cleanup()
 
 void ng::math::DynVec::setNaN()
 {
-	for (int i = 0; i < width; ++i) {
+	for (short i = 0; i < width; ++i) {
 		elements[i] = std::numeric_limits<float>::quiet_NaN();
 	}
 }
@@ -42,12 +42,12 @@ ng::math::DynVec::~DynVec()
 ng::math::DynVec & ng::math::DynVec::add(const DynVec & other)
 {
 	if (width == other.width) {
-		for (int i = 0; i < width; ++i) {
+		for (short i = 0; i < width; ++i) {
 			elements[i] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 	else {
-		for (int i = 0; i < width; ++i) {
+		for (short i = 0; i < width; ++i) {
 			elements[i] += other.elements[i];
 		}
 	}
@@ -57,12 +57,12 @@ ng::math::DynVec & ng::math::DynVec::add(const DynVec & other)
 ng::math::DynVec & ng::math::DynVec::sub(const DynVec & other)
 {
 	if (width == other.width) {
-		for (int i = 0; i < width; ++i) {
+		for (short i = 0; i < width; ++i) {
 			elements[i] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 	else {
-		for (int i = 0; i < width; ++i) {
+		for (short i = 0; i < width; ++i) {
 			elements[i] += other.elements[i];
 		}
 	}
@@ -72,21 +72,24 @@ ng::math::DynVec & ng::math::DynVec::sub(const DynVec & other)
 ng::math::DynVec & ng::math::DynVec::mul(const DynVec & other)
 {
 	if (width == other.width) {
-		for (int i = 0; i < width; ++i) {
+		for (short i = 0; i < width; ++i) {
 			elements[i] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 	else {
-		for (int i = 0; i < width; ++i) {
+		for (short i = 0; i < width; ++i) {
 			elements[i] *= other.elements[i];
 		}
 	}
 	return *this;
 }
 
-DynVec & ng::math::DynVec::mul(float multiplier)
+ng::math::DynVec & ng::math::DynVec::mul(float multiplier)
 {
-	// TODO: insert return statement here
+	for (short i = 0; i < this->width; ++i) {
+		this->elements[i] *= multiplier;
+	}
+	return *this;
 }
 
 ng::math::DynVec & ng::math::DynVec::div(const DynVec & other)

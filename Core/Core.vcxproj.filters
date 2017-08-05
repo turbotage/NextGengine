@@ -108,4 +108,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\graphics\Shaders\fragment.glsl" />
+    <None Include="src\graphics\Shaders\vertex.glsl" />
+  </ItemGroup>
 </Project>

@@ -16,18 +16,19 @@ namespace ng {
 			};
 
 			struct GraphicsUnit {
+				PhysicalDevice* pDevice;
 				vk::Device device;
 				vk::Queue graphicsQueue;
 				vk::DeviceCreateInfo createInfo;
 			};
 
 			struct ComputeUnit {
+				PhysicalDevice* pDevice;
 				vk::Device device;
 				vk::Queue computeQueue;
 				vk::DeviceCreateInfo createInfo;
 			};
 			
-
 			class VulkanBase {
 				//Instance Extensions
 				std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> installedExtensions;
@@ -40,12 +41,15 @@ namespace ng {
 				vk::ApplicationInfo appInfo;
 
 				vk::Instance instance;
-
-				std::vector<PhysicalDevice> physicalDevices;
 				
 				GraphicsUnit graphicsUnit;
 				ComputeUnit computeUnit;
 
+				vk::SurfaceFormatKHR surfaceFormat;
+				vk::Format surfaceColorFormat;
+				vk::ColorSpaceKHR surfaceColorSpace;
+
+				vk::FormatProperties formatProperties;
 
 
 			};
