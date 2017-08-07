@@ -29,6 +29,11 @@ namespace ng {
 				vk::DeviceCreateInfo createInfo;
 			};
 			
+			struct Thread {
+				vk::CommandPool commandPool;
+				std::vector<vk::CommandBuffer> commandBuffers;
+			};
+
 			class VulkanBase {
 				//Instance Extensions
 				std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> installedExtensions;
@@ -42,14 +47,32 @@ namespace ng {
 
 				vk::Instance instance;
 				
+				//graphics
 				GraphicsUnit graphicsUnit;
+				vk::Queue graphicsQueue;
+				std::vector<Thread> graphicsThreads;
+				//computics
 				ComputeUnit computeUnit;
+				vk::Queue computeQueue;
+				std::vector<Thread> computeThreads;
 
 				vk::SurfaceFormatKHR surfaceFormat;
 				vk::Format surfaceColorFormat;
 				vk::ColorSpaceKHR surfaceColorSpace;
 
 				vk::FormatProperties formatProperties;
+
+				VkBuffer vertexBuffer;
+				VkDeviceMemory vertexBufferMemory;
+				
+				VkBuffer indexBuffer;
+				VkDeviceMemory indexBufferMemory;
+
+				VkBuffer uniformBuffer;
+				VkDeviceMemory uniformBufferMemory;
+
+				VkDescriptorPool descriptorPool;
+				VkDescriptorSet descriptorSet;
 
 
 			};

@@ -6,7 +6,7 @@
 
 namespace ng {
 	namespace graphics {
-		class Vertex
+		class VertexExtended
 		{
 		public:
 			math::Vec3 position;
@@ -15,15 +15,22 @@ namespace ng {
 			math::Vec3 binormal;
 			math::Vec3 tangent;
 
-			bool operator==(const Vertex& other) const;
+			bool operator==(const VertexExtended& other) const;
 
+		};
+
+		class Vertex {
+		public:
+			math::Vec3 position;
+			math::Vec3 color;
+			math::Vec2 texCoord;
 		};
 	}
 }
 
 namespace std {
-	template<> struct hash<ng::graphics::Vertex> {
-		size_t operator()(ng::graphics::Vertex const& vertex) const {
+	template<> struct hash<ng::graphics::VertexExtended> {
+		size_t operator()(ng::graphics::VertexExtended const& vertex) const {
 			return hash<ng::math::Vec3>()(vertex.position) ^
 				hash<ng::math::Vec2>()(vertex.uv) ^
 				hash<ng::math::Vec3>()(vertex.normal) ^
@@ -31,5 +38,15 @@ namespace std {
 				hash<ng::math::Vec3>()(vertex.tangent);
 		}
 	};
+
+	template<> struct hash<ng::graphics::Vertex> {
+		size_t operator()(ng::graphics::Vertex const& vertex) const {
+			return
+				((hash<ng::math::Vec3>()(vertex.position) ^
+				(hash<ng::math::Vec3>()(vertex.color) << 1)) >> 1) ^
+				(hash < ng::math::Vec2 > ()(vertex.texCoord) << 1);
+		}
+	};
+
 }
 

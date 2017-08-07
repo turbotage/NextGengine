@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\graphics\Vulkan\Allocation\Chunk.cpp" />
+    <ClCompile Include="src\graphics\Vulkan\Allocation\Block.cpp" />
     <ClCompile Include="src\math\dyn_mat.cpp" />
     <ClCompile Include="src\math\dyn_vec.cpp" />
     <ClCompile Include="src\math\quaternion.cpp" />
@@ -36,6 +38,8 @@
     <ClCompile Include="src\graphics\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\Vulkan\Allocation\Chunk.h" />
+    <ClInclude Include="src\graphics\Vulkan\Allocation\Block.h" />
     <ClInclude Include="src\math\dyn_mat.h" />
     <ClInclude Include="src\math\dyn_vec.h" />
     <ClInclude Include="src\math\quaternion.h" />

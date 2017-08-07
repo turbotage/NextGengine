@@ -29,3 +29,12 @@ typedef uint64_t uint64;
 typedef uint8 byte;
 typedef uint32_t uint;
 
+//inherit to stop class from being copyable 
+struct NotCopyable {
+public:
+	NotCopyable() = default;
+	NotCopyable(NotCopyable const &NotCopyable) = delete;
+	NotCopyable &operator =(NotCopyable const &NotCopyable) = delete;
+};
+
+

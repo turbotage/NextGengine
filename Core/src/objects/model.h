@@ -4,7 +4,7 @@
 
 namespace ng {
 	namespace entity {
-		class Model
+		class Model : Entity
 		{
 		private:
 			Mesh* m_Mesh;
@@ -12,7 +12,9 @@ namespace ng {
 			Model();
 			~Model();
 
-			void load(const char* path);
+			void loadPreformated(const char* path);
+
+			void loadUnformated(const char* path);
 
 		};
 	}
