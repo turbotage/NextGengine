@@ -1,8 +1,4 @@
 //Vertex Shader
-#version 450
-
-#extension GL_ARB_seperate_shader_objects : enable
-#extension GL_ARB_shading_language_420pack : enable
 
 //Uniforms now come in the form of input layouts
 layout (location = 0) in vec3 inPos;

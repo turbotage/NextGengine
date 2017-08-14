@@ -1,24 +1,19 @@
 #include "window.h"
-#include <stdio.h>
+#include "Vulkan\vulkan_base.h"
 
-void ng::graphics::Window::OnMouseEvent(eAction action, int16 x, int16 y, uint8 btn)
+void ng::graphics::Window::init(uint width, uint height, const char * description)
 {
-	const char* type[] = { "up  ", "down", "move" };
-	printf("Mouse: %s %d x %d Btn:%d\n", type[action], x, y, btn);
+	glfwInit();
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+	glfwWindowPtr = glfwCreateWindow(width, height, description, nullptr, nullptr);
 }
 
-void ng::graphics::Window::OnKeyEvent(eAction action, uint8 keycode)
+void ng::graphics::Window::run()
 {
-	const char* type[] = { "up  ", "down" };
-	printf("Key: %s keycode:%d\n", type[action], keycode);
+	while (!glfwWindowShouldClose(glfwWindowPtr)) {
+		glfwPollEvents();
+	}
 }
 
-void ng::graphics::Window::OnTextEvent(const char * str)
-{
-	printf("Text: %s\n", str);
-}
-
-void ng::graphics::Window::OnResizeEvent(uint16 width, uint16 height)
-{
-	printf("Window Resize: width=%4d height=%4d\n", width, height);
-}

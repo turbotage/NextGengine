@@ -13,9 +13,6 @@ namespace ng {
 			//math::Vec3 origin; //position of entity, should be center of mesh, TODO: maybe for a extended version of the class, will take to much memory
 		public:
 
-			Entity();
-			~Entity();
-
 		};
 	}
 }

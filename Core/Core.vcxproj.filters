@@ -60,10 +60,13 @@
     <ClCompile Include="src\graphics\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\Vulkan\Allocation\Block.cpp">
+    <ClCompile Include="src\graphics\Vulkan\vulkan_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics\Vulkan\Allocation\Chunk.cpp">
+    <ClCompile Include="src\memory\MemoryAllocators\allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory\VirtualMemoryAllocators\virtual_freelist_allocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -113,10 +116,16 @@
     <ClInclude Include="src\graphics\window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\Vulkan\Allocation\Block.h">
+    <ClInclude Include="test_code.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\Vulkan\Allocation\Chunk.h">
+    <ClInclude Include="src\graphics\Vulkan\vulkan_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory\MemoryAllocators\allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory\VirtualMemoryAllocators\virtual_freelist_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

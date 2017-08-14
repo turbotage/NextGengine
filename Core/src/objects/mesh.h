@@ -13,9 +13,6 @@ namespace ng {
 			std::vector<ng::graphics::Vertex> vertices;
 			std::vector<uint32> indices;
 		public:
-			Mesh();
-
-			~Mesh();
 
 		};
 	}

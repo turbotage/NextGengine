@@ -24,6 +24,8 @@ namespace ng {
 			math::Vec3 position;
 			math::Vec3 color;
 			math::Vec2 texCoord;
+
+			bool operator==(const Vertex& other) const;
 		};
 	}
 }

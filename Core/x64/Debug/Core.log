@@ -1,1 +1,81 @@
-﻿
+﻿  window.cpp
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(15): error C3646: 'device': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(15): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(16): error C2065: 'VkExtensionProperties': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(16): error C2923: 'std::allocator': 'VkExtensionProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(16): error C2923: 'std::vector': 'VkExtensionProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(16): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(17): error C2065: 'VkLayerProperties': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(17): error C2923: 'std::allocator': 'VkLayerProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(17): error C2923: 'std::vector': 'VkLayerProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(17): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(23): error C3646: 'device': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(23): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(24): error C3646: 'graphicsQueue': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(24): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(25): error C3646: 'createInfo': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(25): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(30): error C3646: 'device': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(30): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(31): error C3646: 'computeQueue': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(31): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(32): error C3646: 'createInfo': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(32): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(36): error C3646: 'commandPool': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(36): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(37): error C2065: 'VkCommandBuffer': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(37): error C2923: 'std::vector': 'VkCommandBuffer' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(37): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(42): error C2065: 'VkExtensionProperties': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(42): error C2923: 'std::allocator': 'VkExtensionProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(42): error C2923: 'std::vector': 'VkExtensionProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(42): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(46): error C2065: 'VkLayerProperties': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(46): error C2923: 'std::allocator': 'VkLayerProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(46): error C2923: 'std::vector': 'VkLayerProperties' is not a valid template type argument for parameter '_Ty'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(46): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(49): error C3646: 'instance': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(49): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(50): error C3646: 'callback': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(50): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(60): error C3646: 'surfaceFormat': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(60): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(61): error C3646: 'surfaceColorFormat': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(61): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(62): error C3646: 'surfaceColorSpace': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(62): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(64): error C3646: 'formatProperties': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(64): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(66): error C3646: 'vertexBuffer': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(66): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(67): error C3646: 'vertexBufferMemory': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(67): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(69): error C3646: 'indexBuffer': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(69): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(70): error C3646: 'indexBufferMemory': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(70): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(72): error C3646: 'uniformBuffer': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(72): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(73): error C3646: 'uniformBufferMemory': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(73): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(75): error C3646: 'descriptorPool': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(75): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(76): error C3646: 'descriptorSet': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(76): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(78): error C3646: 'vertexModule': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(78): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(79): error C3646: 'fragmentModule': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(79): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(81): error C3646: 'pipeline': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(81): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(83): error C3646: 'renderPass': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(83): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(85): error C3646: 'framebuffer': unknown override specifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(85): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  Generating Code...
+  Compiling...
+  main.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  vulkan_base.cpp
+  validation_layers.cpp
