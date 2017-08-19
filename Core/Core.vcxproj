@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\memory\MemoryAllocators\allocator.cpp" />
     <ClCompile Include="src\math\dyn_mat.cpp" />
     <ClCompile Include="src\math\dyn_vec.cpp" />
     <ClCompile Include="src\math\quaternion.cpp" />
@@ -36,10 +35,10 @@
     <ClCompile Include="src\graphics\Vulkan\vulkan_base.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\graphics\Vulkan\vulkan_model.cpp" />
-    <ClCompile Include="src\memory\VirtualMemoryAllocators\virtual_freelist_allocator.cpp" />
+    <ClCompile Include="src\Memory\VirtualMemoryAllocators\allocator.cpp" />
+    <ClCompile Include="src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\memory\MemoryAllocators\allocator.h" />
     <ClInclude Include="src\math\dyn_mat.h" />
     <ClInclude Include="src\math\dyn_vec.h" />
     <ClInclude Include="src\math\quaternion.h" />
@@ -57,7 +56,8 @@
     <ClInclude Include="src\graphics\window.h" />
     <ClInclude Include="test_code.h" />
     <ClInclude Include="src\graphics\Vulkan\vulkan_model.h" />
-    <ClInclude Include="src\memory\VirtualMemoryAllocators\virtual_freelist_allocator.h" />
+    <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />
+    <ClInclude Include="src\Graphics\Vulkan\Allocation\vulkan_allocator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\graphics\Shaders\fragment.glsl" />

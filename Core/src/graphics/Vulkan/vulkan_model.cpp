@@ -15,6 +15,4 @@ void ng::graphics::VulkanModel::loadModel(const char * filename)
 
 	m_DescriptorSet = m_VulkanBase->graphicsUnit.device.allocateDescriptorSets(allocInfo)[0];
 
-
-
 }

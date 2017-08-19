@@ -16,7 +16,6 @@ namespace ng {
 			math::Vec3 tangent;
 
 			bool operator==(const VertexExtended& other) const;
-
 		};
 
 		class Vertex {

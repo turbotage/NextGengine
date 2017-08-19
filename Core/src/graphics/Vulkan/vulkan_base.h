@@ -8,7 +8,8 @@ namespace ng {
 	namespace graphics {
 		
 		struct PhysicalDevice {
-			VkPhysicalDevice device;
+			vk::PhysicalDevice device;
+			vk::PhysicalDeviceMemoryProperties memoryProperties;
 			std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> deviceExtensions;
 			std::vector<vk::LayerProperties, std::allocator<vk::LayerProperties>> deviceLayers;
 			std::vector<const char*> validationLayers;
@@ -51,29 +52,30 @@ namespace ng {
 			ComputeUnit computeUnit;
 			std::vector<Thread> computeThreads;
 
-			Window window;
 			vk::SurfaceFormatKHR surfaceFormat;
 			vk::Format surfaceColorFormat;
 			vk::ColorSpaceKHR surfaceColorSpace;
 
 			vk::FormatProperties formatProperties;
 
-			vk::Buffer vertexBuffer;
-			vk::DeviceMemory vertexBufferMemory;
-			
-			vk::Buffer indexBuffer;
-			vk::DeviceMemory indexBufferMemory;
+			vk::Buffer staticGraphicsStorageBuffer;
+			vk::DeviceMemory staticGraphicsBufferMemory;
 
-			vk::Buffer uniformBuffer;
-			vk::DeviceMemory uniformBufferMemory;
+			vk::Buffer staticComputeStorageBuffer;
+			vk::DeviceMemory staticComputeBufferMemory;
 			
-			vk::DescriptorPool descriptorPool;
+			vk::DescriptorPool graphicsDescriptorPool;
+			vk::DescriptorPool computeDescriptorPool;
 			
 			vk::ShaderModule vertexModule;
 			vk::ShaderModule fragmentModule;
+			vk::ShaderModule computeModule;
 			
-			vk::Pipeline pipeline;
-			vk::PipelineCache pipelineCache;
+			vk::Pipeline graphicsPipeline;
+			vk::PipelineCache graphicsPipelineCache;
+
+			vk::Pipeline computePipeline;
+			vk::PipelineCache computePipelineCache;
 
 			vk::RenderPass renderPass;
 			
