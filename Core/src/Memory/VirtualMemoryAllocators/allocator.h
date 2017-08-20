@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../def.h"
+#include <vector>
 
 namespace ng {
 	namespace memory {

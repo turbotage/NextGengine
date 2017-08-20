@@ -9,11 +9,11 @@ namespace ng {
 		class VulkanModel
 		{
 			VulkanBase* m_VulkanBase;
-			vk::DescriptorSetLayout* m_DescSetLayout;
-			vk::DescriptorSet m_DescriptorSet;
+			VkDescriptorSetLayout* m_DescSetLayout;
+			VkDescriptorSet m_DescriptorSet;
 		public:
 
-			void init(VulkanBase* vulkanBase, vk::DescriptorSetLayout* descriptorSetLayout);
+			void init(VulkanBase* vulkanBase, VkDescriptorSetLayout* descriptorSetLayout);
 
 			void loadModel(const char* filename);
 		};

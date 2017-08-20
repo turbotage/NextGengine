@@ -7,43 +7,57 @@
 namespace ng {
 	namespace graphics {
 		
+		struct QueueFamilyIndices {
+			int graphicsFamily = -1;
+			int presentFamily = -1;
+
+			bool isComplete() {
+				return graphicsFamily >= 0 && presentFamily >= 0;
+			}
+		};
+
 		struct PhysicalDevice {
-			vk::PhysicalDevice device;
-			vk::PhysicalDeviceMemoryProperties memoryProperties;
-			std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> deviceExtensions;
-			std::vector<vk::LayerProperties, std::allocator<vk::LayerProperties>> deviceLayers;
+			VkPhysicalDevice device;
+			VkPhysicalDeviceMemoryProperties memoryProperties;
+			std::vector<VkExtensionProperties> deviceExtensions;
+			std::vector<VkLayerProperties> deviceLayers;
 			std::vector<const char*> validationLayers;
 		};
 
 		struct GraphicsUnit {
 			PhysicalDevice* pDevice;
-			vk::Device device;
-			vk::Queue graphicsQueue;
-			vk::DeviceCreateInfo createInfo;
+			VkDevice device;
+			VkQueue graphicsQueue;
+			VkDeviceCreateInfo createInfo;
 		};
 
 		struct ComputeUnit {
 			PhysicalDevice* pDevice;
-			vk::Device device;
-			vk::Queue computeQueue;
-			vk::DeviceCreateInfo createInfo;
+			VkDevice device;
+			VkQueue computeQueue;
+			VkDeviceCreateInfo createInfo;
 		};
 		
 		struct Thread {
-			vk::CommandPool commandPool;
-			std::vector<vk::CommandBuffer> commandBuffers;
+			VkCommandPool commandPool;
+			std::vector<VkCommandBuffer> commandBuffers;
 		};
 
-		struct VulkanBase {
+		class VulkanBase {
+		public:
 			//Instance Extensions
-			std::vector<vk::ExtensionProperties, std::allocator<vk::ExtensionProperties>> installedExtensions;
+			std::vector<VkExtensionProperties> installedExtensions;
 			std::vector<const char*> extensions;
 
 			//Instance Layers
-			std::vector<vk::LayerProperties, std::allocator<vk::LayerProperties>> installedLayers;
+			std::vector<VkLayerProperties> installedLayers;
 			std::vector<const char*> layers;
 
-			vk::Instance instance;
+			VkInstance instance;
+
+			//debug
+			VkDebugReportFlagsEXT debugReportFlags;
+			VkDebugReportCallbackEXT callback;
 
 			//graphics
 			GraphicsUnit graphicsUnit;
@@ -51,35 +65,41 @@ namespace ng {
 			//computics
 			ComputeUnit computeUnit;
 			std::vector<Thread> computeThreads;
-
-			vk::SurfaceFormatKHR surfaceFormat;
-			vk::Format surfaceColorFormat;
-			vk::ColorSpaceKHR surfaceColorSpace;
-
-			vk::FormatProperties formatProperties;
-
-			vk::Buffer staticGraphicsStorageBuffer;
-			vk::DeviceMemory staticGraphicsBufferMemory;
-
-			vk::Buffer staticComputeStorageBuffer;
-			vk::DeviceMemory staticComputeBufferMemory;
 			
-			vk::DescriptorPool graphicsDescriptorPool;
-			vk::DescriptorPool computeDescriptorPool;
-			
-			vk::ShaderModule vertexModule;
-			vk::ShaderModule fragmentModule;
-			vk::ShaderModule computeModule;
-			
-			vk::Pipeline graphicsPipeline;
-			vk::PipelineCache graphicsPipelineCache;
+			VkSurfaceKHR surface;
+			VkSurfaceFormatKHR surfaceFormat;
+			VkFormat surfaceColorFormat;
+			VkColorSpaceKHR surfaceColorSpace;
 
-			vk::Pipeline computePipeline;
-			vk::PipelineCache computePipelineCache;
+			VkFormatProperties formatProperties;
 
-			vk::RenderPass renderPass;
 			
-			vk::Framebuffer framebuffer;
+			VkDescriptorPool graphicsDescriptorPool;
+			VkDescriptorPool computeDescriptorPool;
+			
+			VkShaderModule vertexModule;
+			VkShaderModule fragmentModule;
+			VkShaderModule computeModule;
+			
+			VkPipeline graphicsPipeline;
+			VkPipelineCache graphicsPipelineCache;
+
+			VkPipeline computePipeline;
+			VkPipelineCache computePipelineCache;
+
+			VkRenderPass renderPass;
+			
+			VkFramebuffer framebuffer;
+
+		public:
+
+			void createInstance();
+
+			void createDebugCallback();
+
+			void createDevices();
+
+
 
 		};
 

@@ -1,10 +1,19 @@
 #pragma once
 #include "def.h"
-
+#include <vector>
 
 namespace ng {
 	namespace graphics {
 		namespace debug {
+			
+			bool isValidationLayersEnabled();
+
+			const std::vector<const char*> getValidationLayerNames();
+
+			bool checkValidationLayerSupport();
+
+			std::vector<const char*> getRequiredExtensions(bool enableValidationLayers);
+
 			// Default debug callback
 			VkBool32 messageCallback(VkDebugReportFlagsEXT flags,
 				VkDebugReportObjectTypeEXT objType,
@@ -18,9 +27,9 @@ namespace ng {
 			// Load debug function pointers and set debug callback
 			// if callBack is NULL, default message callback will be used
 			void setupDebugging(
-				VkInstance instance,
+				VkInstance instance, 
 				VkDebugReportFlagsEXT flags,
-				VkDebugReportCallbackEXT callBack);
+				VkDebugReportCallbackEXT callback);
 
 			// Clear debug callback
 			void freeDebugCallback(VkInstance instance);
