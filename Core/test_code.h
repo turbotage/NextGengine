@@ -24,3 +24,27 @@ void testOfMat4() {
 	std::cout << one.mul(two) << std::endl;
 	std::cout << "wawo" << std::endl;
 }
+
+void testMath() {
+#define set_nm(x, n, m, num) (x.rows[n].elements[m]=num)
+
+	ng::math::DynMat dots;
+	ng::math::DynMat conector;
+	ng::math::DynMat re;
+
+	dots.init(2, 2);
+	conector.init(1, 2);
+	re.init(2, 1);
+
+	set_nm(dots, 0, 0, 0);
+	set_nm(dots, 0, 1, 0);
+
+	set_nm(dots, 1, 0, 4);
+	set_nm(dots, 1, 1, 4);
+
+	set_nm(conector, 0, 0, 0);
+	set_nm(conector, 1, 0, 1);
+	std::cout << dots << "\n" << conector << "\n\n";
+	re = dots*conector;
+	std::cout << re << std::endl;
+}

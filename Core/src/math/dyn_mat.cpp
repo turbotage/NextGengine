@@ -42,6 +42,16 @@ ng::math::DynMat::~DynMat()
 	cleanup();
 }
 
+ng::math::DynMat & ng::math::DynMat::operator=(DynMat & other)
+{
+	for (int i = 0; i < height; ++i) {
+		memcpy((void*)&rows[i], (void*)&other.rows[i], other.rows[i].width * sizeof(float));
+		int apa = 0;
+		apa++;
+	}
+	return *this;
+}
+
 ng::math::DynMat & ng::math::DynMat::add(const DynMat & other)
 {
 	if (width == other.width && height == other.height) {
@@ -64,22 +74,23 @@ ng::math::DynMat & ng::math::DynMat::sub(const DynMat & other)
 	return *this;
 }
 
-ng::math::DynMat* ng::math::DynMat::mul(const DynMat & other)
+ng::math::DynMat ng::math::DynMat::mul(const DynMat & other)
 {
-	if (height != other.width) {
+	if (width != other.height) {
 		setNaN();
-		return this;
+		return *this;
 	}
-	DynMat* ret = new DynMat(height, other.width);
+	DynMat ret(height, other.width);
 	DynVec otherMul(other.height);
 	for (unsigned short i = 0; i < height; ++i) {
 		for (unsigned short j = 0; j < other.width; ++j) {
 			for (unsigned short k = 0; k < other.height; ++k) {
 				otherMul.elements[k] = other.rows[k].elements[j];
 			}
-			ret->rows[i].elements[j] = rows[i].dot(otherMul);
+			ret.rows[i].elements[j] = rows[i].dot(otherMul);
 		}
 	}
+	int hurp = 0;
 	return ret;
 }
 
@@ -133,14 +144,14 @@ ng::math::DynMat ng::math::operator-(DynMat left, const DynMat & right)
 	return left.sub(right);
 }
 
-ng::math::DynMat* ng::math::operator*(DynMat left, const DynMat & right)
+ng::math::DynMat ng::math::operator*(DynMat left, const DynMat & right)
 {
 	return left.mul(right);
 }
 
 std::ostream & ng::math::operator<<(std::ostream & stream, const DynMat & matrix)
 {
-	stream << "Mat4: (\n";
+	stream << "DynMat: (\n";
 	for (unsigned short i = 0; i < matrix.height; ++i) {
 		for (unsigned short j = 0; j < matrix.width; ++j) {
 			stream << matrix.rows[i].elements[j] << "  ";

@@ -10,9 +10,14 @@ namespace ng {
 		struct QueueFamilyIndices {
 			int graphicsFamily = -1;
 			int presentFamily = -1;
+			int computeFamily = -1;
 
-			bool isComplete() {
-				return graphicsFamily >= 0 && presentFamily >= 0;
+			bool isGraphicsComplete() {
+				return graphicsFamily >= 0; // && presentFamily >= 0;
+			}
+
+			bool isComputeComplete() {
+				return computeFamily >= 0;
 			}
 		};
 
@@ -59,6 +64,7 @@ namespace ng {
 			VkDebugReportFlagsEXT debugReportFlags;
 			VkDebugReportCallbackEXT debugReportCallback;
 
+			bool computeAndGraphicsSameDevice = false;
 			//graphics
 			GraphicsUnit graphicsUnit;
 			std::vector<Thread> graphicsThreads;
@@ -98,7 +104,11 @@ namespace ng {
 			void createDebugCallback();
 			void freeDebugCallback();
 
-			void createDevices();
+			void createPhysicalDevices();
+			//void freePhysicalDevices();
+
+			void createLogicalDevices();
+			void freeLogicalDevices();
 
 		};
 

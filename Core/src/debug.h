@@ -10,7 +10,6 @@ namespace ng {
 			bool isValidationLayersEnabled();
 
 			bool checkValidationLayerSupport();
-
 			
 			void setDebugValidationLayers(VulkanBase *vulkanBase);
 

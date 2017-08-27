@@ -1,3 +1,5 @@
-﻿  main.cpp
+﻿  vulkan_base.cpp
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.cpp(109): warning C4018: '<': signed/unsigned mismatch
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.cpp(138): warning C4018: '<': signed/unsigned mismatch
   Core.vcxproj -> D:\vikto\Documents\Visual Studio 2017\Projects\NextGengine\x64\Debug\Core.exe
   Core.vcxproj -> D:\vikto\Documents\Visual Studio 2017\Projects\NextGengine\x64\Debug\Core.pdb (Partial PDB)

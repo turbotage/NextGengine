@@ -27,7 +27,6 @@ uint32 findMemoryType(uint32 memoryTypeBits, VkPhysicalDeviceMemoryProperties* p
 				VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | 
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
-
 			uint32 type = getMemoryType(optimal);
 			if (type == -1) {
 				int result = getMemoryType(required);
