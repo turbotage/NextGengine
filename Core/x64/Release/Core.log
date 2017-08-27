@@ -1,29 +1,26 @@
-﻿  quaternion.cpp
+﻿  dyn_mat.cpp
+  dyn_vec.cpp
+  quaternion.cpp
   model.cpp
   mesh.cpp
-src\objects\mesh.cpp(3): error C2039: 'setDescriptorSet': is not a member of 'ng::entity::Mesh'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\objects\mesh.h(11): note: see declaration of 'ng::entity::Mesh'
   entity.cpp
   debug.cpp
   main.cpp
-main.cpp(21): error C3861: 'initVulkan': identifier not found
   mat4.cpp
 src\math\mat4.cpp(230): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  vec3.cpp
   vec4.cpp
+  vec2.cpp
   vertex.cpp
   vulkan_base.cpp
   window.cpp
   vulkan_model.cpp
-src\graphics\Vulkan\vulkan_model.cpp(12): error C2039: 'descriptorPool': is not a member of 'ng::graphics::VulkanBase'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\graphics\vulkan\vulkan_base.h(37): note: see declaration of 'ng::graphics::VulkanBase'
   allocator.cpp
 src\Memory\VirtualMemoryAllocators\allocator.cpp(33): warning C4267: '=': conversion from 'size_t' to 'uint32', possible loss of data
 src\Memory\VirtualMemoryAllocators\allocator.cpp(34): warning C4267: '=': conversion from 'size_t' to 'uint32', possible loss of data
 src\Memory\VirtualMemoryAllocators\allocator.cpp(51): warning C4267: '=': conversion from 'size_t' to 'uint32', possible loss of data
   vulkan_allocator.cpp
-src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp(39): error C2361: initialization of 'type' is skipped by 'default' label
-  src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp(29): note: see declaration of 'type'
-src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp(39): error C2361: initialization of 'required' is skipped by 'default' label
-  src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp(25): note: see declaration of 'required'
-src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp(39): error C2361: initialization of 'optimal' is skipped by 'default' label
-  src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp(20): note: see declaration of 'optimal'
+  Generating code
+  All 445 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Core.vcxproj -> D:\vikto\Documents\Visual Studio 2017\Projects\NextGengine\x64\Release\Core.exe

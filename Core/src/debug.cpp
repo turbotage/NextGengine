@@ -24,16 +24,27 @@ namespace ng {
 			const bool enableValidationLayers = true;
 #endif
 
-			const std::vector<const char*> validationLayerNames = {
+			std::vector<const char*> validationLayers = {
 				"VK_LAYER_LUNARG_standard_validation"
 			};
 
-			int32_t validationLayerCount = 1;
-			PFN_vkCreateDebugReportCallbackEXT CreateDebugReportCallback = VK_NULL_HANDLE;
-			PFN_vkDestroyDebugReportCallbackEXT DestroyDebugReportCallback = VK_NULL_HANDLE;
-			PFN_vkDebugReportMessageEXT debugBreakCallback = VK_NULL_HANDLE;
+			VkResult CreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
+				auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+				if (func != nullptr) {
+					return func(instance, pCreateInfo, pAllocator, pCallback);
+				}
+				else {
+					return VK_ERROR_EXTENSION_NOT_PRESENT;
+				}
+			}
 
-			VkDebugReportCallbackEXT msgCallback;
+			static void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator) {
+				auto func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+				if (func != nullptr) {
+					func(instance, callback, pAllocator);
+				}
+			}
+
 		}
 	}
 }
@@ -43,9 +54,9 @@ bool ng::graphics::debug::isValidationLayersEnabled()
 	return enableValidationLayers;
 }
 
-const std::vector<const char*> ng::graphics::debug::getValidationLayerNames()
+void ng::graphics::debug::setDebugValidationLayers(VulkanBase *vulkanBase)
 {
-	return validationLayerNames;
+	vulkanBase->layers = validationLayers;
 }
 
 bool ng::graphics::debug::checkValidationLayerSupport()
@@ -55,7 +66,7 @@ bool ng::graphics::debug::checkValidationLayerSupport()
 
 	std::vector<VkLayerProperties> availableLayers(layerCount);
 	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-	for (const char* layerName : validationLayerNames) {
+	for (const char* layerName : validationLayers) {
 		bool layerFound = false;
 		for (const auto& layerProperties : availableLayers) {
 			if (strcmp(layerName, layerProperties.layerName) == 0) {
@@ -70,7 +81,7 @@ bool ng::graphics::debug::checkValidationLayerSupport()
 	return true;
 }
 
-std::vector<const char*> ng::graphics::debug::getRequiredExtensions(bool enableValidationLayers)
+void ng::graphics::debug::setDebugExtensions(VulkanBase *vulkanBase)
 {
 	std::vector<const char*> extensions;
 
@@ -84,86 +95,30 @@ std::vector<const char*> ng::graphics::debug::getRequiredExtensions(bool enableV
 	if (enableValidationLayers) {
 		extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 	}
-	return extensions;
+	vulkanBase->extensions = extensions;
 }
 
-VkBool32 ng::graphics::debug::messageCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t srcObject, size_t location, int32_t msgCode, const char * pLayerPrefix, const char * pMsg, void * pUserData)
+VKAPI_ATTR VkBool32 VKAPI_CALL ng::graphics::debug::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64 obj, size_t location, int32 code, const char * layerPrefix, const char * msg, void * userData)
 {
-	// Select prefix depending on flags passed to the callback
-	// Note that multiple flags may be set for a single validation message
-	std::string prefix("");
+	std::cerr << "validation layer: " << msg << std::endl;
 
-	// Error that may result in undefined behaviour
-	if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
-	{
-		prefix += "ERROR:";
-	};
-	// Warnings may hint at unexpected / non-spec API usage
-	if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
-	{
-		prefix += "WARNING:";
-	};
-	// May indicate sub-optimal usage of the API
-	if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
-	{
-		prefix += "PERFORMANCE:";
-	};
-	// Informal messages that may become handy during debugging
-	if (flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
-	{
-		prefix += "INFO:";
-	}
-	// Diagnostic info from the Vulkan loader and layers
-	// Usually not helpful in terms of API usage, but may help to debug layer and loader problems 
-	if (flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
-	{
-		prefix += "DEBUG:";
-	}
-
-	// Display message to default output (console/logcat)
-	std::stringstream debugMessage;
-	debugMessage << prefix << " [" << pLayerPrefix << "] Code " << msgCode << " : " << pMsg;
-
-	if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
-		std::cerr << debugMessage.str() << "\n";
-	}
-	else {
-		std::cout << debugMessage.str() << "\n";
-	}
-	fflush(stdout);
-
-	// The return value of this callback controls wether the Vulkan call that caused
-	// the validation message will be aborted or not
-	// We return VK_FALSE as we DON'T want Vulkan calls that cause a validation message 
-	// (and return a VkResult) to abort
-	// If you instead want to have calls abort, pass in VK_TRUE and the function will 
-	// return VK_ERROR_VALIDATION_FAILED_EXT 
 	return VK_FALSE;
 }
 
 void ng::graphics::debug::setupDebugging(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportCallbackEXT callback)
 {
-	ng::graphics::debug::CreateDebugReportCallback = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT"));
-	ng::graphics::debug::DestroyDebugReportCallback = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT"));
-	ng::graphics::debug::debugBreakCallback = reinterpret_cast<PFN_vkDebugReportMessageEXT>(vkGetInstanceProcAddr(instance, "vkDebugReportMessageEXT"));
+	if (!enableValidationLayers) return;
 
-	VkDebugReportCallbackCreateInfoEXT debugCreateInfo = {};
-	debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
-	debugCreateInfo.pfnCallback = (PFN_vkDebugReportCallbackEXT)ng::graphics::debug::messageCallback;
-	debugCreateInfo.flags = flags;
-
-	VkResult err = ng::graphics::debug::CreateDebugReportCallback(
-		instance,
-		&debugCreateInfo,
-		nullptr,
-		(callback != VK_NULL_HANDLE) ? &callback : &ng::graphics::debug::msgCallback);
-	assert(!err);
+	VkDebugReportCallbackCreateInfoEXT createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+	createInfo.flags = flags;
+	createInfo.pfnCallback = ng::graphics::debug::debugCallback;
+	if (CreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &callback) != VK_SUCCESS) {
+		throw std::runtime_error("failed to set up debug callback");
+	}
 }
 
-void ng::graphics::debug::freeDebugCallback(VkInstance instance)
+void ng::graphics::debug::freeDebugCallback(VkInstance instance, VkDebugReportCallbackEXT callback)
 {
-	if (msgCallback != VK_NULL_HANDLE)
-	{
-		DestroyDebugReportCallback(instance, msgCallback, nullptr);
-	}
+	DestroyDebugReportCallbackEXT(instance, callback, nullptr);
 }

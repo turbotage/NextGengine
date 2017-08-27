@@ -17,7 +17,7 @@ namespace ng {
 		};
 
 		struct PhysicalDevice {
-			VkPhysicalDevice device;
+			VkPhysicalDevice device = VK_NULL_HANDLE;
 			VkPhysicalDeviceMemoryProperties memoryProperties;
 			std::vector<VkExtensionProperties> deviceExtensions;
 			std::vector<VkLayerProperties> deviceLayers;
@@ -25,14 +25,14 @@ namespace ng {
 		};
 
 		struct GraphicsUnit {
-			PhysicalDevice* pDevice;
+			PhysicalDevice pDevice;
 			VkDevice device;
 			VkQueue graphicsQueue;
 			VkDeviceCreateInfo createInfo;
 		};
 
 		struct ComputeUnit {
-			PhysicalDevice* pDevice;
+			PhysicalDevice pDevice;
 			VkDevice device;
 			VkQueue computeQueue;
 			VkDeviceCreateInfo createInfo;
@@ -43,7 +43,7 @@ namespace ng {
 			std::vector<VkCommandBuffer> commandBuffers;
 		};
 
-		class VulkanBase {
+		struct VulkanBase {
 		public:
 			//Instance Extensions
 			std::vector<VkExtensionProperties> installedExtensions;
@@ -57,7 +57,7 @@ namespace ng {
 
 			//debug
 			VkDebugReportFlagsEXT debugReportFlags;
-			VkDebugReportCallbackEXT callback;
+			VkDebugReportCallbackEXT debugReportCallback;
 
 			//graphics
 			GraphicsUnit graphicsUnit;
@@ -73,7 +73,6 @@ namespace ng {
 
 			VkFormatProperties formatProperties;
 
-			
 			VkDescriptorPool graphicsDescriptorPool;
 			VkDescriptorPool computeDescriptorPool;
 			
@@ -94,12 +93,12 @@ namespace ng {
 		public:
 
 			void createInstance();
+			void freeInstance();
 
 			void createDebugCallback();
+			void freeDebugCallback();
 
 			void createDevices();
-
-
 
 		};
 

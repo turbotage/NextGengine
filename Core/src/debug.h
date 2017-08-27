@@ -1,6 +1,7 @@
 #pragma once
 #include "def.h"
 #include <vector>
+#include "Graphics\Vulkan\vulkan_base.h"
 
 namespace ng {
 	namespace graphics {
@@ -8,21 +9,22 @@ namespace ng {
 			
 			bool isValidationLayersEnabled();
 
-			const std::vector<const char*> getValidationLayerNames();
-
 			bool checkValidationLayerSupport();
 
-			std::vector<const char*> getRequiredExtensions(bool enableValidationLayers);
+			
+			void setDebugValidationLayers(VulkanBase *vulkanBase);
 
-			// Default debug callback
-			VkBool32 messageCallback(VkDebugReportFlagsEXT flags,
+			void setDebugExtensions(VulkanBase *vulkanBase);
+
+			VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+				VkDebugReportFlagsEXT flags,
 				VkDebugReportObjectTypeEXT objType,
-				uint64_t srcObject,
+				uint64 obj,
 				size_t location,
-				int32_t msgCode,
-				const char* pLayerPrefix,
-				const char* pMsg,
-				void* pUserData);
+				int32 code,
+				const char* layerPrefix,
+				const char* msg,
+				void* userData);
 
 			// Load debug function pointers and set debug callback
 			// if callBack is NULL, default message callback will be used
@@ -32,7 +34,7 @@ namespace ng {
 				VkDebugReportCallbackEXT callback);
 
 			// Clear debug callback
-			void freeDebugCallback(VkInstance instance);
+			void freeDebugCallback(VkInstance instance, VkDebugReportCallbackEXT callback);
 		}
 	}
 

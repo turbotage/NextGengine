@@ -56,12 +56,12 @@ void ng::graphics::VulkanAllocator::init(VulkanBase * vkBase, AllocatorUsage all
 
 	switch (m_DeviceType) {
 	case GRAPHICS_UNIT:
-		memProps = &m_VulkanBase->graphicsUnit.pDevice->memoryProperties;
-		pDevice = &m_VulkanBase->graphicsUnit.pDevice->device;
+		memProps = &m_VulkanBase->graphicsUnit.pDevice.memoryProperties;
+		pDevice = &m_VulkanBase->graphicsUnit.pDevice.device;
 		break;
 	case COMPUTE_UNIT:
-		memProps = &m_VulkanBase->computeUnit.pDevice->memoryProperties;
-		pDevice = &m_VulkanBase->computeUnit.pDevice->device;
+		memProps = &m_VulkanBase->computeUnit.pDevice.memoryProperties;
+		pDevice = &m_VulkanBase->computeUnit.pDevice.device;
 		break;
 	}
 	//*memProps = pDevice->getMemoryProperties();

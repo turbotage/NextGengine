@@ -6,7 +6,6 @@ void ng::graphics::Window::init(uint width, uint height, const char * descriptio
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
 	glfwWindowPtr = glfwCreateWindow(width, height, description, nullptr, nullptr);
 }
 

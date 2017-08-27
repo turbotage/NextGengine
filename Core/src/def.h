@@ -21,6 +21,7 @@
 #define TO_DEGREES(radians) radians * 180 / NG_PI
 
 #include <stdint.h>
+#include <inttypes.h>
 
 typedef int8_t int8;
 typedef int16_t int16;
