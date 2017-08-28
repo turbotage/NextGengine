@@ -3,8 +3,17 @@
 #include <iostream>
 #include <map>
 #include <utility>
+#include <set>
 
-ng::graphics::QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+const std::vector<const char*> graphicsDeviceExtensions = {
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
+const std::vector<const char*> computeDeviceExtensions = {
+
+};
+
+ng::graphics::QueueFamilyIndices ng::graphics::VulkanBase::findQueueFamilies(VkPhysicalDevice device) {
 	ng::graphics::QueueFamilyIndices indices;
 
 	uint32 queueFamilyCount = 0;
@@ -21,12 +30,36 @@ ng::graphics::QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) {
 			indices.computeFamily = i;
 		}
+		VkBool32 presentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+		if (queueFamily.queueCount > 0 && presentSupport) {
+			indices.presentFamily = i;
+		}
 		if (indices.isComputeComplete() && indices.isGraphicsComplete()) {
 			break;
 		}
 		i++;
 	}
 	return indices;
+}
+
+ng::graphics::SwapChainSupportDetails ng::graphics::VulkanBase::querySwapChainSupport(VkPhysicalDevice device)
+{
+	SwapChainSupportDetails details;
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+	uint32 formatCount;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+	if (formatCount != 0) {
+		details.formats.resize(formatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+	}
+	uint32 presentModeCount;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+	if (presentModeCount != 0) {
+		details.presentModes.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+	}
+	return details;
 }
 
 void ng::graphics::VulkanBase::createInstance()
@@ -84,22 +117,65 @@ void ng::graphics::VulkanBase::freeDebugCallback()
 
 void ng::graphics::VulkanBase::createPhysicalDevices()
 {
+	auto checkDeviceExtensionSupport = [&](VkPhysicalDevice device, short deviceType) -> bool {
+		uint32 extensionCount;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+		std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+		std::set<std::string> requiredExtensions;
+		if (deviceType == GRAPHICS_UNIT) {
+			std::set<std::string> requiredExtensions2(graphicsDeviceExtensions.begin(), graphicsDeviceExtensions.end());
+			requiredExtensions = requiredExtensions2;
+		}
+		else if (deviceType == COMPUTE_UNIT) {
+			std::set<std::string> requiredExtensions2(computeDeviceExtensions.begin(), computeDeviceExtensions.end());
+			requiredExtensions = requiredExtensions2;
+		}
+		for (const auto& extension : availableExtensions) {
+			requiredExtensions.erase(extension.extensionName);
+		}
+		return requiredExtensions.empty();
+
+	};
+
 	auto rateGraphicsDeviceSuitability = [&](VkPhysicalDevice device, bool needComputeCompatibility) -> uint32 {
 		VkPhysicalDeviceProperties deviceProperties;
 		VkPhysicalDeviceFeatures deviceFeatures;
 		vkGetPhysicalDeviceProperties(device, &deviceProperties);
 		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 		int score = 0;
+
+		//things that is needed will return 0 if they don't exist
+		//return 0 if no gemomatryShader is available
 		if (!deviceFeatures.geometryShader) {
 			return 0;
 		}
 		QueueFamilyIndices indices = findQueueFamilies(device);
+		//if it doesn't support graphicsQueue return 0
 		if (!indices.isGraphicsComplete()) {
 			return 0;
 		}
+		//if it doesn't support presentQueue return 0
+		if (!indices.isPresentComplete()) {
+			return 0;
+		}
+		//if the graphics device also have to be the compute device return 0 if computeQueue isn't available
 		if (needComputeCompatibility && !indices.isComputeComplete()) {
 			return 0;
 		}
+		//check if graphicsDevice extensions are available, if not return 0
+		if (!checkDeviceExtensionSupport(device, GRAPHICS_UNIT)) {
+			return 0;
+		}
+		//if the graphicsDevice also needs to be computeDevice check if it also have computeDevice extensions
+		//otherwise return 0
+		if (needComputeCompatibility) {
+			if (!checkDeviceExtensionSupport(device, COMPUTE_UNIT)) {
+				return 0;
+			}
+		}
+
+		//score adding stuff
 		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			score += 1000;
 		}
@@ -202,7 +278,6 @@ void ng::graphics::VulkanBase::createPhysicalDevices()
 		devices.erase(std::find(devices.begin(), devices.end(), graphicsUnit.pDevice.device));
 		computeUnit.pDevice.device = pickComputeDevice(&devices);
 	}
-
 }
 
 void ng::graphics::VulkanBase::createLogicalDevices()
@@ -210,24 +285,29 @@ void ng::graphics::VulkanBase::createLogicalDevices()
 	//graphicsUnit
 	{
 		QueueFamilyIndices indices = findQueueFamilies(graphicsUnit.pDevice.device);
-
-		VkDeviceQueueCreateInfo queueCreateInfo = {};
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = indices.graphicsFamily;
-		queueCreateInfo.queueCount = 1;
+		
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<int> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
 
 		float queuePriority = 1.0f;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
+		for (int queueFamily : uniqueQueueFamilies) {
+			VkDeviceQueueCreateInfo queueCreateInfo = {};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = queueFamily;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
 
 		VkPhysicalDeviceFeatures deviceFeatures = {};
 
 		VkDeviceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos = &queueCreateInfo;
-		createInfo.queueCreateInfoCount = 1;
-
+		createInfo.queueCreateInfoCount = static_cast<uint32>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = 0;
+		createInfo.enabledExtensionCount = static_cast<uint32>(graphicsDeviceExtensions.size());
+		createInfo.ppEnabledExtensionNames = graphicsDeviceExtensions.data();
 
 		if (ng::graphics::debug::isValidationLayersEnabled()) {
 			createInfo.enabledLayerCount = static_cast<uint32>(layers.size());
@@ -242,6 +322,7 @@ void ng::graphics::VulkanBase::createLogicalDevices()
 		}
 
 		vkGetDeviceQueue(graphicsUnit.device, indices.graphicsFamily, 0, &graphicsUnit.graphicsQueue);
+		vkGetDeviceQueue(graphicsUnit.device, indices.presentFamily, 0, &graphicsUnit.presentQueue);
 	}
 	//computeUnit
 	{
@@ -261,9 +342,9 @@ void ng::graphics::VulkanBase::createLogicalDevices()
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		createInfo.pQueueCreateInfos = &queueCreateInfo;
 		createInfo.queueCreateInfoCount = 1;
-
 		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = 0;
+		createInfo.enabledExtensionCount = static_cast<uint32>(computeDeviceExtensions.size());
+		createInfo.ppEnabledExtensionNames = computeDeviceExtensions.data();
 
 		if (ng::graphics::debug::isValidationLayersEnabled()) {
 			createInfo.enabledLayerCount = static_cast<uint32>(layers.size());

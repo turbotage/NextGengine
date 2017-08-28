@@ -11,9 +11,18 @@ void ng::graphics::Window::init(uint width, uint height, const char * descriptio
 
 void ng::graphics::Window::createSurface(VkInstance* instance, VkSurfaceKHR* surface)
 {
+	m_Instance = instance;
+	m_Surface = surface;
 	if (glfwCreateWindowSurface(*instance, glfwWindowPtr, nullptr, surface)) {
 		throw std::runtime_error("failed to create window surface!");
 	}
+
+
+}
+
+void ng::graphics::Window::freeSurface()
+{
+	vkDestroySurfaceKHR(*m_Instance, *m_Surface, nullptr);
 }
 
 void ng::graphics::Window::run()

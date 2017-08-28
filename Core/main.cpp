@@ -6,13 +6,12 @@
 #include <chrono>
 #include "src\Math\dyn_mat.h"
 
-using namespace ng;
+using namespace ng::graphics;
 
 
-class Application {
+class Application : VulkanBase {
 private:
-	graphics::Window window;
-	graphics::VulkanBase vulkanBase;
+	Window window;
 public:
 
 	~Application() {
@@ -21,11 +20,11 @@ public:
 
 	void init() {
 		window.init(800, 600, "window");
-		vulkanBase.createInstance();
-		vulkanBase.createDebugCallback();
-		window.createSurface(&vulkanBase.instance, &vulkanBase.surface);
-		vulkanBase.createPhysicalDevices();
-		vulkanBase.createLogicalDevices();
+		createInstance();
+		createDebugCallback();
+		window.createSurface(&instance, &surface);
+		createPhysicalDevices();
+		createLogicalDevices();
 	}
 
 	void run() {
@@ -33,9 +32,9 @@ public:
 	}
 
 	void cleanup() {
-		vulkanBase.freeLogicalDevices();
-		vulkanBase.freeDebugCallback();
-		vulkanBase.freeInstance();
+		freeLogicalDevices();
+		freeDebugCallback();
+		freeInstance();
 		glfwDestroyWindow(window.glfwWindowPtr);
 		glfwTerminate();
 	}

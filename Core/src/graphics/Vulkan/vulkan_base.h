@@ -4,20 +4,37 @@
 #include <vector>
 #include "../window.h"
 
+
+
 namespace ng {
 	namespace graphics {
 		
+		enum {
+			GRAPHICS_UNIT,
+			COMPUTE_UNIT,
+		};
+
+		struct SwapChainSupportDetails {
+			VkSurfaceCapabilitiesKHR capabilities;
+			std::vector<VkSurfaceFormatKHR> formats;
+			std::vector<VkPresentModeKHR> presentModes;
+		};
+
 		struct QueueFamilyIndices {
 			int graphicsFamily = -1;
 			int presentFamily = -1;
 			int computeFamily = -1;
 
 			bool isGraphicsComplete() {
-				return graphicsFamily >= 0; // && presentFamily >= 0;
+				return graphicsFamily >= 0;
 			}
 
 			bool isComputeComplete() {
 				return computeFamily >= 0;
+			}
+
+			bool isPresentComplete() {
+				return presentFamily >= 0;
 			}
 		};
 
@@ -26,13 +43,13 @@ namespace ng {
 			VkPhysicalDeviceMemoryProperties memoryProperties;
 			std::vector<VkExtensionProperties> deviceExtensions;
 			std::vector<VkLayerProperties> deviceLayers;
-			std::vector<const char*> validationLayers;
 		};
 
 		struct GraphicsUnit {
 			PhysicalDevice pDevice;
 			VkDevice device;
 			VkQueue graphicsQueue;
+			VkQueue presentQueue;
 			VkDeviceCreateInfo createInfo;
 		};
 
@@ -97,6 +114,9 @@ namespace ng {
 			VkFramebuffer framebuffer;
 
 		public:
+
+			QueueFamilyIndices findQueueFamilies(VkPhysicalDevice);
+			SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
 			void createInstance();
 			void freeInstance();
