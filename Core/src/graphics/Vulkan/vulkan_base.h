@@ -2,7 +2,6 @@
 
 #include "../../def.h"
 #include <vector>
-#include "../window.h"
 
 
 
@@ -94,7 +93,7 @@ namespace ng {
 			VkFormat surfaceColorFormat;
 			VkColorSpaceKHR surfaceColorSpace;
 
-			VkFormatProperties formatProperties;
+			//VkFormatProperties formatProperties;
 
 			VkDescriptorPool graphicsDescriptorPool;
 			VkDescriptorPool computeDescriptorPool;
@@ -115,7 +114,7 @@ namespace ng {
 
 		public:
 
-			QueueFamilyIndices findQueueFamilies(VkPhysicalDevice);
+			QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 			SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
 			void createInstance();

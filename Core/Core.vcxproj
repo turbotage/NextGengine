@@ -37,6 +37,8 @@
     <ClCompile Include="src\graphics\Vulkan\vulkan_model.cpp" />
     <ClCompile Include="src\Memory\VirtualMemoryAllocators\allocator.cpp" />
     <ClCompile Include="src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp" />
+    <ClCompile Include="src\Graphics\Vulkan\Pipeline\vulkan_graphics_pipeline.cpp" />
+    <ClCompile Include="src\Graphics\Vulkan\Pipeline\vulkan_pipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\math\dyn_mat.h" />
@@ -58,6 +60,8 @@
     <ClInclude Include="src\graphics\Vulkan\vulkan_model.h" />
     <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />
     <ClInclude Include="src\Graphics\Vulkan\Allocation\vulkan_allocator.h" />
+    <ClInclude Include="src\Graphics\Vulkan\Pipeline\vulkan_graphics_pipeline.h" />
+    <ClInclude Include="src\Graphics\Vulkan\Pipeline\vulkan_pipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\graphics\Shaders\fragment.glsl" />

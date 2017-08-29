@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include "src\def.h"
 #include "src\Graphics\Vulkan\vulkan_base.h"
+#include "src\Graphics\window.h"
 #include "src\debug.h"
 #include <chrono>
 #include "src\Math\dyn_mat.h"
@@ -25,6 +26,9 @@ public:
 		window.createSurface(&instance, &surface);
 		createPhysicalDevices();
 		createLogicalDevices();
+		window.createSwapChain(&graphicsUnit.device, querySwapChainSupport(graphicsUnit.pDevice.device), findQueueFamilies(graphicsUnit.pDevice.device));
+		window.createSwapChainImageViews();
+		printf("successfully went through application initalization\n");
 	}
 
 	void run() {
@@ -32,8 +36,11 @@ public:
 	}
 
 	void cleanup() {
+		window.freeSwapChainImageViews();
+		window.freeSwapChain();
 		freeLogicalDevices();
 		freeDebugCallback();
+		window.freeSurface();
 		freeInstance();
 		glfwDestroyWindow(window.glfwWindowPtr);
 		glfwTerminate();

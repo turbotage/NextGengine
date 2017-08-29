@@ -174,6 +174,10 @@ void ng::graphics::VulkanBase::createPhysicalDevices()
 				return 0;
 			}
 		}
+		SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+		if (swapChainSupport.formats.empty() && swapChainSupport.presentModes.empty()) {
+			return 0;
+		}
 
 		//score adding stuff
 		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
