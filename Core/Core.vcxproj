@@ -64,8 +64,9 @@
     <ClInclude Include="src\Graphics\Vulkan\Pipeline\vulkan_pipeline.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\graphics\Shaders\fragment.glsl" />
-    <None Include="src\graphics\Shaders\vertex.glsl" />
+    <None Include="src\Graphics\Shaders\compile.bat" />
+    <None Include="src\Graphics\Shaders\shader.frag" />
+    <None Include="src\Graphics\Shaders\shader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{f74a2ef4-f86c-4507-ae3e-3486ec8f1626}</ProjectGuid>

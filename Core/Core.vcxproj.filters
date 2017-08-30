@@ -142,7 +142,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\graphics\Shaders\fragment.glsl" />
-    <None Include="src\graphics\Shaders\vertex.glsl" />
+    <None Include="src\Graphics\Shaders\shader.vert" />
+    <None Include="src\Graphics\Shaders\shader.frag" />
+    <None Include="src\Graphics\Shaders\compile.bat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
