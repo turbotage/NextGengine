@@ -64,6 +64,8 @@
     <ClInclude Include="src\Graphics\Vulkan\Pipeline\vulkan_pipeline.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CompiledShaders\frag.spv" />
+    <None Include="CompiledShaders\vert.spv" />
     <None Include="src\Graphics\Shaders\compile.bat" />
     <None Include="src\Graphics\Shaders\shader.frag" />
     <None Include="src\Graphics\Shaders\shader.vert" />

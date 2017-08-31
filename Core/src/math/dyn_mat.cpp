@@ -15,9 +15,11 @@ void ng::math::DynMat::init(unsigned short w, unsigned short h)
 void ng::math::DynMat::cleanup()
 {
 	if (rows != nullptr) {
-		delete[] rows;
+		for (short i = 0; i < height; ++i) {
+			rows[i].cleanup();
+		}
+		rows = nullptr;
 	}
-	rows = nullptr;
 }
 
 void ng::math::DynMat::setNaN()
@@ -39,15 +41,18 @@ ng::math::DynMat::DynMat(unsigned short w, unsigned short h)
 
 ng::math::DynMat::~DynMat()
 {
-	cleanup();
+
 }
 
 ng::math::DynMat & ng::math::DynMat::operator=(DynMat & other)
 {
-	for (int i = 0; i < height; ++i) {
-		memcpy((void*)&rows[i], (void*)&other.rows[i], other.rows[i].width * sizeof(float));
-		int apa = 0;
-		apa++;
+	if (height != other.height || width != other.width) {
+		setNaN();
+	}
+	else {
+		for (int i = 0; i < height; ++i) {
+			memcpy((void*)&rows[i], (void*)&other.rows[i], other.rows[i].width * sizeof(float));
+		}
 	}
 	return *this;
 }
@@ -80,7 +85,7 @@ ng::math::DynMat ng::math::DynMat::mul(const DynMat & other)
 		setNaN();
 		return *this;
 	}
-	DynMat ret(height, other.width);
+	DynMat ret = DynMat(other.height, width);
 	DynVec otherMul(other.height);
 	for (unsigned short i = 0; i < height; ++i) {
 		for (unsigned short j = 0; j < other.width; ++j) {
@@ -90,7 +95,6 @@ ng::math::DynMat ng::math::DynMat::mul(const DynMat & other)
 			ret.rows[i].elements[j] = rows[i].dot(otherMul);
 		}
 	}
-	int hurp = 0;
 	return ret;
 }
 

@@ -1,7 +1,9 @@
 #include "vulkan_graphics_pipeline.h"
 
-void ng::graphics::VulkanGraphicsPipeline::createRenderPass()
+void ng::graphics::VulkanGraphicsPipeline::createRenderPass(VkDevice* device, Window* window)
 {
+	m_Window = window;
+	m_Device = device;
 	VkAttachmentDescription colorAttachment = {};
 	colorAttachment.format = m_Window->swapChainImageFormat;
 	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -39,9 +41,8 @@ void ng::graphics::VulkanGraphicsPipeline::freeRenderPass()
 	vkDestroyRenderPass(*m_Device, renderPass, nullptr);
 }
 
-void ng::graphics::VulkanGraphicsPipeline::createGraphicsPipeline(Window* window, std::vector<std::pair<std::string, NgShaderType>>* shaderPaths)
+void ng::graphics::VulkanGraphicsPipeline::createGraphicsPipeline(std::vector<std::pair<std::string, NgShaderType>>* shaderPaths)
 {
-	m_Window = window;
 	for (const auto& shaderPath : *shaderPaths) {
 		switch (shaderPath.second)
 		{
@@ -97,14 +98,14 @@ void ng::graphics::VulkanGraphicsPipeline::createGraphicsPipeline(Window* window
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float)window->swapChainExtent.width;
-	viewport.height = (float)window->swapChainExtent.height;
+	viewport.width = (float)m_Window->swapChainExtent.width;
+	viewport.height = (float)m_Window->swapChainExtent.height;
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
 	VkRect2D scissor = {};
 	scissor.offset = { 0, 0 };
-	scissor.extent = window->swapChainExtent;
+	scissor.extent = m_Window->swapChainExtent;
 
 	VkPipelineViewportStateCreateInfo viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -177,10 +178,33 @@ void ng::graphics::VulkanGraphicsPipeline::createGraphicsPipeline(Window* window
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
 
+	VkGraphicsPipelineCreateInfo pipelineInfo = {};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount = 2;
+	pipelineInfo.pStages = shaderStages;
+	pipelineInfo.pVertexInputState = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pDepthStencilState = nullptr;
+	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pDynamicState = nullptr;
+	pipelineInfo.pViewportState = &viewportState;
+
+	pipelineInfo.layout = pipelineLayout;
+
+	pipelineInfo.renderPass = renderPass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
+	if (vkCreateGraphicsPipelines(*m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create graphics pipeline");
+	}
 }
 
 void ng::graphics::VulkanGraphicsPipeline::freeGraphicsPipeline()
 {
+	vkDestroyPipeline(*m_Device, graphicsPipeline, nullptr);
 	vkDestroyPipelineLayout(*m_Device, pipelineLayout, nullptr);
 	if (vertShaderModule != VK_NULL_HANDLE) {
 		vkDestroyShaderModule(*m_Device, vertShaderModule, nullptr);

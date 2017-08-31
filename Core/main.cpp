@@ -3,16 +3,24 @@
 #include "src\def.h"
 #include "src\Graphics\Vulkan\vulkan_base.h"
 #include "src\Graphics\window.h"
+#include "src\Graphics\Vulkan\Pipeline\vulkan_graphics_pipeline.h"
 #include "src\debug.h"
 #include <chrono>
 #include "src\Math\dyn_mat.h"
 
 using namespace ng::graphics;
 
-
-class Application : VulkanBase {
+class Application {
 private:
+	VulkanBase vulkanBase;
 	Window window;
+	VulkanGraphicsPipeline graphicsPipeline;
+
+	std::vector<std::pair<std::string, NgShaderType>> shaders = {
+		std::pair<std::string, NgShaderType>("vert.spv", VERTEX_SHADER_BIT),
+		std::pair<std::string, NgShaderType>("frag.spv", FRAGMENT_SHADER_BIT)
+	};
+
 public:
 
 	~Application() {
@@ -21,13 +29,22 @@ public:
 
 	void init() {
 		window.init(800, 600, "window");
-		createInstance();
-		createDebugCallback();
-		window.createSurface(&instance, &surface);
-		createPhysicalDevices();
-		createLogicalDevices();
-		window.createSwapChain(&graphicsUnit.device, querySwapChainSupport(graphicsUnit.pDevice.device), findQueueFamilies(graphicsUnit.pDevice.device));
+		vulkanBase.createInstance();
+		vulkanBase.createDebugCallback();
+		window.createSurface(&vulkanBase.instance, &vulkanBase.surface);
+		vulkanBase.createPhysicalDevices();
+		vulkanBase.createLogicalDevices();
+		window.createSwapChain(
+			&vulkanBase.graphicsUnit.device, 
+			vulkanBase.querySwapChainSupport(
+				vulkanBase.graphicsUnit.pDevice.device), 
+				vulkanBase.findQueueFamilies(
+					vulkanBase.graphicsUnit.pDevice.device
+				)
+			);
 		window.createSwapChainImageViews();
+		graphicsPipeline.createRenderPass(&vulkanBase.graphicsUnit.device, &window);
+		graphicsPipeline.createGraphicsPipeline(&shaders);
 		printf("successfully went through application initalization\n");
 	}
 
@@ -36,12 +53,14 @@ public:
 	}
 
 	void cleanup() {
+		graphicsPipeline.freeGraphicsPipeline();
+		graphicsPipeline.freeRenderPass();
 		window.freeSwapChainImageViews();
 		window.freeSwapChain();
-		freeLogicalDevices();
-		freeDebugCallback();
+		vulkanBase.freeLogicalDevices();
+		vulkanBase.freeDebugCallback();
 		window.freeSurface();
-		freeInstance();
+		vulkanBase.freeInstance();
 		glfwDestroyWindow(window.glfwWindowPtr);
 		glfwTerminate();
 	}

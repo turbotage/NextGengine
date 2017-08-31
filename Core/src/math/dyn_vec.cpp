@@ -12,14 +12,24 @@ void ng::math::DynVec::cleanup()
 {
 	if (elements != nullptr) {
 		delete[] elements;
+		elements = nullptr;
 	}
-	elements = nullptr;
 }
 
 void ng::math::DynVec::setNaN()
 {
 	for (short i = 0; i < width; ++i) {
 		elements[i] = std::numeric_limits<float>::quiet_NaN();
+	}
+}
+
+ng::math::DynVec & ng::math::DynVec::operator=(DynVec & other)
+{
+	if (width != other.width) {
+		setNaN();
+	}
+	else {
+		memcpy(elements, other.elements, width * sizeof(float));
 	}
 }
 
@@ -35,7 +45,7 @@ ng::math::DynVec::DynVec(unsigned short w)
 
 ng::math::DynVec::~DynVec()
 {
-	cleanup();
+
 }
 
 

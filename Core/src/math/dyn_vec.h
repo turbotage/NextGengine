@@ -17,6 +17,8 @@ namespace ng {
 			void cleanup();
 			void setNaN();
 			
+			DynVec& operator=(DynVec& other);
+
 			DynVec& add(const DynVec& other);
 			DynVec& sub(const DynVec& other);
 			DynVec& mul(const DynVec& other);

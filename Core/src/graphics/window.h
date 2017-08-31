@@ -22,6 +22,7 @@ namespace ng {
 			VkFormat swapChainImageFormat;
 			VkExtent2D swapChainExtent;
 			std::vector<VkImageView> swapChainImageViews;
+			std::vector<VkFramebuffer> swapChainFramebuffers;
 
 		public:
 

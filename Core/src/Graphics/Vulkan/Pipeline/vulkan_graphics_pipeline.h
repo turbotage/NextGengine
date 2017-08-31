@@ -19,6 +19,7 @@ namespace ng {
 			Window* m_Window;
 		public:
 
+			VkPipeline graphicsPipeline;
 			VkRenderPass renderPass;
 			VkPipelineLayout pipelineLayout;
 
@@ -26,10 +27,10 @@ namespace ng {
 			VkShaderModule tessellShaderModule = VK_NULL_HANDLE;
 			VkShaderModule fragShaderModule = VK_NULL_HANDLE;
 
-			void createRenderPass();
+			void createRenderPass(VkDevice* device, Window* window);
 			void freeRenderPass();
 
-			void createGraphicsPipeline(Window* window, std::vector<std::pair<std::string, NgShaderType>>* shaderPaths);
+			void createGraphicsPipeline(std::vector<std::pair<std::string, NgShaderType>>* shaderPaths);
 			void freeGraphicsPipeline();
 
 		};

@@ -147,5 +147,7 @@
     <None Include="src\Graphics\Shaders\compile.bat">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="CompiledShaders\frag.spv" />
+    <None Include="CompiledShaders\vert.spv" />
   </ItemGroup>
 </Project>

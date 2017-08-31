@@ -8,7 +8,7 @@ namespace ng {
 
 		class VulkanPipeline
 		{
-		public:
+		protected:
 
 			static std::vector<char> readFile(const std::string& filename);
 
