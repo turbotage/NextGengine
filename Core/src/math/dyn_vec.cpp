@@ -31,6 +31,7 @@ ng::math::DynVec & ng::math::DynVec::operator=(DynVec & other)
 	else {
 		memcpy(elements, other.elements, width * sizeof(float));
 	}
+	return *this;
 }
 
 ng::math::DynVec::DynVec()

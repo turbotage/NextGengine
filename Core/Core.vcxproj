@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.cpp" />
+    <ClCompile Include="src\Graphics\Pipelines\vulkan_pipeline.cpp" />
+    <ClCompile Include="src\Graphics\vulkan_base.cpp" />
+    <ClCompile Include="src\Graphics\GraphicsObjects\vulkan_model.cpp" />
     <ClCompile Include="src\math\dyn_mat.cpp" />
     <ClCompile Include="src\math\dyn_vec.cpp" />
     <ClCompile Include="src\math\quaternion.cpp" />
@@ -31,16 +35,16 @@
     <ClCompile Include="src\math\vec3.cpp" />
     <ClCompile Include="src\math\vec4.cpp" />
     <ClCompile Include="src\math\vec2.cpp" />
-    <ClCompile Include="src\graphics\vertex.cpp" />
-    <ClCompile Include="src\graphics\Vulkan\vulkan_base.cpp" />
+    <ClCompile Include="src\Graphics\GraphicsObjects\vertex.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
-    <ClCompile Include="src\graphics\Vulkan\vulkan_model.cpp" />
     <ClCompile Include="src\Memory\VirtualMemoryAllocators\allocator.cpp" />
-    <ClCompile Include="src\Graphics\Vulkan\Allocation\vulkan_allocator.cpp" />
-    <ClCompile Include="src\Graphics\Vulkan\Pipeline\vulkan_graphics_pipeline.cpp" />
-    <ClCompile Include="src\Graphics\Vulkan\Pipeline\vulkan_pipeline.cpp" />
+    <ClCompile Include="src\Graphics\Allocation\vulkan_allocator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.h" />
+    <ClInclude Include="src\Graphics\Pipelines\vulkan_pipeline.h" />
+    <ClInclude Include="src\Graphics\vulkan_base.h" />
+    <ClInclude Include="src\Graphics\GraphicsObjects\vulkan_model.h" />
     <ClInclude Include="src\math\dyn_mat.h" />
     <ClInclude Include="src\math\dyn_vec.h" />
     <ClInclude Include="src\math\quaternion.h" />
@@ -53,15 +57,11 @@
     <ClInclude Include="src\math\vec4.h" />
     <ClInclude Include="src\def.h" />
     <ClInclude Include="src\math\vec2.h" />
-    <ClInclude Include="src\graphics\vertex.h" />
-    <ClInclude Include="src\graphics\Vulkan\vulkan_base.h" />
+    <ClInclude Include="src\Graphics\GraphicsObjects\vertex.h" />
     <ClInclude Include="src\graphics\window.h" />
     <ClInclude Include="test_code.h" />
-    <ClInclude Include="src\graphics\Vulkan\vulkan_model.h" />
     <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />
-    <ClInclude Include="src\Graphics\Vulkan\Allocation\vulkan_allocator.h" />
-    <ClInclude Include="src\Graphics\Vulkan\Pipeline\vulkan_graphics_pipeline.h" />
-    <ClInclude Include="src\Graphics\Vulkan\Pipeline\vulkan_pipeline.h" />
+    <ClInclude Include="src\Graphics\Allocation\vulkan_allocator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />

@@ -1,7 +1,7 @@
 #pragma once
 #include "def.h"
 #include <vector>
-#include "Graphics\Vulkan\vulkan_base.h"
+#include "Graphics\vulkan_base.h"
 
 namespace ng {
 	namespace graphics {

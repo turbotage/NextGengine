@@ -3,7 +3,7 @@
 #include "../math/mat4.h"
 #include "entity.h"
 #include <vector>
-#include "../graphics/vertex.h"
+#include "../Graphics/GraphicsObjects/vertex.h"
 
 namespace ng {
 	namespace entity {

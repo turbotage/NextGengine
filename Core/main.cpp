@@ -1,12 +1,12 @@
 #include <iostream>
 #include <stdexcept>
 #include "src\def.h"
-#include "src\Graphics\Vulkan\vulkan_base.h"
+#include "src\Graphics\vulkan_base.h"
 #include "src\Graphics\window.h"
-#include "src\Graphics\Vulkan\Pipeline\vulkan_graphics_pipeline.h"
 #include "src\debug.h"
 #include <chrono>
 #include "src\Math\dyn_mat.h"
+#include "src\Graphics\Pipelines\vulkan_graphics_pipeline.h"
 
 using namespace ng::graphics;
 
@@ -20,11 +20,21 @@ private:
 		std::pair<std::string, NgShaderType>("vert.spv", VERTEX_SHADER_BIT),
 		std::pair<std::string, NgShaderType>("frag.spv", FRAGMENT_SHADER_BIT)
 	};
-
+	
 public:
 
 	~Application() {
 		cleanup();
+	}
+
+	void startCommandBuffers(std::vector<VkCommandBuffer>* buffers) {
+		for (uint32 i = 0; i < (*buffers).size(); ++i) {
+			VkCommandBufferBeginInfo beginInfo = {};
+			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+			beginInfo.pInheritanceInfo = nullptr;
+			vkBeginCommandBuffer((*buffers)[i], &beginInfo);
+		}
 	}
 
 	void init() {
@@ -45,6 +55,8 @@ public:
 		window.createSwapChainImageViews();
 		graphicsPipeline.createRenderPass(&vulkanBase.graphicsUnit.device, &window);
 		graphicsPipeline.createGraphicsPipeline(&shaders);
+		window.createFramebuffers(&graphicsPipeline);
+		
 		printf("successfully went through application initalization\n");
 	}
 
@@ -53,6 +65,7 @@ public:
 	}
 
 	void cleanup() {
+		window.freeFramebuffers();
 		graphicsPipeline.freeGraphicsPipeline();
 		graphicsPipeline.freeRenderPass();
 		window.freeSwapChainImageViews();

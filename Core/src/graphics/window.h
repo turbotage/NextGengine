@@ -1,13 +1,18 @@
 #pragma once
 
 #include "../def.h"
-#include "vulkan\vulkan_base.h"
+#include "vulkan_base.h"
 #include <GLFW\glfw3.h>
 #include <vector>
+//#include "Pipelines\vulkan_graphics_pipeline.h"
 
 namespace ng {
 	namespace graphics {
+
+		class VulkanGraphicsPipeline;
+
 		class Window {
+		private:
 			VkInstance* m_Instance;
 			VkSurfaceKHR* m_Surface;
 			VkDevice* m_Device;
@@ -36,6 +41,9 @@ namespace ng {
 
 			void createSwapChainImageViews();
 			void freeSwapChainImageViews();
+
+			void createFramebuffers(VulkanGraphicsPipeline* pipeline);
+			void freeFramebuffers();
 
 			void run();
 
