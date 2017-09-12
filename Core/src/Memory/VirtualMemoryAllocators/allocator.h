@@ -7,13 +7,11 @@ namespace ng {
 	namespace memory {
 
 		struct ContiguesBlock {
-			void* data;
 			uint64 offset;
 			uint64 size;
 		};
 
 		struct Allocation {
-			void* data;
 			uint64 offset;
 			uint64 size;
 			uint32 contiguesBlockIndex;
@@ -32,16 +30,13 @@ namespace ng {
 			std::vector<ContiguesBlock> m_ContiguesBlocks;
 			std::vector<Allocation> m_Allocations;
 
-			uint16 m_AllocatorIndex;
+			bool fullyDefragmented = false;
 			uint64 m_MemorySize;
-			char* m_Memory = nullptr;
 		public:
-			
-			~Allocator();
 
-			void init(uint64 size, uint16 allocatorIndex);
+			void init(uint64 size);
 
-			Allocation* allocate(uint64 bytes);
+			Allocation* allocate(uint64 size);
 
 			bool freeAllocation(Allocation* alloc);
 

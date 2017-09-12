@@ -1,5 +1,6 @@
 #include "mat4.h"
 #include "../def.h"
+#include <random>
 
 #define _mm_shufd(xmm, mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmm), mask))
 

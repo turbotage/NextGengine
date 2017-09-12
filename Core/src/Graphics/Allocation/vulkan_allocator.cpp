@@ -16,20 +16,43 @@ uint32 ng::graphics::VulkanAllocator::findMemoryType(VkPhysicalDevice* pDevice, 
 void ng::graphics::VulkanAllocator::init(VulkanBase * vkBase)
 {
 	m_VulkanBase = vkBase;
-	uint64_t size;
 
-
+	for (int i = 0; i < m_VulkanBase->graphicsUnit.pDevice.memoryProperties.memoryHeapCount; ++i) {
+		if (m_VulkanBase->graphicsUnit.pDevice.memoryProperties.memoryHeaps[i].flags == VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) {
+			m_GraphicsMemorySize = (VkDeviceSize)(m_VulkanBase->graphicsUnit.pDevice.memoryProperties.memoryHeaps[i].size * 0.9);
+		}
+	}
 
 	createBufferAndMemory(
 		GRAPHICS_UNIT,
 		&m_GraphicsBuffer,
 		&m_GraphicsDeviceMemory,
-		size,
+		m_GraphicsMemorySize,
 		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 		VK_SHARING_MODE_EXCLUSIVE
 	);
 	
+	createBufferAndMemory(
+		GRAPHICS_UNIT,
+		&m_HostBuffer,
+		&m_HostLocalMemory,
+		m_HostLocalMemorySize,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		VK_SHARING_MODE_CONCURRENT
+	);
+	
+	createBufferAndMemory(
+		COMPUTE_UNIT,
+		&m_ComputeBuffer,
+		&m_ComputeDeviceMemory,
+		m_ComputeDeviceMemorySize,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		VK_SHARING_MODE_EXCLUSIVE
+	);
+
 }
 
 void ng::graphics::VulkanAllocator::createBufferAndMemory(DeviceType deviceType, VkBuffer* buffer, VkDeviceMemory* memory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkSharingMode sharingMode)
@@ -47,9 +70,12 @@ void ng::graphics::VulkanAllocator::createBufferAndMemory(DeviceType deviceType,
 		device = &m_VulkanBase->graphicsUnit.device;
 		pDevice = &m_VulkanBase->graphicsUnit.pDevice.device;
 	}
-	else {
+	else if (deviceType == COMPUTE_UNIT){
 		device = &m_VulkanBase->computeUnit.device;
 		pDevice = &m_VulkanBase->computeUnit.pDevice.device;
+	}
+	else {
+		throw std::runtime_error("no correct unit selected!");
 	}
 
 	if (vkCreateBuffer(*device, &createInfo, nullptr, buffer) != VK_SUCCESS) {

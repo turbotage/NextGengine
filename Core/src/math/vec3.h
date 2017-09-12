@@ -18,6 +18,8 @@ namespace ng {
 			Vec3& mul(const Vec3& other);
 			Vec3& div(const Vec3& other);
 
+			void normalize();
+
 			friend Vec3 operator+(Vec3 left, const Vec3& right);
 			friend Vec3 operator-(Vec3 left, const Vec3& right);
 			friend Vec3 operator*(Vec3 left, const Vec3& right);

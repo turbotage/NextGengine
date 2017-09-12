@@ -5,8 +5,9 @@
 #include "src\Graphics\window.h"
 #include "src\debug.h"
 #include <chrono>
-#include "src\Math\dyn_mat.h"
+#include "src\Math\mat4.h"
 #include "src\Graphics\Pipelines\vulkan_graphics_pipeline.h"
+#include "src\Memory\VirtualMemoryAllocators\allocator.h"
 
 using namespace ng::graphics;
 
@@ -81,6 +82,36 @@ public:
 };
 
 int main(int argc, char* argv[]){
+
+	char array[50];
+	ng::memory::Allocator allocator;
+	allocator.init(50);
+	std::vector<ng::memory::Allocation*> allocs;
+	int c = 'a';
+	do {
+		if (c == 'a') {
+			printf("allocation size\n");
+			std::cin >> c;
+			ng::memory::Allocation* a = allocator.allocate(c - '0');
+			for (int i = 0; i < c-'0'; i++) {
+				array[a->offset] = a->allocationIndex;
+			}
+			allocs.push_back(a);
+		}
+		else if (c == 'f') {
+			printf("allocation to free\n");
+			std::cin >> c;
+			ng::memory::Allocation* a = allocs[c];
+			for (int i = 0; i < a->size; ++i) {
+				array[a->offset + i] = 0;
+			}
+			allocator.freeAllocation(a);
+		}
+		for (int i = 0; i < 50; ++i) {
+			printf("%d", array[i]);
+		}
+		std::cin >> c;
+	} while (c != 'q');
 
 	using namespace ng::graphics;
 	Application app;

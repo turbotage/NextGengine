@@ -1,0 +1,11 @@
+﻿  main.cpp
+main.cpp(101): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+main.cpp(103): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+main.cpp(105): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+main.cpp(106): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  7 of 1611 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Core.vcxproj -> D:\vikto\Documents\Visual Studio 2017\Projects\NextGengine\x64\Release\Core.exe

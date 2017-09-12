@@ -1,35 +1,25 @@
 #include "allocator.h"
 
-ng::memory::Allocator::~Allocator()
+void ng::memory::Allocator::init(uint64 size)
 {
-	if (m_Memory != nullptr) {
-		free(m_Memory);
-	}
-}
-
-void ng::memory::Allocator::init(uint64 size, uint16 allocatorIndex)
-{
-	m_Memory = (char*)malloc(size);
 	m_MemorySize = size;
 
 	ContiguesBlock cb;
-	cb.data = m_Memory;
 	cb.offset = 0;
 	cb.size = 0;
 	m_ContiguesBlocks.push_back(cb);
 }
 
-ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 bytes)
+ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 size)
 {
 	Allocation alloc;
 
-	for (int j = 0; j < 2; ++j) {
+	do {
 		//TODO: find suitable place for allocation
-		if (bytes < m_MemorySize - m_ContiguesBlocks.back().size) {
+		if (size < (m_MemorySize - m_ContiguesBlocks.back().size)) {
 			//set all alloc members
-			alloc.size = bytes;
+			alloc.size = size;
 			alloc.offset = m_ContiguesBlocks.back().size;
-			alloc.data = (void*)(&m_Memory + alloc.offset);
 			alloc.contiguesBlockIndex = m_ContiguesBlocks.size() - 1;
 			alloc.allocationIndex = m_Allocations.size();
 
@@ -42,11 +32,10 @@ ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 bytes)
 			for (int i = 0; i < m_ContiguesBlocks.size(); ++i) {
 				uint64 cb1 = m_ContiguesBlocks[i].offset + m_ContiguesBlocks[i].size;
 				uint64 cb2 = m_ContiguesBlocks[i + 1].offset;
-				if (bytes < cb2 - cb1) {
+				if (size < (cb2 - cb1)) {
 					//set all alloc members
-					alloc.size = bytes;
+					alloc.size = size;
 					alloc.offset = cb1;
-					alloc.data = (void*)(&m_Memory[alloc.offset]);
 					alloc.contiguesBlockIndex = i;
 					alloc.allocationIndex = m_Allocations.size();
 
@@ -57,11 +46,10 @@ ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 bytes)
 				}
 			}
 		}
-		if (j == 1) {
-			std::runtime_error("out of memory in Allocator");
-		}
 		defragment();
 	}
+	while (fullyDefragmented != true);
+	std::runtime_error("out of memory in Allocator");
 }
 
 bool ng::memory::Allocator::freeAllocation(Allocation* alloc)
@@ -86,7 +74,6 @@ bool ng::memory::Allocator::freeAllocation(Allocation* alloc)
 		ContiguesBlock cb;
 		cb.offset = alloc->offset + alloc->size;
 		cb.size = m_ContiguesBlocks[alloc->contiguesBlockIndex].size - cb.offset;
-		cb.data = (void*)(&m_Memory[alloc->offset]);
 
 		m_ContiguesBlocks.insert(m_ContiguesBlocks.begin() + alloc->contiguesBlockIndex + 1, cb);
 		for (auto& allocation : m_Allocations) {

@@ -48,3 +48,33 @@ void testMath() {
 	re = dots*conector;
 	std::cout << re << std::endl;
 }
+
+
+std::random_device rd;
+std::mt19937 gen(rd());
+std::uniform_real_distribution<> dis(-1, 1);
+std::uniform_real_distribution<> dis2(0, 2 * 3.141592);
+
+using namespace ng::math;
+
+#define MAT_SIZE 10000000
+Mat4 *rotaionMats1 = new Mat4[MAT_SIZE];
+Mat4 *rotaionMats2 = new Mat4[MAT_SIZE];
+Mat4 ret;
+
+auto start = std::chrono::system_clock::now();
+for (int i = 0; i < MAT_SIZE; ++i) {
+	Vec3 rotationAxis1(dis(gen), dis(gen), dis(gen));
+	rotationAxis1.normalize();
+	Vec3 rotationAxis2(dis(gen), dis(gen), dis(gen));
+	rotationAxis2.normalize();
+	rotaionMats1[i] = Mat4::rotation(dis2(gen), rotationAxis1);
+	rotaionMats2[i] = Mat4::rotation(dis2(gen), rotationAxis1);
+	ret = rotaionMats1[i] * rotaionMats2[i];
+}
+auto end = std::chrono::system_clock::now();
+auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+std::cout << elapsed.count() << '\n';
+
+delete[] rotaionMats1;
+delete[] rotaionMats2;

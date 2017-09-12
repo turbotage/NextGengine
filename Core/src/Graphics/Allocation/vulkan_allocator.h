@@ -44,8 +44,13 @@ namespace ng {
 			void createBufferAndMemory(DeviceType deviceType, VkBuffer* buffer, VkDeviceMemory* memory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkSharingMode sharingMode);
 
 		private:
+			VkDeviceSize m_GraphicsMemorySize;
 			VkDeviceMemory m_GraphicsDeviceMemory;
+
+			VkDeviceSize m_ComputeDeviceMemorySize;
 			VkDeviceMemory m_ComputeDeviceMemory;
+
+			VkDeviceSize m_HostLocalMemorySize;
 			VkDeviceMemory m_HostLocalMemory;
 
 			VkBuffer m_GraphicsBuffer;
