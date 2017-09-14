@@ -10,10 +10,9 @@ void ng::memory::Allocator::init(uint64 size)
 	m_ContiguesBlocks.push_back(cb);
 }
 
-ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 size)
+ng::memory::Allocation ng::memory::Allocator::allocate(uint64 size)
 {
 	Allocation alloc;
-
 	do {
 		//TODO: find suitable place for allocation
 		if (size < (m_MemorySize - m_ContiguesBlocks.back().size)) {
@@ -26,9 +25,13 @@ ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 size)
 			m_ContiguesBlocks.back().size += alloc.size;
 			m_Allocations.push_back(alloc);
 
-			return &alloc;
+			printf("inside if\n");
+			printf("m_MemorySize : %" PRIu64 "\n", m_MemorySize);
+			printf("m_ContiguesBlocks.back().size : %" PRIu64 "\n", m_ContiguesBlocks.back().size);
+			return alloc;
 		}
 		else {
+			printf("inside else");
 			for (int i = 0; i < m_ContiguesBlocks.size(); ++i) {
 				uint64 cb1 = m_ContiguesBlocks[i].offset + m_ContiguesBlocks[i].size;
 				uint64 cb2 = m_ContiguesBlocks[i + 1].offset;
@@ -40,9 +43,9 @@ ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 size)
 					alloc.allocationIndex = m_Allocations.size();
 
 					m_ContiguesBlocks[i].size += alloc.size;
-					m_Allocations.push_back(alloc);
+					//m_Allocations.push_back(alloc);
 
-					return &alloc;
+					return alloc;
 				}
 			}
 		}
@@ -55,6 +58,8 @@ ng::memory::Allocation* ng::memory::Allocator::allocate(uint64 size)
 bool ng::memory::Allocator::freeAllocation(Allocation* alloc)
 {
 	//if allocation is the last in ContiguesBlock
+	printf("alloc->offset : %" PRIu64 "\n", alloc->offset);
+	printf("alloc->size : %" PRIu64 "\n", alloc->size);
 	if ((alloc->offset + alloc->size) == (m_ContiguesBlocks[alloc->contiguesBlockIndex].offset + m_ContiguesBlocks[alloc->contiguesBlockIndex].size)){
 		m_ContiguesBlocks[alloc->contiguesBlockIndex].size -= alloc->size;
 		if ((m_ContiguesBlocks[alloc->contiguesBlockIndex].size == 0) && m_ContiguesBlocks.size() > 1) {
@@ -93,7 +98,7 @@ bool ng::memory::Allocator::freeAllocation(Allocation* alloc)
 
 bool ng::memory::Allocator::defragment()
 {
-	return false;
+
 }
 
 uint64 ng::memory::Allocator::getAllocatedMemory()

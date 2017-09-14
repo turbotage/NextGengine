@@ -36,11 +36,11 @@ namespace ng {
 
 			void init(uint64 size);
 
-			Allocation* allocate(uint64 size);
+			Allocation allocate(uint64 size);
 
 			bool freeAllocation(Allocation* alloc);
 
-			bool defragment();
+			virtual bool defragment();
 
 			uint64 getAllocatedMemory();
 
