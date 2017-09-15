@@ -89,26 +89,26 @@ int main(int argc, char* argv[]){
 	}
 	ng::memory::Allocator allocator;
 	allocator.init(50);
-	std::vector<ng::memory::Allocation*> allocs;
+	std::vector<ng::memory::Allocation> allocs;
 	char c = 'a';
 	do {
 		if (c == 'a') {
 			printf("allocation size\n");
 			std::cin >> c;
-			ng::memory::Allocation* a = allocator.allocate(c - '0');
+			ng::memory::Allocation a = allocator.allocate(c - '0');
 			for (int i = 0; i < c-'0'; i++) {
-				array[a->offset + i] = a->allocationIndex + '0';
+				array[a.offset + i] = a.allocationIndex + '0';
 			}
 			allocs.push_back(a);
 		}
 		else if (c == 'f') {
 			printf("allocation to free\n");
 			std::cin >> c;
-			ng::memory::Allocation* a = allocs[c-'0'];
-			for (int i = 0; i < a->size; ++i) {
-				array[a->offset + i] = 0;
+			ng::memory::Allocation a = allocs[c-'0'];
+			for (int i = 0; i < a.size; ++i) {
+				array[a.offset + i] = 0;
 			}
-			allocator.freeAllocation(a);
+			allocator.freeAllocation(&a);
 		}
 		else if (c == 'g') {
 			allocator.getAllocatedMemory();
