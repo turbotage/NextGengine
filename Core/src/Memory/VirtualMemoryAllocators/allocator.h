@@ -2,6 +2,8 @@
 
 #include "../../def.h"
 #include <vector>
+#include <mutex>
+#include <map>
 
 namespace ng {
 	namespace memory {
@@ -10,39 +12,43 @@ namespace ng {
 #define ALLOCATOR_CHUNK_SIZE (ALLOCATOR_BLOCK_SIZE*8)
 */
 
+#define MEMORY_ALIGNMENT 16
+
 		/*
-		Probably a quite bad allocator for regular memory allocation, allot of unnecessary vars, and no allocation memory is stored in the memory itself
-		,might change that later but it's not the most important now.
-		It works pretty good for what it is made for, and that is for GPU mem allocation
+		The allocator used for allocations on the gpu
 		*/
 
 		struct Allocation {
 			uint64 offset;
-			uint64 size;
+			uint32 size;
 		};
 
-		struct AllocatedChunk {
+		struct DefragType {
 			uint64 offset;
-			uint64 size;
+			std::vector<Allocation> affectedAllocations;
+			Allocation regionToMove;
 		};
 
-		struct AllocationNode {
-			AllocationNode* next;
-			AllocatedChunk allocatedChunk;
-		};
-
-		class FreeListAllocator
+		class Allocator
 		{
-		private:
-			AllocationNode endNode;
-			std::vector<AllocationNode> allocationNodes;
+		protected:
+			std::mutex m_AllocatorMutex;
+			std::map<uint64, uint32> m_Allocations; //offset, size
+			std::map<uint64, uint64> m_FreeSpaces; //size, offset
+			uint64 m_MemorySize;
+			uint64 m_FreeMemorySize;
 		public:
-
 			void init(uint64 size);
 
-			Allocation allocate(uint64 size);
+			auto allocate(uint32 size);
 
 			bool free(Allocation allocation);
+			
+			uint64 getPossibleDefragSize();
+
+			uint32 getDefragSpaceNum();
+
+			ng::memory::DefragType defragment();
 
 		};
 

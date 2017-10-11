@@ -103,6 +103,14 @@ ng::math::DynVec & ng::math::DynVec::mul(float multiplier)
 	return *this;
 }
 
+ng::math::DynVec & ng::math::DynVec::div(float multiplier)
+{
+	for (short i = 0; i < this->width; ++i) {
+		this->elements[i] /= multiplier;
+	}
+	return *this;
+}
+
 ng::math::DynVec & ng::math::DynVec::div(const DynVec & other)
 {
 	if (width == other.width) {
@@ -200,6 +208,16 @@ ng::math::DynVec ng::math::operator*(DynVec left, const DynVec & right)
 }
 
 ng::math::DynVec ng::math::operator/(DynVec left, const DynVec & right)
+{
+	return left.div(right);
+}
+
+ng::math::DynVec ng::math::operator*(const float & left, DynVec right)
+{
+	return right.mul(left);
+}
+
+ng::math::DynVec ng::math::operator/(DynVec left, const float & right)
 {
 	return left.div(right);
 }

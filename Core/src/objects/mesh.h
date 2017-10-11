@@ -10,8 +10,7 @@ namespace ng {
 		class Mesh
 		{
 		private:
-			std::vector<ng::graphics::Vertex> vertices;
-			std::vector<uint32> indices;
+			
 		public:
 
 		};

@@ -49,6 +49,22 @@ ng::math::Vec3 & ng::math::Vec3::div(const Vec3 & other)
 	return *this;
 }
 
+ng::math::Vec3 & ng::math::Vec3::mul(const float & other)
+{
+	x *= other;
+	y *= other;
+	z *= other;
+	return *this;
+}
+
+ng::math::Vec3 & ng::math::Vec3::div(const float & other)
+{
+	x /= other;
+	y /= other;
+	z /= other;
+	return *this;
+}
+
 void ng::math::Vec3::normalize()
 {
 	float lenght = sqrt(x*x + y*y + z*z);
@@ -103,6 +119,16 @@ ng::math::Vec3 ng::math::operator*(Vec3 left, const Vec3 & right)
 }
 
 ng::math::Vec3 ng::math::operator/(Vec3 left, const Vec3 & right)
+{
+	return left.div(right);
+}
+
+ng::math::Vec3 ng::math::operator*(float left, Vec3 right)
+{
+	return right.mul(left);
+}
+
+ng::math::Vec3 ng::math::operator/(Vec3 left, const float & right)
 {
 	return left.div(right);
 }

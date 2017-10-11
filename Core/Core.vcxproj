@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="src\scene_graph.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_pipeline.cpp" />
     <ClCompile Include="src\Graphics\vulkan_base.cpp" />
@@ -41,6 +43,8 @@
     <ClCompile Include="src\Graphics\Allocation\vulkan_allocator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="src\scene_graph.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_pipeline.h" />
     <ClInclude Include="src\Graphics\vulkan_base.h" />

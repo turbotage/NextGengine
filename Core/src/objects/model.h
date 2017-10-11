@@ -7,7 +7,6 @@ namespace ng {
 		class Model : Entity
 		{
 		private:
-			VkPipeline pipeline;
 			Mesh* m_Mesh;
 		public:
 

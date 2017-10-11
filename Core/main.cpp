@@ -83,39 +83,45 @@ public:
 
 int main(int argc, char* argv[]){
 
-	char array[50];
-	for (int i = 0; i < 50; ++i) {
-		array[i] = 0;
+#define ARRAY_SIZE 500
+	char array[ARRAY_SIZE];
+	for (int i = 0; i < ARRAY_SIZE; ++i) {
+		array[i] = 'F';
 	}
+	for (int i = 0; i < ARRAY_SIZE; ++i) {
+		printf("%c", array[i]);
+	}
+	printf("\n");
+	std::vector<ng::memory::Allocation> allocations;
 	ng::memory::Allocator allocator;
-	allocator.init(50);
-	std::vector<ng::memory::Allocation> allocs;
+	allocator.init(ARRAY_SIZE);
 	char c = 'a';
+	int d = 0;
 	do {
 		if (c == 'a') {
-			printf("allocation size\n");
-			std::cin >> c;
-			ng::memory::Allocation a = allocator.allocate(c - '0');
-			for (int i = 0; i < c-'0'; i++) {
-				array[a.offset + i] = a.allocationIndex + '0';
+			std::cin >> d;
+			printf("%d\n", d);
+			ng::memory::Allocation alloc = allocator.allocate(d);
+			for (int i = alloc.offset; i < (alloc.offset + alloc.size); ++i) {
+				array[i] = 'A';
 			}
-			allocs.push_back(a);
+			allocations.push_back(alloc);
 		}
 		else if (c == 'f') {
-			printf("allocation to free\n");
-			std::cin >> c;
-			ng::memory::Allocation a = allocs[c-'0'];
-			for (int i = 0; i < a.size; ++i) {
-				array[a.offset + i] = 0;
+			std::cin >> d;
+			printf("%d\n", d);
+			ng::memory::Allocation a = allocations[d];
+			allocator.free(a);
+			for (int i = a.offset; i < (a.offset + a.size); ++i) {
+				array[i] = 'F';
+				printf("%d\n", i);
 			}
-			allocator.freeAllocation(&a);
+			allocations.erase(allocations.begin()+d);
 		}
-		else if (c == 'g') {
-			allocator.getAllocatedMemory();
-		}
-		for (int i = 0; i < 50; ++i) {
+		for (int i = 0; i < ARRAY_SIZE; ++i) {
 			printf("%c", array[i]);
 		}
+		printf("\n");
 		std::cin >> c;
 	} while (c != 'q');
 

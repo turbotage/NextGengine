@@ -2,7 +2,7 @@
 
 ng::math::Vec4::Vec4()
 {
-	_mm_set_ps(0, 0, 0, 0);
+	_mm_set_ps(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 ng::math::Vec4::Vec4(float scalar)

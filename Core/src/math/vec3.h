@@ -18,12 +18,18 @@ namespace ng {
 			Vec3& mul(const Vec3& other);
 			Vec3& div(const Vec3& other);
 
+			Vec3& mul(const float& other);
+			Vec3& div(const float& other);
+
 			void normalize();
 
 			friend Vec3 operator+(Vec3 left, const Vec3& right);
 			friend Vec3 operator-(Vec3 left, const Vec3& right);
 			friend Vec3 operator*(Vec3 left, const Vec3& right);
 			friend Vec3 operator/(Vec3 left, const Vec3& right);
+
+			friend Vec3 operator*(float left, Vec3 right);
+			friend Vec3 operator/(Vec3 left, const float& right);
 
 			bool operator==(const Vec3& other) const;
 			bool operator!=(const Vec3& other) const;

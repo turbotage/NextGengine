@@ -22,8 +22,10 @@ namespace ng {
 			DynVec& add(const DynVec& other);
 			DynVec& sub(const DynVec& other);
 			DynVec& mul(const DynVec& other);
-			DynVec& mul(float multiplier);
 			DynVec& div(const DynVec& other);
+
+			DynVec& mul(float multiplier);
+			DynVec& div(float multiplier);
 
 			float dot(const DynVec& other);
 
@@ -31,6 +33,9 @@ namespace ng {
 			friend DynVec operator-(DynVec left, const DynVec& right);
 			friend DynVec operator*(DynVec left, const DynVec& right);
 			friend DynVec operator/(DynVec left, const DynVec& right);
+
+			friend DynVec operator*(const float& left, DynVec right);
+			friend DynVec operator/(DynVec left, const float& right);
 
 			bool operator==(const DynVec& other) const;
 			bool operator!=(const DynVec& other) const;
