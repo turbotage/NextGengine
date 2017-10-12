@@ -54,12 +54,12 @@ ng::math::DynVec & ng::math::DynVec::add(const DynVec & other)
 {
 	if (width == other.width) {
 		for (short i = 0; i < width; ++i) {
-			elements[i] = std::numeric_limits<float>::quiet_NaN();
+			elements[i] += other.elements[i];
 		}
 	}
 	else {
 		for (short i = 0; i < width; ++i) {
-			elements[i] += other.elements[i];
+			elements[i] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 	return *this;
@@ -69,12 +69,12 @@ ng::math::DynVec & ng::math::DynVec::sub(const DynVec & other)
 {
 	if (width == other.width) {
 		for (short i = 0; i < width; ++i) {
-			elements[i] = std::numeric_limits<float>::quiet_NaN();
+			elements[i] -= other.elements[i];
 		}
 	}
 	else {
 		for (short i = 0; i < width; ++i) {
-			elements[i] += other.elements[i];
+			elements[i] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 	return *this;

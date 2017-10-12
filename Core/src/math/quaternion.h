@@ -10,8 +10,7 @@ namespace ng {
 		class Quaternion
 		{
 		private:
-			float m_MouseSensitivity;
-
+			
 		public:
 
 			union {
@@ -29,7 +28,10 @@ namespace ng {
 
 			Vec3 Rotate(const Quaternion& quat, const Vec3& vec);
 
+			void Rotate4(const Quaternion& quat, Vec3& v1, Vec3& v2, Vec3& v3, Vec3& v4);
+
 			~Quaternion();
+
 		};
 	}
 }

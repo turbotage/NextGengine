@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="oc_tree.cpp" />
     <ClCompile Include="src\scene_graph.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_pipeline.cpp" />
@@ -44,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="oc_tree.h" />
     <ClInclude Include="src\scene_graph.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_pipeline.h" />
