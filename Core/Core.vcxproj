@@ -19,8 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="oc_tree.cpp" />
+    <ClCompile Include="src\binary_tree.cpp" />
+    <ClCompile Include="src\aabb.cpp" />
+    <ClCompile Include="src\camera.cpp" />
+    <ClCompile Include="src\oc_tree.cpp" />
     <ClCompile Include="src\scene_graph.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_pipeline.cpp" />
@@ -42,10 +44,13 @@
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\Memory\VirtualMemoryAllocators\allocator.cpp" />
     <ClCompile Include="src\Graphics\Allocation\vulkan_allocator.cpp" />
+    <ClCompile Include="src\Math\vec3i.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="oc_tree.h" />
+    <ClInclude Include="src\binary_tree.h" />
+    <ClInclude Include="src\aabb.h" />
+    <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\oc_tree.h" />
     <ClInclude Include="src\scene_graph.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_pipeline.h" />
@@ -68,6 +73,7 @@
     <ClInclude Include="test_code.h" />
     <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />
     <ClInclude Include="src\Graphics\Allocation\vulkan_allocator.h" />
+    <ClInclude Include="src\Math\vec3i.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />

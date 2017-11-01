@@ -10,3 +10,8 @@ OcTree::OcTree()
 OcTree::~OcTree()
 {
 }
+
+OcTree::Node::Node()
+{
+
+}
