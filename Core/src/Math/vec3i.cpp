@@ -2,16 +2,18 @@
 
 ng::math::Vec3i::Vec3i()
 {
+
 }
 
 ng::math::Vec3i::Vec3i(int32 scalar)
+	: x(scalar), y(scalar), z(scalar)
 {
-
 }
 
 ng::math::Vec3i::Vec3i(int32 x, int32 y, int32 z)
+	: x(x), y(y), z(z)
 {
-	
+
 }
 
 ng::math::Vec3i & ng::math::Vec3i::add(const Vec3i & other)

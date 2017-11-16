@@ -19,10 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\binary_tree.cpp" />
-    <ClCompile Include="src\aabb.cpp" />
+    <ClCompile Include="src\Props\renderable.cpp" />
+    <ClCompile Include="src\Props\collidable.cpp" />
+    <ClCompile Include="src\Objects\object.cpp" />
+    <ClCompile Include="src\BoundingVolumes\general_bv.cpp" />
+    <ClCompile Include="src\BoundingVolumes\bounding_sphere.cpp" />
+    <ClCompile Include="src\Props\physical_properties.cpp" />
+    <ClCompile Include="src\DataStructures\binary_tree.cpp" />
+    <ClCompile Include="src\BoundingVolumes\aabb.cpp" />
     <ClCompile Include="src\camera.cpp" />
-    <ClCompile Include="src\oc_tree.cpp" />
+    <ClCompile Include="src\DataStructures\oc_tree.cpp" />
     <ClCompile Include="src\scene_graph.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_pipeline.cpp" />
@@ -45,12 +51,19 @@
     <ClCompile Include="src\Memory\VirtualMemoryAllocators\allocator.cpp" />
     <ClCompile Include="src\Graphics\Allocation\vulkan_allocator.cpp" />
     <ClCompile Include="src\Math\vec3i.cpp" />
+    <ClCompile Include="src\DataStructures\uniform_grid.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\binary_tree.h" />
-    <ClInclude Include="src\aabb.h" />
+    <ClInclude Include="src\Props\renderable.h" />
+    <ClInclude Include="src\Props\collidable.h" />
+    <ClInclude Include="src\Objects\object.h" />
+    <ClInclude Include="src\BoundingVolumes\general_bv.h" />
+    <ClInclude Include="src\BoundingVolumes\bounding_sphere.h" />
+    <ClInclude Include="src\Props\physical_properties.h" />
+    <ClInclude Include="src\DataStructures\binary_tree.h" />
+    <ClInclude Include="src\BoundingVolumes\aabb.h" />
     <ClInclude Include="src\camera.h" />
-    <ClInclude Include="src\oc_tree.h" />
+    <ClInclude Include="src\DataStructures\oc_tree.h" />
     <ClInclude Include="src\scene_graph.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_pipeline.h" />
@@ -74,6 +87,7 @@
     <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />
     <ClInclude Include="src\Graphics\Allocation\vulkan_allocator.h" />
     <ClInclude Include="src\Math\vec3i.h" />
+    <ClInclude Include="src\DataStructures\uniform_grid.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />

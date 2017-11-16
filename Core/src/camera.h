@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src\Math\vec3.h"
+#include "Math\vec3.h"
 
 class Camera
 {

@@ -3,11 +3,11 @@
 #include "Objects\model.h"
 
 
-
-
-class ModelGraph
+class SceneGraph
 {
 public:
 	
+
+
 };
 
