@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "../Objects\model.h"
+#include "../Entities\model.h"
 #include "../BoundingVolumes\general_bv.h"
-#include "../Objects/object.h"
+#include "../Entities/object.h"
 
 
 #define INVALID 0x00
@@ -16,7 +16,7 @@ namespace ng {
 		class OcTree
 		{
 		private:
-
+			
 			class Node {
 			private:
 				Node* parentNode;
