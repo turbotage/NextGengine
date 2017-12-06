@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Objects\model.h"
-
+#include <>
 
 class SceneGraph
 {
+private:
+	
 public:
+	
 	
 
 

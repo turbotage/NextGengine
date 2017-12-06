@@ -7,7 +7,7 @@ namespace ng {
 		class Vec3i
 		{
 		public:
-			int x, y, z;
+			int32 x, y, z;
 
 			Vec3i();
 			Vec3i(int32 scalar);
@@ -18,7 +18,12 @@ namespace ng {
 			Vec3i& mul(const Vec3i& other);
 			Vec3i& div(const Vec3i& other);
 
-
+			bool operator<(const Vec3i& other);
+			bool operator>(const Vec3i& other);
+			bool operator<(const Vec3i& other) const;
+			bool operator>(const Vec3i& other) const;
+			bool operator<=(const Vec3i& other) const;
+			bool operator>=(const Vec3i& other) const;
 
 		};
 	}

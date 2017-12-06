@@ -7,9 +7,10 @@ namespace ng {
 		class Entity
 		{
 		private:
-
+			ng::math::Mat4 transform;
+			ng::math::Vec3 position;
 		public:
-
+			
 		};
 	}
 }

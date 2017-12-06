@@ -18,6 +18,7 @@ namespace ng {
 			VkDevice * m_Device;
 			Window * m_Window;
 		public:
+			int pipelineIndex;
 
 			VkPipeline graphicsPipeline;
 			VkRenderPass renderPass;

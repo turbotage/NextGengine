@@ -83,6 +83,26 @@ bool ng::math::Vec3::operator!=(const Vec3 & other) const
 	return (x != other.x) || (y != other.y) || (z != other.z);
 }
 
+bool ng::math::Vec3::operator<(const Vec3 & other) const
+{
+	return (x < other.x) && (y < other.y) && (z < other.z);
+}
+
+bool ng::math::Vec3::operator>(const Vec3 & other) const
+{
+	return (x > other.x) && (y > other.y) && (z > other.z);
+}
+
+bool ng::math::Vec3::operator<=(const Vec3 & other) const
+{
+	return (x <= other.x) && (y <= other.y) && (z <= other.z);
+}
+
+bool ng::math::Vec3::operator>=(const Vec3 & other) const
+{
+	return (x >= other.x) && (y >= other.y) && (z >= other.z);
+}
+
 ng::math::Vec3 & ng::math::Vec3::operator+=(const Vec3 & other)
 {
 	return add(other);

@@ -2,10 +2,11 @@
 
 #include "../Props/collidable.h"
 #include "../Props/renderable.h"
+#include "../Entities/entity.h"
 
 namespace ng {
 	namespace entity {
-		class Object : public Collidable<Object>, public Renderable<Object>
+		class Object : public Collidable, public Renderable, public Entity
 		{
 		private:
 

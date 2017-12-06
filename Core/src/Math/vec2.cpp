@@ -55,6 +55,26 @@ bool ng::math::Vec2::operator!=(const Vec2 & other) const
 	return (x != other.x) || (y != other.y);
 }
 
+bool ng::math::Vec2::operator<(const Vec2 & other) const
+{
+	return (x < other.x) && (y < other.y);
+}
+
+bool ng::math::Vec2::operator>(const Vec2 & other) const
+{
+	return (x > other.x) && (y > other.y);
+}
+
+bool ng::math::Vec2::operator<=(const Vec2 & other) const
+{
+	return (x <= other.x) && (y <= other.y);
+}
+
+bool ng::math::Vec2::operator>=(const Vec2 & other) const
+{
+	return (x >= other.x) && (y >= other.y);
+}
+
 ng::math::Vec2 & ng::math::Vec2::operator+=(const Vec2 & other)
 {
 	return add(other);

@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Math\hash_functions.cpp" />
     <ClCompile Include="src\Props\renderable.cpp" />
     <ClCompile Include="src\Props\collidable.cpp" />
     <ClCompile Include="src\Entities\object.cpp" />
@@ -53,6 +52,7 @@
     <ClCompile Include="src\Graphics\Allocation\vulkan_allocator.cpp" />
     <ClCompile Include="src\Math\vec3i.cpp" />
     <ClCompile Include="src\DataStructures\uniform_grid.cpp" />
+    <ClCompile Include="src\Math\vec3s.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\hash_functions.h" />
@@ -90,6 +90,7 @@
     <ClInclude Include="src\Graphics\Allocation\vulkan_allocator.h" />
     <ClInclude Include="src\Math\vec3i.h" />
     <ClInclude Include="src\DataStructures\uniform_grid.h" />
+    <ClInclude Include="src\Math\vec3s.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />
