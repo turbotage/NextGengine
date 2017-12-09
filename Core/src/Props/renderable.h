@@ -1,13 +1,16 @@
 #pragma once
 
 #include "../def.h"
-#include "../BoundingVolumes/general_bv.h"
+#include "../Entities/entity.h"
+#include <mutex>
 
 class Renderable
 {
 private:
 	uint8 m_RenderProps;
-	GeneralBV* m_BoundingVolume;
+	float m_Radius;
+	ng::entity::Entity* m_Entity;
+	std::mutex* m_Mutex;
 public:
 
 	enum eRenderProps {

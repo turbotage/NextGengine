@@ -11,9 +11,7 @@
 namespace ng {
 	namespace dstructs {
 
-		struct GridIndex {
-			uint16 xIndex, yIndex, zIndex;
-		};
+		typedef ng::math::Vec3s GridIndex;
 
 		class UniformGrid
 		{
@@ -39,7 +37,7 @@ namespace ng {
 namespace std {
 	template<> struct hash<ng::dstructs::GridIndex> {
 		size_t operator()(ng::dstructs::GridIndex const& index) const {
-			std::vector<short> v{ index.xIndex, index.yIndex, index.zIndex };
+			std::vector<short> v{ index.x, index.y, index.z };
 			return ng::math::hashCombineMany(&v);
 		}
 	};

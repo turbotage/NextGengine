@@ -1,14 +1,18 @@
 #pragma once
 
-#include "../BoundingVolumes/general_bv.h"
 #include "../def.h"
+#include "../Math/vec3.h"
+#include "../Entities/entity.h"
+#include <mutex>
 
 class Collidable
 {
 private:
-
 	uint8 m_CollisionProps;
-	GeneralBV* m_BoundingVolume;
+	ng::math::Vec3 m_Dimensions;
+
+	ng::entity::Entity* m_Entity;
+	std::mutex* m_Mutex;
 public:
 
 	enum eCollisionProps {

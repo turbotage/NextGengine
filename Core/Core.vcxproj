@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Math\fft.cpp" />
     <ClCompile Include="src\Props\renderable.cpp" />
     <ClCompile Include="src\Props\collidable.cpp" />
     <ClCompile Include="src\Entities\object.cpp" />
@@ -55,6 +56,7 @@
     <ClCompile Include="src\Math\vec3s.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Math\fft.h" />
     <ClInclude Include="src\Math\hash_functions.h" />
     <ClInclude Include="src\Props\renderable.h" />
     <ClInclude Include="src\Props\collidable.h" />

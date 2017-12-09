@@ -49,12 +49,28 @@ ng::math::Vec3i & ng::math::Vec3i::div(const Vec3i & other)
 	return *this;
 }
 
-bool ng::math::Vec3i::operator<(const Vec3i & other)
+ng::math::Vec3i & ng::math::Vec3i::mul(const int32 & other)
+{
+	x *= other;
+	y *= other;
+	z *= other;
+	return *this;
+}
+
+ng::math::Vec3i & ng::math::Vec3i::div(const int32 & other)
+{
+	x /= other;
+	y /= other;
+	z /= other;
+	return *this;
+}
+
+bool ng::math::Vec3i::operator<(const Vec3i & other) const
 {
 	return (x == other.x) && (y == other.y) && (z == other.z);
 }
 
-bool ng::math::Vec3i::operator>(const Vec3i & other)
+bool ng::math::Vec3i::operator>(const Vec3i & other) const
 {
 	return (x == other.x) || (y == other.y) || (z == other.z);
 }
@@ -77,4 +93,30 @@ bool ng::math::Vec3i::operator<=(const Vec3i & other) const
 bool ng::math::Vec3i::operator>=(const Vec3i & other) const
 {
 	return (x >= other.x) && (y >= other.y) && (z >= other.z);
+}
+
+ng::math::Vec3i & ng::math::Vec3i::operator+=(const Vec3i & other)
+{
+	return add(other);
+}
+
+ng::math::Vec3i & ng::math::Vec3i::operator-=(const Vec3i & other)
+{
+	return sub(other);
+}
+
+ng::math::Vec3i & ng::math::Vec3i::operator*=(const Vec3i & other)
+{
+	return mul(other);
+}
+
+ng::math::Vec3i & ng::math::Vec3i::operator/=(const Vec3i & other)
+{
+	return div(other);
+}
+
+std::ostream & ng::math::operator<<(std::ostream & stream, const Vec3i & vector)
+{
+	stream << "Vec3i: (" << vector.x << ", " << vector.y << ", " << vector.z << ")";
+	return stream;
 }
