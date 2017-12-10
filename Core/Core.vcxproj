@@ -101,6 +101,9 @@
     <None Include="src\Graphics\Shaders\shader.frag" />
     <None Include="src\Graphics\Shaders\shader.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{f74a2ef4-f86c-4507-ae3e-3486ec8f1626}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

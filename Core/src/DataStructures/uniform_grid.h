@@ -4,8 +4,9 @@
 
 #include "../Entities/object.h"
 #include "../Math/vec3.h"
-#include "../Math/vec3s.h"
 #include "../Math/hash_functions.h"
+#include "../Math/vec3s.h"
+#include "../camera.h"
 
 
 namespace ng {
@@ -18,6 +19,7 @@ namespace ng {
 		private:
 			
 			float m_GridSize;
+			float m_GridIndexRadius;
 			ng::math::Vec3s m_WorldSizeMultipler;
 
 			std::unordered_multimap<GridIndex, Collidable*> m_Collidables;
@@ -26,9 +28,14 @@ namespace ng {
 		public:
 
 			GridIndex getIndex(ng::math::Vec3 position);
+			ng::math::Vec3 getCenterPosition(const GridIndex* index);
+
+			std::vector<Renderable*> frustrumCull(Camera& cam);
+
+			
 
 			UniformGrid();
-			UniformGrid(uint16 expectedNumOfObjects);
+			UniformGrid(uint16 expectedNumOfObjects, float gridSize, ng::math::Vec3s worldSizeMultiplier);
 			~UniformGrid();
 		};
 	}
