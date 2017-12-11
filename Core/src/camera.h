@@ -1,18 +1,33 @@
 #pragma once
 
 #include "Math\vec3.h"
+#include "Math\quaternion.h"
 
 class Camera
 {
 private:
 
-	float nearPlaneDistance;
-	float farPlaneDistance;
+
 
 	bool isInView();
 
 public:
-	Camera();
+
+	float m_FieldOfView;
+
+	float m_FarPlaneDistance;
+	float m_NearPlaneDistance;
+	float m_HalfWidth;
+	float m_HalfHeight;
+
+	ng::math::Quaternion m_Rotation;
+
+	ng::math::Vec3 m_Forward;
+	ng::math::Vec3 m_Up;
+	ng::math::Vec3 m_Right;
+	ng::math::Vec3 m_Left;
+
+	Camera(float fov, float viewDistance, float htwRatio);
 	~Camera();
 };
 

@@ -20,7 +20,46 @@ ng::math::Quaternion::Quaternion(const Quaternion & Quaternion)
 	row = Quaternion.row;
 }
 
-ng::math::Quaternion ng::math::Quaternion::rotation(const Vec3 & rotationAxis, float angle)
+ng::math::Quaternion & ng::math::Quaternion::add(const Quaternion & other)
+{
+	row = _mm_add_ps(row, other.row);
+	return *this;
+}
+
+ng::math::Quaternion & ng::math::Quaternion::sub(const Quaternion & other)
+{
+	row = _mm_sub_ps(row, other.row);
+	return *this;
+}
+
+ng::math::Quaternion & ng::math::Quaternion::mul(const Quaternion & other)
+{
+	Quaternion ret;
+	ret.row = _mm_mul_ps(_mm_set_ps(w, w, w, w), _mm_set_ps(other.w, other.z, other.y, other.x));
+	__m128 temp = _mm_mul_ps(_mm_set_ps(-1.0f * x, z, y, x), _mm_set_ps(other.x, other.w, other.w, other.w));
+	ret.row = _mm_add_ps(ret.row, temp);
+	temp = _mm_mul_ps(_mm_set_ps(-1.0f * y, x, z, y), _mm_set_ps(other.y, other.y, other.x, other.z));
+	ret.row = _mm_add_ps(ret.row, temp);
+	temp = _mm_mul_ps(_mm_set_ps(z, y, x, z), _mm_set_ps(other.z, other.x, other.z, other.y));
+	ret.row = _mm_sub_ps(ret.row, temp);
+	ret.Normalize();
+	row = ret.row;
+	return *this;
+}
+
+ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec3 & rotationAxis, float angle)
+{
+	float sinAngle = sin(angle*0.5);
+	row = _mm_set_ps(
+		rotationAxis.x * sinAngle,
+		rotationAxis.y * sinAngle,
+		rotationAxis.z * sinAngle,
+		cos(angle*0.5)
+	);
+	return *this;
+}
+
+ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec3 & rotationAxis, float angle)
 {
 	Quaternion quat;
 	float sinAngle = sin(angle*0.5);
@@ -33,7 +72,14 @@ ng::math::Quaternion ng::math::Quaternion::rotation(const Vec3 & rotationAxis, f
 	return quat;
 }
 
-ng::math::Quaternion ng::math::Quaternion::rotation(const Vec4 & rotationAxis, float angle)
+ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec4 & rotationAxis, float angle)
+{
+	float sinAngle = sin(angle*0.5);
+	row = _mm_mul_ps(_mm_set_ps(cos(angle*0.5), sinAngle, sinAngle, sinAngle), rotationAxis.row);
+	return *this;
+}
+
+ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec4 & rotationAxis, float angle)
 {
 	Quaternion quat;
 	float sinAngle = sin(angle*0.5);
@@ -137,6 +183,48 @@ void ng::math::Quaternion::Rotate4(const Quaternion & quat, Vec3 & v1, Vec3 & v2
 	v3.x = xFloats[1];
 	v3.y = yFloats[1];
 	v3.z = zFloats[1];
+}
+
+float ng::math::Quaternion::Norm()
+{
+	Quaternion q;
+	q.row = _mm_dp_ps(row, row, 0xFFFF);
+	return q.x;
+}
+
+float ng::math::Quaternion::Norm(const Quaternion & quat)
+{
+	Quaternion q;
+	q.row = _mm_dp_ps(quat.row, quat.row, 0xFFFF);
+	return q.x;
+}
+
+float ng::math::Quaternion::Length()
+{
+	return sqrt(Norm());
+}
+
+float ng::math::Quaternion::Length(const Quaternion & quat)
+{
+	return sqrt(Norm(quat));
+}
+
+ng::math::Quaternion & ng::math::Quaternion::Normalize()
+{
+	Quaternion q;
+	q.row = _mm_dp_ps(row, row, 0xFFFF);
+	q.row = _mm_rsqrt_ps(q.row);
+	row = _mm_mul_ps(q.row, row);
+	return *this;
+}
+
+ng::math::Quaternion ng::math::Quaternion::Normalized(const Quaternion & quat)
+{
+	Quaternion q;
+	q.row = _mm_dp_ps(quat.row, quat.row, 0xFFFF);
+	q.row = _mm_rsqrt_ps(q.row);
+	q.row = _mm_mul_ps(q.row, quat.row);
+	return q;
 }
 
 ng::math::Quaternion::~Quaternion()

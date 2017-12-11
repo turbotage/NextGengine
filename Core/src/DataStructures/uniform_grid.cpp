@@ -49,12 +49,21 @@ ng::math::Vec3 ng::dstructs::UniformGrid::getCenterPosition(const GridIndex * in
 	return ret;
 }
 
+std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
+{
+	m_ObjectsToRender.clear();
+	m_GridIndicesToRender.clear();
+
+	
+
+}
+
 ng::dstructs::UniformGrid::UniformGrid()
 {
 	
 }
 
-ng::dstructs::UniformGrid::UniformGrid(uint16 expectedNumOfObjects, float gridSize, ng::math::Vec3s worldSizeMultiplier)
+ng::dstructs::UniformGrid::UniformGrid(ng::math::Vec3s worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects)
 	: m_GridSize(gridSize), m_WorldSizeMultipler(worldSizeMultiplier)
 {
 	float t = gridSize * 0.5;

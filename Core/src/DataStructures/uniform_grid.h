@@ -22,6 +22,9 @@ namespace ng {
 			float m_GridIndexRadius;
 			ng::math::Vec3s m_WorldSizeMultipler;
 
+			std::vector<GridIndex*> m_GridIndicesToRender;
+			std::vector<Renderable*> m_ObjectsToRender;
+
 			std::unordered_multimap<GridIndex, Collidable*> m_Collidables;
 			std::unordered_multimap<GridIndex, Renderable*> m_Renderables;
 
@@ -30,12 +33,12 @@ namespace ng {
 			GridIndex getIndex(ng::math::Vec3 position);
 			ng::math::Vec3 getCenterPosition(const GridIndex* index);
 
-			std::vector<Renderable*> frustrumCull(Camera& cam);
+			std::vector<Renderable*>* frustrumCull(Camera& cam);
 
 			
 
 			UniformGrid();
-			UniformGrid(uint16 expectedNumOfObjects, float gridSize, ng::math::Vec3s worldSizeMultiplier);
+			UniformGrid(ng::math::Vec3s worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
 			~UniformGrid();
 		};
 	}
