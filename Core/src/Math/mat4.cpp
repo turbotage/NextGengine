@@ -335,6 +335,4 @@ std::ostream & ng::math::operator<<(std::ostream & stream, const Mat4 & matrix)
 
 
 
-
-
 #undef _mm_shufd

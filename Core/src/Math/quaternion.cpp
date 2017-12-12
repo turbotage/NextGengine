@@ -183,6 +183,10 @@ void ng::math::Quaternion::Rotate4(const Quaternion & quat, Vec3 & v1, Vec3 & v2
 	v3.x = xFloats[1];
 	v3.y = yFloats[1];
 	v3.z = zFloats[1];
+
+	v4.x = xFloats[0];
+	v4.y = yFloats[0];
+	v4.z = zFloats[0];
 }
 
 float ng::math::Quaternion::Norm()
