@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math\vec3.h"
+#include "Math\plane.h"
 #include "Math\quaternion.h"
 
 class Camera
@@ -21,6 +21,17 @@ public:
 	float m_HalfHeight;
 
 	ng::math::Quaternion m_Rotation;
+
+	ng::math::Plane rightPlane;
+	ng::math::Plane leftPlane;
+	ng::math::Plane topPlane;
+	ng::math::Plane bottomPlane;
+
+	ng::math::Plane nearPlane;
+	ng::math::Plane farPlane;
+	ng::math::Plane cullPlane1;
+	ng::math::Plane	cullPlane2;
+
 
 	ng::math::Vec3 m_Forward;
 	ng::math::Vec3 m_Up;

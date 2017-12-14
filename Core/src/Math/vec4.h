@@ -8,12 +8,16 @@ namespace ng {
 	namespace math {
 		ALIGN(16) class Vec4
 		{
+		private:
+
 		public:
 
-			union {
-				ALIGN(16) float x, y, z, w;
-				__m128 row;
-			};
+			__m128 row;
+
+			float getX() const;
+			float getY() const;
+			float getZ() const;
+			float getW() const;
 
 			Vec4();
 			Vec4(float scalar);
@@ -38,18 +42,19 @@ namespace ng {
 			Vec4& operator/=(const Vec4& other);
 
 			friend std::ostream& operator<<(std::ostream& stream, const Vec4& vector);
+		
 		};
 	}
 }
 
 namespace std {
 	template<> struct hash<ng::math::Vec4> {
-		size_t operator()(ng::math::Vec4 const& vector) const {
+		size_t operator()(ng::math::Vec4 & vector) const {
 			return
-				hash<float>()(vector.x) ^
-				hash<float>()(vector.y) ^
-				hash<float>()(vector.z) ^
-				hash<float>()(vector.w);
+				hash<float>()(vector.getX()) ^
+				hash<float>()(vector.getY()) ^
+				hash<float>()(vector.getZ()) ^
+				hash<float>()(vector.getW());
 		}
 	};
 }

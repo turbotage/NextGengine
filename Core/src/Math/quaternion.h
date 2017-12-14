@@ -7,16 +7,18 @@
 
 namespace ng {
 	namespace math {
-		class Quaternion
+		ALIGN(16) class Quaternion
 		{
 		private:
-			
+
 		public:
 
-			union {
-				ALIGN(16) float x, y, z, w;
-				__m128 row;
-			};
+			__m128 row;
+
+			float getX() const;
+			float getY() const;
+			float getZ() const;
+			float getW() const;
 
 			Quaternion();
 			Quaternion(float scalar);
@@ -33,8 +35,12 @@ namespace ng {
 			Quaternion& setRotation(const Vec4& rotationAxis, float angle);
 			static Quaternion getRotation(const Vec4& rotationAxis, float angle);
 
-			Vec3 Rotate(const Quaternion& quat, const Vec3& vec);
-			
+			Vec3 EulerAngles();
+			static Vec3 getEulerAngles(const Quaternion& quat);
+
+			Vec3 Rotate(const Vec3& vec);
+			static Vec3 getRotation(const Quaternion& quat, const Vec3& vec);
+
 			void Rotate4(const Quaternion& quat, Vec3& v1, Vec3& v2, Vec3& v3, Vec3& v4);
 
 			float Norm();

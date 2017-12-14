@@ -22,4 +22,5 @@ Camera::Camera(float fov, float viewDistance, float htwRatio)
 
 Camera::~Camera()
 {
+
 }
