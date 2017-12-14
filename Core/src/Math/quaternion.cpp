@@ -62,7 +62,7 @@ ng::math::Quaternion & ng::math::Quaternion::mul(const Quaternion & other)
 	ret.row = _mm_add_ps(ret.row, temp);
 	temp = _mm_mul_ps(_mm_set_ps(getZ(), getY(), getX(), getZ()), _mm_set_ps(other.getZ(), other.getX(), other.getZ(), other.getY()));
 	ret.row = _mm_sub_ps(ret.row, temp);
-	ret.Normalize();
+	ret.normalize();
 	row = ret.row;
 	return *this;
 }
@@ -107,7 +107,7 @@ ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec4 & rotationAxis
 	return quat;
 }
 
-ng::math::Vec3 ng::math::Quaternion::EulerAngles()
+ng::math::Vec3 ng::math::Quaternion::eulerAngles()
 {
 	return Vec3(
 		atan2(2.0f * (getX() * getY() + getZ() * getW()), 1.0f - 2.0f * (getY() * getY() + getZ() * getZ()))
@@ -125,7 +125,7 @@ ng::math::Vec3 ng::math::Quaternion::getEulerAngles(const Quaternion & quat)
 	);
 }
 
-ng::math::Vec3 ng::math::Quaternion::Rotate(const Vec3 & vec)
+ng::math::Vec3 ng::math::Quaternion::rotate(const Vec3 & vec)
 {
 	__m128 temp1 = _mm_mul_ps(_mm_set_ps(getX(), getW(), getW(), getW()), _mm_set_ps(vec.x, vec.z, vec.y, vec.x));
 	__m128 temp2 = _mm_mul_ps(_mm_set_ps(getY(), getX(), getZ(), getY()), _mm_set_ps(vec.y, vec.y, vec.x, vec.z));
@@ -195,7 +195,7 @@ ng::math::Vec3 ng::math::Quaternion::getRotation(const Quaternion & quat, const 
 	return Vec3(temps[3], temps[2], temps[1]);
 }
 
-void ng::math::Quaternion::Rotate4(const Quaternion & quat, Vec3 & v1, Vec3 & v2, Vec3 & v3, Vec3 & v4)
+void ng::math::Quaternion::rotate4(const Quaternion & quat, Vec3 & v1, Vec3 & v2, Vec3 & v3, Vec3 & v4)
 {
 	__m128 tempX;
 	{
@@ -262,31 +262,31 @@ void ng::math::Quaternion::Rotate4(const Quaternion & quat, Vec3 & v1, Vec3 & v2
 	v4.z = zFloats[0];
 }
 
-float ng::math::Quaternion::Norm()
+float ng::math::Quaternion::norm()
 {
 	Quaternion q;
 	q.row = _mm_dp_ps(row, row, 0xFFFF);
 	return q.getX();
 }
 
-float ng::math::Quaternion::Norm(const Quaternion & quat)
+float ng::math::Quaternion::norm(const Quaternion & quat)
 {
 	Quaternion q;
 	q.row = _mm_dp_ps(quat.row, quat.row, 0xFFFF);
 	return q.getX();
 }
 
-float ng::math::Quaternion::Length()
+float ng::math::Quaternion::length()
 {
-	return sqrt(Norm());
+	return sqrt(norm());
 }
 
-float ng::math::Quaternion::Length(const Quaternion & quat)
+float ng::math::Quaternion::length(const Quaternion & quat)
 {
-	return sqrt(Norm(quat));
+	return sqrt(norm(quat));
 }
 
-ng::math::Quaternion & ng::math::Quaternion::Normalize()
+ng::math::Quaternion & ng::math::Quaternion::normalize()
 {
 	Quaternion q;
 	q.row = _mm_dp_ps(row, row, 0xFFFF);
@@ -295,7 +295,7 @@ ng::math::Quaternion & ng::math::Quaternion::Normalize()
 	return *this;
 }
 
-ng::math::Quaternion ng::math::Quaternion::Normalized(const Quaternion & quat)
+ng::math::Quaternion ng::math::Quaternion::normalized(const Quaternion & quat)
 {
 	Quaternion q;
 	q.row = _mm_dp_ps(quat.row, quat.row, 0xFFFF);

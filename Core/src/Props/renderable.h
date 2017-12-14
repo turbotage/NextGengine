@@ -10,6 +10,7 @@ private:
 	uint8 m_RenderProps;
 	float m_Radius;
 	ng::entity::Entity* m_Entity;
+	
 	std::mutex* m_Mutex;
 public:
 

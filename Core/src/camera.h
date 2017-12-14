@@ -13,13 +13,14 @@ private:
 
 public:
 
-	float m_FieldOfView;
+	float fieldOfView;
 
-	float m_FarPlaneDistance;
-	float m_NearPlaneDistance;
-	float m_HalfWidth;
-	float m_HalfHeight;
+	float farPlaneDistance;
+	float nearPlaneDistance;
+	float halfWidth;
+	float halfHeight;
 
+	float angleChangeSinceLastUpdate;
 	ng::math::Quaternion m_Rotation;
 
 	ng::math::Plane rightPlane;
@@ -32,11 +33,12 @@ public:
 	ng::math::Plane cullPlane1;
 	ng::math::Plane	cullPlane2;
 
-
 	ng::math::Vec3 m_Forward;
 	ng::math::Vec3 m_Up;
 	ng::math::Vec3 m_Right;
 	ng::math::Vec3 m_Left;
+
+	ng::math::Vec3* position;
 
 	Camera(float fov, float viewDistance, float htwRatio);
 	~Camera();

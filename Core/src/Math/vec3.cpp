@@ -73,6 +73,11 @@ void ng::math::Vec3::normalize()
 	z /= lenght;
 }
 
+float ng::math::Vec3::norm()
+{
+	return sqrt(x*x + y*y + z*z);
+}
+
 bool ng::math::Vec3::operator==(const Vec3 & other) const
 {
 	return (x == other.x) && (y == other.y) && (z == other.z);

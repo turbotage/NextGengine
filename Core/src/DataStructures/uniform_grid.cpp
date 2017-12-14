@@ -1,19 +1,22 @@
 #include "uniform_grid.h"
 #include <math.h>
+#include "../Math/vec2.h"
 
-short getQuadrant(float value) {
-	if ((value >= -NG_PI / 4.0f) || (value < NG_PI / 4.0f)) {
+ng::dstructs::GridIndex getDirection(float pitch, float yaw) {
+
+	if ((pitch >= -NG_PI / 4.0f) || (pitch < NG_PI / 4.0f)) {
 		return 1;
 	}
-	if ((value < -3.0f*NG_PI / 4.0f) || (value >= 3.0f*NG_PI / 4.0f)) {
+	if ((pitch < -3.0f*NG_PI / 4.0f) || (pitch >= 3.0f*NG_PI / 4.0f)) {
 		return 2;
 	}
-	if ((value >= NG_PI / 4.0f) && (value < 3.0f*NG_PI / 4.0f)) {
+	if ((pitch >= NG_PI / 4.0f) && (pitch < 3.0f*NG_PI / 4.0f)) {
 		return 3;
 	}
-	if ((value < -NG_PI / 4.0f) && (value >= -3.0f*NG_PI / 4.0f)) {
+	if ((pitch < -NG_PI / 4.0f) && (pitch >= -3.0f*NG_PI / 4.0f)) {
 		return 4;
 	}
+
 }
 
 ng::dstructs::GridIndex ng::dstructs::UniformGrid::getIndex(ng::math::Vec3 position)
@@ -64,15 +67,62 @@ ng::math::Vec3 ng::dstructs::UniformGrid::getCenterPosition(const GridIndex * in
 	return ret;
 }
 
+std::vector<ng::dstructs::GridIndex*>* ng::dstructs::UniformGrid::gridIndicesCulling(Camera & cam)
+{
+	ng::math::Vec3 eulerAngles = cam.m_Rotation.eulerAngles(); //pitch, roll, yaw
+
+	/*
+	Vertical Plane					  Horizontal Plane
+	View from along the Z-axis		  View from along the Y-axis
+	-	  V2	-						-	  H2	-
+	-	      -							  -		  -
+	-	-								-	-
+	V3	  -	   V1						H3	  -	   H1
+	-	-								-	-
+	-		  -							  -		  -
+	-	  V4	-						-	  H4	-
+	
+	*/
+
+#define Q1(s) ((s >= -NG_PI / 4.0f) || (s < NG_PI / 4.0f))
+#define Q2(s) ((s >= NG_PI / 4.0f) && (s < 3.0f*NG_PI / 4.0f))
+#define Q3(s) ((s < -3.0f*NG_PI / 4.0f) || (s >= 3.0f*NG_PI / 4.0f))
+#define Q4(s) ((s < -NG_PI / 4.0f) && (s >= -3.0f*NG_PI / 4.0f))
+
+	/*
+	circle around
+	*/
+
+	//if the camera points somewhat along the positive or negative y axis
+	if (Q2(eulerAngles.x) || Q4(eulerAngles.x)) {
+
+	}
+	//if the camera points somewhat along the positive or negative x axis
+	else if (Q1(eulerAngles.z) || Q3(eulerAngles.z)) {
+
+	}
+	//if the camera points somewhat along the positive or negative z axis
+	else if (Q2(eulerAngles.z) || Q4(eulerAngles.z)) {
+
+	}
+
+#undef V1
+#undef V2
+#undef V3
+#undef V4
+
+#undef H1
+#undef H2
+#undef H3
+#undef H4
+}
+
 std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
 {
-#define Q1 1
-#define Q2 2
-#define Q3 3
-#define Q4 4
+
+
 
 	m_ObjectsToRender.clear();
-	m_GridIndicesToRender.clear();
 
 	__m128 sidePlaneA =
 		_mm_set_ps(cam.rightPlane.a, cam.leftPlane.a, cam.topPlane.a, cam.bottomPlane.a);
@@ -83,42 +133,8 @@ std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
 	__m128 sidePlaneD =
 		_mm_set_ps(cam.rightPlane.d, cam.leftPlane.d, cam.topPlane.d, cam.bottomPlane.d);
 
-	ng::math::Vec3 eulerAngles = cam.m_Rotation.EulerAngles(); //pitch, roll, yaw
 
-	/*
-	-	  Q2	-
-	  -	      -
-	    -	-
-	Q3	  -	    Q1
-		-	-
-	  -		  -
-	-	  Q4	-
 
-	
-
-	*/
-
-	short pitchQuad = getQuadrant(eulerAngles.x);
-	short yawQuad = getQuadrant(eulerAngles.z);
-
-	switch (pitchQuad) {
-	case Q1:
-		
-		break;
-	case Q2:
-
-		break;
-	case Q3:
-
-		break;
-	case Q4:
-
-		break;
-	}
-#undef Q1
-#undef Q2
-#undef Q3
-#undef Q4
 }
 
 ng::dstructs::UniformGrid::UniformGrid()

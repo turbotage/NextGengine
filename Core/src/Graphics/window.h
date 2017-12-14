@@ -6,6 +6,24 @@
 #include <vector>
 //#include "Pipelines\vulkan_graphics_pipeline.h"
 
+
+/*
+Window cordinate system
+positive Z is pointing in to the screen
+positive X is pointing to the right on the screen
+positive Y is pointing downwards on the screen
+			    Z
+			  -
+			-
+		  -	
+		------------ X
+		|
+		|
+		|
+		|
+		Y
+*/
+
 namespace ng {
 	namespace graphics {
 

@@ -35,22 +35,22 @@ namespace ng {
 			Quaternion& setRotation(const Vec4& rotationAxis, float angle);
 			static Quaternion getRotation(const Vec4& rotationAxis, float angle);
 
-			Vec3 EulerAngles();
+			Vec3 eulerAngles();
 			static Vec3 getEulerAngles(const Quaternion& quat);
 
-			Vec3 Rotate(const Vec3& vec);
+			Vec3 rotate(const Vec3& vec);
 			static Vec3 getRotation(const Quaternion& quat, const Vec3& vec);
 
-			void Rotate4(const Quaternion& quat, Vec3& v1, Vec3& v2, Vec3& v3, Vec3& v4);
+			void rotate4(const Quaternion& quat, Vec3& v1, Vec3& v2, Vec3& v3, Vec3& v4);
 
-			float Norm();
-			static float Norm(const Quaternion& quat);
+			float norm();
+			static float norm(const Quaternion& quat);
 
-			float Length();
-			static float Length(const Quaternion& quat);
+			float length();
+			static float length(const Quaternion& quat);
 
-			Quaternion& Normalize();
-			static Quaternion Normalized(const Quaternion& quat);
+			Quaternion& normalize();
+			static Quaternion normalized(const Quaternion& quat);
 
 			~Quaternion();
 
