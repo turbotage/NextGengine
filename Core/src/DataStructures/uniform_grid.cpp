@@ -120,18 +120,24 @@ std::vector<ng::dstructs::GridIndex*>* ng::dstructs::UniformGrid::gridIndicesCul
 std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
 {
 
+	for (auto renderable : m_ObjectsToRender) {
 
+	}
 
 	m_ObjectsToRender.clear();
 
-	__m128 sidePlaneA =
-		_mm_set_ps(cam.rightPlane.a, cam.leftPlane.a, cam.topPlane.a, cam.bottomPlane.a);
-	__m128 sidePlaneB =
-		_mm_set_ps(cam.rightPlane.b, cam.leftPlane.b, cam.topPlane.b, cam.bottomPlane.b);
-	__m128 sidePlaneC =
-		_mm_set_ps(cam.rightPlane.c, cam.leftPlane.c, cam.topPlane.c, cam.bottomPlane.c);
-	__m128 sidePlaneD =
-		_mm_set_ps(cam.rightPlane.d, cam.leftPlane.d, cam.topPlane.d, cam.bottomPlane.d);
+	__m128 rightPlane =
+		_mm_set_ps(cam.rightPlane.a, cam.rightPlane.b, cam.rightPlane.c, cam.rightPlane.d);
+	__m128 leftPlane =
+		_mm_set_ps(cam.leftPlane.a, cam.leftPlane.b, cam.leftPlane.c, cam.leftPlane.d);
+	__m128 topPlane =
+		_mm_set_ps(cam.topPlane.a, cam.topPlane.b, cam.topPlane.c, cam.topPlane.d);
+	__m128 bottomPlane =
+		_mm_set_ps(cam.bottomPlane.a, cam.bottomPlane.b, cam.bottomPlane.c, cam.bottomPlane.d);
+	__m128 nearPlane =
+		_mm_set_ps(cam.nearPlane.a, cam.nearPlane.b, cam.nearPlane.c, cam.nearPlane.d);
+	__m128 farPlane =
+		_mm_set_ps(cam.farPlane.a, cam.farPlane.b, cam.farPlane.c, cam.farPlane.d);
 
 
 

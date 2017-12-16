@@ -18,6 +18,8 @@ namespace ng {
 		{
 		private:
 			
+			
+
 			float m_GridSize;
 			float m_GridIndexRadius;
 			ng::math::Vec3s m_WorldSizeMultipler;

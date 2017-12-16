@@ -78,6 +78,15 @@ float ng::math::Vec3::norm()
 	return sqrt(x*x + y*y + z*z);
 }
 
+ng::math::Vec3 ng::math::Vec3::cross(const Vec3 & other)
+{
+	ng::math::Vec3 ret;
+	ret.x = ((y * other.z) - (z * other.y));
+	ret.y = -1 * ((x * other.z) - (z * other.x));
+	ret.z = ((x * other.y) - (y * other.x));
+	return ret;
+}
+
 bool ng::math::Vec3::operator==(const Vec3 & other) const
 {
 	return (x == other.x) && (y == other.y) && (z == other.z);

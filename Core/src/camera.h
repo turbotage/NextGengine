@@ -13,14 +13,16 @@ private:
 
 public:
 
-	float fieldOfView;
 
-	float farPlaneDistance;
+	const float fieldOfView;
+	
+	const float farPlaneDistance;
 	float nearPlaneDistance;
 	float halfWidth;
 	float halfHeight;
 
 	float angleChangeSinceLastUpdate;
+	bool lastFrame;
 	ng::math::Quaternion m_Rotation;
 
 	ng::math::Plane rightPlane;
@@ -33,10 +35,14 @@ public:
 	ng::math::Plane cullPlane1;
 	ng::math::Plane	cullPlane2;
 
-	ng::math::Vec3 m_Forward;
-	ng::math::Vec3 m_Up;
-	ng::math::Vec3 m_Right;
-	ng::math::Vec3 m_Left;
+	ng::math::Vec3 forward;
+	ng::math::Vec3 up;
+	ng::math::Vec3 right;
+
+	ng::math::Vec3 rightPlaneNormal;
+	ng::math::Vec3 leftPlaneNormal;
+	ng::math::Vec3 topPlaneNormal;
+	ng::math::Vec3 bottomPlaneNormal;
 
 	ng::math::Vec3* position;
 

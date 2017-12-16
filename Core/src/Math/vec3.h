@@ -24,6 +24,8 @@ namespace ng {
 			void normalize();
 			float norm();
 
+			Vec3 cross(const Vec3& other);
+
 			friend Vec3 operator+(Vec3 left, const Vec3& right);
 			friend Vec3 operator-(Vec3 left, const Vec3& right);
 			friend Vec3 operator*(Vec3 left, const Vec3& right);
