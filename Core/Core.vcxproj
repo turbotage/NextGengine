@@ -31,7 +31,8 @@
     <ClCompile Include="src\BoundingVolumes\aabb.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\DataStructures\oc_tree.cpp" />
-    <ClCompile Include="src\scene_graph.cpp" />
+    <ClCompile Include="src\SceneGraph\group_node.cpp" />
+    <ClCompile Include="src\SceneGraph\scene_graph.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.cpp" />
     <ClCompile Include="src\Graphics\Pipelines\vulkan_pipeline.cpp" />
     <ClCompile Include="src\Graphics\vulkan_base.cpp" />
@@ -55,6 +56,7 @@
     <ClCompile Include="src\Math\vec3i.cpp" />
     <ClCompile Include="src\DataStructures\uniform_grid.cpp" />
     <ClCompile Include="src\Math\vec3s.cpp" />
+    <ClCompile Include="src\SceneGraph\transform_node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\plane.h" />
@@ -70,7 +72,8 @@
     <ClInclude Include="src\BoundingVolumes\aabb.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\DataStructures\oc_tree.h" />
-    <ClInclude Include="src\scene_graph.h" />
+    <ClInclude Include="src\SceneGraph\group_node.h" />
+    <ClInclude Include="src\SceneGraph\scene_graph.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_graphics_pipeline.h" />
     <ClInclude Include="src\Graphics\Pipelines\vulkan_pipeline.h" />
     <ClInclude Include="src\Graphics\vulkan_base.h" />
@@ -89,6 +92,7 @@
     <ClInclude Include="src\math\vec2.h" />
     <ClInclude Include="src\Graphics\GraphicsObjects\vertex.h" />
     <ClInclude Include="src\graphics\window.h" />
+    <ClInclude Include="src\SceneGraph\transform_node.h" />
     <ClInclude Include="test_code.h" />
     <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />
     <ClInclude Include="src\Graphics\Allocation\vulkan_allocator.h" />

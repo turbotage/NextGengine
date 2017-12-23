@@ -1,13 +1,13 @@
 #pragma once
 
 #include "mesh.h"
+#include "../BoundingVolumes/general_bv.h"
 
 namespace ng {
 	namespace entity {
 		class Model : Entity
 		{
 		private:
-
 			Mesh* m_Mesh;
 
 		public:
@@ -17,7 +17,7 @@ namespace ng {
 			void loadPreformated(const char* path);
 			void loadUnformated(const char* path);
 
-			void setRenderable(bool )
+			void setRenderable(bool renderable);
 
 		};
 	}

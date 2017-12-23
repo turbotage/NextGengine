@@ -120,12 +120,6 @@ std::vector<ng::dstructs::GridIndex*>* ng::dstructs::UniformGrid::gridIndicesCul
 std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
 {
 
-	for (auto renderable : m_ObjectsToRender) {
-
-	}
-
-	m_ObjectsToRender.clear();
-
 	__m128 rightPlane =
 		_mm_set_ps(cam.rightPlane.a, cam.rightPlane.b, cam.rightPlane.c, cam.rightPlane.d);
 	__m128 leftPlane =
