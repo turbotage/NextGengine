@@ -4,6 +4,7 @@
 #include "../Math/quaternion.h"
 #include "../Entities/mesh.h"
 #include "../BoundingVolumes/general_bv.h"
+#include "../BoundingVolumes/bounding_sphere.h"
 
 namespace ng {
 	namespace scenegraph {
@@ -14,17 +15,23 @@ namespace ng {
 		protected:
 			//tree-related
 			SceneNode * m_Parent;
-			std::string name;
+			std::vector<SceneNode*> m_Children;
+			std::string m_Name;
 
 			//positional
-			ng::math::Vec3 m_CenterPosition;
-			ng::math::Vec3 m_AaBbDimensions; //width, height, depth
-			float m_Radius;
+			ng::math::Vec3 m_Position;
+
+			//BV
+			ng::bvolumes::BoundingSphere m_BoundingSphere;
+
 		public:
 
 			SceneNode();
 
-			ng::math::Vec3 
+			ng::math::Vec3 getCenterPosition();
+
+			float getBoundingSphereRadius();
+			void setBoundingSphereRadius(float radius);
 
 		};
 

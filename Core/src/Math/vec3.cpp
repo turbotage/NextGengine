@@ -137,6 +137,38 @@ ng::math::Vec3 & ng::math::Vec3::operator/=(const Vec3 & other)
 	return div(other);
 }
 
+ng::math::Vec3 & ng::math::Vec3::operator+=(float other)
+{
+	x += other;
+	y += other;
+	z += other;
+	return *this;
+}
+
+ng::math::Vec3 & ng::math::Vec3::operator-=(float other)
+{
+	x -= other;
+	y -= other;
+	z -= other;
+	return *this;
+}
+
+ng::math::Vec3 & ng::math::Vec3::operator*=(float other)
+{
+	x *= other;
+	y *= other;
+	z *= other;
+	return *this;
+}
+
+ng::math::Vec3 & ng::math::Vec3::operator/=(float other)
+{
+	x /= other;
+	y /= other;
+	z /= other;
+	return *this;
+}
+
 ng::math::Vec3 ng::math::operator+(Vec3 left, const Vec3 & right)
 {
 	return left.add(right);

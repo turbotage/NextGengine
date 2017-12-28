@@ -6,9 +6,9 @@ namespace ng {
 	namespace scenegraph {
 		class GroupNode : SceneNode {
 		private:
-			std::vector<SceneNode*> m_Children;
 
-			void calcCombinedCenter();
+			void setCalculatedCombinedCenter();
+
 		public:
 			void addChild(SceneNode* child);
 		};

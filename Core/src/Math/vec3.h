@@ -46,6 +46,11 @@ namespace ng {
 			Vec3& operator*=(const Vec3& other);
 			Vec3& operator/=(const Vec3& other);
 
+			Vec3& operator+=(float other);
+			Vec3& operator-=(float other);
+			Vec3& operator*=(float other);
+			Vec3& operator/=(float other);
+
 			friend std::ostream& operator<<(std::ostream& stream, const Vec3& vector);
 		};
 	}
