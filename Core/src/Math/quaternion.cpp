@@ -67,7 +67,7 @@ ng::math::Quaternion & ng::math::Quaternion::mul(const Quaternion & other)
 	return *this;
 }
 
-ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec3 & rotationAxis, float angle)
+ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec3f & rotationAxis, float angle)
 {
 	float sinAngle = sin(angle*0.5);
 	row = _mm_set_ps(
@@ -79,7 +79,7 @@ ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec3 & rotationAx
 	return *this;
 }
 
-ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec3 & rotationAxis, float angle)
+ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec3f & rotationAxis, float angle)
 {
 	Quaternion quat;
 	float sinAngle = sin(angle*0.5);
@@ -92,14 +92,14 @@ ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec3 & rotationAxis
 	return quat;
 }
 
-ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec4 & rotationAxis, float angle)
+ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec4f & rotationAxis, float angle)
 {
 	float sinAngle = sin(angle*0.5);
 	row = _mm_mul_ps(_mm_set_ps(cos(angle*0.5), sinAngle, sinAngle, sinAngle), rotationAxis.row);
 	return *this;
 }
 
-ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec4 & rotationAxis, float angle)
+ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec4f & rotationAxis, float angle)
 {
 	Quaternion quat;
 	float sinAngle = sin(angle*0.5);
@@ -107,25 +107,25 @@ ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec4 & rotationAxis
 	return quat;
 }
 
-ng::math::Vec3 ng::math::Quaternion::eulerAngles()
+ng::math::Vec3f ng::math::Quaternion::eulerAngles()
 {
-	return Vec3(
+	return Vec3f(
 		atan2(2.0f * (getX() * getY() + getZ() * getW()), 1.0f - 2.0f * (getY() * getY() + getZ() * getZ()))
 		, asin(2.0f * (getX() * getW() + getY() * getZ()))
 		, atan2(2.0f * (getX() * getW() + getY() * getZ()), 1.0f - 2.0f * (getZ() * getZ() + getW() * getW()))
 		);
 }
 
-ng::math::Vec3 ng::math::Quaternion::getEulerAngles(const Quaternion & quat)
+ng::math::Vec3f ng::math::Quaternion::getEulerAngles(const Quaternion & quat)
 {
-	return Vec3(
+	return Vec3f(
 		atan2(2.0f * (quat.getX() * quat.getY() + quat.getZ() * quat.getW()), 1.0f - 2.0f * (quat.getY() * quat.getY() + quat.getZ() * quat.getZ()))
 		, asin(2.0f * (quat.getX() * quat.getW() + quat.getY() * quat.getZ()))
 		, atan2(2.0f * (quat.getX() * quat.getW() + quat.getY() * quat.getZ()), 1.0f - 2.0f * (quat.getZ() * quat.getZ() + quat.getW() * quat.getW()))
 	);
 }
 
-ng::math::Vec3 ng::math::Quaternion::rotate(const Vec3 & vec)
+ng::math::Vec3f ng::math::Quaternion::rotate(const Vec3f & vec)
 {
 	__m128 temp1 = _mm_mul_ps(_mm_set_ps(getX(), getW(), getW(), getW()), _mm_set_ps(vec.x, vec.z, vec.y, vec.x));
 	__m128 temp2 = _mm_mul_ps(_mm_set_ps(getY(), getX(), getZ(), getY()), _mm_set_ps(vec.y, vec.y, vec.x, vec.z));
@@ -157,10 +157,10 @@ ng::math::Vec3 ng::math::Quaternion::rotate(const Vec3 & vec)
 
 	temp1 = _mm_add_ps(temp1, temp2);
 	_mm_store_ps(temps, temp1);
-	return Vec3(temps[3], temps[2], temps[1]);
+	return Vec3f(temps[3], temps[2], temps[1]);
 }
 
-ng::math::Vec3 ng::math::Quaternion::getRotation(const Quaternion & quat, const Vec3 & vec)
+ng::math::Vec3f ng::math::Quaternion::getRotation(const Quaternion & quat, const Vec3f & vec)
 {
 	__m128 temp1 = _mm_mul_ps(_mm_set_ps(quat.getX(), quat.getW(), quat.getW(), quat.getW()), _mm_set_ps(vec.x, vec.z, vec.y, vec.x));
 	__m128 temp2 = _mm_mul_ps(_mm_set_ps(quat.getY(), quat.getX(), quat.getZ(), quat.getY()), _mm_set_ps(vec.y, vec.y, vec.x, vec.z));
@@ -192,10 +192,10 @@ ng::math::Vec3 ng::math::Quaternion::getRotation(const Quaternion & quat, const 
 
 	temp1 = _mm_add_ps(temp1, temp2);
 	_mm_store_ps(temps, temp1);
-	return Vec3(temps[3], temps[2], temps[1]);
+	return Vec3f(temps[3], temps[2], temps[1]);
 }
 
-void ng::math::Quaternion::rotate4(const Quaternion & quat, Vec3 & v1, Vec3 & v2, Vec3 & v3, Vec3 & v4)
+void ng::math::Quaternion::rotate4(const Quaternion & quat, Vec3f & v1, Vec3f & v2, Vec3f & v3, Vec3f & v4)
 {
 	__m128 tempX;
 	{

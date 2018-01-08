@@ -35,16 +35,16 @@ public:
 	ng::math::Plane cullPlane1;
 	ng::math::Plane	cullPlane2;
 
-	ng::math::Vec3 forward;
-	ng::math::Vec3 up;
-	ng::math::Vec3 right;
+	ng::math::Vec3f forward;
+	ng::math::Vec3f up;
+	ng::math::Vec3f right;
 
-	ng::math::Vec3 rightPlaneNormal;
-	ng::math::Vec3 leftPlaneNormal;
-	ng::math::Vec3 topPlaneNormal;
-	ng::math::Vec3 bottomPlaneNormal;
+	ng::math::Vec3f rightPlaneNormal;
+	ng::math::Vec3f leftPlaneNormal;
+	ng::math::Vec3f topPlaneNormal;
+	ng::math::Vec3f bottomPlaneNormal;
 
-	ng::math::Vec3* position;
+	ng::math::Vec3f* position;
 
 	Camera(float fov, float viewDistance, float htwRatio);
 	~Camera();

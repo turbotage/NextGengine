@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/vec3.h"
+#include "../Math/Vec3f.h"
 
 namespace ng {
 	namespace bvolumes {
@@ -13,7 +13,7 @@ namespace ng {
 			//	|	|	|	|
 			//	5	|	4	|
 			//		6		7
-			ng::math::Vec3 center;
+			ng::math::Vec3f center;
 			float width; // x
 			float height; // y
 			float depth; //z

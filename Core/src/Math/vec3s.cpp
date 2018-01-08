@@ -1,4 +1,4 @@
-#include "vec3s.h"
+#include "Vec3s.h"
 
 ng::math::Vec3s::Vec3s()
 {

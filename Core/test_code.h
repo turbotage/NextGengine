@@ -1,19 +1,19 @@
 #pragma once
 
-#include "src\math\vec3.h"
-#include "src\math\vec4.h"
+#include "src\math\Vec3f.h"
+#include "src\math\Vec4f.h"
 #include "src\math\mat4.h"
 
 void testOfMat4() {
-	ng::math::Vec3 A(3, 2, 6);
+	ng::math::Vec3f A(3, 2, 6);
 	std::cout << A << std::endl;
-	ng::math::Vec4 one(4, 5, 6, 7);
+	ng::math::Vec4f one(4, 5, 6, 7);
 	std::cout << one << std::endl;
-	ng::math::Vec4 two(2, 7, 3, 4);
+	ng::math::Vec4f two(2, 7, 3, 4);
 	std::cout << two << std::endl;
-	ng::math::Vec4 three(1, 2, 1, 7);
+	ng::math::Vec4f three(1, 2, 1, 7);
 	std::cout << three << std::endl;
-	ng::math::Vec4 four(2, 9, 3, 1);
+	ng::math::Vec4f four(2, 9, 3, 1);
 	std::cout << four << std::endl;
 
 	ng::math::Mat4 mat1(one, two, three, four);
@@ -64,9 +64,9 @@ Mat4 ret;
 
 auto start = std::chrono::system_clock::now();
 for (int i = 0; i < MAT_SIZE; ++i) {
-	Vec3 rotationAxis1(dis(gen), dis(gen), dis(gen));
+	Vec3f rotationAxis1(dis(gen), dis(gen), dis(gen));
 	rotationAxis1.normalize();
-	Vec3 rotationAxis2(dis(gen), dis(gen), dis(gen));
+	Vec3f rotationAxis2(dis(gen), dis(gen), dis(gen));
 	rotationAxis2.normalize();
 	rotaionMats1[i] = Mat4::rotation(dis2(gen), rotationAxis1);
 	rotaionMats2[i] = Mat4::rotation(dis2(gen), rotationAxis1);

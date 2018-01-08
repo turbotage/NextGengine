@@ -4,12 +4,12 @@ ng::math::Plane::Plane()
 {
 }
 
-ng::math::Plane::Plane(Vec3 point, Vec3 planeVector, Vec3 planeNormal)
+ng::math::Plane::Plane(Vec3f point, Vec3f planeVector, Vec3f planeNormal)
 {
 	setPlane(point, planeVector, planeNormal);
 }
 
-void ng::math::Plane::setPlane(Vec3 point, Vec3 planeVector, Vec3 planeNormal)
+void ng::math::Plane::setPlane(Vec3f point, Vec3f planeVector, Vec3f planeNormal)
 {
 	a = planeVector.x;
 	b = planeVector.y;
@@ -19,7 +19,7 @@ void ng::math::Plane::setPlane(Vec3 point, Vec3 planeVector, Vec3 planeNormal)
 	normOfBasis = sqrt( (a * a) + (b * b) + (c * c) );
 }
 
-float ng::math::Plane::distanceToPoint(Vec3 point)
+float ng::math::Plane::distanceToPoint(Vec3f point)
 {
 	return abs(a*point.x + b * point.y + c * point.z + d) / normOfBasis;
 }

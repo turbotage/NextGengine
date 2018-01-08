@@ -16,20 +16,20 @@ ng::math::Mat4::Mat4(float diagonal)
 	rows[3] = _mm_set_ps(diagonal, 0.0f, 0.0f, 0.0f);
 }
 
-ng::math::Mat4::Mat4(Vec4 diagonal)
+ng::math::Mat4::Mat4(Vec4f diagonal)
 {
-	rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, diagonal.x);
-	rows[1] = _mm_set_ps(0.0f, 0.0f, diagonal.y, 0.0f);
-	rows[2] = _mm_set_ps(0.0f, diagonal.z, 0.0f, 0.0f);
-	rows[3] = _mm_set_ps(diagonal.w, 0.0f, 0.0f, 0.0f);
+	rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, diagonal.getX());
+	rows[1] = _mm_set_ps(0.0f, 0.0f, diagonal.getY(), 0.0f);
+	rows[2] = _mm_set_ps(0.0f, diagonal.getZ(), 0.0f, 0.0f);
+	rows[3] = _mm_set_ps(diagonal.getW(), 0.0f, 0.0f, 0.0f);
 }
 
-ng::math::Mat4::Mat4(Vec4 row1, Vec4 row2, Vec4 row3, Vec4 row4)
+ng::math::Mat4::Mat4(Vec4f row1, Vec4f row2, Vec4f row3, Vec4f row4)
 {
-	rows[0] = _mm_set_ps(row1.w, row1.z, row1.y, row1.x);
-	rows[1] = _mm_set_ps(row2.w, row2.z, row2.y, row2.x);
-	rows[2] = _mm_set_ps(row3.w, row3.z, row3.y, row3.x);
-	rows[3] = _mm_set_ps(row4.w, row4.z, row4.y, row4.x);
+	rows[0] = _mm_set_ps(row1.getW(), row1.getZ(), row1.getY(), row1.getX());
+	rows[1] = _mm_set_ps(row2.getW(), row2.getZ(), row2.getY(), row2.getX());
+	rows[2] = _mm_set_ps(row3.getW(), row3.getZ(), row3.getY(), row3.getX());
+	rows[3] = _mm_set_ps(row4.getW(), row4.getZ(), row4.getY(), row4.getX());
 }
 
 ng::math::Mat4 & ng::math::Mat4::mul(const Mat4 & other)
@@ -55,37 +55,36 @@ ng::math::Mat4 & ng::math::Mat4::operator*=(const Mat4 & other)
 	return mul(other);
 }
 
-ng::math::Vec3 ng::math::Mat4::mul(const Vec3 & other) const
+ng::math::Vec3f ng::math::Mat4::mul(const Vec3f & other) const
 {
-	__m128 row = _mm_set_ps(1.0f, other.z, other.y, other.x);
-	__m128 ret = _mm_add_ps(
+	Vec4f ret;
+	ret.row = _mm_set_ps(1.0f, other.z, other.y, other.x);
+	ret.row = _mm_add_ps(
 				_mm_add_ps(
-					_mm_dp_ps(rows[0], row, 0b11110001), 
-					_mm_dp_ps(rows[1], row, 0b11110010)
+					_mm_dp_ps(rows[0], ret.row, 0b11110001),
+					_mm_dp_ps(rows[1], ret.row, 0b11110010)
 				),
 				_mm_add_ps(
-					_mm_dp_ps(rows[2], row, 0b11110100),
-					_mm_dp_ps(rows[3], row, 0b11111000)
+					_mm_dp_ps(rows[2], ret.row, 0b11110100),
+					_mm_dp_ps(rows[3], ret.row, 0b11111000)
 				)
 			);
-	return Vec3(ret.m128_f32[0], ret.m128_f32[1], ret.m128_f32[2]);
+	return Vec3f(ret.getX(), ret.getY(), ret.getZ());
 }
 
-ng::math::Vec4 ng::math::Mat4::mul(const Vec4 & other) const
+ng::math::Vec4f ng::math::Mat4::mul(const Vec4f & other) const
 {
-	__m128 row = _mm_load_ps(&other.x);
-	__m128 ret = _mm_add_ps(
+	Vec4f returner;
+	returner.row = _mm_add_ps(
 		_mm_add_ps(
-			_mm_dp_ps(rows[0], row, 0b11110001),
-			_mm_dp_ps(rows[1], row, 0b11110010)
+			_mm_dp_ps(rows[0], other.row, 0b11110001),
+			_mm_dp_ps(rows[1], other.row, 0b11110010)
 		),
 		_mm_add_ps(
-			_mm_dp_ps(rows[2], row, 0b11110100),
-			_mm_dp_ps(rows[3], row, 0b11111000)
+			_mm_dp_ps(rows[2], other.row, 0b11110100),
+			_mm_dp_ps(rows[3], other.row, 0b11111000)
 		)
 	);
-	Vec4 returner;
-	_mm_store_ps(&returner.x, ret);
 	return returner;
 }
 
@@ -239,7 +238,20 @@ ng::math::Mat4 ng::math::Mat4::perspective(float fov, float aspectRatio, float n
 	return returner;
 }
 
-ng::math::Mat4 ng::math::Mat4::translation(const Vec3 & translation)
+ng::math::Mat4 ng::math::Mat4::lookAt(const Vec3f & camera, const Vec3f & object, const Vec3f & up)
+{
+	Mat4 ret;
+	Vec3f f = Vec3f::normalized(object - camera);
+	Vec3f s = f.cross(Vec3f::normalized(up));
+	Vec3f u = s.cross(Vec3f::normalized(f));
+	ret.rows[0] = _mm_set_ps(0.0f, -f.x, u.x, s.x);
+	ret.rows[1] = _mm_set_ps(0.0f, -f.y, u.y, s.y);
+	ret.rows[2] = _mm_set_ps(0.0f, -f.z, u.z, s.z);
+	ret.rows[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
+	return ret * Mat4::translation(Vec3f(-camera.x, -camera.y, -camera.z));
+}
+
+ng::math::Mat4 ng::math::Mat4::translation(const Vec3f & translation)
 {
 	Mat4 returner;
 	returner.rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);
@@ -249,7 +261,7 @@ ng::math::Mat4 ng::math::Mat4::translation(const Vec3 & translation)
 	return returner;
 }
 
-ng::math::Mat4 ng::math::Mat4::rotation(float angle, const Vec3& axis)
+ng::math::Mat4 ng::math::Mat4::rotation(const Vec3f& axis, float angle)
 {
 #define x axis.x
 #define y axis.y
@@ -289,7 +301,25 @@ ng::math::Mat4 ng::math::Mat4::rotation(float angle, const Vec3& axis)
 #undef z
 }
 
-ng::math::Mat4 ng::math::Mat4::scale(const Vec3 & scale)
+ng::math::Mat4 ng::math::Mat4::rotation(const Quaternion & quat)
+{
+	Mat4 m1;
+	Mat4 m2;
+
+	m1.rows[0] = _mm_set_ps(quat.getX(), -quat.getY(), quat.getZ(), quat.getW());
+	m1.rows[1] = _mm_set_ps(quat.getY(), quat.getW(), quat.getW(), -quat.getZ());
+	m1.rows[2] = _mm_set_ps(quat.getZ(), -quat.getW(), -quat.getX(), quat.getY());
+	m1.rows[3] = _mm_set_ps(quat.getW(), -quat.getZ(), -quat.getY(), -quat.getX());
+	
+	m2.rows[0] = _mm_set_ps(-quat.getX(), -quat.getY(), quat.getZ(), quat.getW());
+	m2.rows[1] = _mm_set_ps(-quat.getY(), quat.getW(), quat.getW(), -quat.getZ());
+	m2.rows[2] = _mm_set_ps(-quat.getZ(), -quat.getW(), -quat.getX(), quat.getY());
+	m2.rows[3] = _mm_set_ps(quat.getW(), quat.getZ(), quat.getY(), quat.getX());
+
+	return m1 * m2;
+}
+
+ng::math::Mat4 ng::math::Mat4::scale(const Vec3f & scale)
 {
 	Mat4 returner;
 	returner.rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, scale.x);
@@ -304,12 +334,12 @@ ng::math::Mat4 ng::math::operator*(Mat4 left, const Mat4 & right)
 	return left.mul(right);
 }
 
-ng::math::Vec3 ng::math::operator*(const Mat4 & left, const Vec3 & right)
+ng::math::Vec3f ng::math::operator*(const Mat4 & left, const Vec3f & right)
 {
 	return left.mul(right);
 }
 
-ng::math::Vec4 ng::math::operator*(const Mat4 & left, const Vec4 & right)
+ng::math::Vec4f ng::math::operator*(const Mat4 & left, const Vec4f & right)
 {
 	return left.mul(right);
 }

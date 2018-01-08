@@ -1,7 +1,7 @@
 #pragma once
 
 #include "aabb.h"
-#include "../Math/vec3.h"
+#include "../Math/Vec3f.h"
 
 namespace ng {
 	namespace bvolumes {

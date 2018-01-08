@@ -3,16 +3,16 @@
 #include <unordered_map>
 
 #include "../Entities/model.h"
-#include "../Math/vec3.h"
+#include "../Math/Vec3f.h"
 #include "../Math/hash_functions.h"
-#include "../Math/vec3s.h"
+#include "../Math/Vec3fs.h"
 #include "../camera.h"
 
 
 namespace ng {
 	namespace dstructs {
 
-		typedef ng::math::Vec3s GridIndex;
+		typedef ng::math::Vec3fs GridIndex;
 
 		class UniformGrid
 		{
@@ -21,19 +21,19 @@ namespace ng {
 			float m_GridSize;
 			float m_GridIndexRadius;
 
-			ng::math::Vec3s m_WorldSizeMultipler;
+			ng::math::Vec3fs m_WorldSizeMultipler;
 
 			std::unordered_multimap<GridIndex, ng::entity::Model*> m_Collidables;
 
 		public:
 
-			GridIndex getIndex(ng::math::Vec3 position);
-			ng::math::Vec3 getCenterPosition(const GridIndex* index);
+			GridIndex getIndex(ng::math::Vec3f position);
+			ng::math::Vec3f getCenterPosition(const GridIndex* index);
 
 			
 
 			UniformGrid();
-			UniformGrid(ng::math::Vec3s worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
+			UniformGrid(ng::math::Vec3fs worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
 			~UniformGrid();
 		};
 	}

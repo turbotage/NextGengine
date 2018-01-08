@@ -5,6 +5,7 @@
 #include "../Entities/mesh.h"
 #include "../BoundingVolumes/general_bv.h"
 #include "../BoundingVolumes/bounding_sphere.h"
+#include "../Props/movement_properties.h"
 
 namespace ng {
 	namespace scenegraph {
@@ -13,34 +14,87 @@ namespace ng {
 		private:
 
 		protected:
-			//tree-related
-			SceneNode * m_Parent;
+			/**  TREE-STRUCTURE  **/
+			SceneNode * m_Parent = nullptr;
 			std::vector<SceneNode*> m_Children;
 			std::string m_Name;
 
-			//positional
-			ng::math::Vec3 m_Position;
+			/**  POSITIONAL  **/
+			/**  world-transform  **/
+			ng::math::Mat4 m_WorldTransform;
 
-			//BV
+			/**  node-position  **/
+			ng::math::Vec3f m_Position;
+
+
+			/**  MOVEMENT  **/
+			ng::props::mMovementPropertiesMask m_MovementProperties;
+
+			/**  point-rotation  **/
+			ng::props::PointRotation* m_PointRotation = nullptr;
+
+			/**  local-rotation  **/
+			ng::props::LocalRotation* m_LocalRotation = nullptr;
+
+			/**  linear-movement  **/
+			ng::props::LinearMovement* m_LinearMovement = nullptr;
+
+
+			/**  BOUNDING-VOLUME  **/
 			ng::bvolumes::BoundingSphere m_BoundingSphere;
+
+			virtual void onAddChild();
+
+			virtual void onUpdate();
 
 		public:
 
+			void updateBoundingVolumes();
+
 			SceneNode();
 
-			ng::math::Vec3 getCenterPosition();
+			const ng::math::Vec3f& getCenterPosition();
 
-			float getBoundingSphereRadius();
+			const ng::math::Vec3f& getBoundingSpherePosition();
+
+			float getBoundingSphereRadius() const;
 			void setBoundingSphereRadius(float radius);
+
+			bool hasMovementProperties(ng::props::mMovementPropertiesMask propsMask);
+			void addMovementProperties(ng::props::mMovementPropertiesMask propsMask);
+			void setMovementProperties(ng::props::mMovementPropertiesMask propsMask);
+
+			/**  rotates this node and all its children around the rotationAxis by angle degrees **/
+			const ng::math::Mat4& rotate(const ng::math::Vec3f& rotationAxis, const float angle);
+			/**  rotates this node and all its children  **/
+			const ng::math::Mat4& rotate(const ng::math::Mat4& rotationMatrix);
+			/**  rotates this node and all its children  **/
+			const ng::math::Mat4& rotate(const ng::math::Quaternion& rotationQuaternion);
+			/**  rotates this node and all its children around a point and axis by angle degrees  **/
+			const ng::math::Mat4& rotateAround(const ng::math::Vec3f& rotationPoint, const ng::math::Vec3f& rotationAxis, const float angle);
+
+			/**  translates this node and all its children  **/
+			const ng::math::Mat4& translate(const ng::math::Vec3f& translation);
+			/**  translates this node and all its children  **/
+			const ng::math::Mat4& translate(const ng::math::Mat4& translationMatrix);
+
+			/**  applies some linear transformation to this node and all its children  **/
+			const ng::math::Mat4& transform(const ng::math::Mat4& transformation);
+			
+			/*  adds a child to the node  */
+			void addChild(SceneNode* childNode);
+
+			void update(float time);
+
 
 		};
 
 		class SceneGraph
 		{
 		private:
-
+			SceneNode m_RootNode;
 		public:
-
+			
 			
 
 

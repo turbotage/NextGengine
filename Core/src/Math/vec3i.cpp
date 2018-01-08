@@ -1,4 +1,4 @@
-#include "vec3i.h"
+#include "Vec3i.h"
 
 ng::math::Vec3i::Vec3i()
 {

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Props\movement_properties.cpp" />
     <ClCompile Include="src\Math\plane.cpp" />
     <ClCompile Include="src\Math\fft.cpp" />
     <ClCompile Include="src\Props\renderable.cpp" />
@@ -46,9 +47,9 @@
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\math\mat4.cpp" />
-    <ClCompile Include="src\math\vec3.cpp" />
-    <ClCompile Include="src\math\vec4.cpp" />
-    <ClCompile Include="src\math\vec2.cpp" />
+    <ClCompile Include="src\math\vec3f.cpp" />
+    <ClCompile Include="src\math\vec4f.cpp" />
+    <ClCompile Include="src\math\vec2f.cpp" />
     <ClCompile Include="src\Graphics\GraphicsObjects\vertex.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\Memory\VirtualMemoryAllocators\allocator.cpp" />
@@ -59,6 +60,7 @@
     <ClCompile Include="src\SceneGraph\transform_node.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Props\movement_properties.h" />
     <ClInclude Include="src\Math\plane.h" />
     <ClInclude Include="src\Math\fft.h" />
     <ClInclude Include="src\Math\hash_functions.h" />
@@ -86,10 +88,10 @@
     <ClInclude Include="src\Entities\entity.h" />
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\math\mat4.h" />
-    <ClInclude Include="src\math\vec3.h" />
-    <ClInclude Include="src\math\vec4.h" />
+    <ClInclude Include="src\math\vec3f.h" />
+    <ClInclude Include="src\math\vec4f.h" />
     <ClInclude Include="src\def.h" />
-    <ClInclude Include="src\math\vec2.h" />
+    <ClInclude Include="src\math\vec2f.h" />
     <ClInclude Include="src\Graphics\GraphicsObjects\vertex.h" />
     <ClInclude Include="src\graphics\window.h" />
     <ClInclude Include="src\SceneGraph\transform_node.h" />

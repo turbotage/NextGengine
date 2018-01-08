@@ -91,7 +91,7 @@ void ng::math::FFT::transform(ComplexArray& arr)
 	//fourier done
 }
 
-void ng::math::FFT::inversTransform()
+void ng::math::FFT::inverseTransform()
 {
 	m_Array = m_Array.apply(std::conj);
 	transform();

@@ -8,7 +8,7 @@ namespace ng {
 		{
 		private:
 			ng::math::Mat4 transform;
-			ng::math::Vec3 position;
+			ng::math::Vec3f position;
 		public:
 			
 		};

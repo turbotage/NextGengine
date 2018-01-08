@@ -21,7 +21,7 @@ namespace ng {
 			void transform();
 			static void transform(ComplexArray& arr);
 
-			void inversTransform();
+			void inverseTransform();
 			static void inverseTransform(ComplexArray& arr);
 
 			friend std::ostream& operator<<(std::ostream& stream, const FFT& fourier);

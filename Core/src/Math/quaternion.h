@@ -2,8 +2,8 @@
 
 #include "../def.h"
 #include <smmintrin.h>
-#include "vec3.h"
-#include "vec4.h"
+#include "Vec3f.h"
+#include "Vec4f.h"
 
 namespace ng {
 	namespace math {
@@ -29,19 +29,19 @@ namespace ng {
 			Quaternion& sub(const Quaternion& other);
 			Quaternion& mul(const Quaternion& other);
 
-			Quaternion& setRotation(const Vec3& rotationAxis, float angle);
-			static Quaternion getRotation(const Vec3& rotationAxis, float angle);
+			Quaternion& setRotation(const Vec3f& rotationAxis, float angle);
+			static Quaternion getRotation(const Vec3f& rotationAxis, float angle);
 			
-			Quaternion& setRotation(const Vec4& rotationAxis, float angle);
-			static Quaternion getRotation(const Vec4& rotationAxis, float angle);
+			Quaternion& setRotation(const Vec4f& rotationAxis, float angle);
+			static Quaternion getRotation(const Vec4f& rotationAxis, float angle);
 
-			Vec3 eulerAngles();
-			static Vec3 getEulerAngles(const Quaternion& quat);
+			Vec3f eulerAngles();
+			static Vec3f getEulerAngles(const Quaternion& quat);
 
-			Vec3 rotate(const Vec3& vec);
-			static Vec3 getRotation(const Quaternion& quat, const Vec3& vec);
+			Vec3f rotate(const Vec3f& vec);
+			static Vec3f getRotation(const Quaternion& quat, const Vec3f& vec);
 
-			void rotate4(const Quaternion& quat, Vec3& v1, Vec3& v2, Vec3& v3, Vec3& v4);
+			void rotate4(const Quaternion& quat, Vec3f& v1, Vec3f& v2, Vec3f& v3, Vec3f& v4);
 
 			float norm();
 			static float norm(const Quaternion& quat);
