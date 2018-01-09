@@ -11,7 +11,9 @@ namespace ng {
 			std::mutex m_Mutex;
 			
 
-			void setCalculatedCombinedCenter();
+			void setCombinedCenter();
+
+			void onUpdate(float time) override;
 
 		public:
 			

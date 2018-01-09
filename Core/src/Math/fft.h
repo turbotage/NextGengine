@@ -15,6 +15,7 @@ namespace ng {
 
 		class FFT
 		{
+		private:
 			ComplexArray m_Array;
 		public:
 

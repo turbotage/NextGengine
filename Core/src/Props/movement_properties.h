@@ -8,13 +8,13 @@ namespace ng {
 		typedef int mMovementPropertiesMask;
 
 		enum eMovementPropertyBit {
-			MOVEMENT_ENABLED_BIT = 0x01,
-			POINT_ROTATION_BIT = 0x02,
-			LOCAL_ROTATION_BIT = 0x04,
-			LINEAR_MOVEMENT_BIT = 0x08,
-			//VELOCITY_BIT = 0x10,
-			//ACCELERATION_BIT = 0x20,
-			//JERK_BIT = 0x40
+			MOVEMENT_ENABLED_BIT = 0x02,
+			POINT_ROTATION_BIT = 0x04,
+			LOCAL_ROTATION_BIT = 0x08,
+			LINEAR_MOVEMENT_BIT = 0x10,
+			VELOCITY_BIT = 0x20,
+			ACCELERATION_BIT = 0x40,
+			JERK_BIT = 0x80
 		};
 
 		struct PointRotation {
@@ -22,11 +22,14 @@ namespace ng {
 			ng::math::Vec3f rotationAxis;
 			float angularVelocity;
 			float angularAcceleration;
+			float angularJerk;
 		};
 
 		struct LocalRotation {
 			ng::math::Vec3f rotationAxis;
 			float angularVelocity;
+			float angularAcceleration;
+			float angularJerk;
 		};
 
 		typedef ng::math::Vec3f Velocity;

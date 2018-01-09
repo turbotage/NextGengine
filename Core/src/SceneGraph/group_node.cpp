@@ -1,7 +1,7 @@
 #include "group_node.h"
 
 
-void ng::scenegraph::GroupNode::setCalculatedCombinedCenter()
+void ng::scenegraph::GroupNode::setCombinedCenter()
 {
 	m_BoundingSphere.centerPos = ng::math::Vec3f(0.0f, 0.0f, 0.0f);
 
@@ -13,8 +13,9 @@ void ng::scenegraph::GroupNode::setCalculatedCombinedCenter()
 	m_BoundingSphere.centerPos /= (float)m_Children.size();
 }
 
-void ng::scenegraph::GroupNode::addChild(SceneNode* child) 
+void ng::scenegraph::GroupNode::onUpdate(float time)
 {
-	m_Children.push_back(child);
-	setCalculatedCombinedCenter();
+	setCombinedCenter();
 }
+
+
