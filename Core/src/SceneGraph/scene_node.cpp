@@ -1,5 +1,15 @@
 #include "scene_node.h"
 
+void ng::scenegraph::SceneNode::onAddChild()
+{
+
+}
+
+void ng::scenegraph::SceneNode::onUpdate(float time)
+{
+	setCombinedCenter();
+}
+
 void ng::scenegraph::SceneNode::updateBoundingVolumes()
 {
 	if (m_Parent == nullptr) {
@@ -143,4 +153,16 @@ void ng::scenegraph::SceneNode::update(float time)
 
 	m_Position = m_WorldTransform * m_Position;
 	onUpdate(time);
+}
+
+void ng::scenegraph::SceneNode::setCombinedCenter()
+{
+	m_BoundingSphere.centerPos = ng::math::Vec3f(0.0f, 0.0f, 0.0f);
+
+	ng::math::Vec3f dirVec;
+	for (int i = 0; i < m_Children.size(); ++i) {
+		m_BoundingSphere.centerPos += (m_Children[i]->getCenterPosition() * m_Children[i]->getBoundingSphereRadius());
+	}
+
+	m_BoundingSphere.centerPos /= (float)m_Children.size();
 }

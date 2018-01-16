@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\Renderers\deferred_renderer.cpp" />
+    <ClCompile Include="src\SceneGraph\culling_walker.cpp" />
     <ClCompile Include="src\Props\movement_properties.cpp" />
     <ClCompile Include="src\Math\plane.cpp" />
     <ClCompile Include="src\Math\fft.cpp" />
@@ -57,9 +59,12 @@
     <ClCompile Include="src\Math\vec3i.cpp" />
     <ClCompile Include="src\DataStructures\uniform_grid.cpp" />
     <ClCompile Include="src\Math\vec3s.cpp" />
+    <ClCompile Include="src\SceneGraph\scene_node.cpp" />
     <ClCompile Include="src\SceneGraph\transform_node.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />
+    <ClInclude Include="src\SceneGraph\culling_walker.h" />
     <ClInclude Include="src\Props\movement_properties.h" />
     <ClInclude Include="src\Math\plane.h" />
     <ClInclude Include="src\Math\fft.h" />
@@ -94,6 +99,7 @@
     <ClInclude Include="src\math\vec2f.h" />
     <ClInclude Include="src\Graphics\GraphicsObjects\vertex.h" />
     <ClInclude Include="src\graphics\window.h" />
+    <ClInclude Include="src\SceneGraph\scene_node.h" />
     <ClInclude Include="src\SceneGraph\transform_node.h" />
     <ClInclude Include="test_code.h" />
     <ClInclude Include="src\Memory\VirtualMemoryAllocators\allocator.h" />

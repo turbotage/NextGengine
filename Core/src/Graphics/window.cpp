@@ -197,6 +197,9 @@ void ng::graphics::Window::run()
 {
 	while (!glfwWindowShouldClose(glfwWindowPtr)) {
 		glfwPollEvents();
+
+
+
 	}
 }
 

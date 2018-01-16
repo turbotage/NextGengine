@@ -188,6 +188,7 @@ void ng::graphics::VulkanBase::createPhysicalDevices()
 		printf("rate graphics device\n");
 		printf("MemHeapCount : %d\n", memProperties.memoryHeapCount);
 		printf("MemTypeCount : %d\n", memProperties.memoryTypeCount);
+
 		for (int i = 0; i < memProperties.memoryHeapCount; ++i) {
 			printf("HeapIndex : %d\n", i);
 			printf("HeapSize : %" PRIu64 "\n", memProperties.memoryHeaps[i].size);

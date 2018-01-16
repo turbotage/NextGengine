@@ -36,6 +36,20 @@ typedef uint64_t uint64;
 typedef uint8 byte;
 typedef uint32_t uint;
 
+#include <map>
+#include <algorithm>
+
+namespace ng {
+	namespace stl {
+		
+		template<typename T, typename R>
+		searchMultimapByValue(std::multimap<T, R>::interator searchStart, std::multimap<T, R>::interator searchEnd, R searchValue) {
+			using const_ref = std::multimap<T, R>::const_reference;
+			std::find_if()
+		}
+	}
+}
+
 //inherit to stop class from being copyable 
 struct NotCopyable {
 public:

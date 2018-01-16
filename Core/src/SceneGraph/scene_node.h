@@ -11,6 +11,11 @@ namespace ng {
 		class SceneNode {
 		private:
 
+			void update(float time);
+
+			void setCombinedCenter();
+
+
 		protected:
 			/**  TREE-STRUCTURE  **/
 			SceneNode * m_Parent = nullptr;
@@ -79,10 +84,20 @@ namespace ng {
 			/**  applies some linear transformation to this node and all its children  **/
 			const ng::math::Mat4& transform(const ng::math::Mat4& transformation);
 
-			/*  adds a child to the node  */
+			/**  adds a child to the node  **/
 			void addChild(SceneNode* childNode);
 
-			void update(float time);
+			/**  gets called when cull-walker checks if this node is in camera view, 
+				overide if things need to be done during frustrum culling  **/
+			virtual void onFrutrumCulling();
+
+			/**  gets called when collision-walker checks if this node has been in a collision,
+			overide if things need to be done during collision-check  **/
+			virtual void onCollisionCheck();
+
+			/**  gets called when transformation-walker updates this node's position and movement,
+			overide if things need to be done during transformation-changes  **/
+			virtual void onMovementUpdate();
 
 		};
 	}
