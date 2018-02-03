@@ -8,39 +8,6 @@
 
 namespace ng {
 
-	namespace vma {
-
-		class VulkanMemoryAllocator {
-		private:
-
-			VkDevice* m_Device;
-			VkPhysicalDevice* m_PhysicalDevice;
-
-			VkBuffer m_StagingBuffer;
-			VkDeviceMemory m_StagingBufferMemory;
-
-			void createVkBufferAndMemory(
-				VkBuffer* buffer, 
-				VkDeviceMemory* memory, 
-				VkDeviceSize size, 
-				VkBufferUsageFlags usage, 
-				VkMemoryPropertyFlags properties, 
-				VkSharingMode sharingMode);
-
-			
-
-
-		protected:
-
-		public:
-
-			Buffer createBuffer(VkDeviceSize size, VkMemoryPropertyFlags memRequirements);
-
-			void freeBuffer(Buffer buffer);
-
-		};
-	}
-
 	namespace memory {
 /*
 #define ALLOCATOR_BLOCK_SIZE 4096

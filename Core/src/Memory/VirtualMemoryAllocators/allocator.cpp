@@ -1,4 +1,5 @@
 #include "allocator.h"
+#include "..\vulkan_memory_allocator.h"
 
 void ng::memory::Allocator::init(uint64 size)
 {	
@@ -13,24 +14,3 @@ void ng::memory::Allocator::init(uint64 size)
 }
 
 
-
-
-void ng::vma::VulkanMemoryAllocator::createVkBufferAndMemory(
-	VkBuffer* buffer, 
-	VkDeviceMemory* memory, 
-	VkDeviceSize size, 
-	VkBufferUsageFlags usage, 
-	VkMemoryPropertyFlags properties, 
-	VkSharingMode sharingMode)
-{
-	VkBufferCreateInfo createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	createInfo.pNext = nullptr;
-	createInfo.size = size;
-	createInfo.usage = usage;
-	createInfo.sharingMode = sharingMode;
-
-	if (vkCreateBuffer(*m_Device, &createInfo, nullptr, buffer) != VK_SUCCESS) {
-
-	}
-}

@@ -4,6 +4,9 @@
 
 #include <map>
 #include <unordered_map>
+#include <mutex>
+
+#include "vulkan_memory_allocator.h"
 
 namespace ng {
 	namespace vma {
@@ -12,36 +15,84 @@ namespace ng {
 		private:
 			friend class VkBufferRegionAllocator;
 
-			std::map<VkDeviceSize, VkDeviceSize>::iterator m_OffsetAndSize;
+			uint16 m_BufferCopies;
+			
+			VkBuffer* m_Buffer;
 
-			friend void VkBufferRegionAllocator::setBufferIt(Buffer*, std::map<VkDeviceSize, VkDeviceSize>::iterator);
-
+			void* m_Data;
+			
+			VkDeviceSize m_Offset;
+			
+			VkDeviceSize m_Size;
 		public:
-			VkBuffer * buffer;
 
-			VkDeviceSize getOffset() {
-				return m_OffsetAndSize->first;
-			}
+			Buffer();
 
-			VkDeviceSize getSize() {
-				return m_OffsetAndSize->second;
-			}
+			Buffer(VkDeviceSize offset, VkDeviceSize size, VkBuffer* buffer);
+
+			Buffer(Buffer &buf);
+
 		};
+
+		
 
 		class VkBufferRegionAllocator {
 		private:
-			void setBufferIt(Buffer* buffer, std::map<VkDeviceSize, VkDeviceSize>::iterator it) {
-				buffer->m_OffsetAndSize = it;
-			}
 
+			friend VulkanMemoryAllocator;
+
+			std::mutex m_MutexLock;
+
+			VkMemoryAlignment m_MemoryAlignment;
 			VkDeviceSize m_MemorySize;
 			VkDeviceSize m_FreeMemorySize;
-			VkDeviceMemory m_DeviceMemory;
-
-			VkBuffer m_Buffer;
 
 			/**  holds all allocations done in this VkDeviceMemory instance, //offset, size **/
 			std::map<VkDeviceSize, VkDeviceSize> m_Allocations;
+
+			struct Allocations {
+			private:
+				struct SizeAndBuffer {
+					VkDeviceSize size;
+					Buffer* buffer;
+
+					SizeAndBuffer(VkDeviceSize size, Buffer* buffer) 
+						: size(size), buffer(buffer) {};
+				};
+				
+				std::map<VkDeviceSize, SizeAndBuffer> m_Allocations;
+			
+			public:
+
+				void insert(VkDeviceSize offset, VkDeviceSize size, Buffer* buffer) {
+					m_Allocations.insert(std::pair<VkDeviceSize, SizeAndBuffer>(offset, SizeAndBuffer(size, buffer)));
+				}
+
+				void erase(VkDeviceSize offset) {
+					m_Allocations.erase(m_Allocations.find(offset));
+				}
+
+				void clear() {
+					m_Allocations.clear();
+				}
+
+				void erase(std::map<VkDeviceSize, SizeAndBuffer>::iterator it) {
+					m_Allocations.erase(it);
+				}
+
+				auto find(VkDeviceSize offset) {
+					return m_Allocations.find(offset);
+				}
+				
+				auto begin() {
+					return m_Allocations.begin();
+				}
+
+				auto end() {
+					return m_Allocations.end();
+				}
+
+			} m_Allocations;
 
 			struct FreeSpaces {
 			private:
@@ -81,7 +132,7 @@ namespace ng {
 				std::pair<VkDeviceSize, VkDeviceSize> findSuitableFreeSpace(VkDeviceSize size) {
 					auto it = sortBySize.lower_bound(size);
 					if (it == sortBySize.end()) {
-						std::runtime_error("failed to allocate\n");
+						return std::pair<VkDeviceSize, VkDeviceSize>(0, 0);
 					}
 					return *it;
 				}
@@ -90,14 +141,26 @@ namespace ng {
 
 		public:
 
+			VkDeviceMemory bufferMemory;
+			VkBuffer buffer;
+
+			VkBufferRegionAllocator(VkDeviceSize memorySize, VkMemoryAlignment memoryAlignment);
+
+			/**  offset, size **/
+			std::pair<VkDeviceSize, VkDeviceSize> findSuitableFreeSpace(VkDeviceSize size);
+
+			bool isInBufferRegion(Buffer* buffer);
+
 			/**  d  **/
-			Buffer createBuffer(VkDeviceSize size);
+			Buffer* createBuffer(VkDeviceSize size);
+
+			Buffer* createBuffer(VkDeviceSize offset, VkDeviceSize size);
 
 			/**  f  **/
-			void freeBuffer(Buffer buffer);
+			void freeBuffer(Buffer* buffer);
 
 			/**  d  **/
-			void defragment();
+			void defragment(VkBuffer stagingBuffer);
 
 		};
 	}
