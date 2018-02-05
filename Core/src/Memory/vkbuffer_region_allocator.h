@@ -15,6 +15,8 @@ namespace ng {
 		struct VkBufferRegionAllocatorCreateInfo {
 			VkDevice* device;
 			VkBuffer* stagingBuffer;
+			VkCommandPool* commandPool;
+			VkQueue* queue;
 			VkDeviceMemory* stagingBufferMemory;
 			VkDeviceSize memorySize;
 			VkMemoryAlignment memoryAlignment;

@@ -1,13 +1,5 @@
 #include "vkbuffer_region_allocator.h"
 
-//VkBuffer
-
-
-
-
-
-
-
 //VkBufferRegionAllocator
 
 ng::vma::VkBufferRegionAllocator::VkBufferRegionAllocator(VkBufferRegionAllocatorCreateInfo createInfo)
@@ -214,20 +206,72 @@ void ng::vma::VkBufferRegionAllocator::freeBuffer(Buffer* buffer)
 
 void ng::vma::VkBufferRegionAllocator::defragment()
 {
-	
 	m_FreeSpaces.clear();
-	auto it = m_Buffers.begin();
+
 	VkDeviceSize offset = 0;
 	void* data;
-	vkMapMemory(*m_CreateInfo.device, *m_CreateInfo.stagingBufferMemory, 0, VK_WHOLE_SIZE, 0, &data);
-	byte* dataPtr = (byte*)data;
-	for (auto it = m_Buffers.begin(); it != m_Buffers.end(); ++it ) {
-		VkDeviceSize size = it->second->m_Size;
-		if (it->first != offset) {
-			memcpy((void*)dataPtr, );
-		}
 
+	std::vector<Buffer*> newBuffers(m_Buffers.size());
+
+	Buffer* movedBuffer;
+
+	byte* dataPtr;
+
+	vkMapMemory(*m_CreateInfo.device, *m_CreateInfo.stagingBufferMemory, 0, VK_WHOLE_SIZE, 0, &data);
+	dataPtr = (byte*)data;
+
+	for (auto it = m_Buffers.begin(); it != m_Buffers.end(); ++it ) {
+		if (it->first != offset) {
+			memcpy((void*)dataPtr, it->second->m_Data, it->second->m_Size);
+			movedBuffer = it->second;
+			movedBuffer->m_Offset = offset;
+			newBuffers.push_back(movedBuffer);
+		}
 	}
 	vkUnmapMemory(*m_CreateInfo.device, *m_CreateInfo.stagingBufferMemory);
+
+	m_Buffers.clear();
+
+	for (int i = 0; i < newBuffers.size(); ++i) {
+		m_Buffers.insert(newBuffers[i]);
+	}
+
+	VkDeviceSize newFreeSpaceOffset = (--m_Buffers.end())->first + (--m_Buffers.end())->second->m_Size;
+	VkDeviceSize newFreeSpaceSize = (--m_Buffers.end())->second->m_Size;
+
+	m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
+
+	VkCommandBufferAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = *m_CreateInfo.commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	VkCommandBuffer commandBuffer;
+	vkAllocateCommandBuffers(*m_CreateInfo.device, &allocInfo, &commandBuffer);
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+	VkBufferCopy copyRegion = {};
+	copyRegion.srcOffset = 0;
+	copyRegion.dstOffset = 0;
+	copyRegion.size = m_CreateInfo.memorySize - newFreeSpaceSize;
+	vkCmdCopyBuffer(commandBuffer, *m_CreateInfo.stagingBuffer, buffer, 1, &copyRegion);
+
+	vkEndCommandBuffer(commandBuffer);
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	vkQueueSubmit(*m_CreateInfo.queue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(*m_CreateInfo.queue);
+
+	vkFreeCommandBuffers(*m_CreateInfo.device, *m_CreateInfo.commandPool, 1, &commandBuffer);
 }
 

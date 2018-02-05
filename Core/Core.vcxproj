@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Graphics\Renderers\deferred_renderer.cpp" />
-    <ClCompile Include="src\Memory\Buffer.cpp" />
+    <ClCompile Include="src\Memory\buffer.cpp" />
     <ClCompile Include="src\SceneGraph\culling_walker.cpp" />
     <ClCompile Include="src\Props\movement_properties.cpp" />
     <ClCompile Include="src\Math\plane.cpp" />
@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />
-    <ClInclude Include="src\Memory\Buffer.h" />
+    <ClInclude Include="src\Memory\buffer.h" />
     <ClInclude Include="src\SceneGraph\culling_walker.h" />
     <ClInclude Include="src\Props\movement_properties.h" />
     <ClInclude Include="src\Math\plane.h" />

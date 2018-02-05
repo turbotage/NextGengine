@@ -246,7 +246,7 @@ void ng::graphics::VulkanBase::createPhysicalDevices()
 		vkGetPhysicalDeviceMemoryProperties(device, &memProperties);
 		printf("rate compute device\n");
 		for (int i = 0; i < memProperties.memoryHeapCount; ++i) {
-			/*
+			
 			printf("%" PRIu64 "\n", memProperties.memoryHeaps[i].size);
 			printf("%d\n\n", memProperties.memoryHeaps[i].flags);
 			printf("%d\n\n", memProperties.memoryTypes[i].propertyFlags);
@@ -269,9 +269,9 @@ void ng::graphics::VulkanBase::createPhysicalDevices()
 				}
 			}
 			else {
-				printf("found non VK_MEMORY_HEAP_DEVICE_LOCAL_BIT\n");
+				printf("found no VK_MEMORY_HEAP_DEVICE_LOCAL_BIT\n");
 			}
-			*/
+			
 		}
 		printf("physicalDevice score: %d\n", score);
 		return score;
