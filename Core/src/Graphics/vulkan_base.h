@@ -57,12 +57,13 @@ namespace ng {
 			VkQueue computeQueue;
 		};
 		
-		struct Thread {
+		class VkThread {
+		public:
 			VkCommandPool commandPool;
 			std::vector<VkCommandBuffer> commandBuffers;
 		};
 
-		struct VulkanBase {
+		class VulkanBase {
 		public:
 			//Instance Extensions
 			std::vector<VkExtensionProperties> installedExtensions;
@@ -81,17 +82,15 @@ namespace ng {
 			bool computeAndGraphicsSameDevice = false;
 			//graphics
 			GraphicsUnit graphicsUnit;
-			std::vector<Thread> graphicsThreads;
+			std::vector<VkThread> graphicsThreads;
 			//computics
 			ComputeUnit computeUnit;
-			std::vector<Thread> computeThreads;
+			std::vector<VkThread> computeThreads;
 			
 			VkSurfaceKHR surface;
 			VkSurfaceFormatKHR surfaceFormat;
 			VkFormat surfaceColorFormat;
 			VkColorSpaceKHR surfaceColorSpace;
-
-			std::vector<Thread> threads;
 
 		public:
 
@@ -109,6 +108,9 @@ namespace ng {
 
 			void createLogicalDevices();
 			void freeLogicalDevices();
+			
+			void createCommandPools();
+			void freeCommandPools();
 
 		};
 

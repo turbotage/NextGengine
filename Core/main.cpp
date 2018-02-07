@@ -11,8 +11,11 @@
 
 using namespace ng::graphics;
 
+#define NUM_OF_THREADS 4
+
 class Application {
 private:
+
 	VulkanBase vulkanBase;
 	Window window;
 	VulkanGraphicsPipeline graphicsPipeline;
@@ -57,7 +60,8 @@ public:
 		graphicsPipeline.createRenderPass(&vulkanBase.graphicsUnit.device, &window);
 		graphicsPipeline.createGraphicsPipeline(&shaders);
 		window.createFramebuffers(&graphicsPipeline);
-		
+		vulkanBase.createCommandPools();
+
 		printf("successfully went through application initalization\n");
 	}
 
@@ -66,6 +70,7 @@ public:
 	}
 
 	void cleanup() {
+		vulkanBase.freeCommandPools();
 		window.freeFramebuffers();
 		graphicsPipeline.freeGraphicsPipeline();
 		graphicsPipeline.freeRenderPass();
@@ -82,48 +87,6 @@ public:
 };
 
 int main(int argc, char* argv[]){
-
-#define ARRAY_SIZE 500
-	char array[ARRAY_SIZE];
-	for (int i = 0; i < ARRAY_SIZE; ++i) {
-		array[i] = 'F';
-	}
-	for (int i = 0; i < ARRAY_SIZE; ++i) {
-		printf("%c", array[i]);
-	}
-	printf("\n");
-	std::vector<ng::memory::Allocation> allocations;
-	ng::memory::Allocator allocator;
-	allocator.init(ARRAY_SIZE);
-	char c = 'a';
-	int d = 0;
-	do {
-		if (c == 'a') {
-			std::cin >> d;
-			printf("%d\n", d);
-			ng::memory::Allocation alloc = allocator.allocate(d);
-			for (int i = alloc.offset; i < (alloc.offset + alloc.size); ++i) {
-				array[i] = 'A';
-			}
-			allocations.push_back(alloc);
-		}
-		else if (c == 'f') {
-			std::cin >> d;
-			printf("%d\n", d);
-			ng::memory::Allocation a = allocations[d];
-			allocator.free(a);
-			for (int i = a.offset; i < (a.offset + a.size); ++i) {
-				array[i] = 'F';
-				printf("%d\n", i);
-			}
-			allocations.erase(allocations.begin()+d);
-		}
-		for (int i = 0; i < ARRAY_SIZE; ++i) {
-			printf("%c", array[i]);
-		}
-		printf("\n");
-		std::cin >> c;
-	} while (c != 'q');
 
 	using namespace ng::graphics;
 	Application app;

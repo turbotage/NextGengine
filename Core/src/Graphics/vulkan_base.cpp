@@ -423,3 +423,30 @@ void ng::graphics::VulkanBase::freeLogicalDevices()
 	vkDestroyDevice(computeUnit.device, nullptr);
 }
 
+void ng::graphics::VulkanBase::createCommandPools()
+{
+	QueueFamilyIndices graphicsQueueFamilyIndices = findQueueFamilies(computeUnit.pDevice.device);
+	for (auto& thread : graphicsThreads) {
+		VkCommandPoolCreateInfo poolInfo = {};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.queueFamilyIndex = graphicsQueueFamilyIndices.graphicsFamily;
+		poolInfo.flags = 0;
+
+		if (vkCreateCommandPool(computeUnit.device, &poolInfo, nullptr, &thread.commandPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create command pool!");
+		}
+
+	}
+}
+
+void ng::graphics::VulkanBase::freeCommandPools()
+{
+	for (auto& thread : graphicsThreads) {
+		vkDestroyCommandPool(graphicsUnit.device, thread.commandPool, nullptr);
+	}
+
+	for (auto& thread : computeThreads) {
+		vkDestroyCommandPool(computeUnit.device, thread.commandPool, nullptr);
+	}
+}
+
