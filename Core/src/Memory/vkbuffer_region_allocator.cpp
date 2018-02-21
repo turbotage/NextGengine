@@ -2,18 +2,18 @@
 
 //VkBufferRegionAllocator
 
-ng::vma::VkBufferRegionAllocator::VkBufferRegionAllocator(VkBufferRegionAllocatorCreateInfo createInfo)
+ng::memory::vma::VkBufferRegionAllocator::VkBufferRegionAllocator(VkBufferRegionAllocatorCreateInfo createInfo)
 	: m_CreateInfo(createInfo)
 {
 
 }
 
-std::pair<VkDeviceSize, VkDeviceSize> ng::vma::VkBufferRegionAllocator::findSuitableFreeSpace(VkDeviceSize size)
+std::pair<VkDeviceSize, VkDeviceSize> ng::memory::vma::VkBufferRegionAllocator::findSuitableFreeSpace(VkDeviceSize size)
 {
 	return m_FreeSpaces.findSuitableFreeSpace(size);
 }
 
-bool ng::vma::VkBufferRegionAllocator::isInBufferRegion(Buffer* buffer)
+bool ng::memory::vma::VkBufferRegionAllocator::isInBufferRegion(Buffer* buffer)
 {
 	auto bufferIt = m_Buffers.find(buffer);
 	if (bufferIt != m_Buffers.end()) {
@@ -24,7 +24,7 @@ bool ng::vma::VkBufferRegionAllocator::isInBufferRegion(Buffer* buffer)
 	return false;
 }
 
-ng::vma::Buffer* ng::vma::VkBufferRegionAllocator::createBuffer(VkDeviceSize size)
+ng::memory::Buffer* ng::memory::vma::VkBufferRegionAllocator::createBuffer(VkDeviceSize size)
 {
 
 	VkDeviceSize allocSize = size + m_CreateInfo.memoryAlignment -(size % m_CreateInfo.memoryAlignment); //fix size to right mem-alignment
@@ -44,7 +44,7 @@ ng::vma::Buffer* ng::vma::VkBufferRegionAllocator::createBuffer(VkDeviceSize siz
 	return retBuffer;
 }
 
-ng::vma::Buffer* ng::vma::VkBufferRegionAllocator::createBuffer(VkDeviceSize offset, VkDeviceSize size)
+ng::memory::Buffer* ng::memory::vma::VkBufferRegionAllocator::createBuffer(VkDeviceSize offset, VkDeviceSize size)
 {
 	Buffer* retBuffer = new Buffer(offset, size, &buffer);
 
@@ -55,7 +55,7 @@ ng::vma::Buffer* ng::vma::VkBufferRegionAllocator::createBuffer(VkDeviceSize off
 	return retBuffer;
 }
 
-void ng::vma::VkBufferRegionAllocator::freeBuffer(Buffer* buffer)
+void ng::memory::vma::VkBufferRegionAllocator::freeBuffer(Buffer* buffer)
 {
 
 	//print a VkDeviceSize printf("New FreeSpace offset: %" PRIu64 " , New FreeSpace size : %" PRIu32 "\n", freeSpace.second, freeSpace.first); //show allocation parameters
@@ -204,7 +204,7 @@ void ng::vma::VkBufferRegionAllocator::freeBuffer(Buffer* buffer)
 	m_Buffers.erase(currentAllocIt);
 }
 
-void ng::vma::VkBufferRegionAllocator::defragment()
+void ng::memory::vma::VkBufferRegionAllocator::defragment()
 {
 	m_FreeSpaces.clear();
 
@@ -234,6 +234,7 @@ void ng::vma::VkBufferRegionAllocator::defragment()
 
 	for (int i = 0; i < newBuffers.size(); ++i) {
 		m_Buffers.insert(newBuffers[i]);
+		newBuffers[i]->update();
 	}
 
 	VkDeviceSize newFreeSpaceOffset = (--m_Buffers.end())->first + (--m_Buffers.end())->second->m_Size;

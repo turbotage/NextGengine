@@ -3,10 +3,15 @@
 #include "../def.h"
 
 namespace ng {
-	namespace vma {
+	namespace memory {
+
+		namespace vma {
+			class VkBufferRegionAllocator;
+		}
+
 		class Buffer {
-		private:
-			friend class VkBufferRegionAllocator;
+		protected:
+			friend class ng::memory::vma::VkBufferRegionAllocator;
 
 			uint16 m_BufferCopies;
 
@@ -17,6 +22,10 @@ namespace ng {
 			VkDeviceSize m_Offset;
 
 			VkDeviceSize m_Size;
+
+		protected:
+
+			virtual void update();
 
 		public:
 

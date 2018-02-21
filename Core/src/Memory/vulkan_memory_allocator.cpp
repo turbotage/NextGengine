@@ -2,7 +2,7 @@
 
 #define DEFAULT_ALLOC_SIZE 536870912
 
-void ng::vma::VulkanMemoryAllocator::createStagingBufferAndMemory(VkDeviceSize size) {
+void ng::memory::vma::VulkanMemoryAllocator::createStagingBufferAndMemory(VkDeviceSize size) {
 
 	VkBufferCreateInfo bufferInfo = {};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -29,12 +29,12 @@ void ng::vma::VulkanMemoryAllocator::createStagingBufferAndMemory(VkDeviceSize s
 	vkBindBufferMemory(*m_Device, m_StagingBuffer, m_StagingBufferMemory, 0);
 }
 
-ng::vma::VulkanMemoryAllocator::VulkanMemoryAllocator()
+ng::memory::vma::VulkanMemoryAllocator::VulkanMemoryAllocator()
 {
 
 }
 
-void ng::vma::VulkanMemoryAllocator::init(VulkanMemoryAllocatorCreateInfo createInfo)
+void ng::memory::vma::VulkanMemoryAllocator::init(VulkanMemoryAllocatorCreateInfo createInfo)
 {
 	m_CreateInfo = createInfo;
 	createStagingBufferAndMemory(createInfo.defaultAllocationSize);
@@ -49,7 +49,7 @@ void ng::vma::VulkanMemoryAllocator::init(VulkanMemoryAllocatorCreateInfo create
 	);
 }
 
-void ng::vma::VulkanMemoryAllocator::createVkBufferAndMemory(
+void ng::memory::vma::VulkanMemoryAllocator::createVkBufferAndMemory(
 	VkBuffer* buffer,
 	VkDeviceMemory* memory,
 	VkDeviceSize size,
@@ -83,7 +83,7 @@ void ng::vma::VulkanMemoryAllocator::createVkBufferAndMemory(
 	vkBindBufferMemory(*m_Device, m_StagingBuffer, m_StagingBufferMemory, 0);
 }
 
-uint32 ng::vma::VulkanMemoryAllocator::findMemoryType(uint32 typeFilter, VkMemoryPropertyFlags properties)
+uint32 ng::memory::vma::VulkanMemoryAllocator::findMemoryType(uint32 typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
 	vkGetPhysicalDeviceMemoryProperties(*m_PhysicalDevice, &memProperties);
@@ -95,7 +95,7 @@ uint32 ng::vma::VulkanMemoryAllocator::findMemoryType(uint32 typeFilter, VkMemor
 	return -1;
 }
 
-ng::vma::Buffer* ng::vma::VulkanMemoryAllocator::createBuffer(VkDeviceSize size)
+ng::memory::Buffer* ng::memory::vma::VulkanMemoryAllocator::createBuffer(VkDeviceSize size)
 {
 	VkDeviceSize allocSize = size + m_CreateInfo.memoryAlignment - (size % m_CreateInfo.memoryAlignment);
 	
@@ -119,7 +119,7 @@ ng::vma::Buffer* ng::vma::VulkanMemoryAllocator::createBuffer(VkDeviceSize size)
 	return m_BufferRegionAllocators[suitableBufferRegionIndex].createBuffer(bestFitFreeSpace.first, bestFitFreeSpace.second);
 }
 
-void ng::vma::VulkanMemoryAllocator::freeBuffer(Buffer* buffer)
+void ng::memory::vma::VulkanMemoryAllocator::freeBuffer(Buffer* buffer)
 {
 	
 	for (const auto& bufferRegion : m_BufferRegionAllocators) {
@@ -130,7 +130,7 @@ void ng::vma::VulkanMemoryAllocator::freeBuffer(Buffer* buffer)
 
 }
 
-void ng::vma::VulkanMemoryAllocator::defragment()
+void ng::memory::vma::VulkanMemoryAllocator::defragment()
 {
 
 }

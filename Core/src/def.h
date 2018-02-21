@@ -1,6 +1,14 @@
 #pragma once
 
 #include <assert.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <fstream>
+#include <ostream>
+#include <stdexcept>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -8,8 +16,11 @@
 
 #ifdef __linux__
 #define ALIGN(s) __attribute__((aligned(s)))
-#elif _WIN32
+#elif defined(_WIN32)
 #define ALIGN(s) __declspec(align(s))
+#include <Windows.h>
+#include <fcntl.h>
+#include <io.h>
 #else 
 #define ALIGN(s) __attribute__((aligned(s)))
 #endif
@@ -38,9 +49,14 @@ typedef uint32_t uint;
 
 typedef uint8 VkMemoryAlignment;
 
-#include <map>
+#include <vector>
 #include <algorithm>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
 
+/*
 namespace ng {
 	namespace stl {
 		template<typename T, typename R>
@@ -50,6 +66,7 @@ namespace ng {
 		}
 	}
 }
+*/
 
 //inherit to stop class from being copyable 
 struct NotCopyable {

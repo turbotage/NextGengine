@@ -1,12 +1,14 @@
 #pragma once
 #include "def.h"
-#include <vector>
-#include "Graphics\vulkan_base.h"
 
 namespace ng {
+
 	namespace graphics {
+
+		class VulkanBase;
+
 		namespace debug {
-			
+
 			bool isValidationLayersEnabled();
 
 			bool checkValidationLayerSupport();
@@ -34,6 +36,9 @@ namespace ng {
 
 			// Clear debug callback
 			void freeDebugCallback(VkInstance instance, VkDebugReportCallbackEXT callback);
+		
+			std::string errorString(VkResult errorCode);
+
 		}
 	}
 
@@ -44,5 +49,15 @@ namespace ng {
 		~Debug();
 
 	};
+}
+
+#define VULKAN_CHECK_RESULT(f)																				\
+{																										\
+	VkResult res = (f);																					\
+	if (res != VK_SUCCESS)																				\
+	{																									\
+		std::cout << "Fatal : VkResult is \"" << ng::graphics::debug::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl; \
+		assert(res == VK_SUCCESS);																		\
+	}																									\
 }
 

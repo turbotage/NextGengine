@@ -1,116 +1,29 @@
-﻿  fft.cpp
-src\Math\fft.cpp(5): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-src\Math\fft.cpp(51): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-src\Math\fft.cpp(99): warning C4244: 'argument': conversion from '::size_t' to 'const std::complex<double>::_Ty', possible loss of data
-src\Math\fft.cpp(108): warning C4244: 'argument': conversion from '::size_t' to 'const std::complex<double>::_Ty', possible loss of data
-src\Math\fft.cpp(114): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  renderable.cpp
-  collidable.cpp
-  object.cpp
-src\Entities\object.cpp(5): error C2653: 'Object': is not a class or namespace name
-src\Entities\object.cpp(6): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-src\Entities\object.cpp(6): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
-src\Entities\object.cpp(7): error C2550: 'Object': constructor initializer lists are only allowed on constructor definitions
-src\Entities\object.cpp(9): warning C4508: 'Object': function should return a value; 'void' return type assumed
-src\Entities\object.cpp(12): error C2653: 'Object': is not a class or namespace name
-src\Entities\object.cpp(13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-src\Entities\object.cpp(13): error C2084: function 'int Object(void)' already has a body
-  src\Entities\object.cpp(5): note: see previous definition of 'Object'
-  general_bv.cpp
-  bounding_sphere.cpp
-  physical_properties.cpp
-  binary_tree.cpp
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\binary_tree.h(30): error C2244: 'ng::dstructs::BinaryTree<T>::search': unable to match function definition to an existing declaration
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\binary_tree.h(29): note: see declaration of 'ng::dstructs::BinaryTree<T>::search'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\binary_tree.h(30): note: definition
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\binary_tree.h(30): note: 'void ng::dstructs::BinaryTree<T>::search(T)'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\binary_tree.h(30): note: existing declarations
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\binary_tree.h(30): note: 'ng::dstructs::BinaryTree<T>::BinaryTreeNode *ng::dstructs::BinaryTree<T>::search(T)'
-  aabb.cpp
-  camera.cpp
-  oc_tree.cpp
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\../Entities\model.h(22): error C2143: syntax error: missing ';' before '}'
-  scene_graph.cpp
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\scene_graph.h(3): fatal error C1083: Cannot open include file: '': No such file or directory
-  vulkan_graphics_pipeline.cpp
-  vulkan_pipeline.cpp
-  vulkan_base.cpp
-src\Graphics\vulkan_base.cpp(191): warning C4018: '<': signed/unsigned mismatch
-src\Graphics\vulkan_base.cpp(196): warning C4018: '<': signed/unsigned mismatch
-src\Graphics\vulkan_base.cpp(201): warning C4244: '+=': conversion from 'VkDeviceSize' to 'int', possible loss of data
-src\Graphics\vulkan_base.cpp(204): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
-src\Graphics\vulkan_base.cpp(204): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
-src\Graphics\vulkan_base.cpp(208): warning C4244: '+=': conversion from 'VkDeviceSize' to 'int', possible loss of data
-src\Graphics\vulkan_base.cpp(211): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
-src\Graphics\vulkan_base.cpp(211): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
-src\Graphics\vulkan_base.cpp(215): warning C4244: '+=': conversion from 'VkDeviceSize' to 'int', possible loss of data
-src\Graphics\vulkan_base.cpp(218): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
-src\Graphics\vulkan_base.cpp(218): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
-src\Graphics\vulkan_base.cpp(221): warning C4244: '+=': conversion from 'VkDeviceSize' to 'int', possible loss of data
-src\Graphics\vulkan_base.cpp(247): warning C4018: '<': signed/unsigned mismatch
-  vulkan_model.cpp
-  dyn_mat.cpp
-  dyn_vec.cpp
-  quaternion.cpp
-src\math\quaternion.cpp(26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-src\math\quaternion.cpp(31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-src\math\quaternion.cpp(39): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-src\math\quaternion.cpp(40): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  model.cpp
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\entities\model.h(22): error C2143: syntax error: missing ';' before '}'
-  Compiling...
-  mesh.cpp
-  entity.cpp
-  debug.cpp
-  main.cpp
-main.cpp(104): error C3779: 'ng::memory::Allocator::allocate': a function that returns 'auto' cannot be used before it is defined
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\Memory\VirtualMemoryAllocators\allocator.h(43): note: see declaration of 'ng::memory::Allocator::allocate'
-main.cpp(105): warning C4244: 'initializing': conversion from 'uint64' to 'int', possible loss of data
-main.cpp(115): warning C4244: 'initializing': conversion from 'uint64' to 'int', possible loss of data
-  mat4.cpp
-src\math\mat4.cpp(231): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  vec3.cpp
-  vec4.cpp
-  vec2.cpp
-  vertex.cpp
-  window.cpp
-  allocator.cpp
-src\Memory\VirtualMemoryAllocators\allocator.cpp(53): warning C4477: 'printf' : format string '%u' requires an argument of type 'unsigned int', but variadic argument 2 has type 'uint64'
-  src\Memory\VirtualMemoryAllocators\allocator.cpp(53): note: consider using '%llu' in the format string
-  src\Memory\VirtualMemoryAllocators\allocator.cpp(53): note: consider using '%Iu' in the format string
-  src\Memory\VirtualMemoryAllocators\allocator.cpp(53): note: consider using '%I64u' in the format string
-src\Memory\VirtualMemoryAllocators\allocator.cpp(60): warning C4477: 'printf' : format string '%u' requires an argument of type 'unsigned int', but variadic argument 2 has type 'uint64'
-  src\Memory\VirtualMemoryAllocators\allocator.cpp(60): note: consider using '%llu' in the format string
-  src\Memory\VirtualMemoryAllocators\allocator.cpp(60): note: consider using '%Iu' in the format string
-  src\Memory\VirtualMemoryAllocators\allocator.cpp(60): note: consider using '%I64u' in the format string
-src\Memory\VirtualMemoryAllocators\allocator.cpp(76): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
-  vulkan_allocator.cpp
-src\Graphics\Allocation\vulkan_allocator.cpp(20): warning C4018: '<': signed/unsigned mismatch
-  vec3i.cpp
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\math\vec3i.h(27): error C2535: 'bool ng::math::Vec3i::operator <(const ng::math::Vec3i &) const': member function already defined or declared
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\math\vec3i.h(25): note: see declaration of 'ng::math::Vec3i::operator <'
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\math\vec3i.h(28): error C2535: 'bool ng::math::Vec3i::operator >(const ng::math::Vec3i &) const': member function already defined or declared
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\math\vec3i.h(26): note: see declaration of 'ng::math::Vec3i::operator >'
-src\Math\vec3i.cpp(79): error C2084: function 'bool ng::math::Vec3i::operator <(const ng::math::Vec3i &) const' already has a body
-  src\Math\vec3i.cpp(68): note: see previous definition of '<'
-src\Math\vec3i.cpp(84): error C2084: function 'bool ng::math::Vec3i::operator >(const ng::math::Vec3i &) const' already has a body
-  src\Math\vec3i.cpp(73): note: see previous definition of '>'
-  uniform_grid.cpp
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\uniform_grid.h(38): error C2908: explicit specialization; 'std::hash<_Kty>' has already been instantiated
-          with
-          [
-              _Kty=ng::dstructs::GridIndex
-          ]
-d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\uniform_grid.h(43): error C2766: explicit specialization; 'std::hash<_Kty>' has already been defined
-          with
-          [
-              _Kty=ng::dstructs::GridIndex
-          ]
-  D:\Program\Visual Studio 2017\VC\Tools\MSVC\14.12.25827\include\unordered_map(547): note: see previous definition of 'hash<ng::math::Vec3s>'
-src\DataStructures\uniform_grid.cpp(6): error C2039: 'xIndex': is not a member of 'ng::math::Vec3s'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\../Math/vec3s.h(8): note: see declaration of 'ng::math::Vec3s'
-src\DataStructures\uniform_grid.cpp(7): error C2039: 'yIndex': is not a member of 'ng::math::Vec3s'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\../Math/vec3s.h(8): note: see declaration of 'ng::math::Vec3s'
-src\DataStructures\uniform_grid.cpp(8): error C2039: 'zIndex': is not a member of 'ng::math::Vec3s'
-  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\datastructures\../Math/vec3s.h(8): note: see declaration of 'ng::math::Vec3s'
-  vec3s.cpp
+﻿  debug.cpp
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): error C2039: 'VulkanBase': is not a member of 'ng::graphics'
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(7): note: see declaration of 'ng::graphics'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): error C2079: 'VulkanBase' uses undefined class 'ng::graphics::debug::ng'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(25): error C2027: use of undefined type 'ng::graphics::debug::ng'
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): note: see declaration of 'ng::graphics::debug::ng'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(25): error C2065: 'vulkanBase': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(25): error C2182: 'setDebugValidationLayers': illegal use of type 'void'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(27): error C2027: use of undefined type 'ng::graphics::debug::ng'
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): note: see declaration of 'ng::graphics::debug::ng'
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(27): error C2065: 'vulkanBase': undeclared identifier
+d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(27): error C2182: 'setDebugExtensions': illegal use of type 'void'
+src\debug.cpp(59): error C2027: use of undefined type 'ng::graphics::debug::ng'
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): note: see declaration of 'ng::graphics::debug::ng'
+src\debug.cpp(59): error C2065: 'vulkanBase': undeclared identifier
+src\debug.cpp(59): error C2182: 'setDebugValidationLayers': illegal use of type 'void'
+src\debug.cpp(59): error C2374: 'ng::graphics::debug::setDebugValidationLayers': redefinition; multiple initialization
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(25): note: see declaration of 'ng::graphics::debug::setDebugValidationLayers'
+src\debug.cpp(60): error C2448: 'ng::graphics::debug::setDebugValidationLayers': function-style initializer appears to be a function definition
+src\debug.cpp(86): error C2027: use of undefined type 'ng::graphics::debug::ng'
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): note: see declaration of 'ng::graphics::debug::ng'
+src\debug.cpp(86): error C2065: 'vulkanBase': undeclared identifier
+src\debug.cpp(86): error C2182: 'setDebugExtensions': illegal use of type 'void'
+src\debug.cpp(86): error C2374: 'ng::graphics::debug::setDebugExtensions': redefinition; multiple initialization
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(27): note: see declaration of 'ng::graphics::debug::setDebugExtensions'
+src\debug.cpp(87): error C2448: 'ng::graphics::debug::setDebugExtensions': function-style initializer appears to be a function definition
+src\debug.cpp(117): error C2027: use of undefined type 'ng::graphics::debug::ng'
+  d:\vikto\documents\visual studio 2017\projects\nextgengine\core\src\debug.h(19): note: see declaration of 'ng::graphics::debug::ng'
+src\debug.cpp(158): warning C4065: switch statement contains 'default' but no 'case' labels

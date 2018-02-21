@@ -4,59 +4,61 @@
 
 
 namespace ng {
-	namespace vma {
+	namespace memory {
+		namespace vma {
 
-		struct VulkanMemoryAllocatorCreateInfo {
-			VkDeviceSize defaultAllocationSize;
-			VkMemoryAlignment memoryAlignment;
-			VkBufferUsageFlags usage;
-			VkMemoryPropertyFlags properties;
-			VkSharingMode sharingMode;
-		};
+			struct VulkanMemoryAllocatorCreateInfo {
+				VkDeviceSize defaultAllocationSize;
+				VkMemoryAlignment memoryAlignment;
+				VkBufferUsageFlags usage;
+				VkMemoryPropertyFlags properties;
+				VkSharingMode sharingMode;
+			};
 
-		class VulkanMemoryAllocator {
-		private:
+			class VulkanMemoryAllocator {
+			private:
 
-			std::mutex m_DefragmentationMutex;
+				std::mutex m_DefragmentationMutex;
 
-			VulkanMemoryAllocatorCreateInfo m_CreateInfo;
+				VulkanMemoryAllocatorCreateInfo m_CreateInfo;
 
-			VkDevice* m_Device;
-			VkPhysicalDevice* m_PhysicalDevice;
+				VkDevice* m_Device;
+				VkPhysicalDevice* m_PhysicalDevice;
 
-			VkMemoryPropertyFlags memoryProperties;
+				VkMemoryPropertyFlags memoryProperties;
 
-			VkBuffer m_StagingBuffer;
-			VkDeviceMemory m_StagingBufferMemory;
+				VkBuffer m_StagingBuffer;
+				VkDeviceMemory m_StagingBufferMemory;
 
-			std::vector<VkBufferRegionAllocator> m_BufferRegionAllocators;
+				std::vector<VkBufferRegionAllocator> m_BufferRegionAllocators;
 
-			void createStagingBufferAndMemory(VkDeviceSize size);
+				void createStagingBufferAndMemory(VkDeviceSize size);
 
-		protected:
+			protected:
 
-		public:
+			public:
 
-			VulkanMemoryAllocator();
+				VulkanMemoryAllocator();
 
-			void init(VulkanMemoryAllocatorCreateInfo createInfo);
+				void init(VulkanMemoryAllocatorCreateInfo createInfo);
 
-			void createVkBufferAndMemory(
-				VkBuffer* buffer,
-				VkDeviceMemory* memory,
-				VkDeviceSize size,
-				VkBufferUsageFlags usage,
-				VkMemoryPropertyFlags properties,
-				VkSharingMode sharingMode);
+				void createVkBufferAndMemory(
+					VkBuffer* buffer,
+					VkDeviceMemory* memory,
+					VkDeviceSize size,
+					VkBufferUsageFlags usage,
+					VkMemoryPropertyFlags properties,
+					VkSharingMode sharingMode);
 
-			uint32 findMemoryType(uint32 typeFilter, VkMemoryPropertyFlags properties);
+				uint32 findMemoryType(uint32 typeFilter, VkMemoryPropertyFlags properties);
 
-			Buffer* createBuffer(VkDeviceSize size);
+				Buffer* createBuffer(VkDeviceSize size);
 
-			void freeBuffer(Buffer* buffer);
+				void freeBuffer(Buffer* buffer);
 
-			void defragment();
+				void defragment();
 
-		};
+			};
+		}
 	}
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../def.h"
-#include <vector>
 
 
 
@@ -36,26 +35,6 @@ namespace ng {
 				return presentFamily >= 0;
 			}
 		};
-
-		struct PhysicalDevice {
-			VkPhysicalDevice device = VK_NULL_HANDLE;
-			VkPhysicalDeviceMemoryProperties memoryProperties;
-			std::vector<VkExtensionProperties> deviceExtensions;
-			std::vector<VkLayerProperties> deviceLayers;
-		};
-
-		struct GraphicsUnit {
-			PhysicalDevice pDevice;
-			VkDevice device;
-			VkQueue graphicsQueue;
-			VkQueue presentQueue;
-		};
-
-		struct ComputeUnit {
-			PhysicalDevice pDevice;
-			VkDevice device;
-			VkQueue computeQueue;
-		};
 		
 		class VkThread {
 		public:
@@ -80,12 +59,6 @@ namespace ng {
 			VkDebugReportCallbackEXT debugReportCallback;
 
 			bool computeAndGraphicsSameDevice = false;
-			//graphics
-			GraphicsUnit graphicsUnit;
-			std::vector<VkThread> graphicsThreads;
-			//computics
-			ComputeUnit computeUnit;
-			std::vector<VkThread> computeThreads;
 			
 			VkSurfaceKHR surface;
 			VkSurfaceFormatKHR surfaceFormat;

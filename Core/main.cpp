@@ -30,7 +30,7 @@ public:
 	~Application() {
 		cleanup();
 	}
-
+	 
 	void startCommandBuffers(std::vector<VkCommandBuffer>* buffers) {
 		for (uint32 i = 0; i < (*buffers).size(); ++i) {
 			VkCommandBufferBeginInfo beginInfo = {};

@@ -6,8 +6,6 @@ namespace ng {
 		{
 		public:
 
-			
-
 			CullingWalker();
 			~CullingWalker();
 		};
