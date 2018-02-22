@@ -32,13 +32,13 @@ namespace ng {
 
 			bool debugMarkersEnabled = false;
 
-			std::vector<VkThread> threads;
+			std::vector<VkThread>* threads;
 
 		public:
 
 			operator VkDevice() { return logicalDevice; }
 
-			VulkanDevice(VkPhysicalDevice physicalDevice);
+			VulkanDevice(VkPhysicalDevice physicalDevice, std::vector<VkThread>* threads);
 
 			~VulkanDevice();
 

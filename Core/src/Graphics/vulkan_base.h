@@ -38,6 +38,7 @@ namespace ng {
 		
 		class VkThread {
 		public:
+			uint32 queueFamilyIndex;
 			VkCommandPool commandPool;
 			std::vector<VkCommandBuffer> commandBuffers;
 		};

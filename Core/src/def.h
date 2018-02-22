@@ -76,4 +76,4 @@ public:
 	NotCopyable &operator =(NotCopyable const &NotCopyable) = delete;
 };
 
-
+#include "debug.h"

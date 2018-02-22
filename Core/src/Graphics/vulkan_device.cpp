@@ -2,9 +2,13 @@
 
 #include "../debug.h"
 
-ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice) 
+ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, std::vector<VkThread>* threads) 
 {
 	assert(physicalDevice);
+
+	assert(threads);
+
+	this->threads = threads;
 
 	this->physicalDevice = physicalDevice;
 
@@ -37,7 +41,7 @@ ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 
 ng::graphics::VulkanDevice::~VulkanDevice() 
 {
-	for (auto& thread : threads) {
+	for (auto& thread : *threads) {
 		if (thread.commandPool) {
 			vkDestroyCommandPool(logicalDevice, thread.commandPool, nullptr);
 		}
@@ -183,7 +187,9 @@ VkResult ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeature
 	VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice);
 
 	if (result == VK_SUCCESS) {
-		
+		for (auto& thread : *threads) {
+			thread.commandPool = createCommandPool(thread.queueFamilyIndex);
+		}
 	}
 
 	this->enabledFeatures = enabledFeatures;

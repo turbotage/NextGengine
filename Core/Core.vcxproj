@@ -66,6 +66,7 @@
     <ClCompile Include="src\Memory\vulkan_memory_allocator.cpp" />
     <ClCompile Include="src\Memory\vertex_index_buffer.cpp" />
     <ClCompile Include="src\Graphics\vulkan_device.cpp" />
+    <ClCompile Include="src\Graphics\vulkan_swap_chain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="src\Memory\vulkan_memory_allocator.h" />
     <ClInclude Include="src\Memory\vertex_index_buffer.h" />
     <ClInclude Include="src\Graphics\vulkan_device.h" />
+    <ClInclude Include="src\Graphics\vulkan_swap_chain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />
