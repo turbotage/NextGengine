@@ -6,34 +6,11 @@
 
 namespace ng {
 	namespace graphics {
-		
-		enum {
-			GRAPHICS_UNIT,
-			COMPUTE_UNIT,
-		};
 
 		struct SwapChainSupportDetails {
 			VkSurfaceCapabilitiesKHR capabilities;
 			std::vector<VkSurfaceFormatKHR> formats;
 			std::vector<VkPresentModeKHR> presentModes;
-		};
-
-		struct QueueFamilyIndices {
-			int graphicsFamily = -1;
-			int presentFamily = -1;
-			int computeFamily = -1;
-
-			bool isGraphicsComplete() {
-				return graphicsFamily >= 0;
-			}
-
-			bool isComputeComplete() {
-				return computeFamily >= 0;
-			}
-
-			bool isPresentComplete() {
-				return presentFamily >= 0;
-			}
 		};
 		
 		class VkThread {
@@ -68,17 +45,11 @@ namespace ng {
 
 		public:
 
-			QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-			SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
 			void createInstance();
 			void freeInstance();
 
 			void createDebugCallback();
 			void freeDebugCallback();
-
-			void createPhysicalDevices();
-			//void freePhysicalDevices();
 
 			void createLogicalDevices();
 			void freeLogicalDevices();

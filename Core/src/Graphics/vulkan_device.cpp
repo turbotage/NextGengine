@@ -148,6 +148,7 @@ VkResult ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeature
 		queueFamilyIndices.compute = queueFamilyIndices.graphics;
 	}
 
+	//Dedicated transfer queue
 	if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT) {
 		queueFamilyIndices.transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
 		if ((queueFamilyIndices.transfer != queueFamilyIndices.graphics) && (queueFamilyIndices.transfer != queueFamilyIndices.compute)) {

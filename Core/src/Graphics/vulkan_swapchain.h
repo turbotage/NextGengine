@@ -6,17 +6,17 @@
 namespace ng {
 	namespace graphics {
 
-		struct VulkanSwapChainCreateInfo {
+		struct VulkanSwapchainCreateInfo {
 			VkInstance instance;
 			VulkanDevice* vulkanDevice;
 		};
 
-		struct SwapChainBuffer {
+		struct SwapchainBuffer {
 			VkImage image;
 			VkImageView view;
 		};
 
-		class VulkanSwapChain
+		class VulkanSwapchain
 		{
 		private:
 			VkInstance instance;
@@ -41,24 +41,26 @@ namespace ng {
 
 			uint32 imageCount;
 			std::vector<VkImage> images;
-			std::vector<SwapChainBuffer> buffers;
+			std::vector<SwapchainBuffer> buffers;
 
 			uint32 queueNodeIndex = UINT32_MAX;
 
 		public:
 
-			VulkanSwapChain();
-			~VulkanSwapChain();
+			VulkanSwapchain(VulkanSwapchainCreateInfo createInfo);
+			~VulkanSwapchain();
 
 			void createSurface(GLFWwindow *glfwWindowPtr);
 
-			void createSwapChain(uint32* width, uint32* height, bool vsync = false);
+			void createSwapchain(uint32* width, uint32* height, bool vsync = false);
 
 			VkResult acquireNextImage(VkSemaphore presentCompleteSemaphore, uint32 *imageIndex);
 
 			VkResult queuePresent(VkQueue queue, uint32 imageIndex, VkSemaphore waitSemaphore = VK_NULL_HANDLE);
 
-			void cleanup();
+			void freeSwapchain();
+
+
 
 		};
 	}

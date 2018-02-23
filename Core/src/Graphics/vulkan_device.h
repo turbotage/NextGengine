@@ -2,6 +2,9 @@
 
 #include "vulkan_base.h"
 
+#define VULKAN_DEVICE_ID_PRESENT_UNIT 0
+#define VULKAN_DEVICE_ID_COMPUTE_UNIT 1
+
 namespace ng {
 	namespace graphics {
 
@@ -28,9 +31,18 @@ namespace ng {
 				uint32 graphics;
 				uint32 compute;
 				uint32 transfer;
+
+				bool isGraphicsComplete() { return graphics >= 0; }
+
+				bool isComputeComplete() { return compute >= 0; }
+
+				bool isTransferComplete() { return transfer >= 0; }
+
 			} queueFamilyIndices;
 
 			bool debugMarkersEnabled = false;
+
+			uint16 deviceID;
 
 			std::vector<VkThread>* threads;
 

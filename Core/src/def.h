@@ -49,6 +49,7 @@ typedef uint32_t uint;
 
 typedef uint8 VkMemoryAlignment;
 
+#include <array>
 #include <vector>
 #include <algorithm>
 #include <map>

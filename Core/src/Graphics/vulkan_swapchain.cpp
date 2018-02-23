@@ -1,11 +1,21 @@
-#include "vulkan_swap_chain.h"
+#include "vulkan_swapchain.h"
 
-void ng::graphics::VulkanSwapChain::createSurface(GLFWwindow *glfwWindowPtr)
+ng::graphics::VulkanSwapchain::VulkanSwapchain(VulkanSwapchainCreateInfo createInfo)
+	: instance(createInfo.instance), vulkanDevice(createInfo.vulkanDevice)
+{
+
+}
+
+ng::graphics::VulkanSwapchain::~VulkanSwapchain()
+{
+}
+
+void ng::graphics::VulkanSwapchain::createSurface(GLFWwindow *glfwWindowPtr)
 {
 	VULKAN_CHECK_RESULT(glfwCreateWindowSurface(instance, glfwWindowPtr, nullptr, &surface));
 }
 
-void ng::graphics::VulkanSwapChain::createSwapChain(uint32* width, uint32* height, bool vsync)
+void ng::graphics::VulkanSwapchain::createSwapchain(uint32* width, uint32* height, bool vsync)
 {
 	VkSwapchainKHR oldSwapChain = swapChain;
 
@@ -143,12 +153,12 @@ void ng::graphics::VulkanSwapChain::createSwapChain(uint32* width, uint32* heigh
 
 }
 
-VkResult ng::graphics::VulkanSwapChain::acquireNextImage(VkSemaphore presentCompleteSemaphore, uint32 * imageIndex)
+VkResult ng::graphics::VulkanSwapchain::acquireNextImage(VkSemaphore presentCompleteSemaphore, uint32 * imageIndex)
 {
 	return fpAcquireNextImageKHR(vulkanDevice->logicalDevice, swapChain, UINT64_MAX, presentCompleteSemaphore, (VkFence)nullptr, imageIndex);
 }
 
-VkResult ng::graphics::VulkanSwapChain::queuePresent(VkQueue queue, uint32 imageIndex, VkSemaphore waitSemaphore)
+VkResult ng::graphics::VulkanSwapchain::queuePresent(VkQueue queue, uint32 imageIndex, VkSemaphore waitSemaphore)
 {
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -164,7 +174,19 @@ VkResult ng::graphics::VulkanSwapChain::queuePresent(VkQueue queue, uint32 image
 	return fpQueuePresentKHR(queue, &presentInfo);
 }
 
-void ng::graphics::VulkanSwapChain::cleanup()
+void ng::graphics::VulkanSwapchain::freeSwapchain()
 {
-	if(swa)
+	if (swapChain != VK_NULL_HANDLE) {
+		for (uint32 i = 0; i < imageCount; ++i) {
+			vkDestroyImageView(vulkanDevice->logicalDevice, buffers[i].view, nullptr);
+		}
+	}
+	if (surface != VK_NULL_HANDLE) {
+		fpDestroySwapchainKHR(vulkanDevice->logicalDevice, swapChain, nullptr);
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+	}
+	surface = VK_NULL_HANDLE;
+	swapChain = VK_NULL_HANDLE;
 }
+
+
