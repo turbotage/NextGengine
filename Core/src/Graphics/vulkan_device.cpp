@@ -1,14 +1,8 @@
 #include "vulkan_device.h"
 
-#include "../debug.h"
-
-ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, std::vector<VkThread>* threads) 
+ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice) 
 {
 	assert(physicalDevice);
-
-	assert(threads);
-
-	this->threads = threads;
 
 	this->physicalDevice = physicalDevice;
 
@@ -41,7 +35,7 @@ ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice, std::v
 
 ng::graphics::VulkanDevice::~VulkanDevice() 
 {
-	for (auto& thread : *threads) {
+	for (auto& thread : threads) {
 		if (thread.commandPool) {
 			vkDestroyCommandPool(logicalDevice, thread.commandPool, nullptr);
 		}
@@ -105,11 +99,11 @@ uint32 ng::graphics::VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlag
 		}
 	}
 
-	throw std::runtime_error("Could not find a matching queue family index");
+	return -1;
 
 }
 
-VkResult ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, 
+void ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, 
 	std::vector<const char*> enabledExtensions, 
 	bool useSwapSchain, 
 	VkQueueFlags requestedQueueTypes)
@@ -185,17 +179,9 @@ VkResult ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeature
 		deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
 	}
 
-	VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice);
-
-	if (result == VK_SUCCESS) {
-		for (auto& thread : *threads) {
-			thread.commandPool = createCommandPool(thread.queueFamilyIndex);
-		}
-	}
+	VULKAN_CHECK_RESULT(vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice));
 
 	this->enabledFeatures = enabledFeatures;
-
-	return result;
 }
 
 bool ng::graphics::VulkanDevice::extensionSupported(std::string extension)
@@ -258,7 +244,7 @@ void ng::graphics::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffe
 	}
 }
 
-VkResult ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer * buffer, VkDeviceMemory * memory, void * data)
+void ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer * buffer, VkDeviceMemory * memory, void * data)
 {
 	VkBufferCreateInfo bufferCreateInfo = {};
 	bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -294,7 +280,94 @@ VkResult ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMe
 	}
 
 	VULKAN_CHECK_RESULT(vkBindBufferMemory(logicalDevice, *buffer, *memory, 0));
+}
 
-	return VK_SUCCESS;
+uint32 ng::graphics::VulkanDevice::getMemoryScore()
+{
+	uint32 score = 0;
+	for (int i = 0; i < memoryProperties.memoryHeapCount; ++i) {
+		LOGI("HeapIndex : " << i);
+		LOGI("HeapSize : " << memoryProperties.memoryHeaps[i].size);
+		LOGI("HeapFlags : " << memoryProperties.memoryHeaps[i].flags);
+
+		for (int j = 0; j < memoryProperties.memoryTypeCount; ++j) {
+			if (memoryProperties.memoryTypes[j].propertyFlags == VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) {
+				//Memory Type 0
+				if (memoryProperties.memoryTypes[j].heapIndex == i) {
+					LOGI("Found VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT\n");
+					score += memoryProperties.memoryHeaps[i].size / 10000;
+				}
+			}
+			else if (memoryProperties.memoryTypes[j].propertyFlags == VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) {
+				//Memory Type 1
+				if (memoryProperties.memoryTypes[j].heapIndex == i) {
+					LOGI("Found VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT\n");
+					score += memoryProperties.memoryHeaps[i].size / 30000;
+				}
+			}
+			else if (memoryProperties.memoryTypes[j].propertyFlags == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) {
+				//MemoryType 2
+				if (memoryProperties.memoryTypes[j].heapIndex == i) {
+					LOGI("Found VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT\n");
+					score += memoryProperties.memoryHeaps[i].size / 50000;
+				}
+			}
+			else if (memoryProperties.memoryTypes[j].propertyFlags == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT) {
+				if (memoryProperties.memoryTypes[j].heapIndex == i) {
+					LOGI("Found VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT\n");
+					score += memoryProperties.memoryHeaps[i].size / 80000;
+				}
+			}
+		}
+
+	}
+	return score;
+}
+
+uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceType)
+{
+	uint32 score;
+
+	switch (deviceType) {
+	case VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT:
+		if (features.geometryShader) {
+			return 0;
+		}
+		if (properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			return 0;
+		}
+		uint32 graphics = getQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+		if (graphics == -1) {
+			return 0;
+		}
+		uint32 transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
+		if (graphics != transfer) {
+			score += 10000;
+		}
+
+		score += (uint32)(properties.limits.maxImageDimension2D / 2);
+
+		score += getMemoryScore();
+
+		break;
+	case VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT:
+
+		break;
+	case VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_AND_COMPUTE_UNIT:
+
+		break;
+	case VULKAN_DEVICE_TYPE_GRAPHICS_UNIT:
+
+		break;
+	case VULKAN_DEVICE_TYPE_COMPUTE_UNIT:
+
+		break;
+	case VULKAN_DEVICE_TYPE_GRAPHICS_AND_COMPUTE_UNIT:
+
+		break;
+	default:
+
+		break;
+	}
 }
 

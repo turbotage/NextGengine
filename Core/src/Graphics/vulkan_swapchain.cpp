@@ -189,4 +189,25 @@ void ng::graphics::VulkanSwapchain::freeSwapchain()
 	swapChain = VK_NULL_HANDLE;
 }
 
+ng::graphics::SwapchainSupportDetails ng::graphics::VulkanSwapchain::querySwapchainSupport()
+{
+	SwapchainSupportDetails details;
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vulkanDevice->physicalDevice, surface, &details.capabilities);
+
+	uint32 formatCount;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(vulkanDevice->physicalDevice, surface, &formatCount, nullptr);
+	if (formatCount != 0) {
+		details.formats.resize(formatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(vulkanDevice->physicalDevice, surface, &formatCount, details.formats.data());
+	}
+
+	uint32 presentModeCount;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(vulkanDevice->physicalDevice, surface, &presentModeCount, nullptr);
+	if (presentModeCount != 0) {
+		details.presentModes.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(vulkanDevice->physicalDevice, surface, &presentModeCount, details.presentModes.data());
+	}
+	return details;
+}
+
 

@@ -6,12 +6,6 @@
 
 namespace ng {
 	namespace graphics {
-
-		struct SwapChainSupportDetails {
-			VkSurfaceCapabilitiesKHR capabilities;
-			std::vector<VkSurfaceFormatKHR> formats;
-			std::vector<VkPresentModeKHR> presentModes;
-		};
 		
 		class VkThread {
 		public:

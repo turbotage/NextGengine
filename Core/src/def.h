@@ -2,6 +2,8 @@
 
 #include <assert.h>
 #include <math.h>
+#include <complex>
+#include <valarray>
 #include <stdlib.h>
 #include <string>
 #include <cstring>

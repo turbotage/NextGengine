@@ -6,6 +6,12 @@
 namespace ng {
 	namespace graphics {
 
+		struct SwapchainSupportDetails {
+			VkSurfaceCapabilitiesKHR capabilities;
+			std::vector<VkSurfaceFormatKHR> formats;
+			std::vector<VkPresentModeKHR> presentModes;
+		};
+
 		struct VulkanSwapchainCreateInfo {
 			VkInstance instance;
 			VulkanDevice* vulkanDevice;
@@ -60,7 +66,7 @@ namespace ng {
 
 			void freeSwapchain();
 
-
+			SwapchainSupportDetails querySwapchainSupport();
 
 		};
 	}

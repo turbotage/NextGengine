@@ -8,6 +8,28 @@
 namespace ng {
 	namespace graphics {
 
+		enum VulkanDeviceTypeBits {
+			VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT,
+			VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT,
+			VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_AND_COMPUTE_UNIT,
+			VULKAN_DEVICE_TYPE_GRAPHICS_UNIT,
+			VULKAN_DEVICE_TYPE_COMPUTE_UNIT,
+			VULKAN_DEVICE_TYPE_GRAPHICS_AND_COMPUTE_UNIT
+		};
+
+		struct QueueFamilyIndices {
+			uint32 graphics;
+			uint32 compute;
+			uint32 transfer;
+
+			bool isGraphicsComplete() { return graphics >= 0; }
+
+			bool isComputeComplete() { return compute >= 0; }
+
+			bool isTransferComplete() { return transfer >= 0; }
+
+		};
+
 		class VulkanDevice
 		{
 		public:
@@ -27,30 +49,19 @@ namespace ng {
 
 			VkDevice logicalDevice;
 
-			struct QueueFamilyIndices {
-				uint32 graphics;
-				uint32 compute;
-				uint32 transfer;
-
-				bool isGraphicsComplete() { return graphics >= 0; }
-
-				bool isComputeComplete() { return compute >= 0; }
-
-				bool isTransferComplete() { return transfer >= 0; }
-
-			} queueFamilyIndices;
+			QueueFamilyIndices queueFamilyIndices;
 
 			bool debugMarkersEnabled = false;
 
 			uint16 deviceID;
 
-			std::vector<VkThread>* threads;
+			std::vector<VkThread> threads;
 
 		public:
 
 			operator VkDevice() { return logicalDevice; }
 
-			VulkanDevice(VkPhysicalDevice physicalDevice, std::vector<VkThread>* threads);
+			VulkanDevice(VkPhysicalDevice physicalDevice);
 
 			~VulkanDevice();
 
@@ -58,7 +69,7 @@ namespace ng {
 
 			uint32 getQueueFamilyIndex(VkQueueFlagBits queueFlags);
 
-			VkResult createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures,
+			void createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures,
 				std::vector<const char*> enabledExtensions,
 				bool useSwapSchain = true,
 				VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT
@@ -73,14 +84,18 @@ namespace ng {
 
 			void flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free = true);
 
-			VkResult createBuffer(VkBufferUsageFlags usage,
+			void createBuffer(VkBufferUsageFlags usage,
 				VkMemoryPropertyFlags memoryPropertyFlags,
 				VkDeviceSize size,
 				VkBuffer *buffer,
 				VkDeviceMemory *memory,
 				void *data = nullptr);
 
+			static VulkanDevice* getMostSuitableDevice(std::vector<VulkanDevice*> pDevices, VulkanDeviceTypeBits deviceType);
 
+			uint32 getMemoryScore();
+
+			uint32 getDeviceScore(VulkanDeviceTypeBits deviceType);
 
 		};
 		
