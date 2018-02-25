@@ -13,7 +13,7 @@ using namespace ng::graphics;
 
 #define NUM_OF_THREADS 4
 
-class Application {
+class ApplicationOld {
 private:
 
 	VulkanBase vulkanBase;
@@ -27,7 +27,7 @@ private:
 	
 public:
 
-	~Application() {
+	~ApplicationOld() {
 		cleanup();
 	}
 	 
@@ -86,10 +86,18 @@ public:
 
 };
 
+class Application {
+private:
+
+public:
+
+
+};
+
 int main(int argc, char* argv[]){
 
 	using namespace ng::graphics;
-	Application app;
+	ApplicationOld app;
 	try {
 		app.init();
 		app.run();

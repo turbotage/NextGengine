@@ -9,24 +9,27 @@ namespace ng {
 	namespace graphics {
 
 		enum VulkanDeviceTypeBits {
-			VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT,
-			VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT,
-			VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_AND_COMPUTE_UNIT,
-			VULKAN_DEVICE_TYPE_GRAPHICS_UNIT,
-			VULKAN_DEVICE_TYPE_COMPUTE_UNIT,
-			VULKAN_DEVICE_TYPE_GRAPHICS_AND_COMPUTE_UNIT
+			VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT = 1,
+			VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT = 2,
+			VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT = 4,
+			VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE = 8
 		};
 
 		struct QueueFamilyIndices {
-			uint32 graphics;
-			uint32 compute;
-			uint32 transfer;
+			int32 graphics = -1;
+			int32 compute = -1;
+			int32 transfer = -1;
+			int32 present = -1;
 
 			bool isGraphicsComplete() { return graphics >= 0; }
 
 			bool isComputeComplete() { return compute >= 0; }
 
 			bool isTransferComplete() { return transfer >= 0; }
+
+			bool isPresentComplete() { return transfer >= 0; }
+
+			static bool isSame(int32 queue1, int32 queue2) { return (queue1 == queue2); }
 
 		};
 
@@ -67,7 +70,9 @@ namespace ng {
 
 			uint32 getMemoryTypeIndex(uint32 typeBits, VkMemoryPropertyFlags properties, VkBool32 *memTypeFound = nullptr);
 
-			uint32 getQueueFamilyIndex(VkQueueFlagBits queueFlags);
+			int32 getQueueFamilyIndex(VkQueueFlagBits queueFlags);
+
+			std::pair<int32, int32> getGraphicsAndPresentQueueFamilyIndex(VkSurfaceKHR surface);
 
 			void createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures,
 				std::vector<const char*> enabledExtensions,
@@ -91,11 +96,9 @@ namespace ng {
 				VkDeviceMemory *memory,
 				void *data = nullptr);
 
-			static VulkanDevice* getMostSuitableDevice(std::vector<VulkanDevice*> pDevices, VulkanDeviceTypeBits deviceType);
-
 			uint32 getMemoryScore();
 
-			uint32 getDeviceScore(VulkanDeviceTypeBits deviceType);
+			uint32 getDeviceScore(VulkanDeviceTypeBits deviceType, VkSurfaceKHR surface);
 
 		};
 		

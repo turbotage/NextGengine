@@ -45,12 +45,6 @@ namespace ng {
 			void createDebugCallback();
 			void freeDebugCallback();
 
-			void createLogicalDevices();
-			void freeLogicalDevices();
-			
-			void createCommandPools();
-			void freeCommandPools();
-
 		};
 
 	}

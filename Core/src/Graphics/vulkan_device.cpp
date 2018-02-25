@@ -1,4 +1,5 @@
 #include "vulkan_device.h"
+#include "vulkan_swapchain.h"
 
 ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice) 
 {
@@ -63,11 +64,12 @@ uint32 ng::graphics::VulkanDevice::getMemoryTypeIndex(uint32 typeBits, VkMemoryP
 		return 0;
 	}
 	else {
+		LOGD("no found matching memory type");
 		throw std::runtime_error("Could not find a matching memory type");
 	}
 }
 
-uint32 ng::graphics::VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlags) 
+int32 ng::graphics::VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlags) 
 {
 	if (queueFlags & VK_QUEUE_COMPUTE_BIT) {
 		for (uint32 i = 0; i < static_cast<uint32>(queueFamilyProperties.size()); ++i) {
@@ -99,8 +101,52 @@ uint32 ng::graphics::VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlag
 		}
 	}
 
+	LOGD("no queue family could meet the specified requirements");
 	return -1;
+	//throw std::runtime_error("could not find queue family");
+}
 
+std::pair<int32, int32> ng::graphics::VulkanDevice::getGraphicsAndPresentQueueFamilyIndex(VkSurfaceKHR surface)
+{
+	std::pair<int32, int32> ret(-1, -1);
+	if (surface != nullptr) {
+		for (uint32 i = 0; i < static_cast<uint32>(queueFamilyProperties.size()); ++i) {
+			if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				VkBool32 presentSupport;
+				vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
+				if (presentSupport) {
+					ret.first = i;
+					ret.second = i;
+					return ret;
+				}
+			}
+		}
+		for (uint32 i = 0; i < static_cast<uint32>(queueFamilyProperties.size()); ++i) {
+			if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				ret.first = i;
+			}
+			VkBool32 presentSupport;
+			vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
+			if (presentSupport) {
+				ret.second = i;
+			}
+			if ((ret.first != -1) && (ret.second != -1)) {
+				return ret;
+			}
+		}
+	}
+	else {
+		for (uint32 i = 0; i < static_cast<uint32>(queueFamilyProperties.size()); ++i) {
+			if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				ret.first = i;
+				ret.second = -1;
+				return ret;
+			}
+		}
+	}
+
+	LOGD("no queue family could meet the specified requirements");
+	return ret;
 }
 
 void ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, 
@@ -324,50 +370,97 @@ uint32 ng::graphics::VulkanDevice::getMemoryScore()
 	return score;
 }
 
-uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceType)
+uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceType, VkSurfaceKHR surface)
 {
-	uint32 score;
+	uint32 score = 0;
 
-	switch (deviceType) {
-	case VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT:
+	std::pair<int32, int32> graphicsAndPresent;
+	int32 transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
+	if (transfer == -1) {
+		return 0;
+	}
+	int32 compute = getQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
+
+	if ((deviceType & VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT)) {
 		if (features.geometryShader) {
 			return 0;
 		}
 		if (properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			return 0;
 		}
-		uint32 graphics = getQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-		if (graphics == -1) {
+		graphicsAndPresent = getGraphicsAndPresentQueueFamilyIndex(surface);
+		if (graphicsAndPresent.first == -1) {
 			return 0;
 		}
-		uint32 transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
-		if (graphics != transfer) {
-			score += 10000;
+		if (deviceType & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT) {
+
+			if (graphicsAndPresent.second == -1) {
+				return 0;
+			}
+
+			SwapchainSupportDetails details;
+			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &details.capabilities);
+
+			uint32 formatCount;
+			vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, nullptr);
+			if (formatCount != 0) {
+				details.formats.resize(formatCount);
+				vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &formatCount, details.formats.data());
+			}
+
+			uint32 presentModeCount;
+			vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
+			if (presentModeCount != 0) {
+				details.presentModes.resize(presentModeCount);
+				vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, details.presentModes.data());
+			}
+			if (details.formats.empty() && details.presentModes.empty()) {
+				return 0;
+			}
+
+			if (!QueueFamilyIndices::isSame(graphicsAndPresent.first, graphicsAndPresent.second) && (deviceType & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE)) {
+				return 0;
+			}
+			else if(QueueFamilyIndices::isSame(graphicsAndPresent.first, graphicsAndPresent.second)){
+				if (deviceType & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE) {
+					score += 2000;
+				}
+				else {
+					score += 1000;
+				}
+			}
+
+			if (!QueueFamilyIndices::isSame(graphicsAndPresent.first, transfer)) {
+				score += 500;
+			}
+			if (!QueueFamilyIndices::isSame(graphicsAndPresent.second, transfer)) {
+				score += 500;
+			}
+			score += (uint32)(properties.limits.maxImageDimension2D / 2);
+		}
+	}
+
+	if (deviceType & VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT) {
+		if (compute == -1) {
+			return 0;
 		}
 
-		score += (uint32)(properties.limits.maxImageDimension2D / 2);
+		if (!QueueFamilyIndices::isSame(compute, graphicsAndPresent.first)) {
+			score += 1000;
+		}
+		if (!QueueFamilyIndices::isSame(compute, graphicsAndPresent.second)) {
+			score += 1000;
+		}
+		if (!QueueFamilyIndices::isSame(compute, transfer)) {
+			score += 1000;
+		}
 
-		score += getMemoryScore();
-
-		break;
-	case VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT:
-
-		break;
-	case VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_AND_COMPUTE_UNIT:
-
-		break;
-	case VULKAN_DEVICE_TYPE_GRAPHICS_UNIT:
-
-		break;
-	case VULKAN_DEVICE_TYPE_COMPUTE_UNIT:
-
-		break;
-	case VULKAN_DEVICE_TYPE_GRAPHICS_AND_COMPUTE_UNIT:
-
-		break;
-	default:
-
-		break;
+		if (properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			return 0;
+		}
 	}
+
+	score += getMemoryScore();
+	return score;
 }
 
