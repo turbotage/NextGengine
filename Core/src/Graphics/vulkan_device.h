@@ -15,6 +15,8 @@ namespace ng {
 			VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE = 8
 		};
 
+		typedef bool VulkanDeviceTypeFlags;
+
 		struct QueueFamilyIndices {
 			int32 graphics = -1;
 			int32 compute = -1;
@@ -27,7 +29,7 @@ namespace ng {
 
 			bool isTransferComplete() { return transfer >= 0; }
 
-			bool isPresentComplete() { return transfer >= 0; }
+			bool isPresentComplete() { return present >= 0; }
 
 			static bool isSame(int32 queue1, int32 queue2) { return (queue1 == queue2); }
 
@@ -64,7 +66,9 @@ namespace ng {
 
 			operator VkDevice() { return logicalDevice; }
 
+			VulkanDevice();
 			VulkanDevice(VkPhysicalDevice physicalDevice);
+			void init(VkPhysicalDevice physicalDevice);
 
 			~VulkanDevice();
 
@@ -98,7 +102,7 @@ namespace ng {
 
 			uint32 getMemoryScore();
 
-			uint32 getDeviceScore(VulkanDeviceTypeBits deviceType, VkSurfaceKHR surface);
+			uint32 getDeviceScore(VulkanDeviceTypeFlags deviceTypeFlags, VkSurfaceKHR surface);
 
 		};
 		

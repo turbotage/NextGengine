@@ -91,6 +91,140 @@ private:
 
 public:
 
+	Window window;
+
+	VulkanBase base;
+
+	VulkanDevice graphicsDevice;
+	VulkanDevice computeDevice;
+
+	VulkanSwapchain swapchain;
+	
+	VulkanFramebuffer framebuffer;
+	
+public:
+
+	void createPhysicalDevices() {
+
+		uint32 deviceCount = 0;
+		vkEnumeratePhysicalDevices(base.instance, &deviceCount, nullptr);
+
+		if (deviceCount == 0) {
+			throw std::runtime_error("failed to find physical device with vulkan support");
+		}
+
+		std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
+		std::vector<VulkanDevice> vulkanDevices(deviceCount);
+		std::vector<uint32> scores;
+		vkEnumeratePhysicalDevices(base.instance, &deviceCount, physicalDevices.data());
+
+		if (deviceCount == 1) {
+			for (uint16 i = 0; i < deviceCount; ++i) {
+				vulkanDevices[i].init(physicalDevices[i]);
+
+				VulkanDeviceTypeFlags deviceTypeFlags =
+					VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT |
+					VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT |
+					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT |
+					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE;
+
+				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+			}
+
+			auto devicePos = std::max_element(scores.begin(), scores.end());
+			if (scores[*devicePos] != 0) {
+				graphicsDevice = vulkanDevices[*devicePos];
+				computeDevice = vulkanDevices[*devicePos];
+				return;
+			}
+			else {
+				throw std::runtime_error("found no suitable vulkan-device");
+			}
+		}
+		else if (deviceCount > 1){
+			//graphics
+			for (uint16 i = 0; i < deviceCount; ++i) {
+				vulkanDevices[i].init(physicalDevices[i]);
+
+				VulkanDeviceTypeFlags deviceTypeFlags =
+					VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT |
+					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT |
+					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE;
+
+				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+			}
+			auto devicePos = std::max_element(scores.begin(), scores.end());
+			if (scores[*devicePos] != 0) {
+				graphicsDevice = vulkanDevices[*devicePos];
+			}
+			else {
+				throw std::runtime_error("found no suitable graphics vulkan-device");
+			}
+
+			vulkanDevices.erase(vulkanDevices.begin() + *devicePos);
+
+			//compute
+			for (uint16 i = 0; i < deviceCount; ++i) {
+				vulkanDevices[i].init(physicalDevices[i]);
+
+				VulkanDeviceTypeFlags deviceTypeFlags =
+					VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT;
+
+				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+			}
+			auto devicePos2 = std::max_element(scores.begin(), scores.end());
+			if (scores[*devicePos2] != 0) {
+				computeDevice = vulkanDevices[*devicePos2];
+			}
+			else {
+				for (uint16 i = 0; i < deviceCount; ++i) {
+					vulkanDevices[i].init(physicalDevices[i]);
+
+					VulkanDeviceTypeFlags deviceTypeFlags =
+						VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT |
+						VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT |
+						VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT |
+						VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE;
+
+					scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+				}
+
+				auto devicePos = std::max_element(scores.begin(), scores.end());
+				if (scores[*devicePos] != 0) {
+					graphicsDevice = vulkanDevices[*devicePos];
+					computeDevice = vulkanDevices[*devicePos];
+					return;
+				}
+				else {
+					throw std::runtime_error("found no suitable vulkan-device");
+				}
+			}
+		}
+	}
+
+	void init() {
+
+		window.init(800, 600, "sick application");
+
+		base.createInstance();
+		base.createDebugCallback();
+
+		VulkanSwapchainCreateInfo swapchainCreateInfo = {};
+		swapchainCreateInfo.instance = base.instance;
+		swapchainCreateInfo.vulkanDevice = nullptr;
+
+		swapchain.init(swapchainCreateInfo);
+		swapchain.createSurface(window.glfwWindowPtr);
+		
+		createPhysicalDevices();
+		
+		
+
+	}
+
+	void run();
+
+	void cleanup();
 
 };
 

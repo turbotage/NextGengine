@@ -53,8 +53,11 @@ namespace ng {
 
 		public:
 
+			VulkanSwapchain();
 			VulkanSwapchain(VulkanSwapchainCreateInfo createInfo);
 			~VulkanSwapchain();
+
+			void init(VulkanSwapchainCreateInfo createInfo);
 
 			void createSurface(GLFWwindow *glfwWindowPtr);
 

@@ -2,32 +2,17 @@
 #include <algorithm>
 #include "Pipelines\vulkan_graphics_pipeline.h"
 
-void ng::graphics::Window::init(uint width, uint height, const char * description)
+void ng::graphics::Window::init(uint32 width, uint32 height, const char * description)
 {
-	m_Width = width;
-	m_Height = height;
+	this->width = width;
+	this->height = height;
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowPtr = glfwCreateWindow(width, height, description, nullptr, nullptr);
 }
 
-void ng::graphics::Window::createSurface(VkInstance* instance, VkSurfaceKHR* surface)
-{
-	m_Instance = instance;
-	m_Surface = surface;
-	if (glfwCreateWindowSurface(*instance, glfwWindowPtr, nullptr, surface)) {
-		throw std::runtime_error("failed to create window surface!");
-	}
-
-
-}
-
-void ng::graphics::Window::freeSurface()
-{
-	vkDestroySurfaceKHR(*m_Instance, *m_Surface, nullptr);
-}
-
+/*
 VkSurfaceFormatKHR ng::graphics::Window::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 {
 	if (availableFormats.size() == 1 && availableFormats[0].format == VK_FORMAT_UNDEFINED) {
@@ -203,3 +188,4 @@ void ng::graphics::Window::run()
 	}
 }
 
+*/

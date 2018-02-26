@@ -2,8 +2,8 @@
 
 #include "../def.h"
 #include "vulkan_base.h"
-#include <GLFW\glfw3.h>
-#include <vector>
+#include "vulkan_swapchain.h"
+#include "vulkan_framebuffer.h"
 //#include "Pipelines\vulkan_graphics_pipeline.h"
 
 
@@ -31,45 +31,27 @@ namespace ng {
 
 		class Window {
 		private:
-			VkInstance* m_Instance;
-			VkSurfaceKHR* m_Surface;
-			VkDevice* m_Device;
-			uint16 m_Width;
-			uint16 m_Height;
 
 		public:
 			GLFWwindow* glfwWindowPtr;
 
-			VkSwapchainKHR swapChain;
-			std::vector<VkImage> swapChainImages;
-			VkFormat swapChainImageFormat;
-			VkExtent2D swapChainExtent;
-			std::vector<VkImageView> swapChainImageViews;
-			std::vector<VkFramebuffer> swapChainFramebuffers;
+			uint32 width;
+			uint32 height;
 
 		public:
 
-			void init(uint width, uint height, const char* description);
+			void init(uint32 width, uint32 height, const char* description);
 
-			void createSurface(VkInstance* instance, VkSurfaceKHR* surface);
-			void freeSurface();
+			//void createFramebuffers(VulkanGraphicsPipeline* pipeline);
+			//void freeFramebuffers();
 
-			void createSwapChain(VkDevice* device, SwapChainSupportDetails swapChainSupport, QueueFamilyIndices indices);
-			void freeSwapChain();
+			//void run();
 
-			void createSwapChainImageViews();
-			void freeSwapChainImageViews();
+			//VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 
-			void createFramebuffers(VulkanGraphicsPipeline* pipeline);
-			void freeFramebuffers();
+			//VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 
-			void run();
-
-			VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-
-			VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
-
-			VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+			//VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 			
 		};
 	}

@@ -1,7 +1,16 @@
 #include "vulkan_device.h"
 #include "vulkan_swapchain.h"
 
-ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice) 
+ng::graphics::VulkanDevice::VulkanDevice()
+{
+}
+
+ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
+{
+	init(physicalDevice);
+}
+
+void ng::graphics::VulkanDevice::init(VkPhysicalDevice physicalDevice)
 {
 	assert(physicalDevice);
 
@@ -15,7 +24,7 @@ ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 
 	uint32 queueFamilyCount;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
-	
+
 	assert(queueFamilyCount > 0);
 	queueFamilyProperties.resize(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilyProperties.data());
@@ -31,7 +40,6 @@ ng::graphics::VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 			}
 		}
 	}
-
 }
 
 ng::graphics::VulkanDevice::~VulkanDevice() 
@@ -370,7 +378,7 @@ uint32 ng::graphics::VulkanDevice::getMemoryScore()
 	return score;
 }
 
-uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceType, VkSurfaceKHR surface)
+uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeFlags deviceTypeFlags, VkSurfaceKHR surface)
 {
 	uint32 score = 0;
 
@@ -381,7 +389,7 @@ uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceTyp
 	}
 	int32 compute = getQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
 
-	if ((deviceType & VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT)) {
+	if ((deviceTypeFlags & VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT)) {
 		if (features.geometryShader) {
 			return 0;
 		}
@@ -392,7 +400,7 @@ uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceTyp
 		if (graphicsAndPresent.first == -1) {
 			return 0;
 		}
-		if (deviceType & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT) {
+		if (deviceTypeFlags & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT) {
 
 			if (graphicsAndPresent.second == -1) {
 				return 0;
@@ -418,11 +426,11 @@ uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceTyp
 				return 0;
 			}
 
-			if (!QueueFamilyIndices::isSame(graphicsAndPresent.first, graphicsAndPresent.second) && (deviceType & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE)) {
+			if (!QueueFamilyIndices::isSame(graphicsAndPresent.first, graphicsAndPresent.second) && (deviceTypeFlags & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE)) {
 				return 0;
 			}
 			else if(QueueFamilyIndices::isSame(graphicsAndPresent.first, graphicsAndPresent.second)){
-				if (deviceType & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE) {
+				if (deviceTypeFlags & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE) {
 					score += 2000;
 				}
 				else {
@@ -440,7 +448,7 @@ uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeBits deviceTyp
 		}
 	}
 
-	if (deviceType & VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT) {
+	if (deviceTypeFlags & VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT) {
 		if (compute == -1) {
 			return 0;
 		}

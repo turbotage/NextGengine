@@ -1,5 +1,9 @@
 #include "vulkan_swapchain.h"
 
+ng::graphics::VulkanSwapchain::VulkanSwapchain()
+{
+}
+
 ng::graphics::VulkanSwapchain::VulkanSwapchain(VulkanSwapchainCreateInfo createInfo)
 	: instance(createInfo.instance), vulkanDevice(createInfo.vulkanDevice)
 {
@@ -8,6 +12,12 @@ ng::graphics::VulkanSwapchain::VulkanSwapchain(VulkanSwapchainCreateInfo createI
 
 ng::graphics::VulkanSwapchain::~VulkanSwapchain()
 {
+}
+
+void ng::graphics::VulkanSwapchain::init(VulkanSwapchainCreateInfo createInfo)
+{
+	instance = createInfo.instance;
+	vulkanDevice = createInfo.vulkanDevice;
 }
 
 void ng::graphics::VulkanSwapchain::createSurface(GLFWwindow *glfwWindowPtr)
