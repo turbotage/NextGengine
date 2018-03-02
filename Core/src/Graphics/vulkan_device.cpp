@@ -1,6 +1,8 @@
 #include "vulkan_device.h"
 #include "vulkan_swapchain.h"
 
+#include "../debug.h"
+
 ng::graphics::VulkanDevice::VulkanDevice()
 {
 }
@@ -157,64 +159,79 @@ std::pair<int32, int32> ng::graphics::VulkanDevice::getGraphicsAndPresentQueueFa
 	return ret;
 }
 
-void ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, 
-	std::vector<const char*> enabledExtensions, 
-	bool useSwapSchain, 
-	VkQueueFlags requestedQueueTypes)
+void ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures,
+	std::vector<const char*> enabledExtensions,
+	VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT,
+	VkSurfaceKHR surface = nullptr
+)
 {
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
 
 	const float defaultQueuePriority = 0.0f;
 
-	//Graphics queue
-	if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT) {
-		queueFamilyIndices.graphics = getQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
-		VkDeviceQueueCreateInfo queueInfo = {};
-		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueInfo.queueFamilyIndex = queueFamilyIndices.graphics;
-		queueInfo.queueCount = 1;
-		queueInfo.pQueuePriorities = &defaultQueuePriority;
-		queueCreateInfos.push_back(queueInfo);
-	}
-	else {
-		queueFamilyIndices.graphics = VK_NULL_HANDLE;
-	}
-
-	//Dedicated compute queue
-	if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT) {
-		queueFamilyIndices.compute = getQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
-		if (queueFamilyIndices.compute != queueFamilyIndices.graphics) {
+	//Queue-Creation
+	{
+		std::pair<int32, int32> graphicsAndPresentQueue;
+		//Graphics queue
+		if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT) {
+			graphicsAndPresentQueue = getGraphicsAndPresentQueueFamilyIndex(surface);
+			queueFamilyIndices.graphics = graphicsAndPresentQueue.first;
 			VkDeviceQueueCreateInfo queueInfo = {};
 			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueInfo.queueFamilyIndex = queueFamilyIndices.compute;
+			queueInfo.queueFamilyIndex = queueFamilyIndices.graphics;
 			queueInfo.queueCount = 1;
 			queueInfo.pQueuePriorities = &defaultQueuePriority;
 			queueCreateInfos.push_back(queueInfo);
-		}
-	}
-	else {
-		queueFamilyIndices.compute = queueFamilyIndices.graphics;
-	}
 
-	//Dedicated transfer queue
-	if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT) {
-		queueFamilyIndices.transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
-		if ((queueFamilyIndices.transfer != queueFamilyIndices.graphics) && (queueFamilyIndices.transfer != queueFamilyIndices.compute)) {
-			VkDeviceQueueCreateInfo queueInfo = {};
-			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueInfo.queueFamilyIndex = queueFamilyIndices.transfer;
-			queueInfo.queueCount;
-			queueInfo.pQueuePriorities = &defaultQueuePriority;
-			queueCreateInfos.push_back(queueInfo);
-		}
-	}
-	else {
-		queueFamilyIndices.transfer = queueFamilyIndices.graphics;
-	}
+			if (surface != nullptr) {
+				queueFamilyIndices.present = graphicsAndPresentQueue.second;
+				VkDeviceQueueCreateInfo queueInfo2 = {};
+				queueInfo2.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				queueInfo2.queueFamilyIndex = graphicsAndPresentQueue.second;
+				queueInfo2.queueCount = 1;
+				queueInfo2.pQueuePriorities = &defaultQueuePriority;
+				queueCreateInfos.push_back(queueInfo2);
+			}
+			else {
+				queueFamilyIndices.present = VK_NULL_HANDLE;
+			}
 
-	std::vector<const char*> deviceExtensions(enabledExtensions);
-	if (useSwapSchain) {
-		deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+		}
+		else {
+			queueFamilyIndices.graphics = VK_NULL_HANDLE;
+		}
+
+		//Dedicated compute queue
+		if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT) {
+			queueFamilyIndices.compute = getQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
+			if (queueFamilyIndices.compute != queueFamilyIndices.graphics) {
+				VkDeviceQueueCreateInfo queueInfo = {};
+				queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				queueInfo.queueFamilyIndex = queueFamilyIndices.compute;
+				queueInfo.queueCount = 1;
+				queueInfo.pQueuePriorities = &defaultQueuePriority;
+				queueCreateInfos.push_back(queueInfo);
+			}
+		}
+		else {
+			queueFamilyIndices.compute = queueFamilyIndices.graphics;
+		}
+
+		//Dedicated transfer queue
+		if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT) {
+			queueFamilyIndices.transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
+			if ((queueFamilyIndices.transfer != queueFamilyIndices.graphics) && (queueFamilyIndices.transfer != queueFamilyIndices.compute)) {
+				VkDeviceQueueCreateInfo queueInfo = {};
+				queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				queueInfo.queueFamilyIndex = queueFamilyIndices.transfer;
+				queueInfo.queueCount;
+				queueInfo.pQueuePriorities = &defaultQueuePriority;
+				queueCreateInfos.push_back(queueInfo);
+			}
+		}
+		else {
+			queueFamilyIndices.transfer = queueFamilyIndices.graphics;
+		}
 	}
 
 	VkDeviceCreateInfo deviceCreateInfo = {};
@@ -223,19 +240,24 @@ void ng::graphics::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures en
 	deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
 	deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
 
+	// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
 	if (extensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME)) {
-		deviceExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+		enabledExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
 		debugMarkersEnabled = true;
 	}
 
-	if (deviceExtensions.size() > 0) {
-		deviceCreateInfo.enabledExtensionCount = (uint32)deviceExtensions.size();
-		deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+	if (enabledExtensions.size() > 0) {
+		deviceCreateInfo.enabledExtensionCount = (uint32)enabledExtensions.size();
+		deviceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data();
 	}
 
 	VULKAN_CHECK_RESULT(vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice));
 
 	this->enabledFeatures = enabledFeatures;
+
+	for (auto ext : enabledExtensions) {
+		this->enabledExtensions.push_back(std::string(ext));
+	}
 }
 
 bool ng::graphics::VulkanDevice::extensionSupported(std::string extension)
@@ -378,9 +400,19 @@ uint32 ng::graphics::VulkanDevice::getMemoryScore()
 	return score;
 }
 
-uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeFlags deviceTypeFlags, VkSurfaceKHR surface)
+uint32 ng::graphics::VulkanDevice::getDeviceScore(
+	VulkanDeviceTypeFlags deviceTypeFlags,
+	std::vector<const char*> requiredExtentions,
+	VkSurfaceKHR surface)
 {
 	uint32 score = 0;
+
+	for (auto reqExtension : requiredExtentions) {
+		if (!extensionSupported(reqExtension)) {
+			return 0;
+		}
+	}
+
 
 	std::pair<int32, int32> graphicsAndPresent;
 	int32 transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
@@ -406,6 +438,8 @@ uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeFlags deviceTy
 				return 0;
 			}
 
+			//Query swapchain support
+
 			SwapchainSupportDetails details;
 			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &details.capabilities);
 
@@ -425,6 +459,8 @@ uint32 ng::graphics::VulkanDevice::getDeviceScore(VulkanDeviceTypeFlags deviceTy
 			if (details.formats.empty() && details.presentModes.empty()) {
 				return 0;
 			}
+
+			//end of swapchain querying
 
 			if (!QueueFamilyIndices::isSame(graphicsAndPresent.first, graphicsAndPresent.second) && (deviceTypeFlags & VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE)) {
 				return 0;

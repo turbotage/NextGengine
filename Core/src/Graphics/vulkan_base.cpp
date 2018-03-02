@@ -1,18 +1,7 @@
 #include "vulkan_base.h"
-#include <iostream>
-#include <map>
-#include <utility>
-#include <set>
+#include "../debug.h"
 
-const std::vector<const char*> graphicsDeviceExtensions = {
-	VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-
-const std::vector<const char*> computeDeviceExtensions = {
-
-};
-
-void ng::graphics::VulkanBase::createInstance()
+void ng::graphics::VulkanBase::createInstance(std::vector<const char*> requiredExtensions)
 {
 	bool validationLayersEnabled = ng::graphics::debug::isValidationLayersEnabled();
 	if (validationLayersEnabled && !ng::graphics::debug::checkValidationLayerSupport()) {
@@ -31,24 +20,22 @@ void ng::graphics::VulkanBase::createInstance()
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	createInfo.pApplicationInfo = &appInfo;
 
-	ng::graphics::debug::setDebugExtensions(this);
-	createInfo. enabledExtensionCount= static_cast<uint32_t>(extensions.size());
-	createInfo.ppEnabledExtensionNames = extensions.data();
+	if (validationLayersEnabled) {
+		requiredExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+	}
+
+	createInfo.enabledExtensionCount= static_cast<uint32_t>(requiredExtensions.size());
+	createInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
 	if (validationLayersEnabled) {
-		ng::graphics::debug::setDebugValidationLayers(this);
-		createInfo.enabledLayerCount = static_cast<uint32_t>(layers.size());
-		createInfo.ppEnabledLayerNames = layers.data();
+		std::vector<const char*> validationLayers = ng::graphics::debug::getDebugValidationLayers();
+		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		createInfo.ppEnabledLayerNames = validationLayers.data();
 	}
 	else {
 		createInfo.enabledLayerCount = 0;
 	}
 	VULKAN_CHECK_RESULT(vkCreateInstance(&createInfo, nullptr, &instance));
-}
-
-void ng::graphics::VulkanBase::freeInstance()
-{
-	vkDestroyInstance(instance, nullptr);
 }
 
 void ng::graphics::VulkanBase::createDebugCallback()
@@ -57,9 +44,15 @@ void ng::graphics::VulkanBase::createDebugCallback()
 	debug::setupDebugging(instance, debugReportFlags, debugReportCallback);
 }
 
-void ng::graphics::VulkanBase::freeDebugCallback()
+ng::graphics::VulkanBase::VulkanBase()
+{
+
+}
+
+ng::graphics::VulkanBase::~VulkanBase()
 {
 	debug::freeDebugCallback(instance, debugReportCallback);
+	vkDestroyInstance(instance, nullptr);
 }
 
 

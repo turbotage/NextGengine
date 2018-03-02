@@ -56,9 +56,9 @@ bool ng::graphics::debug::isValidationLayersEnabled()
 	return enableValidationLayers;
 }
 
-void ng::graphics::debug::setDebugValidationLayers(VulkanBase *vulkanBase)
+std::vector<const char*> ng::graphics::debug::getDebugValidationLayers()
 {
-	vulkanBase->layers = validationLayers;
+	return ng::graphics::debug::validationLayers;
 }
 
 bool ng::graphics::debug::checkValidationLayerSupport()
@@ -81,23 +81,6 @@ bool ng::graphics::debug::checkValidationLayerSupport()
 		}
 	}
 	return true;
-}
-
-void ng::graphics::debug::setDebugExtensions(VulkanBase *vulkanBase)
-{
-	std::vector<const char*> extensions;
-
-	uint glfwExtensionCount = 0;
-	const char** glfwExtensions;
-	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-	
-	for (uint i = 0; i < glfwExtensionCount; ++i) {
-		extensions.push_back(glfwExtensions[i]);
-	}
-	if (enableValidationLayers) {
-		extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-	}
-	vulkanBase->extensions = extensions;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL ng::graphics::debug::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64 obj, size_t location, int32 code, const char * layerPrefix, const char * msg, void * userData)

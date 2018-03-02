@@ -8,6 +8,16 @@
 namespace ng {
 	namespace graphics {
 
+		//standard device-extensions
+
+		const std::vector<const char*> graphicsDeviceExtensions = {
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME
+		};
+
+		const std::vector<const char*> computeDeviceExtensions = {
+
+		};
+
 		enum VulkanDeviceTypeBits {
 			VULKAN_DEVICE_TYPE_DESCRETE_GRAPHICS_UNIT = 1,
 			VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT = 2,
@@ -52,6 +62,8 @@ namespace ng {
 			
 			std::vector<std::string> supportedExtensions;
 
+			std::vector<std::string> enabledExtensions;
+
 			VkDevice logicalDevice;
 
 			QueueFamilyIndices queueFamilyIndices;
@@ -80,8 +92,8 @@ namespace ng {
 
 			void createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures,
 				std::vector<const char*> enabledExtensions,
-				bool useSwapSchain = true,
-				VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT
+				VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT,
+				VkSurfaceKHR surface = nullptr
 			);
 
 			bool extensionSupported(std::string extension);
@@ -102,7 +114,10 @@ namespace ng {
 
 			uint32 getMemoryScore();
 
-			uint32 getDeviceScore(VulkanDeviceTypeFlags deviceTypeFlags, VkSurfaceKHR surface);
+			uint32 getDeviceScore(VulkanDeviceTypeFlags deviceTypeFlags, 
+				std::vector<const char*> requiredExtentions, 
+				VkSurfaceKHR surface
+			);
 
 		};
 		

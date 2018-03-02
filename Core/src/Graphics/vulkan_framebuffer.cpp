@@ -1,4 +1,6 @@
 #include "vulkan_framebuffer.h"
+#include "../debug.h"
+
 
 bool ng::graphics::VulkanFramebufferAttachment::hasDepth()
 {

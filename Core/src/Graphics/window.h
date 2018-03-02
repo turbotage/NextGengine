@@ -42,6 +42,8 @@ namespace ng {
 
 			void init(uint32 width, uint32 height, const char* description);
 
+			std::vector<const char*> getWindowRequiredExtensions();
+
 			//void createFramebuffers(VulkanGraphicsPipeline* pipeline);
 			//void freeFramebuffers();
 

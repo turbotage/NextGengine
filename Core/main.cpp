@@ -128,7 +128,16 @@ public:
 					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT |
 					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE;
 
-				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+				std::vector<const char*> deviceExtensions(graphicsDeviceExtensions.size() + computeDeviceExtensions.size());
+
+				for (auto extension : graphicsDeviceExtensions) {
+					deviceExtensions.push_back(extension);
+				}
+				for (auto extension : computeDeviceExtensions) {
+					deviceExtensions.push_back(extension);
+				}
+
+				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, deviceExtensions, swapchain.surface);
 			}
 
 			auto devicePos = std::max_element(scores.begin(), scores.end());
@@ -151,7 +160,7 @@ public:
 					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT |
 					VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE;
 
-				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, graphicsDeviceExtensions, swapchain.surface);
 			}
 			auto devicePos = std::max_element(scores.begin(), scores.end());
 			if (scores[*devicePos] != 0) {
@@ -170,7 +179,7 @@ public:
 				VulkanDeviceTypeFlags deviceTypeFlags =
 					VULKAN_DEVICE_TYPE_DESCRETE_COMPUTE_UNIT;
 
-				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+				scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, computeDeviceExtensions, swapchain.surface);
 			}
 			auto devicePos2 = std::max_element(scores.begin(), scores.end());
 			if (scores[*devicePos2] != 0) {
@@ -186,7 +195,16 @@ public:
 						VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT |
 						VULKAN_DEVICE_TYPE_HAS_PRESENT_SUPPORT_IN_GRAPHICS_QUEUE;
 
-					scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, swapchain.surface);
+					std::vector<const char*> deviceExtensions(graphicsDeviceExtensions.size() + computeDeviceExtensions.size());
+
+					for (auto extension : graphicsDeviceExtensions) {
+						deviceExtensions.push_back(extension);
+					}
+					for (auto extension : computeDeviceExtensions) {
+						deviceExtensions.push_back(extension);
+					}
+
+					scores[i] = vulkanDevices[i].getDeviceScore(deviceTypeFlags, deviceExtensions, swapchain.surface);
 				}
 
 				auto devicePos = std::max_element(scores.begin(), scores.end());
@@ -206,7 +224,7 @@ public:
 
 		window.init(800, 600, "sick application");
 
-		base.createInstance();
+		base.createInstance(window.getWindowRequiredExtensions());
 		base.createDebugCallback();
 
 		VulkanSwapchainCreateInfo swapchainCreateInfo = {};
@@ -218,7 +236,18 @@ public:
 		
 		createPhysicalDevices();
 		
-		
+		VkPhysicalDeviceFeatures graphicsDeviceFeatures = {};
+		VkPhysicalDeviceFeatures computeDeviceFeatures = {};
+
+		graphicsDevice.createLogicalDevice(graphicsDeviceFeatures, graphicsDeviceExtensions, VK_QUEUE_GRAPHICS_BIT, swapchain.surface);
+		computeDevice.createLogicalDevice(computeDeviceFeatures, computeDeviceExtensions, VK_QUEUE_COMPUTE_BIT);
+
+		//set swapchain device before swapchain creation
+		swapchainCreateInfo.vulkanDevice = &graphicsDevice;
+		swapchain.init(swapchainCreateInfo);
+		swapchain.createSwapchain(&window.width, &window.width);
+
+
 
 	}
 

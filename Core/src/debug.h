@@ -13,9 +13,7 @@ namespace ng {
 
 			bool checkValidationLayerSupport();
 			
-			void setDebugValidationLayers(VulkanBase *vulkanBase);
-
-			void setDebugExtensions(VulkanBase *vulkanBase);
+			std::vector<const char*> getDebugValidationLayers();
 
 			VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 				VkDebugReportFlagsEXT flags,

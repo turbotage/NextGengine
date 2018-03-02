@@ -18,11 +18,11 @@ namespace ng {
 		public:
 			//Instance Extensions
 			std::vector<VkExtensionProperties> installedExtensions;
-			std::vector<const char*> extensions;
+			std::vector<const char*> enabledExtensions;
 
 			//Instance Layers
 			std::vector<VkLayerProperties> installedLayers;
-			std::vector<const char*> layers;
+			std::vector<const char*> enabledLayers;
 			
 			VkInstance instance;
 
@@ -30,20 +30,14 @@ namespace ng {
 			VkDebugReportFlagsEXT debugReportFlags;
 			VkDebugReportCallbackEXT debugReportCallback;
 
-			bool computeAndGraphicsSameDevice = false;
-			
-			VkSurfaceKHR surface;
-			VkSurfaceFormatKHR surfaceFormat;
-			VkFormat surfaceColorFormat;
-			VkColorSpaceKHR surfaceColorSpace;
-
 		public:
 
-			void createInstance();
-			void freeInstance();
+			void createInstance(std::vector<const char*> requiredExtensions);
 
 			void createDebugCallback();
-			void freeDebugCallback();
+
+			VulkanBase();
+			~VulkanBase();
 
 		};
 

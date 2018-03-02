@@ -11,6 +11,7 @@
 #include <fstream>
 #include <ostream>
 #include <stdexcept>
+#include <utility>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -78,5 +79,3 @@ public:
 	NotCopyable(NotCopyable const &NotCopyable) = delete;
 	NotCopyable &operator =(NotCopyable const &NotCopyable) = delete;
 };
-
-#include "debug.h"

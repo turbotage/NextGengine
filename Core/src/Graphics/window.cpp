@@ -12,6 +12,17 @@ void ng::graphics::Window::init(uint32 width, uint32 height, const char * descri
 	glfwWindowPtr = glfwCreateWindow(width, height, description, nullptr, nullptr);
 }
 
+std::vector<const char*> ng::graphics::Window::getWindowRequiredExtensions()
+{
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions;
+	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+	return extensions;
+}
+
 /*
 VkSurfaceFormatKHR ng::graphics::Window::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 {
