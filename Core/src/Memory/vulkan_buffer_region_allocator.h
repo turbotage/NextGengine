@@ -6,14 +6,14 @@
 #include <unordered_map>
 #include <mutex>
 
-#include "buffer.h"
+#include "vulkan_buffer.h"
 #include "vulkan_memory_allocator.h"
 
 namespace ng {
 	namespace memory {
 		namespace vma {
 
-			struct VkBufferRegionAllocatorCreateInfo {
+			struct VulkanBufferRegionAllocatorCreateInfo {
 				VkDevice* device;
 				VkBuffer* stagingBuffer;
 				VkCommandPool* commandPool;
@@ -23,40 +23,62 @@ namespace ng {
 				VkMemoryAlignment memoryAlignment;
 			};
 
-			class VkBufferRegionAllocator {
+			class VulkanBufferRegionAllocator {
 			private:
 
 				friend VulkanMemoryAllocator;
 
 				std::mutex m_MutexLock;
 
-				VkBufferRegionAllocatorCreateInfo m_CreateInfo;
+				VulkanBufferRegionAllocatorCreateInfo m_CreateInfo;
 
 				VkDeviceSize m_FreeMemorySize;
 
 				/**  holds all allocations done in this VkDeviceMemory instance, //offset, size **/
-				std::map<VkDeviceSize, VkDeviceSize> m_Allocations;
+				//std::map<VkDeviceSize, VkDeviceSize> m_Allocations;
 
 				struct Buffers {
-				private:
-
-					std::map<VkDeviceSize, Buffer*> m_Allocations;
-
 				public:
 
-					void insert(Buffer* buffer) {
-						m_Allocations.insert(std::pair<VkDeviceSize, Buffer*>(buffer->m_Offset, buffer));
+					struct BufferAllocation {
+						VulkanBuffer buffer;
+						std::vector<VulkanBuffer*> copiedBuffers;
+
+						BufferAllocation(VulkanBufferCreateInfo createInfo) 
+							: buffer(createInfo)
+						{
+							
+						}
+					};
+
+				private:
+
+					std::map<VkDeviceSize, BufferAllocation> m_Allocations;
+
+				public:
+					/*
+					void insert(VulkanBuffer buffer) {
+						BufferAllocation alloc;
+						alloc.buffer = buffer;
+						alloc.bufferCount = 1;
+						m_Allocations.insert(std::pair<VkDeviceSize, BufferAllocation>(buffer->m_Offset, alloc));
+					}
+					*/
+
+					auto emplace(VulkanBufferCreateInfo createInfo) {
+						return m_Allocations.emplace(createInfo.offset, createInfo);
 					}
 
 					void erase(VkDeviceSize offset) {
 						m_Allocations.erase(m_Allocations.find(offset));
 					}
 
-					void erase(Buffer* buffer) {
+					void erase(VulkanBuffer* buffer) {
 						m_Allocations.erase(m_Allocations.find(buffer->m_Offset));
 					}
 
-					void erase(std::map<VkDeviceSize, Buffer*>::iterator it) {
+					void erase(std::map<VkDeviceSize, BufferAllocation>::iterator it) {
+
 						m_Allocations.erase(it);
 					}
 
@@ -68,7 +90,11 @@ namespace ng {
 						return m_Allocations.size();
 					}
 
-					auto find(Buffer* buffer) {
+					auto find(BufferAllocation* bufferAlloc) {
+						return m_Allocations.find(bufferAlloc->buffer.m_Offset);
+					}
+
+					auto find(VulkanBuffer* buffer) {
 						return m_Allocations.find(buffer->m_Offset);
 					}
 
@@ -82,6 +108,17 @@ namespace ng {
 
 					auto end() {
 						return m_Allocations.end();
+					}
+
+					void setBufferCopies(VulkanBuffer* buffer, std::vector<VulkanBuffer*>* copies) {
+						auto it = find(buffer);
+						it->second.copiedBuffers = *copies;
+					}
+
+					uint32 increaseBufferCopies(VulkanBuffer* buffer) {
+						auto it = find(buffer);
+						it->second.copiedBuffers.push_back(buffer);
+						return it->second.copiedBuffers.size();
 					}
 
 				} m_Buffers;
@@ -136,20 +173,23 @@ namespace ng {
 				VkDeviceMemory bufferMemory;
 				VkBuffer buffer;
 
-				VkBufferRegionAllocator(VkBufferRegionAllocatorCreateInfo createInfo);
 
+				VulkanBufferRegionAllocator(VulkanBufferRegionAllocatorCreateInfo createInfo);
+
+				uint32 increaseBufferCopies(VulkanBuffer* buffer);
+				
 				/**  offset, size **/
 				std::pair<VkDeviceSize, VkDeviceSize> findSuitableFreeSpace(VkDeviceSize size);
 
-				bool isInBufferRegion(Buffer* buffer);
+				bool isInBufferRegion(VulkanBuffer* buffer);
 
 				/**  d  **/
-				Buffer* createBuffer(VkDeviceSize size);
+				VulkanBuffer createBuffer(VkDeviceSize size);
 
-				Buffer* createBuffer(VkDeviceSize offset, VkDeviceSize size);
+				VulkanBuffer createBuffer(VkDeviceSize offset, VkDeviceSize size);
 
 				/**  f  **/
-				void freeBuffer(Buffer* buffer);
+				void freeBuffer(VulkanBuffer* buffer);
 
 				/**  d  **/
 				void defragment();

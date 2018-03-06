@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Graphics\Renderers\deferred_renderer.cpp" />
-    <ClCompile Include="src\Memory\buffer.cpp" />
+    <ClCompile Include="src\Memory\vulkan_buffer.cpp" />
     <ClCompile Include="src\SceneGraph\culling_walker.cpp" />
     <ClCompile Include="src\Props\movement_properties.cpp" />
     <ClCompile Include="src\Math\plane.cpp" />
@@ -62,17 +62,18 @@
     <ClCompile Include="src\Math\vec3s.cpp" />
     <ClCompile Include="src\SceneGraph\scene_node.cpp" />
     <ClCompile Include="src\SceneGraph\transform_node.cpp" />
-    <ClCompile Include="src\Memory\vkbuffer_region_allocator.cpp" />
+    <ClCompile Include="src\Memory\vulkan_buffer_region_allocator.cpp" />
     <ClCompile Include="src\Memory\vulkan_memory_allocator.cpp" />
     <ClCompile Include="src\Memory\vertex_index_buffer.cpp" />
     <ClCompile Include="src\Graphics\vulkan_device.cpp" />
     <ClCompile Include="src\Graphics\vulkan_swapchain.cpp" />
     <ClCompile Include="src\Graphics\vulkan_framebuffer.cpp" />
     <ClCompile Include="src\Graphics\vulkan_tools.cpp" />
+    <ClCompile Include="src\Graphics\vulkan_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />
-    <ClInclude Include="src\Memory\buffer.h" />
+    <ClInclude Include="src\Memory\vulkan_buffer.h" />
     <ClInclude Include="src\SceneGraph\culling_walker.h" />
     <ClInclude Include="src\Props\movement_properties.h" />
     <ClInclude Include="src\Math\plane.h" />
@@ -116,13 +117,14 @@
     <ClInclude Include="src\Math\vec3i.h" />
     <ClInclude Include="src\DataStructures\uniform_grid.h" />
     <ClInclude Include="src\Math\vec3s.h" />
-    <ClInclude Include="src\Memory\vkbuffer_region_allocator.h" />
+    <ClInclude Include="src\Memory\vulkan_buffer_region_allocator.h" />
     <ClInclude Include="src\Memory\vulkan_memory_allocator.h" />
     <ClInclude Include="src\Memory\vertex_index_buffer.h" />
     <ClInclude Include="src\Graphics\vulkan_device.h" />
     <ClInclude Include="src\Graphics\vulkan_swapchain.h" />
     <ClInclude Include="src\Graphics\vulkan_framebuffer.h" />
     <ClInclude Include="src\Graphics\vulkan_tools.h" />
+    <ClInclude Include="src\Graphics\vulkan_texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />
@@ -219,7 +221,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\C++\Libraries\tinyobjloader;C:\C++\Libraries\glfw\include;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\C++\Libraries\gli\include;C:\C++\Libraries\tinyobjloader;C:\C++\Libraries\glfw\include;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -256,7 +258,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\C++\Libraries\tinyobjloader;C:\C++\Libraries\glfw\include;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\C++\Libraries\gli\include;C:\C++\Libraries\tinyobjloader;C:\C++\Libraries\glfw\include;C:\C++\Libraries\Vulkan\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

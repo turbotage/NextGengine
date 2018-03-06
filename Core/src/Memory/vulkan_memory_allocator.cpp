@@ -95,7 +95,7 @@ uint32 ng::memory::vma::VulkanMemoryAllocator::findMemoryType(uint32 typeFilter,
 	return -1;
 }
 
-ng::memory::Buffer* ng::memory::vma::VulkanMemoryAllocator::createBuffer(VkDeviceSize size)
+ng::memory::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(VkDeviceSize size)
 {
 	VkDeviceSize allocSize = size + m_CreateInfo.memoryAlignment - (size % m_CreateInfo.memoryAlignment);
 	
@@ -117,17 +117,6 @@ ng::memory::Buffer* ng::memory::vma::VulkanMemoryAllocator::createBuffer(VkDevic
 	}
 
 	return m_BufferRegionAllocators[suitableBufferRegionIndex].createBuffer(bestFitFreeSpace.first, bestFitFreeSpace.second);
-}
-
-void ng::memory::vma::VulkanMemoryAllocator::freeBuffer(Buffer* buffer)
-{
-	
-	for (const auto& bufferRegion : m_BufferRegionAllocators) {
-		if (bufferRegion) {
-
-		}
-	}
-
 }
 
 void ng::memory::vma::VulkanMemoryAllocator::defragment()

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vkbuffer_region_allocator.h"
+#include "vulkan_buffer_region_allocator.h"
 
 
 namespace ng {
@@ -52,9 +52,7 @@ namespace ng {
 
 				uint32 findMemoryType(uint32 typeFilter, VkMemoryPropertyFlags properties);
 
-				Buffer* createBuffer(VkDeviceSize size);
-
-				void freeBuffer(Buffer* buffer);
+				VulkanBuffer createBuffer(VkDeviceSize size);
 
 				void defragment();
 

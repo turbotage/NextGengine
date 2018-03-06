@@ -79,3 +79,25 @@ public:
 	NotCopyable(NotCopyable const &NotCopyable) = delete;
 	NotCopyable &operator =(NotCopyable const &NotCopyable) = delete;
 };
+
+namespace tools {
+
+	std::vector<char> readFile(const std::string & filename)
+	{
+		std::string filename2 = "CompiledShaders/" + filename;
+		std::ifstream file(filename2, std::ios::ate | std::ios::binary);
+		std::cout << filename2 << std::endl;
+		if (!file.is_open()) {
+			throw std::runtime_error("failed to open file!");
+		}
+		size_t fileSize = (size_t)file.tellg();
+		std::vector<char> buffer(fileSize);
+		file.seekg(0);
+		file.read(buffer.data(), fileSize);
+		file.close();
+		return buffer;
+	}
+
+
+
+}

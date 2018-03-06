@@ -8,9 +8,24 @@ namespace ng {
 
 		class VulkanPipeline
 		{
+		private:
+
+			std::string qualifier;
+
+			VkPipeline pipeline;
+
+			VkRenderPass renderPass;
+
+			VkPipelineLayout pipelineLayout;
+
+
+			std::vector<VkShaderModule> shaderModules;
+
 		protected:
 
-			static std::vector<char> readFile(const std::string& filename);
+			VulkanPipeline();
+			~VulkanPipeline();
+
 
 			VkShaderModule createShaderModule(VkDevice* device, const std::vector<char>& code);
 
