@@ -2,43 +2,62 @@
 
 #include "vulkan_buffer_region_allocator.h"
 
+namespace ng {
+	namespace graphics {
+		class VulkanDevice;
+	}
+}
 
 namespace ng {
 	namespace memory {
 		namespace vma {
 
 			struct VulkanMemoryAllocatorCreateInfo {
+				graphics::VulkanDevice* vulkanDevice;
+				VkCommandPool commandPool;
+				VkQueue queue;
 				VkDeviceSize defaultAllocationSize;
 				VkMemoryAlignment memoryAlignment;
 				VkBufferUsageFlags usage;
-				VkMemoryPropertyFlags properties;
-				VkSharingMode sharingMode;
+				VkMemoryPropertyFlags memoryProperties;
 			};
 
 			class VulkanMemoryAllocator {
 			private:
 
-				std::mutex m_DefragmentationMutex;
+				graphics::VulkanDevice* m_VulkanDevice;
 
-				VulkanMemoryAllocatorCreateInfo m_CreateInfo;
+				VkCommandPool m_CommandPool;
 
-				VkDevice* m_Device;
-				VkPhysicalDevice* m_PhysicalDevice;
+				VkQueue m_Queue;
 
-				VkMemoryPropertyFlags memoryProperties;
+				std::mutex m_AllocatorMutex;
 
 				VkBuffer m_StagingBuffer;
 				VkDeviceMemory m_StagingBufferMemory;
 
-				std::vector<VkBufferRegionAllocator> m_BufferRegionAllocators;
+				std::vector<VulkanBufferRegionAllocator*> m_BufferRegionAllocators;
 
 				void createStagingBufferAndMemory(VkDeviceSize size);
 
-			protected:
+
+			public:
+
+				VkDeviceSize defaultAllocationSize;
+
+				VkMemoryAlignment memoryAlignment;
+
+				VkBufferUsageFlags usage;
+
+				VkMemoryPropertyFlags memoryProperties;
 
 			public:
 
 				VulkanMemoryAllocator();
+
+				VulkanMemoryAllocator(VulkanMemoryAllocatorCreateInfo createInfo);
+
+				~VulkanMemoryAllocator();
 
 				void init(VulkanMemoryAllocatorCreateInfo createInfo);
 

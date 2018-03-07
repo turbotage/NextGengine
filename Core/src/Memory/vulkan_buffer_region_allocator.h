@@ -10,17 +10,23 @@
 #include "vulkan_memory_allocator.h"
 
 namespace ng {
+	namespace graphics {
+		class VulkanDevice;
+	}
+}
+
+namespace ng {
 	namespace memory {
 		namespace vma {
 
 			struct VulkanBufferRegionAllocatorCreateInfo {
-				VkDevice* device;
-				VkBuffer* stagingBuffer;
-				VkCommandPool* commandPool;
-				VkQueue* queue;
-				VkDeviceMemory* stagingBufferMemory;
+				graphics::VulkanDevice* vulkanDevice;
+				VkBuffer stagingBuffer;
+				VkDeviceMemory stagingBufferMemory;
 				VkDeviceSize memorySize;
 				VkMemoryAlignment memoryAlignment;
+				VkCommandPool commandPool;
+				VkQueue queue;
 			};
 
 			class VulkanBufferRegionAllocator {
@@ -30,9 +36,26 @@ namespace ng {
 
 				std::mutex m_MutexLock;
 
-				VulkanBufferRegionAllocatorCreateInfo m_CreateInfo;
+				//set on init
 
+				graphics::VulkanDevice* m_VulkanDevice;
+
+				VkBuffer m_StagingBuffer;
+
+				VkDeviceMemory m_StagingBufferMemory;
+
+				VkDeviceSize m_MemorySize;
+				
+				VkMemoryAlignment m_MemoryAlignment;
+				
 				VkDeviceSize m_FreeMemorySize;
+				
+				VkCommandPool m_CommandPool;
+
+				VkQueue m_Queue;
+
+
+				//end of set on init
 
 				/**  holds all allocations done in this VkDeviceMemory instance, //offset, size **/
 				//std::map<VkDeviceSize, VkDeviceSize> m_Allocations;
@@ -152,6 +175,10 @@ namespace ng {
 						sortBySize.clear();
 					}
 
+					uint32 size() {
+						return sortBySize.size();
+					}
+
 					/**  offset, size  **/
 					std::pair<VkDeviceSize, VkDeviceSize> findSpaceWithOffset(VkDeviceSize offset) {
 						return *(sortByOffset.find(offset));
@@ -173,7 +200,6 @@ namespace ng {
 				VkDeviceMemory bufferMemory;
 				VkBuffer buffer;
 
-
 				VulkanBufferRegionAllocator(VulkanBufferRegionAllocatorCreateInfo createInfo);
 
 				uint32 increaseBufferCopies(VulkanBuffer* buffer);
@@ -181,12 +207,14 @@ namespace ng {
 				/**  offset, size **/
 				std::pair<VkDeviceSize, VkDeviceSize> findSuitableFreeSpace(VkDeviceSize size);
 
+				uint32 getFreeSpaceCount();
+
 				bool isInBufferRegion(VulkanBuffer* buffer);
 
 				/**  d  **/
 				VulkanBuffer createBuffer(VkDeviceSize size);
 
-				VulkanBuffer createBuffer(VkDeviceSize offset, VkDeviceSize size);
+				VulkanBuffer createBuffer(VkDeviceSize freeSpaceOffset, VkDeviceSize freeSpaceSize, VkDeviceSize size);
 
 				/**  f  **/
 				void freeBuffer(VulkanBuffer* buffer);

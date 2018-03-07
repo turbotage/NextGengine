@@ -1,10 +1,18 @@
+#include "../Graphics/vulkan_device.h"
 #include "vulkan_buffer_region_allocator.h"
 
 //VkBufferRegionAllocator
 
 ng::memory::vma::VulkanBufferRegionAllocator::VulkanBufferRegionAllocator(VulkanBufferRegionAllocatorCreateInfo createInfo)
-	: m_CreateInfo(createInfo)
 {
+	m_VulkanDevice = createInfo.vulkanDevice;
+	m_StagingBuffer = createInfo.stagingBuffer;
+	m_StagingBufferMemory = createInfo.stagingBufferMemory;
+	m_MemorySize = createInfo.memorySize;
+	m_FreeMemorySize = m_MemorySize;
+	m_MemoryAlignment = createInfo.memoryAlignment;
+	m_CommandPool = createInfo.commandPool;
+	m_Queue = createInfo.queue;
 
 }
 
@@ -16,6 +24,11 @@ uint32 ng::memory::vma::VulkanBufferRegionAllocator::increaseBufferCopies(Vulkan
 std::pair<VkDeviceSize, VkDeviceSize> ng::memory::vma::VulkanBufferRegionAllocator::findSuitableFreeSpace(VkDeviceSize size)
 {
 	return m_FreeSpaces.findSuitableFreeSpace(size);
+}
+
+uint32 ng::memory::vma::VulkanBufferRegionAllocator::getFreeSpaceCount()
+{
+	return m_FreeSpaces.size();
 }
 
 bool ng::memory::vma::VulkanBufferRegionAllocator::isInBufferRegion(VulkanBuffer* buffer)
@@ -37,7 +50,7 @@ bool ng::memory::vma::VulkanBufferRegionAllocator::isInBufferRegion(VulkanBuffer
 ng::memory::VulkanBuffer ng::memory::vma::VulkanBufferRegionAllocator::createBuffer(VkDeviceSize size)
 {
 
-	VkDeviceSize allocSize = size + m_CreateInfo.memoryAlignment -(size % m_CreateInfo.memoryAlignment); //fix size to right mem-alignment
+	VkDeviceSize allocSize = size + m_MemoryAlignment -(size % m_MemoryAlignment); //fix size to right mem-alignment
 
 	auto freeSpaceRet = m_FreeSpaces.findSuitableFreeSpace(allocSize);
 
@@ -59,18 +72,18 @@ ng::memory::VulkanBuffer ng::memory::vma::VulkanBufferRegionAllocator::createBuf
 	return it.first->second.buffer;
 }
 
-ng::memory::VulkanBuffer ng::memory::vma::VulkanBufferRegionAllocator::createBuffer(VkDeviceSize offset, VkDeviceSize size)
+ng::memory::VulkanBuffer ng::memory::vma::VulkanBufferRegionAllocator::createBuffer(VkDeviceSize freeSpaceOffset, VkDeviceSize freeSpaceSize, VkDeviceSize size)
 {
 	VulkanBufferCreateInfo createInfo;
 	createInfo.bufferRegionAllocator = this;
-	createInfo.offset = offset;
+	createInfo.offset = freeSpaceOffset;
 	createInfo.size = size;
 	createInfo.vkBuffer = &buffer;
 
 	auto it = m_Buffers.emplace(createInfo);
 
-	m_FreeSpaces.erase(offset, size);
-	m_FreeSpaces.insert(createInfo.offset + createInfo.size, size - createInfo.size);
+	m_FreeSpaces.erase(freeSpaceOffset, freeSpaceSize);
+	m_FreeSpaces.insert(freeSpaceOffset + size, freeSpaceSize - size);
 	return it.first->second.buffer;
 }
 
@@ -250,7 +263,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::defragment()
 
 	byte* dataPtr;
 
-	vkMapMemory(*m_CreateInfo.device, *m_CreateInfo.stagingBufferMemory, 0, VK_WHOLE_SIZE, 0, &data);
+	vkMapMemory(m_VulkanDevice->logicalDevice, m_StagingBufferMemory, 0, VK_WHOLE_SIZE, 0, &data);
 	dataPtr = (byte*)data;
 
 	for (auto it = m_Buffers.begin(); it != m_Buffers.end(); ++it ) {
@@ -265,7 +278,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::defragment()
 			newBuffers.push_back(tmpCreationPair);
 		}
 	}
-	vkUnmapMemory(*m_CreateInfo.device, *m_CreateInfo.stagingBufferMemory);
+	vkUnmapMemory(m_VulkanDevice->logicalDevice, m_StagingBufferMemory);
 
 	m_Buffers.clear();
 
@@ -290,7 +303,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::defragment()
 	allocInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(*m_CreateInfo.device, &allocInfo, &commandBuffer);
+	vkAllocateCommandBuffers(vulkanDevice->logicalDevice, &allocInfo, &commandBuffer);
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
