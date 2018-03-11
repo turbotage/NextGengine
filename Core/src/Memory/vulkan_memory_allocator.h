@@ -38,8 +38,7 @@ namespace ng {
 
 				std::vector<VulkanBufferRegionAllocator*> m_BufferRegionAllocators;
 
-				void createStagingBufferAndMemory(VkDeviceSize size);
-
+				VkResult createBFA();
 
 			public:
 
@@ -61,19 +60,9 @@ namespace ng {
 
 				void init(VulkanMemoryAllocatorCreateInfo createInfo);
 
-				void createVkBufferAndMemory(
-					VkBuffer* buffer,
-					VkDeviceMemory* memory,
-					VkDeviceSize size,
-					VkBufferUsageFlags usage,
-					VkMemoryPropertyFlags properties,
-					VkSharingMode sharingMode);
-
-				uint32 findMemoryType(uint32 typeFilter, VkMemoryPropertyFlags properties);
-
 				VulkanBuffer createBuffer(VkDeviceSize size);
 
-				void defragment();
+				void defragment(uint32 defragmentNum = UINT32_MAX);
 
 			};
 		}

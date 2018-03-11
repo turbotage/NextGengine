@@ -105,7 +105,7 @@ namespace ng {
 
 			void flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free = true);
 
-			void createBuffer(VkBufferUsageFlags usage,
+			VkResult createBuffer(VkBufferUsageFlags usage,
 				VkMemoryPropertyFlags memoryPropertyFlags,
 				VkDeviceSize size,
 				VkBuffer *buffer,

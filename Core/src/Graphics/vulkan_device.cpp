@@ -320,7 +320,7 @@ void ng::graphics::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffe
 	}
 }
 
-void ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer * buffer, VkDeviceMemory * memory, void * data)
+VkResult ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer * buffer, VkDeviceMemory * memory, void * data)
 {
 	VkBufferCreateInfo bufferCreateInfo = {};
 	bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -336,7 +336,10 @@ void ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemory
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = getMemoryTypeIndex(memRequirements.memoryTypeBits, memoryPropertyFlags);
-	VULKAN_CHECK_RESULT(vkAllocateMemory(logicalDevice, &allocInfo, nullptr, memory));
+
+	VkResult allocResult = vkAllocateMemory(logicalDevice, &allocInfo, nullptr, memory);
+
+	VULKAN_CHECK_RESULT(allocResult);
 
 	if (data != nullptr) {
 		void* mapped;
@@ -355,7 +358,17 @@ void ng::graphics::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemory
 		vkUnmapMemory(logicalDevice, *memory);
 	}
 
-	VULKAN_CHECK_RESULT(vkBindBufferMemory(logicalDevice, *buffer, *memory, 0));
+	VkResult bindResult = vkBindBufferMemory(logicalDevice, *buffer, *memory, 0);
+
+	VULKAN_CHECK_RESULT(bindResult);
+
+	if (allocResult != VK_SUCCESS) {
+		return allocResult;
+	}
+	else if (bindResult != VK_SUCCESS){
+		return bindResult;
+	}
+	return VK_SUCCESS;
 }
 
 uint32 ng::graphics::VulkanDevice::getMemoryScore()

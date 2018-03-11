@@ -2,10 +2,6 @@
 
 #include "../def.h"
 
-#include <map>
-#include <unordered_map>
-#include <mutex>
-
 #include "vulkan_buffer.h"
 #include "vulkan_memory_allocator.h"
 
@@ -151,7 +147,7 @@ namespace ng {
 					/**  holds all free spaces left in this VkDeviceMemory instance //size, offset **/
 					std::unordered_multimap<VkDeviceSize, VkDeviceSize> sortBySize;
 					/**  holds all free spaces left in this VkDeviceMemory instance //offset, size **/
-					std::unordered_multimap<VkDeviceSize, VkDeviceSize> sortByOffset;
+					std::unordered_map<VkDeviceSize, VkDeviceSize> sortByOffset;
 				public:
 
 					void insert(VkDeviceSize offset, VkDeviceSize size) {

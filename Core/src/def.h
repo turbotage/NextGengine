@@ -12,6 +12,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <utility>
+#include <mutex>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -59,6 +60,8 @@ typedef uint8 VkMemoryAlignment;
 #include <unordered_map>
 #include <set>
 #include <unordered_set>
+#include <list>
+#include <forward_list>
 
 /*
 namespace ng {
