@@ -70,6 +70,7 @@
     <ClCompile Include="src\Graphics\vulkan_framebuffer.cpp" />
     <ClCompile Include="src\Graphics\vulkan_tools.cpp" />
     <ClCompile Include="src\Graphics\vulkan_texture.cpp" />
+    <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="src\Graphics\vulkan_framebuffer.h" />
     <ClInclude Include="src\Graphics\vulkan_tools.h" />
     <ClInclude Include="src\Graphics\vulkan_texture.h" />
+    <ClInclude Include="tools.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />
@@ -216,8 +218,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <gli\gli.hpp>
-
 #include "vulkan_device.h"
 
 namespace ng {
@@ -27,8 +25,6 @@ namespace ng {
 			VkSampler sampler;
 
 		public:
-			VulkanTexture();
-			~VulkanTexture();
 
 			void updateDescriptor();
 
@@ -36,6 +32,17 @@ namespace ng {
 
 		};
 
+		class VulkanTexture2D : public VulkanTexture {
+			void loadFromFile(
+				std::string filename,
+				VulkanDevice* vulkanDevice,
+				VkFormat format,
+				VkQueue copyQueue,
+				VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT,
+				VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				bool forceLinear = false
+				);
+		};
 
 
 		class VulkanTextureCubeMap : public VulkanTexture {

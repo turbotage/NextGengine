@@ -6,14 +6,18 @@
 
 #include "Graphics/vulkan_base.h"
 
-ng::Debug::Debug()
+ng::debug::Debug::Debug()
 {
-
 }
 
-ng::Debug::~Debug()
+ng::debug::Debug::~Debug()
 {
+}
 
+void ng::debug::exitFatal(std::string message, int32 exitCode)
+{
+	LOGI("Fatal error : %s", message.c_str());
+	exit(exitCode);
 }
 
 namespace ng {
@@ -139,4 +143,9 @@ std::string ng::graphics::debug::errorString(VkResult errorCode)
 	default:
 		return "UNKNOWN_ERROR";
 	}
+}
+
+void ng::graphics::debug::exitFatal(std::string message, VkResult result)
+{
+	ng::debug::exitFatal(message, (int32)result);
 }

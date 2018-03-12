@@ -3,6 +3,42 @@
 
 namespace ng {
 
+
+
+	namespace debug {
+
+#ifdef NDEBUG
+#define LOGD(s)
+#else
+#define LOGD(s)															\
+{																		\
+	std::cout << "LOGD: " << s << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl; \
+}
+#endif
+
+#define USE_LOGI
+
+#ifdef USE_LOGI
+#define LOGI(s)															\
+{																		\
+	std::cout << "LOGI: " << s << std::endl;							\
+}
+#else
+#define LOGI(s)
+#endif
+
+		class Debug
+		{
+		public:
+			Debug();
+			~Debug();
+
+		};
+
+		void exitFatal(std::string message, int32 exitCode);
+
+	}
+
 	namespace graphics {
 
 		class VulkanBase;
@@ -37,44 +73,7 @@ namespace ng {
 		
 			std::string errorString(VkResult errorCode);
 
+			void exitFatal(std::string message, VkResult result);
 		}
 	}
-
-	class Debug
-	{
-	public:
-		Debug();
-		~Debug();
-
-	};
 }
-
-#define VULKAN_CHECK_RESULT(f)																				\
-{																										\
-	VkResult res = (f);																					\
-	if (res != VK_SUCCESS)																				\
-	{																									\
-		std::cout << "Fatal : VkResult is \"" << ng::graphics::debug::errorString(res) << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl; \
-		assert(res == VK_SUCCESS);																		\
-	}																									\
-}
-
-#ifdef NDEBUG
-#define LOGD(s)
-#else
-#define LOGD(s)															\
-{																		\
-	std::cout << "LOGD: " << s << "\" in " << __FILE__ << " at line " << __LINE__ << std::endl; \
-}
-#endif
-
-#define USE_LOGI
-
-#ifdef USE_LOGI
-#define LOGI(s)															\
-{																		\
-	std::cout << "LOGI: " << s << std::endl;							\
-}
-#else
-#define LOGI(s)
-#endif

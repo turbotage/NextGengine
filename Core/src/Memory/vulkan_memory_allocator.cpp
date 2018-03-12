@@ -69,6 +69,8 @@ ng::memory::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(Vk
 {
 	VkDeviceSize allocSize = size + memoryAlignment - (size % memoryAlignment);
 	
+	assert(allocSize <= defaultAllocationSize);
+
 	for (int i = 0; i < m_BufferRegionAllocators.size() - 1; ++i) {
 		bool someSuitable = false;
 
@@ -97,7 +99,7 @@ ng::memory::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(Vk
 
 		if (!someSuitable) {
 			if (createBFA() != VK_SUCCESS) { //out of memory, defragment...
-				defragment();
+				defragment(2);
 			}
 			continue;
 		}
