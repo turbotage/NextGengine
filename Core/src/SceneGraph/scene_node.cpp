@@ -7,18 +7,121 @@ void ng::scenegraph::SceneNode::onAddChild()
 
 void ng::scenegraph::SceneNode::onUpdate(float time)
 {
-	setCombinedCenter();
+	
 }
 
-void ng::scenegraph::SceneNode::updateBoundingVolumes()
+void ng::scenegraph::SceneNode::redoBoundingVolume()
 {
-	if (m_Parent == nullptr) {
+	float xmin, xmax;
+	float ymin, ymax;
+	float zmin, zmax;
+
+	xmax = m_MinimumAABB.maxX();
+	xmin = m_MinimumAABB.minX();
+	ymax = m_MinimumAABB.maxY();
+	ymin = m_MinimumAABB.minY();
+	zmax = m_MinimumAABB.maxZ();
+	zmin = m_MinimumAABB.minZ();
+
+	for (int i = 0; i <m_Children.size(); ++i) {
+		if (m_Children[i]->m_AABB.maxX() > xmax) {
+			xmax = m_Children[i]->m_AABB.maxX();
+		}
+		if (m_Children[i]->m_AABB.minX() < xmin) {
+			xmin = m_Parent->m_Children[i]->m_AABB.minX();
+		}
+		if (m_Children[i]->m_AABB.maxY() > ymax) {
+			ymax = m_Children[i]->m_AABB.maxY();
+		}
+		if (m_Children[i]->m_AABB.minY() < ymin) {
+			ymin = m_Children[i]->m_AABB.minY();
+		}
+		if (m_Children[i]->m_AABB.maxZ() > zmax) {
+			zmax = m_Children[i]->m_AABB.maxZ();
+		}
+		if (m_Children[i]->m_AABB.minZ() < zmin) {
+			zmin = m_Children[i]->m_AABB.minZ();
+		}
+	}
+
+	m_AABB.setMaxX(xmax);
+	m_AABB.setMinX(xmin);
+	m_AABB.setMaxY(ymax);
+	m_AABB.setMinY(ymin);
+	m_AABB.setMaxZ(zmax);
+	m_AABB.setMinZ(zmin);
+}
+
+void ng::scenegraph::SceneNode::updateBoundingVolumes(ng::bvolumes::AABB* updatedAABB = nullptr, bool isLocal = false)
+{
+	//if this was the first bv to change just call parent bv change and then return
+	if (isLocal) {
+		//For now make all AABBs so big that all meshes can rotate without reWorking AABB should be fixed for later
+		if (m_Parent != nullptr) {
+			m_Parent->updateBoundingVolumes(&(this->m_AABB));
+		}
 		return;
 	}
-	float distAndRadius = (m_BoundingSphere.centerPos - m_Parent->getBoundingSpherePosition()).norm() + m_BoundingSphere.radius;
-	if (distAndRadius > m_Parent->getBoundingSphereRadius()) {
-		m_Parent->setBoundingSphereRadius(distAndRadius);
-		return m_Parent->updateBoundingVolumes();
+
+	//if a pointer to the updated AABB exists we can maybe speed up the AABB rebuild process
+	if (updatedAABB != nullptr) {
+		//if the changed aabb is one of the outer ones in this aabb then we have to redo this aabb and then call parent change bv
+		for (int i = 0; i < 6; ++i) {
+			if (updatedAABB == m_OuterAABBs[i]) {
+				redoBoundingVolume();
+				if (m_Parent != nullptr) {
+					m_Parent->updateBoundingVolumes(&(this->m_AABB));
+				}
+				return;
+			}
+		}
+
+		//if we now which one has changed just check if it is outside current aabb, if it is outside resize aabb if it isn't return without changes
+		if (updatedAABB != nullptr) {
+			bool hasChanged = false;
+			if (updatedAABB->maxX() > m_AABB.maxX()) {
+				hasChanged = true;
+				m_AABB.setMaxX(updatedAABB->maxX());
+				m_OuterAABBs[0] = updatedAABB;
+			}
+			if (updatedAABB->minX() < m_AABB.minX()) {
+				hasChanged = true;
+				m_AABB.setMinX(updatedAABB->minX());
+				m_OuterAABBs[1] = updatedAABB;
+			}
+			if (updatedAABB->maxY() > m_AABB.maxY()) {
+				hasChanged = true;
+				m_AABB.setMaxY(updatedAABB->maxY());
+				m_OuterAABBs[2] = updatedAABB;
+			}
+			if (updatedAABB->minY() < m_AABB.minY()) {
+				hasChanged = true;
+				m_AABB.setMinY(updatedAABB->minY());
+				m_OuterAABBs[3] = updatedAABB;
+			}
+			if (updatedAABB->maxZ() > m_AABB.maxZ()) {
+				hasChanged = true;
+				m_AABB.setMaxZ(updatedAABB->maxZ());
+				m_OuterAABBs[4] = updatedAABB;
+			}
+			if (updatedAABB->minZ() < m_AABB.minZ()) {
+				hasChanged = true;
+				m_AABB.setMinZ(updatedAABB->minZ());
+				m_OuterAABBs[5] = updatedAABB;
+			}
+			if (hasChanged && (m_Parent != nullptr)) {
+				m_Parent->updateBoundingVolumes(&(this->m_AABB));
+			}
+			return;
+		}
+	}
+
+	//if this AABB shoud possibly change but we don't know which child node that has changed, this shoudl rarely happen!! if this happen often
+	//restructure program since this iterative aproach is performance costly
+
+	redoBoundingVolume();
+	if (m_Parent != nullptr) {
+		m_Parent->updateBoundingVolumes();
 	}
 }
 
@@ -27,87 +130,74 @@ ng::scenegraph::SceneNode::SceneNode()
 
 }
 
-const ng::math::Vec3f& ng::scenegraph::SceneNode::getCenterPosition()
+const ng::math::Vec3f& ng::scenegraph::SceneNode::getPosition()
 {
 	return m_Position;
 }
 
-const ng::math::Vec3f& ng::scenegraph::SceneNode::getBoundingSpherePosition()
-{
-	return m_BoundingSphere.centerPos;
-}
-
-float ng::scenegraph::SceneNode::getBoundingSphereRadius() const
-{
-	return m_BoundingSphere.radius;
-}
-
-void ng::scenegraph::SceneNode::setBoundingSphereRadius(float radius)
-{
-	m_BoundingSphere.radius = radius;
-}
-
-bool ng::scenegraph::SceneNode::hasMovementProperties(ng::props::mMovementPropertiesMask props)
-{
-	return (m_MovementProperties & props);
-}
-
-void ng::scenegraph::SceneNode::addMovementProperties(ng::props::mMovementPropertiesMask props)
-{
-	m_MovementProperties = (m_MovementProperties | props);
-}
-
-void ng::scenegraph::SceneNode::setMovementProperties(ng::props::mMovementPropertiesMask props)
-{
-	m_MovementProperties = props;
-}
-
-const ng::math::Mat4 & ng::scenegraph::SceneNode::rotate(const ng::math::Vec3f & rotationAxis, const float angle)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::rotate(const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true)
 {
 	m_WorldTransform *= ng::math::Mat4::rotation(rotationAxis, angle);
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4 & ng::scenegraph::SceneNode::rotate(const ng::math::Mat4 & rotationMatrix)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::rotate(const ng::math::Mat4 & rotationMatrix, bool updateBV = true)
 {
 	m_WorldTransform *= rotationMatrix;
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4 & ng::scenegraph::SceneNode::rotate(const ng::math::Quaternion & rotationQuaternion)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::rotate(const ng::math::Quaternion & rotationQuaternion, bool updateBV = true)
 {
 	m_WorldTransform *= ng::math::Mat4::rotation(rotationQuaternion);
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4 & ng::scenegraph::SceneNode::rotateAround(const ng::math::Vec3f & rotationPoint, const ng::math::Vec3f & rotationAxis, const float angle)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::rotateAround(const ng::math::Vec3f & rotationPoint, const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true)
 {
 	// T(x, y, z) * R * T(-x, -y, -z)
 	m_WorldTransform *= ng::math::Mat4::translation(rotationPoint);
 	m_WorldTransform *= ng::math::Mat4::rotation(rotationAxis, angle);
 	m_WorldTransform *= ng::math::Mat4::translation(-1.0f*rotationPoint);
-	updateBoundingVolumes();
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4 & ng::scenegraph::SceneNode::translate(const ng::math::Vec3f & translation)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::translate(const ng::math::Vec3f & translation, bool updateBV = true)
 {
 	m_WorldTransform *= ng::math::Mat4::translation(translation);
-	updateBoundingVolumes();
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4 & ng::scenegraph::SceneNode::translate(const ng::math::Mat4 & translationMatrix)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::translate(const ng::math::Mat4 & translationMatrix, bool updateBV = true)
 {
 	m_WorldTransform *= translationMatrix;
-	updateBoundingVolumes();
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4 & ng::scenegraph::SceneNode::transform(const ng::math::Mat4 & transformation)
+const ng::math::Mat4 & ng::scenegraph::SceneNode::transform(const ng::math::Mat4 & transformation, bool updateBV = true)
 {
 	m_WorldTransform *= transformation;
-	updateBoundingVolumes();
+	if (updateBV) {
+		updateBoundingVolumes(&this->m_AABB, true);
+	}
 	return m_WorldTransform;
 }
 
@@ -119,42 +209,22 @@ void ng::scenegraph::SceneNode::addChild(SceneNode * childNode)
 
 void ng::scenegraph::SceneNode::update(float time)
 {
-
-	if ( hasMovementProperties(ng::props::eMovementPropertyBit::MOVEMENT_ENABLED_BIT) ) {
-		if (hasMovementProperties(ng::props::eMovementPropertyBit::LOCAL_ROTATION_BIT)) {
-			m_WorldTransform *= ng::math::Mat4::rotation(m_LocalRotation->rotationAxis, m_LocalRotation->angularVelocity * time);
+	if (m_MovementEnabled) {
+		if (m_LocalRotation != nullptr) {
+			rotate(m_LocalRotation->rotationAxis, m_LocalRotation->angularVelocity * time, false);
 			m_LocalRotation->angularVelocity += (m_LocalRotation->angularAcceleration * time);
 			m_LocalRotation->angularAcceleration += (m_LocalRotation->angularJerk * time);
 		}
-		if (hasMovementProperties(ng::props::eMovementPropertyBit::POINT_ROTATION_BIT | 
-									ng::props::eMovementPropertyBit::LINEAR_MOVEMENT_BIT)) {
-			//rotate-around point
-			m_WorldTransform *= ng::math::Mat4::translation(m_PointRotation->rotationPoint);
-			m_WorldTransform *= ng::math::Mat4::rotation(m_PointRotation->rotationAxis, m_PointRotation->angularVelocity * time);
-			m_WorldTransform *= ng::math::Mat4::translation(-1.0f*m_PointRotation->rotationPoint);
-
-			m_PointRotation->angularVelocity += (m_PointRotation->angularAcceleration * time);
-			m_PointRotation->angularAcceleration += (m_PointRotation->angularJerk * time);
-
-			//translate point
-			m_WorldTransform *= ng::math::Mat4::translation(m_LinearMovement->velocity * time);
+		if (m_LinearMovement != nullptr ) {
+			translate(ng::math::Mat4::translation(m_LinearMovement->velocity * time));
 			m_LinearMovement->velocity = m_LinearMovement->acceleration * time;
 			m_LinearMovement->acceleration = m_LinearMovement->jerk * time;
-
-			updateBoundingVolumes();
-		}
-		else if (hasMovementProperties(ng::props::eMovementPropertyBit::POINT_ROTATION_BIT)) {
-			rotateAround(m_PointRotation->rotationPoint, m_PointRotation->rotationAxis, m_PointRotation->angularVelocity * time);
-		}
-		else if (hasMovementProperties(ng::props::eMovementPropertyBit::LINEAR_MOVEMENT_BIT)) {
-			translate(ng::math::Mat4::translation(m_LinearMovement->velocity * time));
 		}
 	}
-
-	m_Position = m_WorldTransform * m_Position;
 	onUpdate(time);
 }
 
+/*
 void ng::scenegraph::SceneNode::setCombinedCenter()
 {
 	m_BoundingSphere.centerPos = ng::math::Vec3f(0.0f, 0.0f, 0.0f);
@@ -166,3 +236,5 @@ void ng::scenegraph::SceneNode::setCombinedCenter()
 
 	m_BoundingSphere.centerPos /= (float)m_Children.size();
 }
+*/
+

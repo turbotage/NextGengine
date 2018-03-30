@@ -21,9 +21,8 @@ public:
 	float halfWidth;
 	float halfHeight;
 
-	float angleChangeSinceLastUpdate;
-	bool lastFrame;
 	ng::math::Quaternion m_Rotation;
+	ng::math::Vec3f m_Position;
 
 	ng::math::Plane rightPlane;
 	ng::math::Plane leftPlane;
@@ -44,9 +43,10 @@ public:
 	ng::math::Vec3f topPlaneNormal;
 	ng::math::Vec3f bottomPlaneNormal;
 
-	ng::math::Vec3f* position;
-
 	Camera(float fov, float viewDistance, float htwRatio);
 	~Camera();
+
+	void update(ng::math::Vec3f positionChange, ng::math::Quaternion rotationChange);
+
 };
 

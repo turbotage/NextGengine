@@ -2,11 +2,12 @@
 
 
 
-CullingWalker::CullingWalker()
+ng::scenegraph::CullingWalker::CullingWalker(Scene * scene)
 {
+	m_Scene = scene;
 }
 
-
-CullingWalker::~CullingWalker()
+void ng::scenegraph::CullingWalker::walk()
 {
+	
 }

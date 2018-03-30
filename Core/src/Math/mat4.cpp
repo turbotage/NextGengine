@@ -4,6 +4,11 @@
 
 #define _mm_shufd(xmm, mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmm), mask))
 
+float ng::math::Mat4::getElement(uint8 row, uint8 column)
+{
+	return _mm_cvtss_f32(_mm_shuffle_ps(rows[row], rows[row], _MM_SHUFFLE(column - 1, column - 1, column - 1, column - 1)));
+}
+
 ng::math::Mat4::Mat4()
 {
 }

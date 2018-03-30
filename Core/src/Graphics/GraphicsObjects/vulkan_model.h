@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../../def.h"
-#include "../../Memory/buffer.h"
+#include "../../Memory/vulkan_buffer.h"
+#include "../../Graphics/vulkan_texture.h"
 
 namespace ng {
 	namespace graphics {
@@ -9,27 +10,28 @@ namespace ng {
 		class VulkanModel
 		{
 		public:
-			ng::memory::Buffer* memoryBuffer;
+			
+			ng::memory::VulkanBuffer m_VertexAndIndexBuffer;
 			
 			struct ModelPart {
 				uint32 vertexOffset;
-				uint32 vertexCount;
-
 				uint32 indexOffset;
+
 				uint32 indexCount;
+
+				ng::graphics::VulkanTexture textureArray;
 			};
 
-			std::vector<ModelPart>* modelParts;
-
-			VkDescriptorSetLayout* m_DescSetLayout;
-			
-			VkDescriptorSet m_DescriptorSet;
+			std::vector<ModelPart> modelParts;
 			
 		public:
 			
 			void init(VulkanBase* vulkanBase, VkDescriptorSetLayout* descriptorSetLayout);
 
 			void loadModel(const char* filename);
+
 		};
 	}
+
 }
+

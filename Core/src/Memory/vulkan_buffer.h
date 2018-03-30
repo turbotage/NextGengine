@@ -19,7 +19,7 @@ namespace ng {
 
 		class VulkanBuffer {
 		private:
-			vma::VulkanBufferRegionAllocator* m_BufferRegionAllocator;
+			vma::VulkanBufferRegionAllocator* m_BufferRegionAllocator = nullptr;
 		protected:
 			friend class ng::memory::vma::VulkanBufferRegionAllocator;
 
@@ -42,6 +42,8 @@ namespace ng {
 			VulkanBuffer();
 
 			VulkanBuffer(VulkanBufferCreateInfo createInfo);
+
+			void init(VulkanBufferCreateInfo createInfo);
 
 			~VulkanBuffer();
 

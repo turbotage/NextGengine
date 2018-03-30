@@ -38,6 +38,11 @@ void ng::graphics::VulkanTexture2D::loadFromFile(std::string filename, VulkanDev
 
 	VkBool32 useStaging = !forceLinear;
 
+	VkMemoryAllocateInfo memAllocInfo;
+	memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+
+	VkMemoryRequirements memReqs;
 	
-	
+	VkCommandBuffer copyCmd = vulkanDevice->createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
 }

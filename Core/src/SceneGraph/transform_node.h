@@ -2,13 +2,19 @@
 
 #include "scene_graph.h"
 
+#define SCENE_GRAPH_NODE_TYPE_ID_TRANSFORM 1;
+
 namespace ng {
 	namespace scenegraph {
+
 		class TransformNode : SceneNode {
 		private:
-			ng::math::Mat4 m_Transform;
-			ng::math::Quaternion m_Rotation;
+			
 		public:
+
+			static TransformNode* castSceneNode(SceneNode* node) {
+				return static_cast<TransformNode*>(node);
+			}
 
 		};
 	}

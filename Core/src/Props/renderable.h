@@ -11,9 +11,7 @@ private:
 	
 public:
 
-	enum eRenderProps {
-		RENDERING_ON = 1,
-	};
+	
 
 	
 

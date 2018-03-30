@@ -18,6 +18,11 @@ namespace ng {
 
 		VulkanBuffer::VulkanBuffer(VulkanBufferCreateInfo createInfo)
 		{
+			init(createInfo);
+		}
+
+		void VulkanBuffer::init(VulkanBufferCreateInfo createInfo)
+		{
 			m_Offset = createInfo.offset;
 			m_Size = createInfo.size;
 			m_VkBuffer = createInfo.vkBuffer;
@@ -27,7 +32,9 @@ namespace ng {
 
 		VulkanBuffer::~VulkanBuffer()
 		{
-			m_BufferRegionAllocator->freeBuffer(this);
+			if (m_BufferRegionAllocator != nullptr) {
+				m_BufferRegionAllocator->freeBuffer(this);
+			}
 		}
 
 		VulkanBuffer VulkanBuffer::operator=(const VulkanBuffer & buffer)

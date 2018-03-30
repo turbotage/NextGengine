@@ -1,12 +1,6 @@
 #pragma once
 #include "def.h"
 
-namespace ng {
-
-
-
-	namespace debug {
-
 #ifdef NDEBUG
 #define LOGD(s)
 #else
@@ -26,6 +20,10 @@ namespace ng {
 #else
 #define LOGI(s)
 #endif
+
+namespace ng {
+
+	namespace debug {
 
 		class Debug
 		{

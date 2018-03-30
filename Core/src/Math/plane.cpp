@@ -4,18 +4,17 @@ ng::math::Plane::Plane()
 {
 }
 
-ng::math::Plane::Plane(Vec3f point, Vec3f planeVector, Vec3f planeNormal)
+ng::math::Plane::Plane(Vec3f planeNormal, Vec3f point)
 {
-	setPlane(point, planeVector, planeNormal);
+	setPlane(planeNormal, point);
 }
 
-void ng::math::Plane::setPlane(Vec3f point, Vec3f planeVector, Vec3f planeNormal)
+void ng::math::Plane::setPlane(Vec3f planeNormal, Vec3f point)
 {
-	a = planeVector.x;
-	b = planeVector.y;
-	c = planeVector.z;
-	d = 0.0f;
-	d -= ((a * point.x) + (b * point.y) + (c * point.z));
+	a = planeNormal.x;
+	b = planeNormal.y;
+	c = planeNormal.z;
+	d = ((a * point.x) + (b * point.y) + (c * point.z));
 	normOfBasis = sqrt( (a * a) + (b * b) + (c * c) );
 }
 

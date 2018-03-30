@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../def.h"
-
+#include "vulkan_tools.h"
 
 
 namespace ng {

@@ -32,7 +32,7 @@ ng::math::Quaternion::Quaternion(float scalar)
 
 ng::math::Quaternion::Quaternion(float x, float y, float z, float w)
 {
-	_mm_set_ps(x, y, z, w);
+	_mm_set_ps(w, z, y, x);
 }
 
 ng::math::Quaternion::Quaternion(const Quaternion & Quaternion)
@@ -46,10 +46,20 @@ ng::math::Quaternion & ng::math::Quaternion::add(const Quaternion & other)
 	return *this;
 }
 
+ng::math::Quaternion & ng::math::Quaternion::operator+=(const Quaternion & other)
+{
+	return add(other);
+}
+
 ng::math::Quaternion & ng::math::Quaternion::sub(const Quaternion & other)
 {
 	row = _mm_sub_ps(row, other.row);
 	return *this;
+}
+
+ng::math::Quaternion & ng::math::Quaternion::operator-=(const Quaternion & other)
+{
+	return sub(other);
 }
 
 ng::math::Quaternion & ng::math::Quaternion::mul(const Quaternion & other)
@@ -67,27 +77,32 @@ ng::math::Quaternion & ng::math::Quaternion::mul(const Quaternion & other)
 	return *this;
 }
 
+ng::math::Quaternion & ng::math::Quaternion::operator*=(const Quaternion & other)
+{
+	return mul(other);
+}
+
 ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec3f & rotationAxis, float angle)
 {
 	float sinAngle = sin(angle*0.5);
 	row = _mm_set_ps(
-		rotationAxis.x * sinAngle,
-		rotationAxis.y * sinAngle,
+		cos(angle*0.5),
 		rotationAxis.z * sinAngle,
-		cos(angle*0.5)
+		rotationAxis.y * sinAngle,
+		rotationAxis.x * sinAngle
 	);
 	return *this;
 }
 
-ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec3f & rotationAxis, float angle)
+ng::math::Quaternion ng::math::Quaternion::getQuaternion(const Vec3f & rotationAxis, float angle)
 {
 	Quaternion quat;
 	float sinAngle = sin(angle*0.5);
 	quat.row = _mm_set_ps(
-		rotationAxis.x * sinAngle,
-		rotationAxis.y * sinAngle,
+		cos(angle*0.5),
 		rotationAxis.z * sinAngle,
-		cos(angle*0.5)
+		rotationAxis.y * sinAngle,
+		rotationAxis.x * sinAngle
 	);
 	return quat;
 }
@@ -99,7 +114,7 @@ ng::math::Quaternion & ng::math::Quaternion::setRotation(const Vec4f & rotationA
 	return *this;
 }
 
-ng::math::Quaternion ng::math::Quaternion::getRotation(const Vec4f & rotationAxis, float angle)
+ng::math::Quaternion ng::math::Quaternion::getQuaternion(const Vec4f & rotationAxis, float angle)
 {
 	Quaternion quat;
 	float sinAngle = sin(angle*0.5);
@@ -125,7 +140,7 @@ ng::math::Vec3f ng::math::Quaternion::getEulerAngles(const Quaternion & quat)
 	);
 }
 
-ng::math::Vec3f ng::math::Quaternion::rotate(const Vec3f & vec)
+void ng::math::Quaternion::rotate(Vec3f & vec)
 {
 	__m128 temp1 = _mm_mul_ps(_mm_set_ps(getX(), getW(), getW(), getW()), _mm_set_ps(vec.x, vec.z, vec.y, vec.x));
 	__m128 temp2 = _mm_mul_ps(_mm_set_ps(getY(), getX(), getZ(), getY()), _mm_set_ps(vec.y, vec.y, vec.x, vec.z));
@@ -157,7 +172,9 @@ ng::math::Vec3f ng::math::Quaternion::rotate(const Vec3f & vec)
 
 	temp1 = _mm_add_ps(temp1, temp2);
 	_mm_store_ps(temps, temp1);
-	return Vec3f(temps[3], temps[2], temps[1]);
+	vec.x = temps[3];
+	vec.y = temps[2];
+	vec.z = temps[1];
 }
 
 ng::math::Vec3f ng::math::Quaternion::getRotation(const Quaternion & quat, const Vec3f & vec)
@@ -195,49 +212,49 @@ ng::math::Vec3f ng::math::Quaternion::getRotation(const Quaternion & quat, const
 	return Vec3f(temps[3], temps[2], temps[1]);
 }
 
-void ng::math::Quaternion::rotate4(const Quaternion & quat, Vec3f & v1, Vec3f & v2, Vec3f & v3, Vec3f & v4)
+void ng::math::Quaternion::rotate4(Vec3f & v1, Vec3f & v2, Vec3f & v3, Vec3f & v4)
 {
 	__m128 tempX;
 	{
-		tempX = _mm_mul_ps(_mm_set_ps1(quat.getW()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x));
-		tempX = _mm_add_ps(tempX, _mm_mul_ps(_mm_set_ps1(quat.getY()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z)));
-		tempX = _mm_sub_ps(tempX, _mm_mul_ps(_mm_set_ps1(quat.getZ()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y)));
+		tempX = _mm_mul_ps(_mm_set_ps1(getW()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x));
+		tempX = _mm_add_ps(tempX, _mm_mul_ps(_mm_set_ps1(getY()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z)));
+		tempX = _mm_sub_ps(tempX, _mm_mul_ps(_mm_set_ps1(getZ()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y)));
 	}
 	__m128 tempY;
 	{
-		tempY = _mm_mul_ps(_mm_set_ps1(quat.getW()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y));
-		tempY = _mm_add_ps(tempY, _mm_mul_ps(_mm_set_ps1(quat.getZ()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x)));
-		tempY = _mm_sub_ps(tempY, _mm_mul_ps(_mm_set_ps1(quat.getX()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z)));
+		tempY = _mm_mul_ps(_mm_set_ps1(getW()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y));
+		tempY = _mm_add_ps(tempY, _mm_mul_ps(_mm_set_ps1(getZ()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x)));
+		tempY = _mm_sub_ps(tempY, _mm_mul_ps(_mm_set_ps1(getX()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z)));
 	}
 	__m128 tempZ;
 	{
-		tempZ = _mm_mul_ps(_mm_set_ps1(quat.getW()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z));
-		tempZ = _mm_add_ps(tempZ, _mm_mul_ps(_mm_set_ps1(quat.getX()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y)));
-		tempZ = _mm_sub_ps(tempZ, _mm_mul_ps(_mm_set_ps1(quat.getY()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x)));
+		tempZ = _mm_mul_ps(_mm_set_ps1(getW()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z));
+		tempZ = _mm_add_ps(tempZ, _mm_mul_ps(_mm_set_ps1(getX()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y)));
+		tempZ = _mm_sub_ps(tempZ, _mm_mul_ps(_mm_set_ps1(getY()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x)));
 	}
 	__m128 tempW;
 	{
-		tempW = _mm_mul_ps(_mm_set_ps1(quat.getX()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x));
-		tempW = _mm_add_ps(tempW, _mm_mul_ps(_mm_set_ps1(quat.getY()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y)));
-		tempW = _mm_add_ps(tempW, _mm_mul_ps(_mm_set_ps1(quat.getZ()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z)));
+		tempW = _mm_mul_ps(_mm_set_ps1(getX()), _mm_set_ps(v4.x, v3.x, v2.x, v1.x));
+		tempW = _mm_add_ps(tempW, _mm_mul_ps(_mm_set_ps1(getY()), _mm_set_ps(v4.y, v3.y, v2.y, v1.y)));
+		tempW = _mm_add_ps(tempW, _mm_mul_ps(_mm_set_ps1(getZ()), _mm_set_ps(v4.z, v3.z, v2.z, v1.z)));
 	}
 	__m128 X;
 	{
-		X = _mm_add_ps(_mm_mul_ps(tempW, _mm_set_ps1(quat.getX())), _mm_mul_ps(tempX, _mm_set_ps1(quat.getW())));
-		X = _mm_sub_ps(X, _mm_mul_ps(tempY, _mm_set_ps1(quat.getZ())));
-		X = _mm_add_ps(X, _mm_mul_ps(tempZ, _mm_set_ps1(quat.getY())));
+		X = _mm_add_ps(_mm_mul_ps(tempW, _mm_set_ps1(getX())), _mm_mul_ps(tempX, _mm_set_ps1(getW())));
+		X = _mm_sub_ps(X, _mm_mul_ps(tempY, _mm_set_ps1(getZ())));
+		X = _mm_add_ps(X, _mm_mul_ps(tempZ, _mm_set_ps1(getY())));
 	}
 	__m128 Y;
 	{
-		Y = _mm_add_ps(_mm_mul_ps(tempW, _mm_set_ps1(quat.getY())), _mm_mul_ps(tempY, _mm_set_ps1(quat.getW())));
-		Y = _mm_sub_ps(Y, _mm_mul_ps(tempZ, _mm_set_ps1(quat.getX())));
-		Y = _mm_add_ps(Y, _mm_mul_ps(tempX, _mm_set_ps1(quat.getZ())));
+		Y = _mm_add_ps(_mm_mul_ps(tempW, _mm_set_ps1(getY())), _mm_mul_ps(tempY, _mm_set_ps1(getW())));
+		Y = _mm_sub_ps(Y, _mm_mul_ps(tempZ, _mm_set_ps1(getX())));
+		Y = _mm_add_ps(Y, _mm_mul_ps(tempX, _mm_set_ps1(getZ())));
 	}
 	__m128 Z;
 	{
-		Z = _mm_add_ps(_mm_mul_ps(tempW, _mm_set_ps1(quat.getZ())), _mm_mul_ps(tempZ, _mm_set_ps1(quat.getW())));
-		Z = _mm_sub_ps(Z, _mm_mul_ps(tempX, _mm_set_ps1(quat.getY())));
-		Z = _mm_add_ps(Z, _mm_mul_ps(tempY, _mm_set_ps1(quat.getX())));
+		Z = _mm_add_ps(_mm_mul_ps(tempW, _mm_set_ps1(getZ())), _mm_mul_ps(tempZ, _mm_set_ps1(getW())));
+		Z = _mm_sub_ps(Z, _mm_mul_ps(tempX, _mm_set_ps1(getY())));
+		Z = _mm_add_ps(Z, _mm_mul_ps(tempY, _mm_set_ps1(getX())));
 	}
 	float xFloats[4];
 	float yFloats[4];
@@ -308,3 +325,4 @@ ng::math::Quaternion::~Quaternion()
 {
 	
 }
+

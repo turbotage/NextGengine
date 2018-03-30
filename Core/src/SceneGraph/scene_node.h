@@ -4,23 +4,33 @@
 
 #include "../Math/mat4.h"
 #include "../Props/movement_properties.h"
-#include "../BoundingVolumes/bounding_sphere.h"
+#include "../BoundingVolumes/aabb.h"
+#include "../Graphics/GraphicsObjects/vulkan_model.h"
 
 namespace ng {
 	namespace scenegraph {
+
+		class CullingWalker;
+
 		class SceneNode {
 		private:
+			friend CullingWalker;
 
 			void update(float time);
 
-			void setCombinedCenter();
+			void redoBoundingVolume();
 
+			ng::bvolumes::AABB* m_OuterAABBs[6]; //0 :  maxX, 1 : minX, 2 : maxY, 3 : minY, 4 : maxZ, 5 : minZ  
 
 		protected:
 			/**  TREE-STRUCTURE  **/
 			SceneNode * m_Parent = nullptr;
+
 			std::vector<SceneNode*> m_Children;
+
 			std::string m_Name;
+
+			uint8 m_NodeType;
 
 			/**  POSITIONAL  **/
 			/**  world-transform  **/
@@ -31,10 +41,7 @@ namespace ng {
 
 
 			/**  MOVEMENT  **/
-			ng::props::mMovementPropertiesMask m_MovementProperties;
-
-			/**  point-rotation  **/
-			ng::props::PointRotation* m_PointRotation = nullptr;
+			bool m_MovementEnabled;
 
 			/**  local-rotation  **/
 			ng::props::LocalRotation* m_LocalRotation = nullptr;
@@ -44,7 +51,11 @@ namespace ng {
 
 
 			/**  BOUNDING-VOLUME  **/
-			ng::bvolumes::BoundingSphere m_BoundingSphere;
+			ng::bvolumes::AABB m_AABB;
+
+			ng::bvolumes::AABB m_MinimumAABB;
+
+			void updateBoundingVolumes(ng::bvolumes::AABB* updatedAABB = nullptr, bool isLocal = false);
 
 			virtual void onAddChild();
 
@@ -52,44 +63,33 @@ namespace ng {
 
 		public:
 
-			void updateBoundingVolumes();
-
 			SceneNode();
 
-			const ng::math::Vec3f& getCenterPosition();
-
-			const ng::math::Vec3f& getBoundingSpherePosition();
-
-			float getBoundingSphereRadius() const;
-			void setBoundingSphereRadius(float radius);
-
-			bool hasMovementProperties(ng::props::mMovementPropertiesMask propsMask);
-			void addMovementProperties(ng::props::mMovementPropertiesMask propsMask);
-			void setMovementProperties(ng::props::mMovementPropertiesMask propsMask);
+			const ng::math::Vec3f& getPosition();
 
 			/**  rotates this node and all its children around the rotationAxis by angle degrees **/
-			const ng::math::Mat4& rotate(const ng::math::Vec3f& rotationAxis, const float angle);
+			const ng::math::Mat4& rotate(const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
 			/**  rotates this node and all its children  **/
-			const ng::math::Mat4& rotate(const ng::math::Mat4& rotationMatrix);
+			const ng::math::Mat4& rotate(const ng::math::Mat4 & rotationMatrix, bool updateBV = true);
 			/**  rotates this node and all its children  **/
-			const ng::math::Mat4& rotate(const ng::math::Quaternion& rotationQuaternion);
+			const ng::math::Mat4& rotate(const ng::math::Quaternion & rotationQuaternion, bool updateBV = true);
 			/**  rotates this node and all its children around a point and axis by angle degrees  **/
-			const ng::math::Mat4& rotateAround(const ng::math::Vec3f& rotationPoint, const ng::math::Vec3f& rotationAxis, const float angle);
+			const ng::math::Mat4& rotateAround(const ng::math::Vec3f & rotationPoint, const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
 
 			/**  translates this node and all its children  **/
-			const ng::math::Mat4& translate(const ng::math::Vec3f& translation);
+			const ng::math::Mat4& translate(const ng::math::Vec3f & translation, bool updateBV = true);
 			/**  translates this node and all its children  **/
-			const ng::math::Mat4& translate(const ng::math::Mat4& translationMatrix);
+			const ng::math::Mat4& translate(const ng::math::Mat4 & translationMatrix, bool updateBV = true);
 
 			/**  applies some linear transformation to this node and all its children  **/
-			const ng::math::Mat4& transform(const ng::math::Mat4& transformation);
+			const ng::math::Mat4& transform(const ng::math::Mat4 & transformation, bool updateBV = true);
 
 			/**  adds a child to the node  **/
 			void addChild(SceneNode* childNode);
 
 			/**  gets called when cull-walker checks if this node is in camera view, 
 				overide if things need to be done during frustrum culling  **/
-			virtual void onFrutrumCulling();
+			virtual void onFrustrumCulling();
 
 			/**  gets called when collision-walker checks if this node has been in a collision,
 			overide if things need to be done during collision-check  **/

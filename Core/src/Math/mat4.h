@@ -13,6 +13,8 @@ namespace ng {
 		public:
 			ALIGN(16) __m128 rows[4];
 			
+			float getElement(uint8 row, uint8 column);
+
 			Mat4();
 			Mat4(float diagonal);
 			Mat4(Vec4f diagonal);

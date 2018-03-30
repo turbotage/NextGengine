@@ -21,8 +21,6 @@ namespace ng {
 				VkDeviceMemory stagingBufferMemory;
 				VkDeviceSize memorySize;
 				VkMemoryAlignment memoryAlignment;
-				VkCommandPool commandPool;
-				VkQueue queue;
 			};
 
 			class VulkanBufferRegionAllocator {
@@ -45,10 +43,6 @@ namespace ng {
 				VkMemoryAlignment m_MemoryAlignment;
 				
 				VkDeviceSize m_FreeMemorySize;
-				
-				VkCommandPool m_CommandPool;
-
-				VkQueue m_Queue;
 
 
 				//end of set on init
@@ -216,7 +210,7 @@ namespace ng {
 				void freeBuffer(VulkanBuffer* buffer);
 
 				/**  d  **/
-				void defragment();
+				void defragment(VkCommandBuffer defragCommandBuffer);
 
 			};
 		}

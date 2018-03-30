@@ -16,9 +16,9 @@ namespace ng {
 			ALIGN(16) float a, b, c, d;
 
 			Plane();
-			Plane(Vec3f point, Vec3f planeVector, Vec3f planeNormal);
+			Plane(Vec3f planeNormal, Vec3f point);
 
-			void setPlane(Vec3f point, Vec3f planeVector, Vec3f planeNormal);
+			void setPlane(Vec3f planeNormal, Vec3f point);
 
 			float distanceToPoint(Vec3f point);
 

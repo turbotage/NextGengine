@@ -11,9 +11,6 @@ ng::memory::vma::VulkanBufferRegionAllocator::VulkanBufferRegionAllocator(Vulkan
 	m_MemorySize = createInfo.memorySize;
 	m_FreeMemorySize = m_MemorySize;
 	m_MemoryAlignment = createInfo.memoryAlignment;
-	m_CommandPool = createInfo.commandPool;
-	m_Queue = createInfo.queue;
-
 }
 
 uint32 ng::memory::vma::VulkanBufferRegionAllocator::increaseBufferCopies(VulkanBuffer * buffer)
@@ -165,7 +162,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buff
 	//if this is the only allocation there is
 	else if ((currentAllocIt == m_Buffers.begin()) && (++currentAllocIt == m_Buffers.end())) {
 		m_FreeSpaces.clear();
-		m_FreeSpaces.insert(0, m_CreateInfo.memorySize);
+		m_FreeSpaces.insert(0, m_MemorySize);
 	}
 	//if this is the first allocation
 	else if (currentAllocIt == m_Buffers.begin()) {
@@ -208,7 +205,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buff
 	else {
 		auto prevAllocIt = --currentAllocIt;
 		//if there is freespace to the right and left of the allocation
-		if ((prevAllocIt->first + prevAllocIt->second.buffer.m_Size != currentAllocIt->first) && (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != m_CreateInfo.memorySize)) {
+		if ((prevAllocIt->first + prevAllocIt->second.buffer.m_Size != currentAllocIt->first) && (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != m_MemorySize)) {
 			/* remove the freespaces to the right and left,
 			and insert new one starting at rigth offset with size of all 3 blocks
 			(right freespace, allocation, left freespace)*/
@@ -233,7 +230,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buff
 			m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 		}
 		//if there is freespace to the right
-		else if (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != m_CreateInfo.memorySize) {
+		else if (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != m_MemorySize) {
 			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
 			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
@@ -250,7 +247,7 @@ void ng::memory::vma::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buff
 	m_Buffers.erase(currentAllocIt);
 }
 
-void ng::memory::vma::VulkanBufferRegionAllocator::defragment()
+void ng::memory::vma::VulkanBufferRegionAllocator::defragment(VkCommandBuffer defragCommandBuffer)
 {
 	m_FreeSpaces.clear();
 
@@ -296,37 +293,12 @@ void ng::memory::vma::VulkanBufferRegionAllocator::defragment()
 
 	m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 
-	VkCommandBufferAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandPool = *m_CreateInfo.commandPool;
-	allocInfo.commandBufferCount = 1;
-
-	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(vulkanDevice->logicalDevice, &allocInfo, &commandBuffer);
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
 	VkBufferCopy copyRegion = {};
 	copyRegion.srcOffset = 0;
 	copyRegion.dstOffset = 0;
-	copyRegion.size = m_CreateInfo.memorySize - newFreeSpaceSize;
-	vkCmdCopyBuffer(commandBuffer, *m_CreateInfo.stagingBuffer, buffer, 1, &copyRegion);
+	copyRegion.size = m_MemorySize - newFreeSpaceSize;
+	vkCmdCopyBuffer(defragCommandBuffer, m_StagingBuffer, buffer, 1, &copyRegion);
 
-	vkEndCommandBuffer(commandBuffer);
-
-	VkSubmitInfo submitInfo = {};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
-
-	vkQueueSubmit(*m_CreateInfo.queue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(*m_CreateInfo.queue);
-
-	vkFreeCommandBuffers(*m_CreateInfo.device, *m_CreateInfo.commandPool, 1, &commandBuffer);
+	vkEndCommandBuffer(defragCommandBuffer);
 }
 

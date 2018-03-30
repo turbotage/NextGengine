@@ -72,7 +72,7 @@ namespace ng {
 
 			uint16 deviceID;
 
-			std::vector<VkThread> threads;
+
 
 		public:
 

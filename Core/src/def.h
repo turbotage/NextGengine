@@ -22,7 +22,6 @@
 #define ALIGN(s) __attribute__((aligned(s)))
 #elif defined(_WIN32)
 #define ALIGN(s) __declspec(align(s))
-#include <Windows.h>
 #include <fcntl.h>
 #include <io.h>
 #else 
