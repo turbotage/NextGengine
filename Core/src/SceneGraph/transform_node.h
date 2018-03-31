@@ -12,7 +12,7 @@ namespace ng {
 			
 		public:
 
-			static TransformNode* castSceneNode(SceneNode* node) {
+			static TransformNode* cast(SceneNode* node) {
 				return static_cast<TransformNode*>(node);
 			}
 

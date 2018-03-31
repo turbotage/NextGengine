@@ -2,7 +2,7 @@
 
 #include "../def.h"
 
-#include "../Math/mat4.h"
+#include "../Math/mat4f.h"
 #include "../Math/quaternion.h"
 #include "../Entities/mesh.h"
 #include "../BoundingVolumes/general_bv.h"
@@ -23,12 +23,12 @@ namespace ng {
 
 			std::list<ng::graphics::VulkanModel> m_Models;
 
-			std::vector<SceneNode> m_ToBeRendered;
+			std::vector<RenderableNode*> m_ToBeRendered;
 
 			SceneGraph m_SceneGraph;
 
 		};
-
+		
 		class SceneGraph
 		{
 		private:

@@ -10,7 +10,7 @@ void ng::scenegraph::SceneNode::onUpdate(float time)
 	
 }
 
-void ng::scenegraph::SceneNode::redoBoundingVolume()
+void ng::scenegraph::SceneNode::rebuildBoundingVolume()
 {
 	float xmin, xmax;
 	float ymin, ymax;
@@ -68,7 +68,7 @@ void ng::scenegraph::SceneNode::updateBoundingVolumes(ng::bvolumes::AABB* update
 		//if the changed aabb is one of the outer ones in this aabb then we have to redo this aabb and then call parent change bv
 		for (int i = 0; i < 6; ++i) {
 			if (updatedAABB == m_OuterAABBs[i]) {
-				redoBoundingVolume();
+				rebuildBoundingVolume();
 				if (m_Parent != nullptr) {
 					m_Parent->updateBoundingVolumes(&(this->m_AABB));
 				}
@@ -119,7 +119,7 @@ void ng::scenegraph::SceneNode::updateBoundingVolumes(ng::bvolumes::AABB* update
 	//if this AABB shoud possibly change but we don't know which child node that has changed, this shoudl rarely happen!! if this happen often
 	//restructure program since this iterative aproach is performance costly
 
-	redoBoundingVolume();
+	rebuildBoundingVolume();
 	if (m_Parent != nullptr) {
 		m_Parent->updateBoundingVolumes();
 	}

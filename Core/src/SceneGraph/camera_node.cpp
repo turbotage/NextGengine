@@ -41,6 +41,4 @@ void ng::scenegraph::CameraNode::onUpdate(float time)
 	topPlane.setPlane(topPlaneNormal, m_Position);
 	bottomPlane.setPlane(bottomPlaneNormal, m_Position);
 
-
-
 }

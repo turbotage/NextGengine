@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene_graph.h"
-#include "../camera.h"
+#include "camera_node.h"
 
 namespace ng {
 	namespace scenegraph {
@@ -19,7 +19,7 @@ namespace ng {
 
 			~CullingWalker();
 
-			void walk(Camera* camera);
+			void walk(CameraNode* camera);
 		};
 	}
 }

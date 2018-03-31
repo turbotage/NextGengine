@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SceneGraph\renderable_node.cpp" />
     <ClCompile Include="src\SceneGraph\camera_node.cpp" />
     <ClCompile Include="src\Graphics\Renderers\deferred_renderer.cpp" />
     <ClCompile Include="src\Memory\vulkan_buffer.cpp" />
@@ -50,7 +51,7 @@
     <ClCompile Include="src\Entities\entity.cpp" />
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\math\mat4.cpp" />
+    <ClCompile Include="src\math\mat4f.cpp" />
     <ClCompile Include="src\math\vec3f.cpp" />
     <ClCompile Include="src\math\vec4f.cpp" />
     <ClCompile Include="src\math\vec2f.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SceneGraph\renderable_node.h" />
     <ClInclude Include="src\SceneGraph\camera_node.h" />
     <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />
     <ClInclude Include="src\Memory\vulkan_buffer.h" />
@@ -105,7 +107,7 @@
     <ClInclude Include="src\Entities\mesh.h" />
     <ClInclude Include="src\Entities\entity.h" />
     <ClInclude Include="src\debug.h" />
-    <ClInclude Include="src\math\mat4.h" />
+    <ClInclude Include="src\math\mat4f.h" />
     <ClInclude Include="src\math\vec3f.h" />
     <ClInclude Include="src\math\vec4f.h" />
     <ClInclude Include="src\def.h" />

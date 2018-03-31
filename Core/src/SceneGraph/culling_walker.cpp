@@ -7,7 +7,7 @@ ng::scenegraph::CullingWalker::CullingWalker(Scene * scene)
 	m_Scene = scene;
 }
 
-void ng::scenegraph::CullingWalker::walk()
+void ng::scenegraph::CullingWalker::walk(CameraNode* camera)
 {
 	
 }

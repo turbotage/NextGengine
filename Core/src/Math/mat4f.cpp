@@ -1,19 +1,19 @@
-#include "mat4.h"
+#include "mat4f.h"
 #include "../def.h"
 #include <random>
 
 #define _mm_shufd(xmm, mask) _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(xmm), mask))
 
-float ng::math::Mat4::getElement(uint8 row, uint8 column)
+float ng::math::Mat4f::getElement(uint8 row, uint8 column)
 {
 	return _mm_cvtss_f32(_mm_shuffle_ps(rows[row], rows[row], _MM_SHUFFLE(column - 1, column - 1, column - 1, column - 1)));
 }
 
-ng::math::Mat4::Mat4()
+ng::math::Mat4f::Mat4f()
 {
 }
 
-ng::math::Mat4::Mat4(float diagonal)
+ng::math::Mat4f::Mat4f(float diagonal)
 {
 	rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, diagonal);
 	rows[1] = _mm_set_ps(0.0f, 0.0f, diagonal, 0.0f);
@@ -21,7 +21,7 @@ ng::math::Mat4::Mat4(float diagonal)
 	rows[3] = _mm_set_ps(diagonal, 0.0f, 0.0f, 0.0f);
 }
 
-ng::math::Mat4::Mat4(Vec4f diagonal)
+ng::math::Mat4f::Mat4f(Vec4f diagonal)
 {
 	rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, diagonal.getX());
 	rows[1] = _mm_set_ps(0.0f, 0.0f, diagonal.getY(), 0.0f);
@@ -29,7 +29,7 @@ ng::math::Mat4::Mat4(Vec4f diagonal)
 	rows[3] = _mm_set_ps(diagonal.getW(), 0.0f, 0.0f, 0.0f);
 }
 
-ng::math::Mat4::Mat4(Vec4f row1, Vec4f row2, Vec4f row3, Vec4f row4)
+ng::math::Mat4f::Mat4f(Vec4f row1, Vec4f row2, Vec4f row3, Vec4f row4)
 {
 	rows[0] = _mm_set_ps(row1.getW(), row1.getZ(), row1.getY(), row1.getX());
 	rows[1] = _mm_set_ps(row2.getW(), row2.getZ(), row2.getY(), row2.getX());
@@ -37,7 +37,7 @@ ng::math::Mat4::Mat4(Vec4f row1, Vec4f row2, Vec4f row3, Vec4f row4)
 	rows[3] = _mm_set_ps(row4.getW(), row4.getZ(), row4.getY(), row4.getX());
 }
 
-ng::math::Mat4 & ng::math::Mat4::mul(const Mat4 & other)
+ng::math::Mat4f & ng::math::Mat4f::mul(const Mat4f & other)
 {
 	for (int i = 0; i < 4; ++i) {
 		__m128 brod1 = _mm_set1_ps(rows[i].m128_f32[0]);
@@ -55,12 +55,12 @@ ng::math::Mat4 & ng::math::Mat4::mul(const Mat4 & other)
 	return *this;
 }
 
-ng::math::Mat4 & ng::math::Mat4::operator*=(const Mat4 & other)
+ng::math::Mat4f & ng::math::Mat4f::operator*=(const Mat4f & other)
 {
 	return mul(other);
 }
 
-ng::math::Vec3f ng::math::Mat4::mul(const Vec3f & other) const
+ng::math::Vec3f ng::math::Mat4f::mul(const Vec3f & other) const
 {
 	Vec4f ret;
 	ret.row = _mm_set_ps(1.0f, other.z, other.y, other.x);
@@ -77,7 +77,7 @@ ng::math::Vec3f ng::math::Mat4::mul(const Vec3f & other) const
 	return Vec3f(ret.getX(), ret.getY(), ret.getZ());
 }
 
-ng::math::Vec4f ng::math::Mat4::mul(const Vec4f & other) const
+ng::math::Vec4f ng::math::Mat4f::mul(const Vec4f & other) const
 {
 	Vec4f returner;
 	returner.row = _mm_add_ps(
@@ -93,7 +93,7 @@ ng::math::Vec4f ng::math::Mat4::mul(const Vec4f & other) const
 	return returner;
 }
 
-ng::math::Mat4 & ng::math::Mat4::add(const Mat4 & other)
+ng::math::Mat4f & ng::math::Mat4f::add(const Mat4f & other)
 {
 	rows[0] = _mm_add_ps(rows[0], other.rows[0]);
 	rows[1] = _mm_add_ps(rows[1], other.rows[1]);
@@ -102,7 +102,7 @@ ng::math::Mat4 & ng::math::Mat4::add(const Mat4 & other)
 	return *this;
 }
 
-ng::math::Mat4 & ng::math::Mat4::sub(const Mat4 & other)
+ng::math::Mat4f & ng::math::Mat4f::sub(const Mat4f & other)
 {
 	rows[0] = _mm_sub_ps(rows[0], other.rows[0]);
 	rows[1] = _mm_sub_ps(rows[1], other.rows[1]);
@@ -111,17 +111,17 @@ ng::math::Mat4 & ng::math::Mat4::sub(const Mat4 & other)
 	return *this;
 }
 
-ng::math::Mat4 & ng::math::Mat4::operator-=(const Mat4 & other)
+ng::math::Mat4f & ng::math::Mat4f::operator-=(const Mat4f & other)
 {
 	return sub(other);
 }
 
-ng::math::Mat4 & ng::math::Mat4::operator+=(const Mat4 & other)
+ng::math::Mat4f & ng::math::Mat4f::operator+=(const Mat4f & other)
 {
 	return add(other);
 }
 
-ng::math::Mat4 & ng::math::Mat4::transpose()
+ng::math::Mat4f & ng::math::Mat4f::transpose()
 {
 	__m128 t1 = _mm_unpacklo_ps(rows[0], rows[1]);
 	__m128 t2 = _mm_unpacklo_ps(rows[2], rows[3]);
@@ -134,7 +134,7 @@ ng::math::Mat4 & ng::math::Mat4::transpose()
 	return *this;
 }
 
-float ng::math::Mat4::det()
+float ng::math::Mat4f::det()
 {
 	__m128 r = _mm_shufd(rows[2], 0x39);
 	__m128 v1 = _mm_mul_ps(r, rows[3]);
@@ -157,7 +157,7 @@ float ng::math::Mat4::det()
 	return _mm_cvtss_f32(d);
 }
 
-ng::math::Mat4 & ng::math::Mat4::invert()
+ng::math::Mat4f & ng::math::Mat4f::invert()
 {
 
 	__m128 f1 = _mm_sub_ps(_mm_mul_ps(_mm_shuffle_ps(rows[2], rows[1], 0xAA),
@@ -219,9 +219,9 @@ ng::math::Mat4 & ng::math::Mat4::invert()
 	return *this;
 }
 
-ng::math::Mat4 ng::math::Mat4::orthographic(float left, float right, float bottom, float top, float near, float far)
+ng::math::Mat4f ng::math::Mat4f::orthographic(float left, float right, float bottom, float top, float near, float far)
 {
-	Mat4 returner;
+	Mat4f returner;
 	returner.rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, 2.0f / (right - left));
 	returner.rows[1] = _mm_set_ps(0.0f, 0.0f, 2.0f / (top - bottom), 0.0f);
 	returner.rows[2] = _mm_set_ps(0.0f, 2.0f / (near - far), 0.0f, 0.0f);
@@ -229,9 +229,9 @@ ng::math::Mat4 ng::math::Mat4::orthographic(float left, float right, float botto
 	return returner;
 }
 
-ng::math::Mat4 ng::math::Mat4::perspective(float fov, float aspectRatio, float near, float far)
+ng::math::Mat4f ng::math::Mat4f::perspective(float fov, float aspectRatio, float near, float far)
 {
-	Mat4 returner;
+	Mat4f returner;
 	float q = 1.0f / tan(0.5 * fov);
 	float a = q / aspectRatio;
 	float b = (near + far) / (near - far);
@@ -243,9 +243,9 @@ ng::math::Mat4 ng::math::Mat4::perspective(float fov, float aspectRatio, float n
 	return returner;
 }
 
-ng::math::Mat4 ng::math::Mat4::lookAt(const Vec3f & camera, const Vec3f & object, const Vec3f & up)
+ng::math::Mat4f ng::math::Mat4f::lookAt(const Vec3f & camera, const Vec3f & object, const Vec3f & up)
 {
-	Mat4 ret;
+	Mat4f ret;
 	Vec3f f = Vec3f::normalized(object - camera);
 	Vec3f s = f.cross(Vec3f::normalized(up));
 	Vec3f u = s.cross(Vec3f::normalized(f));
@@ -253,12 +253,12 @@ ng::math::Mat4 ng::math::Mat4::lookAt(const Vec3f & camera, const Vec3f & object
 	ret.rows[1] = _mm_set_ps(0.0f, -f.y, u.y, s.y);
 	ret.rows[2] = _mm_set_ps(0.0f, -f.z, u.z, s.z);
 	ret.rows[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
-	return ret * Mat4::translation(Vec3f(-camera.x, -camera.y, -camera.z));
+	return ret * Mat4f::translation(Vec3f(-camera.x, -camera.y, -camera.z));
 }
 
-ng::math::Mat4 ng::math::Mat4::translation(const Vec3f & translation)
+ng::math::Mat4f ng::math::Mat4f::translation(const Vec3f & translation)
 {
-	Mat4 returner;
+	Mat4f returner;
 	returner.rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f);
 	returner.rows[1] = _mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f);
 	returner.rows[2] = _mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f);
@@ -266,13 +266,13 @@ ng::math::Mat4 ng::math::Mat4::translation(const Vec3f & translation)
 	return returner;
 }
 
-ng::math::Mat4 ng::math::Mat4::rotation(const Vec3f& axis, float angle)
+ng::math::Mat4f ng::math::Mat4f::rotation(const Vec3f& axis, float angle)
 {
 #define x axis.x
 #define y axis.y
 #define z axis.z
 
-	Mat4 returner;
+	Mat4f returner;
 	float c = cos(angle);
 	float s = sin(angle);
 	float omc = 1.0f - c;
@@ -306,10 +306,10 @@ ng::math::Mat4 ng::math::Mat4::rotation(const Vec3f& axis, float angle)
 #undef z
 }
 
-ng::math::Mat4 ng::math::Mat4::rotation(const Quaternion & quat)
+ng::math::Mat4f ng::math::Mat4f::rotation(const Quaternion & quat)
 {
-	Mat4 m1;
-	Mat4 m2;
+	Mat4f m1;
+	Mat4f m2;
 
 	m1.rows[0] = _mm_set_ps(quat.getX(), -quat.getY(), quat.getZ(), quat.getW());
 	m1.rows[1] = _mm_set_ps(quat.getY(), quat.getW(), quat.getW(), -quat.getZ());
@@ -324,9 +324,9 @@ ng::math::Mat4 ng::math::Mat4::rotation(const Quaternion & quat)
 	return m1 * m2;
 }
 
-ng::math::Mat4 ng::math::Mat4::scale(const Vec3f & scale)
+ng::math::Mat4f ng::math::Mat4f::scale(const Vec3f & scale)
 {
-	Mat4 returner;
+	Mat4f returner;
 	returner.rows[0] = _mm_set_ps(0.0f, 0.0f, 0.0f, scale.x);
 	returner.rows[1] = _mm_set_ps(0.0f, 0.0f, scale.y, 0.0f);
 	returner.rows[2] = _mm_set_ps(0.0f, scale.z, 0.0f, 0.0f);
@@ -334,34 +334,34 @@ ng::math::Mat4 ng::math::Mat4::scale(const Vec3f & scale)
 	return returner;
 }
 
-ng::math::Mat4 ng::math::operator*(Mat4 left, const Mat4 & right)
+ng::math::Mat4f ng::math::operator*(Mat4f left, const Mat4f & right)
 {
 	return left.mul(right);
 }
 
-ng::math::Vec3f ng::math::operator*(const Mat4 & left, const Vec3f & right)
+ng::math::Vec3f ng::math::operator*(const Mat4f & left, const Vec3f & right)
 {
 	return left.mul(right);
 }
 
-ng::math::Vec4f ng::math::operator*(const Mat4 & left, const Vec4f & right)
+ng::math::Vec4f ng::math::operator*(const Mat4f & left, const Vec4f & right)
 {
 	return left.mul(right);
 }
 
-ng::math::Mat4 ng::math::operator+(Mat4 left, const Mat4 & right)
+ng::math::Mat4f ng::math::operator+(Mat4f left, const Mat4f & right)
 {
 	return left.add(right);
 }
 
-ng::math::Mat4 ng::math::operator-(Mat4 left, const Mat4 & right)
+ng::math::Mat4f ng::math::operator-(Mat4f left, const Mat4f & right)
 {
 	return left.sub(right);
 }
 
-std::ostream & ng::math::operator<<(std::ostream & stream, const Mat4 & matrix)
+std::ostream & ng::math::operator<<(std::ostream & stream, const Mat4f & matrix)
 {
-	stream << "Mat4: [\n";
+	stream << "Mat4f: [\n";
 	for (int i = 0; i < 4; ++i) {
 		stream << matrix.rows[i].m128_f32[0] << ", " << matrix.rows[i].m128_f32[1] << ", " << matrix.rows[i].m128_f32[2] << ", " << matrix.rows[i].m128_f32[3] << std::endl;
 	}

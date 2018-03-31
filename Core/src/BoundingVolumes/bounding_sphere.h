@@ -9,12 +9,12 @@ namespace ng {
 		private:
 
 		public:
-			ng::math::Vec3f centerPos;
+			ng::math::Vec3f* center;
 			float radius;
 
 
 			BoundingSphere();
-			BoundingSphere(ng::math::Vec3f pos, float radius);
+			BoundingSphere(ng::math::Vec3f* center, float radius);
 		};
 	}
 }

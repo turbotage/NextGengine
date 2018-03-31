@@ -6,13 +6,13 @@
 
 namespace ng {
 	namespace math {
-		ALIGN(16) class Vec4f
+		class Vec4f
 		{
 		private:
 
 		public:
 
-			__m128 row;
+			ALIGN(16) __m128 row;
 
 			float getX() const;
 			float getY() const;

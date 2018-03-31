@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "../Math/mat4.h"
+#include "../Math/mat4f.h"
 #include "../Props/movement_properties.h"
 #include "../BoundingVolumes/aabb.h"
 #include "../Graphics/GraphicsObjects/vulkan_model.h"
@@ -14,11 +14,13 @@ namespace ng {
 
 		class SceneNode {
 		private:
+
 			friend CullingWalker;
 
 			void update(float time);
 
-			void redoBoundingVolume();
+			/**  will rebuild the AABB in this node  **/
+			void rebuildBoundingVolume();
 
 			ng::bvolumes::AABB* m_OuterAABBs[6]; //0 :  maxX, 1 : minX, 2 : maxY, 3 : minY, 4 : maxZ, 5 : minZ  
 
@@ -34,7 +36,7 @@ namespace ng {
 
 			/**  POSITIONAL  **/
 			/**  world-transform  **/
-			ng::math::Mat4 m_WorldTransform;
+			ng::math::Mat4f m_WorldTransform;
 
 			/**  node-position  **/
 			ng::math::Vec3f m_Position;
@@ -55,6 +57,8 @@ namespace ng {
 
 			ng::bvolumes::AABB m_MinimumAABB;
 
+
+			/**  will update the AABB tree from this node to the top **/
 			void updateBoundingVolumes(ng::bvolumes::AABB* updatedAABB = nullptr, bool isLocal = false);
 
 			virtual void onAddChild();
@@ -68,21 +72,21 @@ namespace ng {
 			const ng::math::Vec3f& getPosition();
 
 			/**  rotates this node and all its children around the rotationAxis by angle degrees **/
-			const ng::math::Mat4& rotate(const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
+			const ng::math::Mat4f& rotate(const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
 			/**  rotates this node and all its children  **/
-			const ng::math::Mat4& rotate(const ng::math::Mat4 & rotationMatrix, bool updateBV = true);
+			const ng::math::Mat4f& rotate(const ng::math::Mat4f & rotationMatrix, bool updateBV = true);
 			/**  rotates this node and all its children  **/
-			const ng::math::Mat4& rotate(const ng::math::Quaternion & rotationQuaternion, bool updateBV = true);
+			const ng::math::Mat4f& rotate(const ng::math::Quaternion & rotationQuaternion, bool updateBV = true);
 			/**  rotates this node and all its children around a point and axis by angle degrees  **/
-			const ng::math::Mat4& rotateAround(const ng::math::Vec3f & rotationPoint, const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
+			const ng::math::Mat4f& rotateAround(const ng::math::Vec3f & rotationPoint, const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
 
 			/**  translates this node and all its children  **/
-			const ng::math::Mat4& translate(const ng::math::Vec3f & translation, bool updateBV = true);
+			const ng::math::Mat4f& translate(const ng::math::Vec3f & translation, bool updateBV = true);
 			/**  translates this node and all its children  **/
-			const ng::math::Mat4& translate(const ng::math::Mat4 & translationMatrix, bool updateBV = true);
+			const ng::math::Mat4f& translate(const ng::math::Mat4f & translationMatrix, bool updateBV = true);
 
 			/**  applies some linear transformation to this node and all its children  **/
-			const ng::math::Mat4& transform(const ng::math::Mat4 & transformation, bool updateBV = true);
+			const ng::math::Mat4f& transform(const ng::math::Mat4f & transformation, bool updateBV = true);
 
 			/**  adds a child to the node  **/
 			void addChild(SceneNode* childNode);
