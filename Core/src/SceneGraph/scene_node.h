@@ -72,21 +72,21 @@ namespace ng {
 			const ng::math::Vec3f& getPosition();
 
 			/**  rotates this node and all its children around the rotationAxis by angle degrees **/
-			const ng::math::Mat4f& rotate(const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
+			const ng::math::Mat4f& rotate(const ng::math::Vec3f& rotationAxis, float angle, bool updateBV = true);
 			/**  rotates this node and all its children  **/
-			const ng::math::Mat4f& rotate(const ng::math::Mat4f & rotationMatrix, bool updateBV = true);
+			const ng::math::Mat4f& rotate(const ng::math::Mat4f& rotationMatrix, bool updateBV = true);
 			/**  rotates this node and all its children  **/
-			const ng::math::Mat4f& rotate(const ng::math::Quaternion & rotationQuaternion, bool updateBV = true);
+			const ng::math::Mat4f& rotate(const ng::math::Quaternion& rotationQuaternion, bool updateBV = true);
 			/**  rotates this node and all its children around a point and axis by angle degrees  **/
-			const ng::math::Mat4f& rotateAround(const ng::math::Vec3f & rotationPoint, const ng::math::Vec3f & rotationAxis, const float angle, bool updateBV = true);
+			const ng::math::Mat4f& rotateAround(const ng::math::Vec3f& rotationPoint, const ng::math::Vec3f& rotationAxis, float angle, bool updateBV = true);
 
 			/**  translates this node and all its children  **/
-			const ng::math::Mat4f& translate(const ng::math::Vec3f & translation, bool updateBV = true);
+			const ng::math::Mat4f& translate(const ng::math::Vec3f& translation, bool updateBV = true);
 			/**  translates this node and all its children  **/
-			const ng::math::Mat4f& translate(const ng::math::Mat4f & translationMatrix, bool updateBV = true);
+			const ng::math::Mat4f& translate(const ng::math::Mat4f& translationMatrix, bool updateBV = true);
 
 			/**  applies some linear transformation to this node and all its children  **/
-			const ng::math::Mat4f& transform(const ng::math::Mat4f & transformation, bool updateBV = true);
+			const ng::math::Mat4f& transform(const ng::math::Mat4f& transformation, bool updateBV = true);
 
 			/**  adds a child to the node  **/
 			void addChild(SceneNode* childNode);

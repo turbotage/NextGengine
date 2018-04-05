@@ -18,18 +18,14 @@ namespace ng {
 			//is local origin, therefore smaller x is negative x and bigger is positive x, and so on for y and z aswell
 			ng::math::Vec3f* position;
 
-			float positiveWidth; // +x
-			float negativeWidth; // -x
-
-			float positiveHeight; // +y
-			float negativeHeight; // -y
-
-			float positiveDepth; // +z 
-			float negativeDepth; // -z
+			ng::math::Vec3f max; // +x, +y, +z
+			ng::math::Vec3f min; // -x, -y, -z
 
 		public:
 
 			AABB();
+
+			AABB(ng::math::Vec3f* position, ng::math::Vec3f max, ng::math::Vec3f min);
 
 			~AABB();
 
@@ -54,6 +50,15 @@ namespace ng {
 
 			float minZ();
 			void setMinZ(float minZ);
+
+			ng::math::Vec3f getPoint0();
+			ng::math::Vec3f getPoint1();
+			ng::math::Vec3f getPoint2();
+			ng::math::Vec3f getPoint3();
+			ng::math::Vec3f getPoint4();
+			ng::math::Vec3f getPoint5();
+			ng::math::Vec3f getPoint6();
+			ng::math::Vec3f getPoint7();
 
 		};
 	}

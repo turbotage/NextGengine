@@ -9,20 +9,20 @@ namespace ng {
 
 		class VulkanModel
 		{
-		public:
+		private:
 			
 			ng::memory::VulkanBuffer m_VertexAndIndexBuffer;
 			
+			ng::graphics::VulkanTexture m_TextureArray;
+
 			struct ModelPart {
 				uint32 vertexOffset;
 				uint32 indexOffset;
 
 				uint32 indexCount;
-
-				ng::graphics::VulkanTexture textureArray;
 			};
 
-			std::vector<ModelPart> modelParts;
+			std::vector<ModelPart> m_ModelParts;
 			
 		public:
 			
