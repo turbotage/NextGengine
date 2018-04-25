@@ -71,7 +71,42 @@ distance checking
 	);
 */
 
-int8 ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode * camera)
+void ng::scenegraph::CullingWalker::addToRendering(ng::scenegraph::RenderableNode * node)
+{
+	auto it = m_Scene->m_SceneRenderState.find(node->m_GraphicsPipeline);
+	if (it == m_Scene->m_SceneRenderState.end()) {
+
+		std::unordered_map<std::list<ng::scenegraph::RenderState>::iterator, std::vector<RenderableNode*>> temp;
+		temp.emplace(node->m_RenderState, node);
+
+		m_Scene->m_SceneRenderState.emplace(node->m_GraphicsPipeline, { {node->m_RenderState, node} })
+
+		it = m_Scene->m_SceneRenderState.insert(
+			std::pair<
+			ng::graphics::VulkanGraphicsPipeline*,
+			std::unordered_map<
+			std::list<ng::scenegraph::RenderState>::iterator,
+			std::vector<RenderableNode*>
+			>
+			>(node->m_GraphicsPipeline, )
+		)
+	}
+}
+
+void ng::scenegraph::CullingWalker::removeFromRendering(ng::scenegraph::RenderableNode * node)
+{
+}
+
+void ng::scenegraph::CullingWalker::addToRenderingRecursively(ng::scenegraph::RenderableNode * node)
+{
+	
+}
+
+void ng::scenegraph::CullingWalker::removeFromRenderingRecursively(ng::scenegraph::RenderableNode * node)
+{
+}
+
+ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode * camera)
 {
 	//aabb 
 	//	1		0
@@ -79,7 +114,7 @@ int8 ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode *
 	//	|	|	|	|
 	//	5	|	4	|
 	//		6		7
-
+	CullingFlags ret;
 	__mmask8 isFullyInside = 0b11111111;
 	__mmask8 isFullyOutside = 0b00000000;
 
@@ -257,12 +292,15 @@ int8 ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode *
 		isFullyOutside |= _mm256_cmp_ps_mask(dists, _mm256_set1_ps(0.0f), _CMP_LE_OS);
 	}
 
+	//if it is fully inside
 	if (isFullyInside == 0b11111111) {
-		return EVERYTHING_IN_FRUSTRUM;
+		ret.setFlags(EVERYTHING_IN_FRUSTRUM);
+		return ret;
 	}
-
+	//if it is fully outside
 	if (isFullyOutside == 0b11111111) {
-		return NOTHING_IN_FRUSTRUM;
+		ret.setFlags(NOTHING_IN_FRUSTRUM);
+		return ret;
 	}
 	
 	//see if bounding sphere is inside frustrum
@@ -348,8 +386,11 @@ int8 ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode *
 
 		dists = _mm256_div_ps(numerator, denominator);
 
-		if (_mm256_cmp_ps_mask(dists, _mm256_set1_ps(node->boundingSphere.radius), _CMP_LT_OS) != 0b00000000) {
-			return MODEL_IN_FRUSTRUM | AABB_IN_FRUSTRUM;
+		/*last two in dists will álways be zero and will therefore automatically be less than radius. 
+		Therefore if comparison is greatar than 0b00000011 some part of the model must be inside frustrum */
+		if (_mm256_cmp_ps_mask(dists, _mm256_set1_ps(node->boundingSphere.radius), _CMP_LT_OS) > 0b00000011) {
+			ret.setFlags(MODEL_IN_FRUSTRUM | AABB_IN_FRUSTRUM);
+			return ret;
 		}
 
 	}
@@ -359,20 +400,36 @@ int8 ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode *
 ng::scenegraph::CullingWalker::CullingWalker(Scene * scene)
 {
 	m_Scene = scene;
+
+
+
 }
 
 void ng::scenegraph::CullingWalker::walk(CameraNode * camera)
 {
-	std::map<ng::math::Vec3f, RenderableNode*>* tbrPtr = &m_Scene->m_ToBeRendered;
-	for (auto it = tbrPtr->begin(); it != tbrPtr->end(); ++it) {
-		if (isInView(it->second) == EVERYTHING_IN_FRUSTRUM) {
-			
-		}
-		if (isInView(it->second) == NOTHING_IN_FRUSTRUM) {
-			
+
+	for (auto it = m_Scene->m_SceneRenderState.begin(); it != m_Scene->m_SceneRenderState.end(); ++it) {
+		for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+			std::vector<RenderableNode*>* rns = &it2->second;
+			for (int i = 0; i < rns->size(); ++i) {
+				CullingFlags cf = isInView((*rns)[i], camera);
+				//nothing
+				if (cf.nothingInFrustrum()) {
+
+				} //all
+				else if (cf.nothingInFrustrum()) {
+
+				} //
+				else if (cf.modelInFrustrum()) {
+
+				}
+				else {
+
+				}
+			}
 		}
 	}
 
-	
-
 }
+
+

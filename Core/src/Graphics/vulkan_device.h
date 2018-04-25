@@ -6,6 +6,14 @@
 #define VULKAN_DEVICE_ID_COMPUTE_UNIT 1
 
 namespace ng {
+	namespace memory {
+		namespace vma {
+			class VulkanMemoryAllocator;
+		}
+	}
+}
+
+namespace ng {
 	namespace graphics {
 
 		//standard device-extensions
@@ -72,7 +80,7 @@ namespace ng {
 
 			uint16 deviceID;
 
-
+			std::vector<ng::memory::vma::VulkanMemoryAllocator> vulkanMemoryAllocators;
 
 		public:
 

@@ -3,6 +3,12 @@
 #include "vulkan_device.h"
 
 namespace ng {
+	namespace memory {
+		class VulkanBuffer;
+	}
+}
+
+namespace ng {
 	namespace graphics {
 
 		class VulkanTexture
@@ -10,7 +16,6 @@ namespace ng {
 		private:
 
 		public:
-			VulkanDevice* vulkanDevice;
 
 			VkImage image;
 			VkImageLayout imageLayout;
@@ -24,11 +29,17 @@ namespace ng {
 
 			VkSampler sampler;
 
+			ng::memory::VulkanBuffer textureBuffer;
+
 		public:
 
 			void updateDescriptor();
 
-			void destroy();
+			void destroy(VulkanDevice* vulkanDevice);
+
+			VulkanTexture operator=(const VulkanTexture& buffer);
+
+			static std::size_t hash(VulkanTexture const& texture);
 
 		};
 

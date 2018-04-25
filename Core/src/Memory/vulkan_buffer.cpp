@@ -1,5 +1,6 @@
 #include "vulkan_buffer.h"
 #include "vulkan_buffer_region_allocator.h"
+#include "../Math/hash_functions.h"
 
 namespace ng {
 	namespace memory {
@@ -55,6 +56,13 @@ namespace ng {
 		void VulkanBuffer::free()
 		{
 			m_BufferRegionAllocator->freeBuffer(this);
+		}
+
+		std::size_t VulkanBuffer::hash(VulkanBuffer const& buffer)
+		{
+			std::size_t ret = std::hash<VkBuffer*>()(buffer.m_VkBuffer);
+			ng::math::hashCombine<VkDeviceSize>(ret, buffer.m_Offset);
+			return ret;
 		}
 
 	}

@@ -9,29 +9,39 @@ namespace ng {
 
 		class VulkanModel
 		{
-		private:
-			
-			ng::memory::VulkanBuffer m_VertexAndIndexBuffer;
-			
-			ng::graphics::VulkanTexture m_TextureArray;
-
+		public: //types
 			struct ModelPart {
 				uint32 vertexOffset;
 				uint32 indexOffset;
 
 				uint32 indexCount;
 			};
-
-			std::vector<ModelPart> m_ModelParts;
 			
-		public:
+		public: //members
+			
+			/**  Vertex-Index Buffer Object  **/
+			ng::memory::VulkanBuffer VIBO;
+
+			std::vector<ModelPart> modelParts;
+
+			ng::graphics::VulkanTexture textureArray;
+			
+			float hqLodDistance;
+			float mqLodDistance;
+			float lqLodDistance;
+
+			
+		public: //member functions
 			
 			void init(VulkanBase* vulkanBase, VkDescriptorSetLayout* descriptorSetLayout);
 
 			void loadModel(const char* filename);
 
+			VulkanModel operator=(const VulkanModel& model);
+
+			static std::size_t hash(VulkanModel const& model);
+
 		};
 	}
 
 }
-

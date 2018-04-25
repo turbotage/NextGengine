@@ -12,6 +12,10 @@ namespace ng {
 			uint32 textureArrayIndex;
 		};
 
+		struct RenderingFlags {
+
+		};
+
 		class RenderableNode : SceneNode
 		{
 			friend CullingWalker;
@@ -32,6 +36,7 @@ namespace ng {
 
 			/**  CULL-LOCK : is set to false if this node has already been culled, gets set to false when culling-walker goes over it  **/
 			bool m_HasBeenCulled = false;
+			CullingFlags m_CullingFlags;
 
 		protected:
 

@@ -1,4 +1,5 @@
 #include "vulkan_texture.h"
+#include "../Memory/vulkan_buffer.h"
 
 #include <gli\gli.hpp>
 
@@ -10,7 +11,7 @@ void ng::graphics::VulkanTexture::updateDescriptor()
 	descriptor.imageLayout = imageLayout;
 }
 
-void ng::graphics::VulkanTexture::destroy()
+void ng::graphics::VulkanTexture::destroy(VulkanDevice* vulkanDevice)
 {
 	vkDestroyImageView(vulkanDevice->logicalDevice, view, nullptr);
 	vkDestroyImage(vulkanDevice->createLogicalDevice, image, nullptr);
@@ -20,15 +21,19 @@ void ng::graphics::VulkanTexture::destroy()
 
 }
 
+std::size_t ng::graphics::VulkanTexture::hash(VulkanTexture const& texture)
+{
+	return ng::memory::VulkanBuffer::hash(texture.textureBuffer);
+}
+
 void ng::graphics::VulkanTexture2D::loadFromFile(std::string filename, VulkanDevice * vulkanDevice, VkFormat format, VkQueue copyQueue, VkImageUsageFlags imageUsageFlags, VkImageLayout imageLayout, bool forceLinear)
 {
 	using namespace gli::gli;
-	
+
 	texture2d texture2D(load(filename.c_str()));
 
 	assert(!texture2D.empty());
 
-	this->vulkanDevice = vulkanDevice;
 	width = static_cast<uint32>(texture2D.extent().x);
 	height = static_cast<uint32>(texture2D.extent().y);
 	mipLevels = static_cast<uint32>(texture2D.levels());

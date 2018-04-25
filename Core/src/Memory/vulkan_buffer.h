@@ -20,7 +20,7 @@ namespace ng {
 		class VulkanBuffer {
 		private:
 			vma::VulkanBufferRegionAllocator* m_BufferRegionAllocator = nullptr;
-		protected:
+		//protected:
 			friend class ng::memory::vma::VulkanBufferRegionAllocator;
 
 			void(*onUpdate)() = nullptr;
@@ -52,6 +52,8 @@ namespace ng {
 			void setBufferUpdateCallbackFunc(void(*callbackFunc)());
 
 			void free();
+
+			static std::size_t hash(VulkanBuffer const& buffer);
 
 		};
 

@@ -46,8 +46,6 @@ namespace ng {
 			Vec2f& operator*=(float other);
 			Vec2f& operator/=(float other);
 
-
-
 			friend std::ostream& operator<<(std::ostream& stream, const Vec2f& vector);
 		};
 	}

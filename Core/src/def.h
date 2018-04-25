@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <utility>
 #include <mutex>
+#include <shared_mutex>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>

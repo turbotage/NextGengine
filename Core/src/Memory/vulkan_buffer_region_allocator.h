@@ -28,10 +28,6 @@ namespace ng {
 
 				friend VulkanMemoryAllocator;
 
-				std::mutex m_MutexLock;
-
-				//set on init
-
 				graphics::VulkanDevice* m_VulkanDevice;
 
 				VkBuffer m_StagingBuffer;
