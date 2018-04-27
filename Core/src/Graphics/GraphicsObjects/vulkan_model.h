@@ -43,5 +43,12 @@ namespace ng {
 
 		};
 	}
+}
 
+namespace std {
+	template<> struct hash<ng::graphics::VulkanModel> {
+		size_t operator()(ng::graphics::VulkanModel const& model) const {
+			return ng::graphics::VulkanModel::hash(model);
+		}
+	};
 }

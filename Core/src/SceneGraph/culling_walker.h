@@ -1,7 +1,16 @@
 #pragma once
 
-#include "scene_graph.h"
 #include "camera_node.h"
+
+namespace ng {
+	namespace scenegraph {
+		class RenderableNode;
+		class SceneNode;
+		class Scene;
+		class RenderState;
+	}
+}
+
 
 namespace ng {
 	namespace scenegraph {

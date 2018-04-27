@@ -1,4 +1,7 @@
 #include "culling_walker.h"
+#include "scene_graph.h"
+#include "renderable_node.h"
+
 #include <immintrin.h>
 
 /*
@@ -79,22 +82,17 @@ void ng::scenegraph::CullingWalker::addToRendering(ng::scenegraph::RenderableNod
 		std::unordered_map<std::list<ng::scenegraph::RenderState>::iterator, std::vector<RenderableNode*>> temp;
 		temp.emplace(node->m_RenderState, node);
 
-		m_Scene->m_SceneRenderState.emplace(node->m_GraphicsPipeline, { {node->m_RenderState, node} })
-
-		it = m_Scene->m_SceneRenderState.insert(
-			std::pair<
-			ng::graphics::VulkanGraphicsPipeline*,
-			std::unordered_map<
-			std::list<ng::scenegraph::RenderState>::iterator,
-			std::vector<RenderableNode*>
-			>
-			>(node->m_GraphicsPipeline, )
-		)
+		m_Scene->m_SceneRenderState.insert(std::make_pair(node->m_GraphicsPipeline, temp));
+	}
+	else {
+		std::unordered_map<std::list<ng::scenegraph::RenderState>::iterator, std::vector<RenderableNode*>> temp  = it->second;
+		temp.find(node->m_RenderState);
 	}
 }
 
 void ng::scenegraph::CullingWalker::removeFromRendering(ng::scenegraph::RenderableNode * node)
 {
+
 }
 
 void ng::scenegraph::CullingWalker::addToRenderingRecursively(ng::scenegraph::RenderableNode * node)
@@ -104,6 +102,7 @@ void ng::scenegraph::CullingWalker::addToRenderingRecursively(ng::scenegraph::Re
 
 void ng::scenegraph::CullingWalker::removeFromRenderingRecursively(ng::scenegraph::RenderableNode * node)
 {
+	
 }
 
 ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode * camera)

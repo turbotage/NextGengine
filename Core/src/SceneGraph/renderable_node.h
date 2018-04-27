@@ -12,17 +12,13 @@ namespace ng {
 			uint32 textureArrayIndex;
 		};
 
-		struct RenderingFlags {
-
-		};
-
 		class RenderableNode : SceneNode
 		{
-			friend CullingWalker;
+			friend class CullingWalker;
 		private:
 
 			/**  RENDER-STATE : contains the vulkan-model **/
-			std::list<RenderState>::iterator m_RenderState;
+			std::list<ng::scenegraph::RenderState>::iterator m_RenderState;
 
 			/**  TEXTURE-ARRAY-INDEX : the index that specifies which texture in the vulkan-model 
 			texture-array that are to be used for rendering this node  **/
@@ -30,7 +26,7 @@ namespace ng {
 
 			/**  VULKAN-GRAPHICS-PIPELINE : the pipeline which will be used to render the vulkan-model  **/
 			ng::graphics::VulkanGraphicsPipeline* m_GraphicsPipeline;
-
+			
 			/**  RENDER-LOCK : set to false or true to enable or disable rendering  **/
 			bool m_RenderingEnabled = true;
 

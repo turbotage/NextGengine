@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SceneGraph\render_state.cpp" />
     <ClCompile Include="src\SceneGraph\renderable_node.cpp" />
     <ClCompile Include="src\SceneGraph\camera_node.cpp" />
     <ClCompile Include="src\Graphics\Renderers\deferred_renderer.cpp" />
@@ -75,6 +76,7 @@
     <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SceneGraph\render_state.h" />
     <ClInclude Include="src\SceneGraph\renderable_node.h" />
     <ClInclude Include="src\SceneGraph\camera_node.h" />
     <ClInclude Include="src\Graphics\Renderers\deferred_renderer.h" />

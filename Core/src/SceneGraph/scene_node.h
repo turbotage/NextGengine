@@ -5,7 +5,6 @@
 #include "../Math/mat4f.h"
 #include "../Props/movement_properties.h"
 #include "../BoundingVolumes/aabb.h"
-#include "../Graphics/GraphicsObjects/vulkan_model.h"
 
 namespace ng {
 	namespace scenegraph {

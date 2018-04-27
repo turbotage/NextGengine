@@ -59,3 +59,11 @@ namespace ng {
 
 	}
 }
+
+namespace std {
+	template<> struct hash<ng::memory::VulkanBuffer> {
+		size_t operator()(ng::memory::VulkanBuffer const& buffer) const {
+			return ng::memory::VulkanBuffer::hash(buffer);
+		}
+	};
+}
