@@ -5,25 +5,25 @@
 #include "../Entities/model.h"
 #include "../Math/Vec3f.h"
 #include "../Math/hash_functions.h"
-#include "../Math/Vec3fs.h"
+#include "../Math/Vec3f.h"
 #include "../camera.h"
 
 
 namespace ng {
 	namespace dstructs {
 
-		typedef ng::math::Vec3fs GridIndex;
+		typedef ng::math::Vec3f GridIndex;
 
 		class UniformGrid
 		{
 		private:
 
-			float m_GridSize;
-			float m_GridIndexRadius;
+			float GridSize;
+			float GridIndexRadius;
 
-			ng::math::Vec3fs m_WorldSizeMultipler;
+			ng::math::Vec3f WorldSizeMultipler;
 
-			std::unordered_multimap<GridIndex, ng::entity::Model*> m_Collidables;
+			std::unordered_multimap<GridIndex, ng::entity::Model*> Collidables;
 
 		public:
 
@@ -33,7 +33,7 @@ namespace ng {
 			
 
 			UniformGrid();
-			UniformGrid(ng::math::Vec3fs worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
+			UniformGrid(ng::math::Vec3f worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
 			~UniformGrid();
 		};
 	}

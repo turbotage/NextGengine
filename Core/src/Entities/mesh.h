@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../math/mat4.h"
+#include "../Math/mat4f.h"
 #include "entity.h"
 #include <vector>
-#include "../Graphics/GraphicsObjects/vertex.h"
+#include "../Vulkan/GraphicsObjects/vertex.h"
 
 namespace ng {
 	namespace entity {

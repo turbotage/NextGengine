@@ -14,6 +14,8 @@
 #include <utility>
 #include <mutex>
 #include <shared_mutex>
+#include <future>
+#include <memory>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -62,6 +64,7 @@ typedef uint8 VkMemoryAlignment;
 #include <unordered_set>
 #include <list>
 #include <forward_list>
+#include <queue>
 
 /*
 namespace ng {

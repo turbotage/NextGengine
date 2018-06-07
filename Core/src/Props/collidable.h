@@ -8,11 +8,11 @@
 class Collidable
 {
 private:
-	uint8 m_CollisionProps;
-	ng::math::Vec3f m_Dimensions;
+	uint8 CollisionProps;
+	ng::math::Vec3f Dimensions;
 
-	ng::entity::Entity* m_Entity;
-	std::mutex* m_Mutex;
+	ng::entity::Entity* Entity;
+	std::mutex* Mutex;
 public:
 
 	enum eCollisionProps {

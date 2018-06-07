@@ -23,22 +23,22 @@ ng::dstructs::GridIndex ng::dstructs::UniformGrid::getIndex(ng::math::Vec3f posi
 {
 	GridIndex ret;
 	if (position.x >= 0) {
-		ret.x = ((position.x / m_GridSize) + 1);
+		ret.x = ((position.x / GridSize) + 1);
 	}
 	else {
-		ret.x = ((position.x / m_GridSize) - 1);
+		ret.x = ((position.x / GridSize) - 1);
 	}
 	if (position.y >= 0) {
-		ret.y = ((position.y / m_GridSize) + 1);
+		ret.y = ((position.y / GridSize) + 1);
 	}
 	else {
-		ret.y = ((position.y / m_GridSize) - 1);
+		ret.y = ((position.y / GridSize) - 1);
 	}
 	if (position.z >= 0) {
-		ret.z = ((position.z / m_GridSize) + 1);
+		ret.z = ((position.z / GridSize) + 1);
 	}
 	else {
-		ret.z = ((position.z / m_GridSize) - 1);
+		ret.z = ((position.z / GridSize) - 1);
 	}
 	return ret;
 }
@@ -47,29 +47,30 @@ ng::math::Vec3f ng::dstructs::UniformGrid::getCenterPosition(const GridIndex * i
 {
 	ng::math::Vec3f ret;
 	if (index->x >= 0) {
-		ret.x = (index->x * m_GridSize) - (m_GridSize / 2);
+		ret.x = (index->x * GridSize) - (GridSize / 2);
 	}
 	else {
-		ret.x = (index->x * m_GridSize) + (m_GridSize / 2);
+		ret.x = (index->x * GridSize) + (GridSize / 2);
 	}
 	if (index->y >= 0) {
-		ret.y = (index->x * m_GridSize) - (m_GridSize / 2);
+		ret.y = (index->x * GridSize) - (GridSize / 2);
 	}
 	else {
-		ret.y = (index->x * m_GridSize) + (m_GridSize / 2);
+		ret.y = (index->x * GridSize) + (GridSize / 2);
 	}
 	if (index->z >= 0) {
-		ret.z = (index->x * m_GridSize) - (m_GridSize / 2);
+		ret.z = (index->x * GridSize) - (GridSize / 2);
 	}
 	else {
-		ret.z = (index->x * m_GridSize) + (m_GridSize / 2);
+		ret.z = (index->x * GridSize) + (GridSize / 2);
 	}
 	return ret;
 }
+#if 0
 
 std::vector<ng::dstructs::GridIndex*>* ng::dstructs::UniformGrid::gridIndicesCulling(Camera & cam)
 {
-	ng::math::Vec3f eulerAngles = cam.m_Rotation.eulerAngles(); //pitch, roll, yaw
+	ng::math::Vec3f eulerAngles = cam.Rotation.eulerAngles(); //pitch, roll, yaw
 
 	/*
 	Vertical Plane					  Horizontal Plane
@@ -121,30 +122,32 @@ std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
 {
 
 	__m128 rightPlane =
-		_mm_set_ps(cam.rightPlane.a, cam.rightPlane.b, cam.rightPlane.c, cam.rightPlane.d);
+		_mset_ps(cam.rightPlane.a, cam.rightPlane.b, cam.rightPlane.c, cam.rightPlane.d);
 	__m128 leftPlane =
-		_mm_set_ps(cam.leftPlane.a, cam.leftPlane.b, cam.leftPlane.c, cam.leftPlane.d);
+		_mset_ps(cam.leftPlane.a, cam.leftPlane.b, cam.leftPlane.c, cam.leftPlane.d);
 	__m128 topPlane =
-		_mm_set_ps(cam.topPlane.a, cam.topPlane.b, cam.topPlane.c, cam.topPlane.d);
+		_mset_ps(cam.topPlane.a, cam.topPlane.b, cam.topPlane.c, cam.topPlane.d);
 	__m128 bottomPlane =
-		_mm_set_ps(cam.bottomPlane.a, cam.bottomPlane.b, cam.bottomPlane.c, cam.bottomPlane.d);
+		_mset_ps(cam.bottomPlane.a, cam.bottomPlane.b, cam.bottomPlane.c, cam.bottomPlane.d);
 	__m128 nearPlane =
-		_mm_set_ps(cam.nearPlane.a, cam.nearPlane.b, cam.nearPlane.c, cam.nearPlane.d);
+		_mset_ps(cam.nearPlane.a, cam.nearPlane.b, cam.nearPlane.c, cam.nearPlane.d);
 	__m128 farPlane =
-		_mm_set_ps(cam.farPlane.a, cam.farPlane.b, cam.farPlane.c, cam.farPlane.d);
+		_mset_ps(cam.farPlane.a, cam.farPlane.b, cam.farPlane.c, cam.farPlane.d);
 
 
 
 }
+
+#endif
 
 ng::dstructs::UniformGrid::UniformGrid()
 {
 	
 }
 
-ng::dstructs::UniformGrid::UniformGrid(ng::math::Vec3fs worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects)
-	: m_GridSize(gridSize), m_WorldSizeMultipler(worldSizeMultiplier)
+ng::dstructs::UniformGrid::UniformGrid(ng::math::Vec3f worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects)
+	: GridSize(gridSize), WorldSizeMultipler(worldSizeMultiplier)
 {
 	float t = gridSize * 0.5;
-	m_GridIndexRadius = sqrt(3 * t * t);
+	GridIndexRadius = sqrt(3 * t * t);
 }

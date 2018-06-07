@@ -2,7 +2,7 @@
 
 void ng::math::FFT::transform()
 {
-	unsigned int N = m_Array.size();
+	unsigned int N = Array.size();
 	unsigned int k = N;
 	unsigned int n;
 
@@ -19,9 +19,9 @@ void ng::math::FFT::transform()
 		for (unsigned int l = 0; l < k; ++l) {
 			for (unsigned int a = l; a < N; a += n) {
 				unsigned int b = a + k;
-				temp = m_Array[a] - m_Array[b];
-				m_Array[a] += m_Array[b];
-				m_Array[b] = temp * T;
+				temp = Array[a] - Array[b];
+				Array[a] += Array[b];
+				Array[b] = temp * T;
 			}
 			T *= phiT;
 		}
@@ -37,9 +37,9 @@ void ng::math::FFT::transform()
 		b = (((b & 0xff00ff00) >> 8) | ((b & 0x00ff00ff) << 8));
 		b = ((b >> 16) | (b << 16)) >> (32 - m);
 		if (b > a) {
-			temp = m_Array[a];
-			m_Array[a] = m_Array[b];
-			m_Array[b] = temp;
+			temp = Array[a];
+			Array[a] = Array[b];
+			Array[b] = temp;
 		}
 	}
 	//fourier done
@@ -93,10 +93,10 @@ void ng::math::FFT::transform(ComplexArray& arr)
 
 void ng::math::FFT::inverseTransform()
 {
-	m_Array = m_Array.apply(std::conj);
+	Array = Array.apply(std::conj);
 	transform();
-	m_Array = m_Array.apply(std::conj);
-	m_Array /= m_Array.size();
+	Array = Array.apply(std::conj);
+	Array /= Array.size();
 	//inverse fourier done
 }
 
@@ -111,11 +111,11 @@ void ng::math::FFT::inverseTransform(ComplexArray& arr)
 
 int ng::math::FFT::getSizeFFT()
 {
-	return m_Array.size();
+	return Array.size();
 }
 
 ng::math::FFT::FFT(ComplexArray arr)
-	: m_Array(arr)
+	: Array(arr)
 {
 
 }
@@ -123,8 +123,8 @@ ng::math::FFT::FFT(ComplexArray arr)
 std::ostream & ng::math::operator<<(std::ostream & stream, const FFT & fourier)
 {
 	stream << "FFT: (";
-	for (int i = 0; i < fourier.m_Array.size(); ++i) {
-		stream << fourier.m_Array[i] << " ";
+	for (int i = 0; i < fourier.Array.size(); ++i) {
+		stream << fourier.Array[i] << " ";
 	}
 	stream << ")";
 	return stream;

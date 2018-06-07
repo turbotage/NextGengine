@@ -7,7 +7,7 @@
 class Renderable
 {
 private:
-	uint8 m_RenderProps;
+	uint8 RenderProps;
 	
 public:
 

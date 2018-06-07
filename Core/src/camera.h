@@ -21,8 +21,8 @@ public:
 	float halfWidth;
 	float halfHeight;
 
-	ng::math::Quaternion m_Rotation;
-	ng::math::Vec3f m_Position;
+	ng::math::Quaternion Rotation;
+	ng::math::Vec3f Position;
 
 	ng::math::Plane rightPlane;
 	ng::math::Plane leftPlane;

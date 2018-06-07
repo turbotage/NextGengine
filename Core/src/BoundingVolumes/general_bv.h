@@ -10,7 +10,7 @@ namespace ng {
 		{
 		public:
 
-			AaBb aabb;
+			AABB aabb;
 						 //bounding sphere
 			float radius;
 

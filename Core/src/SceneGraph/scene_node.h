@@ -11,6 +11,12 @@ namespace ng {
 
 		class CullingWalker;
 
+		enum NodeTypes {
+			SCENE_NODE,
+			RENDERABLE_NODE,
+			TRANSFORM_NODE
+		};
+
 		class SceneNode {
 		private:
 

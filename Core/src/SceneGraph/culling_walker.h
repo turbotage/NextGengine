@@ -24,43 +24,43 @@ namespace ng {
 		/**  Read the macros to understand the functions  **/
 		class CullingFlags {
 		private:
-			uint8 m_CullingFlags;
+			uint8 CullingFlags;
 		public:
 
 			void setBeenCulledTrue() {
-				m_CullingFlags |= 1;
+				CullingFlags |= 1;
 			}
 
 			void setBeenCulledFalse() {
-				m_CullingFlags &= ~1;
+				CullingFlags &= ~1;
 			}
 
 			bool hasBeenCulled() {
-				return ((m_CullingFlags) & 1);
+				return ((CullingFlags) & 1);
 			}
 
 			void setFlags(uint8 flags) {
-				m_CullingFlags = flags;
+				CullingFlags = flags;
 			}
 
 			uint8 getFlags() {
-				return m_CullingFlags;
+				return CullingFlags;
 			}
 
 			bool nothingInFrustrum() {
-				return ((m_CullingFlags >> 1) & 1U);
+				return ((CullingFlags >> 1) & 1U);
 			}
 
 			bool allInFrustrum() {
-				return ((m_CullingFlags >> 2) & 1U);
+				return ((CullingFlags >> 2) & 1U);
 			}
 
 			bool modelInFrustrum() {
-				return ((m_CullingFlags >> 3) & 1U);
+				return ((CullingFlags >> 3) & 1U);
 			}
 
 			bool aabbInFrustrum() {
-				return ((m_CullingFlags >> 4) & 1U);
+				return ((CullingFlags >> 4) & 1U);
 			}
 			
 		};
@@ -69,28 +69,32 @@ namespace ng {
 		{
 		private:
 
-			Scene* m_Scene;
+			Scene* Scene;
 
-			std::map<ng::math::Vec3f, RenderableNode*>* m_ToBeRenderedPtr;
+			std::map<ng::math::Vec3f, RenderableNode*>* ToBeRenderedPtr;
 
-			void addToRendering(ng::scenegraph::RenderableNode* node);
+			void addToRendering(ng::scenegraph::SceneNode* node);
 
-			void removeFromRendering(ng::scenegraph::RenderableNode* node);
+			void removeFromRendering(ng::scenegraph::SceneNode* node);
 
-			void addToRenderingRecursively(ng::scenegraph::RenderableNode* node);
+			void addToRenderingRecursively(ng::scenegraph::SceneNode* node);
 
-			void removeFromRenderingRecursively(ng::scenegraph::RenderableNode* node);
+			void removeFromRenderingRecursively(ng::scenegraph::SceneNode* node);
 
 			CullingFlags isInView(RenderableNode* node, CameraNode* camera);
 
 		public:
 
 			CullingWalker();
-			CullingWalker(Scene* scene);
+
+			CullingWalker(ng::scenegraph::Scene* scene);
 
 			~CullingWalker();
 
-			void walk(CameraNode* camera);
+			void cull(CameraNode* camera);
+
+			void walk(SceneNode* node);
+			
 		};
 	}
 }

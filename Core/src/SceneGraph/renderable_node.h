@@ -1,8 +1,9 @@
 #pragma once
 
 #include "scene_graph.h"
-#include "../Graphics/Pipelines/vulkan_graphics_pipeline.h"
-#include "../Graphics/GraphicsObjects/vulkan_model.h"
+#include "../Vulkan/Pipelines/vulkan_graphics_pipeline.h"
+#include "../BoundingVolumes/bounding_sphere.h"
+#include "culling_walker.h"
 
 namespace ng {
 	namespace scenegraph {
@@ -25,13 +26,12 @@ namespace ng {
 			uint32 m_TextureArrayIndex;
 
 			/**  VULKAN-GRAPHICS-PIPELINE : the pipeline which will be used to render the vulkan-model  **/
-			ng::graphics::VulkanGraphicsPipeline* m_GraphicsPipeline;
+			ng::vulkan::VulkanGraphicsPipeline* m_GraphicsPipeline;
 			
 			/**  RENDER-LOCK : set to false or true to enable or disable rendering  **/
 			bool m_RenderingEnabled = true;
 
 			/**  CULL-LOCK : is set to false if this node has already been culled, gets set to false when culling-walker goes over it  **/
-			bool m_HasBeenCulled = false;
 			CullingFlags m_CullingFlags;
 
 		protected:
@@ -44,6 +44,8 @@ namespace ng {
 
 			RenderableNode();
 			~RenderableNode();
+
+			static RenderableNode* cast(SceneNode* node);
 
 			InstanceData getInstanceData();
 

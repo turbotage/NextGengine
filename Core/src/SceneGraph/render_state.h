@@ -2,7 +2,7 @@
 
 #include "../def.h"
 
-#include "../Graphics/GraphicsObjects/vulkan_model.h"
+#include "../Vulkan/GraphicsObjects/vulkan_model.h"
 
 
 namespace ng {
@@ -14,10 +14,12 @@ namespace ng {
 		public:
 
 			/**  VULKAN-MODEL : vulkan-model  **/
-			ng::graphics::VulkanModel model;
+			ng::vulkan::VulkanModel model;
 
 		public:
 
+			uint32 getInstances();
+			
 			static std::size_t hash(RenderState const& renderState);
 
 			static std::size_t hash(std::list<RenderState>::iterator iter);
@@ -40,4 +42,5 @@ namespace std {
 			return ng::scenegraph::RenderState::hash(iter);
 		}
 	};
+
 }

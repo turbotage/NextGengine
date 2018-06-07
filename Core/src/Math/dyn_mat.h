@@ -4,7 +4,8 @@
 
 namespace ng {
 	namespace math {
-		struct DynMat
+
+		class DynMat
 		{
 			unsigned short height;
 			unsigned short width;
@@ -37,6 +38,7 @@ namespace ng {
 			friend std::ostream& operator<<(std::ostream& stream, const DynMat& matrix);
 
 		};
+
 	}
 }
 

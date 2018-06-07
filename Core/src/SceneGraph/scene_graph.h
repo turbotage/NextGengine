@@ -2,12 +2,12 @@
 
 #include "../def.h"
 
-#include "../Graphics/Pipelines/vulkan_graphics_pipeline.h"
+#include "scene_node.h"
+#include "../Vulkan/Pipelines/vulkan_graphics_pipeline.h"
 
 namespace ng {
 	namespace scenegraph {
 		class RenderableNode;
-		class SceneNode;
 		class RenderState;
 		
 	}
@@ -49,10 +49,10 @@ namespace ng {
 			to render, containging a vector of all the renderable nodes in 
 			the scene-graph that is to be rendered with the first keyd pipeline and second keys local renderstate **/
 			std::unordered_map<
-				ng::graphics::VulkanGraphicsPipeline*,
+				ng::vulkan::VulkanGraphicsPipeline*,
 				std::unordered_map<
 					std::list<ng::scenegraph::RenderState>::iterator,
-					std::vector<RenderableNode*>
+					std::unordered_set<RenderableNode*>
 				>
 			> m_SceneRenderState;
 

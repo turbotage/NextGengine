@@ -8,7 +8,7 @@ namespace ng {
 		class Model : Entity
 		{
 		private:
-			Mesh* m_Mesh;
+			Mesh* Mesh;
 
 		public:
 			bool hasBeenRendered = false;

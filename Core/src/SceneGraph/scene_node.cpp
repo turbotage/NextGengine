@@ -23,7 +23,7 @@ void ng::scenegraph::SceneNode::rebuildBoundingVolume()
 	zmax = m_MinimumAABB.maxZ();
 	zmin = m_MinimumAABB.minZ();
 
-	for (int i = 0; i <m_Children.size(); ++i) {
+	for (int i = 0; i < m_Children.size(); ++i) {
 		if (m_Children[i]->m_AABB.maxX() > xmax) {
 			xmax = m_Children[i]->m_AABB.maxX();
 		}
@@ -227,14 +227,14 @@ void ng::scenegraph::SceneNode::update(float time)
 /*
 void ng::scenegraph::SceneNode::setCombinedCenter()
 {
-	m_BoundingSphere.centerPos = ng::math::Vec3f(0.0f, 0.0f, 0.0f);
+	BoundingSphere.centerPos = ng::math::Vec3f(0.0f, 0.0f, 0.0f);
 
 	ng::math::Vec3f dirVec;
-	for (int i = 0; i < m_Children.size(); ++i) {
-		m_BoundingSphere.centerPos += (m_Children[i]->getCenterPosition() * m_Children[i]->getBoundingSphereRadius());
+	for (int i = 0; i < Children.size(); ++i) {
+		BoundingSphere.centerPos += (Children[i]->getCenterPosition() * Children[i]->getBoundingSphereRadius());
 	}
 
-	m_BoundingSphere.centerPos /= (float)m_Children.size();
+	BoundingSphere.centerPos /= (float)Children.size();
 }
 */
 

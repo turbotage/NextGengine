@@ -34,8 +34,8 @@ Camera::~Camera()
 
 void Camera::update(ng::math::Vec3f positionChange, ng::math::Quaternion rotationChange)
 {
-	m_Position += positionChange;
-	m_Rotation *= rotationChange;
+	Position += positionChange;
+	Rotation *= rotationChange;
 
 	
 

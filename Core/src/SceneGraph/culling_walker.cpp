@@ -1,108 +1,72 @@
 #include "culling_walker.h"
 #include "scene_graph.h"
 #include "renderable_node.h"
+#include "render_state.h"
 
 #include <immintrin.h>
 
-/*
-distance checking
-	ng::bvolumes::AABB* aabb = &node->m_AABB;
-
-	ng::math::Vec3f p0, p1, p2, p3, p4, p5, p6, p7;
-
-	//top4
-	__m128 bot4X = _mm_set_ps(p4.x, p5.x, p6.x, p7.x);
-	__m128 bot4Y = _mm_set_ps(p4.y, p5.y, p6.y, p7.y);
-	__m128 bot4Z = _mm_set_ps(p4.z, p5.z, p6.z, p7.z);
-	//bot4
-	__m128 top4X = _mm_set_ps(p0.x, p1.x, p2.x, p3.x);
-	__m128 top4Y = _mm_set_ps(p0.y, p1.y, p2.y, p3.y);
-	__m128 top4Z = _mm_set_ps(p0.z, p1.z, p2.z, p3.z);
-
-
-	p0 = aabb->getPoint0();
-	p1 = aabb->getPoint1();
-	p2 = aabb->getPoint2();
-	p3 = aabb->getPoint3();
-	p4 = aabb->getPoint4();
-	p5 = aabb->getPoint5();
-	p6 = aabb->getPoint6();
-	p7 = aabb->getPoint7();
-
-	float a;
-	float b;
-	float c;
-	float d;
-
-	float rsqrt;
-
-	__m128 planeA;
-	__m128 planeB;
-	__m128 planeC;
-	__m128 planeD;
-
-	ALIGN(16) float d1, d2, d3, d4;
-
-	a = camera->leftPlane.a;
-	b = camera->leftPlane.b;
-	c = camera->leftPlane.c;
-	d = camera->leftPlane.d;
-
-	planeA = _mm_set_ps(a, a, a, a);
-	planeB = _mm_set_ps(b, b, b, b);
-	planeC = _mm_set_ps(c, c, c, c);
-	planeD = _mm_set_ps(d, d, d, d);
-
-	rsqrt = a * a + b * b + c * c;
-
-	_mm_store_ps(&d1,
-		_mm_rsqrt_ps(
-			_mm_div_ps(
-				_mm_add_ps(
-					_mm_add_ps(
-						_mm_mul_ps(top4X, planeA),
-						_mm_mul_ps(top4Y, planeB)
-					),
-					_mm_add_ps(
-						_mm_mul_ps(top4Z, planeC),
-						planeD
-					)
-				),
-				_mm_set_ps(rsqrt, rsqrt, rsqrt, rsqrt)
-			)
-		)
-	);
-*/
-
-void ng::scenegraph::CullingWalker::addToRendering(ng::scenegraph::RenderableNode * node)
+void ng::scenegraph::CullingWalker::addToRendering(ng::scenegraph::SceneNode * node)
 {
-	auto it = m_Scene->m_SceneRenderState.find(node->m_GraphicsPipeline);
-	if (it == m_Scene->m_SceneRenderState.end()) {
-
-		std::unordered_map<std::list<ng::scenegraph::RenderState>::iterator, std::vector<RenderableNode*>> temp;
-		temp.emplace(node->m_RenderState, node);
-
-		m_Scene->m_SceneRenderState.insert(std::make_pair(node->m_GraphicsPipeline, temp));
+	if (node->m_NodeType != RENDERABLE_NODE) {
+		return;
+	}
+	RenderableNode* rnode = ng::scenegraph::RenderableNode::cast(node);
+	auto it = Scene->m_SceneRenderState.find(rnode->m_GraphicsPipeline);
+	if (it == Scene->m_SceneRenderState.end()) {
+		Scene->m_SceneRenderState.emplace(
+			rnode->m_GraphicsPipeline,
+			std::make_pair(
+				rnode->m_RenderState,
+				rnode
+			)
+		);
+		//finished could return
 	}
 	else {
-		std::unordered_map<std::list<ng::scenegraph::RenderState>::iterator, std::vector<RenderableNode*>> temp  = it->second;
-		temp.find(node->m_RenderState);
+		auto it2 = it->second.find(rnode->m_RenderState);
+		if (it2 == it->second.end()) {
+			auto empIt = it->second.emplace(rnode->m_RenderState, rnode);
+			empIt.first->second.reserve(rnode->m_RenderState->getInstances());
+			//finished could return
+		}
+		else {
+			it2->second.insert(rnode);
+			//finished could return
+		}
 	}
 }
 
-void ng::scenegraph::CullingWalker::removeFromRendering(ng::scenegraph::RenderableNode * node)
+void ng::scenegraph::CullingWalker::removeFromRendering(ng::scenegraph::SceneNode * node)
 {
-
+	if (node->m_NodeType != RENDERABLE_NODE) {
+		return;
+	}
+	RenderableNode* rnode = ng::scenegraph::RenderableNode::cast(node);
+	auto it = Scene->m_SceneRenderState.find(rnode->m_GraphicsPipeline);
+	if (it == Scene->m_SceneRenderState.end()) {
+		return;
+	}
+	auto it2 = it->second.find(rnode->m_RenderState);
+	if (it2 == it->second.end()) {
+		return;
+	}
+	it2->second.erase(rnode);
 }
 
-void ng::scenegraph::CullingWalker::addToRenderingRecursively(ng::scenegraph::RenderableNode * node)
+void ng::scenegraph::CullingWalker::addToRenderingRecursively(ng::scenegraph::SceneNode * node)
 {
-	
+	addToRendering(node);
+	for (auto n : node->m_Children) {
+		addToRenderingRecursively(node);
+	}
 }
 
-void ng::scenegraph::CullingWalker::removeFromRenderingRecursively(ng::scenegraph::RenderableNode * node)
+void ng::scenegraph::CullingWalker::removeFromRenderingRecursively(ng::scenegraph::SceneNode * node)
 {
-	
+	removeFromRendering(node);
+	for (auto n : node->m_Children) {
+		removeFromRenderingRecursively(node);
+	}
 }
 
 ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableNode * node, CameraNode * camera)
@@ -293,12 +257,12 @@ ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableN
 
 	//if it is fully inside
 	if (isFullyInside == 0b11111111) {
-		ret.setFlags(EVERYTHING_IN_FRUSTRUM);
+		ret.setFlags(HAS_BEEN_CULLED | EVERYTHING_IN_FRUSTRUM);
 		return ret;
 	}
 	//if it is fully outside
 	if (isFullyOutside == 0b11111111) {
-		ret.setFlags(NOTHING_IN_FRUSTRUM);
+		ret.setFlags(HAS_BEEN_CULLED | NOTHING_IN_FRUSTRUM);
 		return ret;
 	}
 	
@@ -388,7 +352,7 @@ ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableN
 		/*last two in dists will álways be zero and will therefore automatically be less than radius. 
 		Therefore if comparison is greatar than 0b00000011 some part of the model must be inside frustrum */
 		if (_mm256_cmp_ps_mask(dists, _mm256_set1_ps(node->boundingSphere.radius), _CMP_LT_OS) > 0b00000011) {
-			ret.setFlags(MODEL_IN_FRUSTRUM | AABB_IN_FRUSTRUM);
+			ret.setFlags(HAS_BEEN_CULLED | MODEL_IN_FRUSTRUM | AABB_IN_FRUSTRUM);
 			return ret;
 		}
 
@@ -396,38 +360,44 @@ ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableN
 
 }
 
-ng::scenegraph::CullingWalker::CullingWalker(Scene * scene)
+ng::scenegraph::CullingWalker::CullingWalker(ng::scenegraph::Scene * scene)
 {
-	m_Scene = scene;
+	Scene = scene;
 
 
 
 }
 
-void ng::scenegraph::CullingWalker::walk(CameraNode * camera)
+void ng::scenegraph::CullingWalker::cull(CameraNode * camera)
 {
-
-	for (auto it = m_Scene->m_SceneRenderState.begin(); it != m_Scene->m_SceneRenderState.end(); ++it) {
+	for (auto it = Scene->m_SceneRenderState.begin(); it != Scene->m_SceneRenderState.end(); ++it) {
 		for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-			std::vector<RenderableNode*>* rns = &it2->second;
-			for (int i = 0; i < rns->size(); ++i) {
-				CullingFlags cf = isInView((*rns)[i], camera);
+			std::unordered_set<RenderableNode*>* rns = &it2->second;
+			for (auto rn : *rns) {
+				rn->m_CullingFlags = isInView(rn, camera);
 				//nothing
-				if (cf.nothingInFrustrum()) {
-
+				if (rn->m_CullingFlags.nothingInFrustrum()) {
+					removeFromRenderingRecursively(rn);
 				} //all
-				else if (cf.nothingInFrustrum()) {
-
+				else if (rn->m_CullingFlags.allInFrustrum()) {
+					addToRenderingRecursively(rn);
 				} //
-				else if (cf.modelInFrustrum()) {
-
+				else if (rn->m_CullingFlags.modelInFrustrum()) {
+					addToRendering(rn);
 				}
 				else {
-
+					removeFromRendering(rn);
 				}
 			}
 		}
 	}
+
+	SceneNode* cn = Scene->m_SceneGraph.m_RootNode;
+}
+
+void ng::scenegraph::CullingWalker::walk(SceneNode * node)
+{
+	
 
 }
 
