@@ -88,7 +88,7 @@ namespace ng {
 
 			void shutdown();
 
-			VkCommandBuffer getSecondaryCommandBuffer(uint16 i);
+			VkCommandBuffer getSecondaryCommandBuffer(uint16 i, bool begin = false);
 
 			template<class F, class... Args>
 			auto submitWork(uint16 threadID, F&& f, Args&&... args)->std::future<decltype(f(args...))>;

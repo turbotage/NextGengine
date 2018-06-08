@@ -122,17 +122,17 @@ std::vector<Renderable*>* ng::dstructs::UniformGrid::frustrumCull(Camera & cam)
 {
 
 	__m128 rightPlane =
-		_mset_ps(cam.rightPlane.a, cam.rightPlane.b, cam.rightPlane.c, cam.rightPlane.d);
+		_mm_set_ps(cam.rightPlane.a, cam.rightPlane.b, cam.rightPlane.c, cam.rightPlane.d);
 	__m128 leftPlane =
-		_mset_ps(cam.leftPlane.a, cam.leftPlane.b, cam.leftPlane.c, cam.leftPlane.d);
+		_mm_set_ps(cam.leftPlane.a, cam.leftPlane.b, cam.leftPlane.c, cam.leftPlane.d);
 	__m128 topPlane =
-		_mset_ps(cam.topPlane.a, cam.topPlane.b, cam.topPlane.c, cam.topPlane.d);
+		_mm_set_ps(cam.topPlane.a, cam.topPlane.b, cam.topPlane.c, cam.topPlane.d);
 	__m128 bottomPlane =
-		_mset_ps(cam.bottomPlane.a, cam.bottomPlane.b, cam.bottomPlane.c, cam.bottomPlane.d);
+		_mm_set_ps(cam.bottomPlane.a, cam.bottomPlane.b, cam.bottomPlane.c, cam.bottomPlane.d);
 	__m128 nearPlane =
-		_mset_ps(cam.nearPlane.a, cam.nearPlane.b, cam.nearPlane.c, cam.nearPlane.d);
+		_mm_set_ps(cam.nearPlane.a, cam.nearPlane.b, cam.nearPlane.c, cam.nearPlane.d);
 	__m128 farPlane =
-		_mset_ps(cam.farPlane.a, cam.farPlane.b, cam.farPlane.c, cam.farPlane.d);
+		_mm_set_ps(cam.farPlane.a, cam.farPlane.b, cam.farPlane.c, cam.farPlane.d);
 
 
 

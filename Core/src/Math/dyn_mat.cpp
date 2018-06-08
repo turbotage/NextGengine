@@ -1,18 +1,19 @@
 #include "dyn_mat.h"
 #include <string>
 
-
-void ng::math::DynMat::init(unsigned short w, unsigned short h)
+template<typename T>
+void ng::math::DynMat<T>::init(uint16 w, uint16 h)
 {
 	height = h;
 	width = w;
-	rows = new DynVec[h];
+	rows = new DynVec<T>(w)[h];
 	for (short i = 0; i < height; ++i) {
 		rows[i].init(w);
 	}
 }
 
-void ng::math::DynMat::cleanup()
+template<typename T>
+void ng::math::DynMat<T>::cleanup()
 {
 	if (rows != nullptr) {
 		for (short i = 0; i < height; ++i) {
@@ -22,29 +23,34 @@ void ng::math::DynMat::cleanup()
 	}
 }
 
-void ng::math::DynMat::setNaN()
+template<typename T>
+void ng::math::DynMat<T>::setNaN()
 {
 	for (int i = 0; i < height; ++i) {
 		rows[i].setNaN();
 	}
 }
 
-ng::math::DynMat::DynMat()
+template<typename T>
+ng::math::DynMat<T>::DynMat<T>()
 {
 
 }
 
-ng::math::DynMat::DynMat(unsigned short w, unsigned short h)
+template<typename T>
+ng::math::DynMat<T>::DynMat<T>(uint16 w, uint16 h)
 {
 	init(w, h);
 }
 
-ng::math::DynMat::~DynMat()
+template<typename T>
+ng::math::DynMat<T>::~DynMat<T>()
 {
 
 }
 
-ng::math::DynMat & ng::math::DynMat::operator=(DynMat & other)
+template<typename T>
+ng::math::DynMat<T> & ng::math::DynMat<T>::operator=(DynMat<T> & other)
 {
 	if (height != other.height || width != other.width) {
 		setNaN();
@@ -57,7 +63,8 @@ ng::math::DynMat & ng::math::DynMat::operator=(DynMat & other)
 	return *this;
 }
 
-ng::math::DynMat & ng::math::DynMat::add(const DynMat & other)
+template<typename T>
+ng::math::DynMat<T> & ng::math::DynMat<T>::add(const DynMat<T> & other)
 {
 	if (width == other.width && height == other.height) {
 		setNaN();
@@ -68,28 +75,30 @@ ng::math::DynMat & ng::math::DynMat::add(const DynMat & other)
 	return *this;
 }
 
-ng::math::DynMat & ng::math::DynMat::sub(const DynMat & other)
+template<typename T>
+ng::math::DynMat<T> & ng::math::DynMat<T>::sub(const DynMat<T> & other)
 {
 	if (width == other.width && height == other.height) {
 		setNaN();
 	}
-	for (unsigned short i = 0; i < height; ++i) {
+	for (uint16 i = 0; i < height; ++i) {
 		rows[i] -= other.rows[i];
 	}
 	return *this;
 }
 
-ng::math::DynMat ng::math::DynMat::mul(const DynMat & other)
+template<typename T>
+ng::math::DynMat<T> ng::math::DynMat<T>::mul(const DynMat<T> & other)
 {
 	if (width != other.height) {
 		setNaN();
 		return *this;
 	}
-	DynMat ret = DynMat(other.height, width);
-	DynVec otherMul(other.height);
-	for (unsigned short i = 0; i < height; ++i) {
-		for (unsigned short j = 0; j < other.width; ++j) {
-			for (unsigned short k = 0; k < other.height; ++k) {
+	DynMat<T> ret = DynMat<T>(other.height, width);
+	DynVec<T> otherMul(other.height);
+	for (uint16 i = 0; i < height; ++i) {
+		for (uint16 j = 0; j < other.width; ++j) {
+			for (uint16 k = 0; k < other.height; ++k) {
 				otherMul.elements[k] = other.rows[k].elements[j];
 			}
 			ret.rows[i].elements[j] = rows[i].dot(otherMul);
@@ -98,13 +107,14 @@ ng::math::DynMat ng::math::DynMat::mul(const DynMat & other)
 	return ret;
 }
 
-bool ng::math::DynMat::operator==(const DynMat & other) const
+template<typename T>
+bool ng::math::DynMat<T>::operator==(const DynMat<T> & other) const
 {
 	if (height != other.height || width != other.width) {
 		return false;
 	}
-	for (unsigned short i = 0; i < height; ++i) {
-		for (unsigned short j = 0; j < width; ++j) {
+	for (uint16 i = 0; i < height; ++i) {
+		for (uint16 j = 0; j < width; ++j) {
 			if (rows[i].elements[j] != other.rows[i].elements[j]) {
 				return false;
 			}
@@ -113,13 +123,14 @@ bool ng::math::DynMat::operator==(const DynMat & other) const
 	return true;
 }
 
-bool ng::math::DynMat::operator!=(const DynMat & other) const
+template<typename T>
+bool ng::math::DynMat<T>::operator!=(const DynMat<T> & other) const
 {
 	if (height != other.height || width != other.width) {
 		return true;
 	}
-	for (unsigned short i = 0; i < height; ++i) {
-		for (unsigned short j = 0; j < width; ++j) {
+	for (uint16 i = 0; i < height; ++i) {
+		for (uint16 j = 0; j < width; ++j) {
 			if (rows[i].elements[j] != other.rows[i].elements[j]) {
 				return true;
 			}
@@ -128,36 +139,42 @@ bool ng::math::DynMat::operator!=(const DynMat & other) const
 	return false;
 }
 
-ng::math::DynMat & ng::math::DynMat::operator+=(const DynMat & other)
+template<typename T>
+ng::math::DynMat<T> & ng::math::DynMat<T>::operator+=(const DynMat<T> & other)
 {
 	return add(other);
 }
 
-ng::math::DynMat & ng::math::DynMat::operator-=(const DynMat & other)
+template<typename T>
+ng::math::DynMat<T> & ng::math::DynMat<T>::operator-=(const DynMat<T> & other)
 {
 	return sub(other);
 }
 
-ng::math::DynMat ng::math::operator+(DynMat left, const DynMat & right)
+template<typename T>
+ng::math::DynMat<T> ng::math::operator+(ng::math::DynMat<T> left, const ng::math::DynMat<T> & right)
 {
 	return left.add(right);
 }
 
-ng::math::DynMat ng::math::operator-(DynMat left, const DynMat & right)
+template<typename T>
+ng::math::DynMat<T> ng::math::operator-(ng::math::DynMat<T> left, const ng::math::DynMat<T> & right)
 {
 	return left.sub(right);
 }
 
-ng::math::DynMat ng::math::operator*(DynMat left, const DynMat & right)
+template<typename T>
+ng::math::DynMat<T> ng::math::operator*(ng::math::DynMat<T> left, const ng::math::DynMat<T> & right)
 {
 	return left.mul(right);
 }
 
-std::ostream & ng::math::operator<<(std::ostream & stream, const DynMat & matrix)
+template<typename T>
+std::ostream & ng::math::operator<<(std::ostream & stream, const ng::math::DynMat<T> & matrix)
 {
-	stream << "DynMat: (\n";
-	for (unsigned short i = 0; i < matrix.height; ++i) {
-		for (unsigned short j = 0; j < matrix.width; ++j) {
+	stream << "DynMat<T>: (\n";
+	for (uint16 i = 0; i < matrix.height; ++i) {
+		for (uint16 j = 0; j < matrix.width; ++j) {
 			stream << matrix.rows[i].elements[j] << "  ";
 		}
 		stream << "\n";

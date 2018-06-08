@@ -269,12 +269,12 @@ VkCommandPool ng::vulkan::VulkanDevice::createCommandPool(uint32 queueFamilyInde
 	return cmdPool;
 }
 
-VkCommandBuffer ng::vulkan::VulkanDevice::createCommandBuffer(VkCommandBufferLevel level, VkCommandPool commandPool, bool begin)
+VkCommandBuffer ng::vulkan::VulkanDevice::createCommandBuffer(VkCommandBufferLevel level, VkCommandPool commandPool, bool begin = false)
 {
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
 	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	commandBufferAllocateInfo.commandPool = commandPool;
-	commandBufferAllocateInfo.level;
+	commandBufferAllocateInfo.level = level;
 	commandBufferAllocateInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;

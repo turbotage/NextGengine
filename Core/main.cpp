@@ -10,7 +10,7 @@
 
 using namespace ng::vulkan;
 
-#define NUOF_THREADS 4
+#define NUM_OF_THREADS 4
 
 class Application {
 private:

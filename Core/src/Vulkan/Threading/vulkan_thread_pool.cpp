@@ -41,7 +41,7 @@ void ng::vulkan::VulkanThreadPool::shutdown()
 	}
 }
 
-VkCommandBuffer ng::vulkan::VulkanThreadPool::getSecondaryCommandBuffer(uint16 i)
+VkCommandBuffer ng::vulkan::VulkanThreadPool::getSecondaryCommandBuffer(uint16 i, bool begin = false)
 {
-
+	return m_VulkanDevice->createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY, m_WorkPool[i].commandPool, begin);
 }

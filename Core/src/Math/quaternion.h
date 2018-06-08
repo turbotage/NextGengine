@@ -2,8 +2,9 @@
 
 #include "../def.h"
 #include <smmintrin.h>
-#include "Vec3f.h"
-#include "Vec4f.h"
+#include "vec3f.h"
+#include "vec4f.h"
+#include "mat4f.h"
 
 namespace ng {
 	namespace math {
@@ -24,7 +25,7 @@ namespace ng {
 			Quaternion(float scalar);
 			Quaternion(float x, float y, float z, float w);
 			Quaternion(const Quaternion& Quaternion);
-
+			
 			Quaternion& add(const Quaternion& other);
 			Quaternion& operator+=(const Quaternion& other);
 			Quaternion& sub(const Quaternion& other);

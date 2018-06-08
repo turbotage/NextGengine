@@ -5,37 +5,38 @@
 namespace ng {
 	namespace math {
 
+		template<typename T>
 		class DynMat
 		{
-			unsigned short height;
-			unsigned short width;
-			DynVec* rows = nullptr;
+			uint16 height;
+			uint16 width;
+			DynVec<T>* rows = nullptr;
 
-			void init(unsigned short w, unsigned short h);
+			void init(uint16 w, uint16 h);
 			void cleanup();
 			void setNaN();
 
 			DynMat();
-			DynMat(unsigned short w, unsigned short h);
+			DynMat(uint16 w, uint16 h);
 			~DynMat();
 
-			DynMat& operator=(DynMat& other);
+			DynMat& operator=(DynMat<T>& other);
+			 
+			DynMat& add(const DynMat<T>& other);
+			DynMat& sub(const DynMat<T>& other);
+			DynMat mul(const DynMat<T>& other);
 
-			DynMat& add(const DynMat& other);
-			DynMat& sub(const DynMat& other);
-			DynMat mul(const DynMat& other);
+			friend DynMat operator+(DynMat<T> left, const DynMat<T>& right);
+			friend DynMat operator-(DynMat<T> left, const DynMat<T>& right);
+			friend DynMat operator*(DynMat<T> left, const DynMat<T>& right);
 
-			friend DynMat operator+(DynMat left, const DynMat& right);
-			friend DynMat operator-(DynMat left, const DynMat& right);
-			friend DynMat operator*(DynMat left, const DynMat& right);
+			bool operator==(const DynMat<T>& other) const;
+			bool operator!=(const DynMat<T>& other) const;
 
-			bool operator==(const DynMat& other) const;
-			bool operator!=(const DynMat& other) const;
+			DynMat& operator+=(const DynMat<T>& other);
+			DynMat& operator-=(const DynMat<T>& other);
 
-			DynMat& operator+=(const DynMat& other);
-			DynMat& operator-=(const DynMat& other);
-
-			friend std::ostream& operator<<(std::ostream& stream, const DynMat& matrix);
+			friend std::ostream& operator<<(std::ostream& stream, const DynMat<T>& matrix);
 
 		};
 

@@ -2,13 +2,15 @@
 #include <limits>
 #include <string>
 
-void ng::math::DynVec::init(unsigned short w)
+template<typename T>
+void ng::math::DynVec<T>::init(uint16 w)
 {
 	width = w;
-	elements = new float[w];
+	elements = new T[w];
 }
 
-void ng::math::DynVec::cleanup()
+template<typename T>
+void ng::math::DynVec<T>::cleanup()
 {
 	if (elements != nullptr) {
 		delete[] elements;
@@ -16,14 +18,16 @@ void ng::math::DynVec::cleanup()
 	}
 }
 
-void ng::math::DynVec::setNaN()
+template<typename T>
+void ng::math::DynVec<T>::setNaN()
 {
 	for (short i = 0; i < width; ++i) {
 		elements[i] = std::numeric_limits<float>::quiet_NaN();
 	}
 }
 
-ng::math::DynVec & ng::math::DynVec::operator=(DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::operator=(DynVec<T> & other)
 {
 	if (width != other.width) {
 		setNaN();
@@ -34,23 +38,26 @@ ng::math::DynVec & ng::math::DynVec::operator=(DynVec & other)
 	return *this;
 }
 
-ng::math::DynVec::DynVec()
+template<typename T>
+ng::math::DynVec<T>::DynVec()
 {
 
 }
 
-ng::math::DynVec::DynVec(unsigned short w)
+template<typename T>
+ng::math::DynVec<T>::DynVec(uint16 w)
 {
 	init(w);
 }
 
-ng::math::DynVec::~DynVec()
+template<typename T>
+ng::math::DynVec<T>::~DynVec()
 {
 
 }
 
-
-ng::math::DynVec & ng::math::DynVec::add(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::add(const DynVec<T> & other)
 {
 	if (width == other.width) {
 		for (short i = 0; i < width; ++i) {
@@ -65,7 +72,8 @@ ng::math::DynVec & ng::math::DynVec::add(const DynVec & other)
 	return *this;
 }
 
-ng::math::DynVec & ng::math::DynVec::sub(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::sub(const DynVec<T> & other)
 {
 	if (width == other.width) {
 		for (short i = 0; i < width; ++i) {
@@ -80,7 +88,8 @@ ng::math::DynVec & ng::math::DynVec::sub(const DynVec & other)
 	return *this;
 }
 
-ng::math::DynVec & ng::math::DynVec::mul(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::mul(const DynVec<T> & other)
 {
 	if (width == other.width) {
 		for (short i = 0; i < width; ++i) {
@@ -95,7 +104,8 @@ ng::math::DynVec & ng::math::DynVec::mul(const DynVec & other)
 	return *this;
 }
 
-ng::math::DynVec & ng::math::DynVec::mul(float multiplier)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::mul(float multiplier)
 {
 	for (short i = 0; i < this->width; ++i) {
 		this->elements[i] *= multiplier;
@@ -103,7 +113,8 @@ ng::math::DynVec & ng::math::DynVec::mul(float multiplier)
 	return *this;
 }
 
-ng::math::DynVec & ng::math::DynVec::div(float multiplier)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::div(float multiplier)
 {
 	for (short i = 0; i < this->width; ++i) {
 		this->elements[i] /= multiplier;
@@ -111,7 +122,8 @@ ng::math::DynVec & ng::math::DynVec::div(float multiplier)
 	return *this;
 }
 
-ng::math::DynVec & ng::math::DynVec::div(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::div(const DynVec<T> & other)
 {
 	if (width == other.width) {
 		for (int i = 0; i < width; ++i) {
@@ -126,7 +138,8 @@ ng::math::DynVec & ng::math::DynVec::div(const DynVec & other)
 	return *this;
 }
 
-float ng::math::DynVec::dot(const DynVec & other)
+template<typename T>
+float ng::math::DynVec<T>::dot(const DynVec<T> & other)
 {
 	if (width != other.width) {
 		for (int i = 0; i < width; ++i) {
@@ -141,7 +154,8 @@ float ng::math::DynVec::dot(const DynVec & other)
 	return ret;
 }
 
-bool ng::math::DynVec::operator==(const DynVec & other) const
+template<typename T>
+bool ng::math::DynVec<T>::operator==(const DynVec<T> & other) const
 {
 	if (width == other.width) {
 		for (int i = 0; i < width; ++i) {
@@ -156,7 +170,8 @@ bool ng::math::DynVec::operator==(const DynVec & other) const
 	return returner;
 }
 
-bool ng::math::DynVec::operator!=(const DynVec & other) const
+template<typename T>
+bool ng::math::DynVec<T>::operator!=(const DynVec<T> & other) const
 {
 	if (width == other.width) {
 		for (int i = 0; i < width; ++i) {
@@ -172,56 +187,67 @@ bool ng::math::DynVec::operator!=(const DynVec & other) const
 	return true;
 }
 
-ng::math::DynVec & ng::math::DynVec::operator+=(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::operator+=(const DynVec<T> & other)
 {
 	return add(other);
 }
 
-ng::math::DynVec & ng::math::DynVec::operator-=(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::operator-=(const DynVec<T> & other)
 {
 	return sub(other);
 }
 
-ng::math::DynVec & ng::math::DynVec::operator*=(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::operator*=(const DynVec<T> & other)
 {
 	return mul(other);
 }
 
-ng::math::DynVec & ng::math::DynVec::operator/=(const DynVec & other)
+template<typename T>
+ng::math::DynVec<T> & ng::math::DynVec<T>::operator/=(const DynVec<T> & other)
 {
-	return 	div(other);
+	return div(other);
 }
 
-ng::math::DynVec ng::math::operator+(DynVec left, const DynVec & right)
+template<typename T>
+ng::math::DynVec<T> ng::math::operator+(DynVec<T> left, const DynVec<T> & right)
 {
 	return left.add(right);
 }
 
-ng::math::DynVec ng::math::operator-(DynVec left, const DynVec & right)
+template<typename T>
+ng::math::DynVec<T> ng::math::operator-(DynVec<T> left, const DynVec<T> & right)
 {
 	return left.sub(right);
 }
 
-ng::math::DynVec ng::math::operator*(DynVec left, const DynVec & right)
+template<typename T>
+ng::math::DynVec<T> ng::math::operator*(DynVec<T> left, const DynVec<T> & right)
 {
 	return left.mul(right);
 }
 
-ng::math::DynVec ng::math::operator/(DynVec left, const DynVec & right)
+template<typename T>
+ng::math::DynVec<T> ng::math::operator/(DynVec<T> left, const DynVec<T> & right)
 {
 	return left.div(right);
 }
 
-ng::math::DynVec ng::math::operator*(const float & left, DynVec right)
+template<typename T>
+ng::math::DynVec<T> ng::math::operator*(const float & left, DynVec<T> right)
 {
 	return right.mul(left);
 }
 
-ng::math::DynVec ng::math::operator/(DynVec left, const float & right)
+template<typename T>
+ng::math::DynVec<T> ng::math::operator/(DynVec left, const float & right)
 {
 	return left.div(right);
 }
 
+template<typename T>
 std::ostream & ng::math::operator<<(std::ostream & stream, const DynVec & vector)
 {
 	stream << "DynVec: (";
@@ -231,3 +257,4 @@ std::ostream & ng::math::operator<<(std::ostream & stream, const DynVec & vector
 	stream << vector.elements[vector.width - 1] << ")";
 	return stream;
 }
+
