@@ -63,7 +63,6 @@ namespace ng {
 			
 			std::vector<VkQueueFamilyProperties> queueFamilyProperties;
 
-			
 			VkPhysicalDeviceFeatures features;
 			VkPhysicalDeviceFeatures enabledFeatures;
 			
@@ -82,6 +81,9 @@ namespace ng {
 			VkQueue presentQueue = VK_NULL_HANDLE;
 			VkQueue computeQueue = VK_NULL_HANDLE;
 			VkQueue transferQueue = VK_NULL_HANDLE;
+
+			VkCommandPool memoryCommandPool;
+			std::mutex memoryMutex;
 
 		public:
 
@@ -114,12 +116,18 @@ namespace ng {
 
 			void flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free = true);
 
+			/**  OBS! buffer memory has to be mappable if data isn't nullptr  **/
 			VkResult createBuffer(VkBufferUsageFlags usage,
 				VkMemoryPropertyFlags memoryPropertyFlags,
 				VkDeviceSize size,
 				VkBuffer *buffer,
 				VkDeviceMemory *memory,
 				void *data = nullptr);
+
+			VkResult copyDataToBuffer(VkBuffer dstBuffer, 
+				VkDeviceSize offset, 
+				VkDeviceSize dataSize, 
+				void* data);
 
 			uint32 getMemoryScore();
 

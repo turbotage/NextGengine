@@ -16,20 +16,25 @@ namespace ng {
 
 		struct VulkanBufferRegionAllocatorCreateInfo {
 			VulkanDevice* vulkanDevice;
+			VkDeviceMemory vkBufferMemory;
+			VkBuffer vkBuffer;
 			VkDeviceSize memorySize;
 			VkMemoryAlignment memoryAlignment;
 		};
 
 		class VulkanBufferRegionAllocator {
 		private:
-
 			friend VulkanMemoryAllocator;
 
-			VulkanDevice* m_VulkanDevice;
+			VulkanDevice* m_VulkanDevice; //read only
 
-			VkDeviceSize m_MemorySize;
+			VkDeviceMemory m_VkBufferMemory; //read only
 			
-			VkMemoryAlignment m_MemoryAlignment;
+			VkBuffer m_VkBuffer; //read only
+			
+			VkDeviceSize m_MemorySize; //read only
+			
+			VkMemoryAlignment m_MemoryAlignment; //read only
 			
 			VkDeviceSize m_FreeMemorySize;
 
@@ -45,7 +50,7 @@ namespace ng {
 						VulkanBuffer buffer;
 						std::vector<VulkanBuffer*> copiedBuffers;
 
-						BufferAllocation(VulkanBufferCreateInfo createInfo) 
+						BufferAllocation(VulkanBuffer::VulkanBufferInternalCreateInfo createInfo) 
 							: buffer(createInfo)
 						{
 							
@@ -67,7 +72,7 @@ namespace ng {
 					}
 					*/
 
-					auto emplace(VulkanBufferCreateInfo createInfo) {
+					auto emplace(VulkanBuffer::VulkanBufferInternalCreateInfo createInfo) {
 						return m_Allocations.emplace(createInfo.offset, createInfo);
 					}
 
@@ -76,7 +81,7 @@ namespace ng {
 					}
 
 					void erase(VulkanBuffer* buffer) {
-						m_Allocations.erase(m_Allocations.find(buffer->Offset));
+						m_Allocations.erase(m_Allocations.find(buffer->m_Offset));
 					}
 
 					void erase(std::map<VkDeviceSize, BufferAllocation>::iterator it) {
@@ -92,11 +97,11 @@ namespace ng {
 					}
 
 					auto find(BufferAllocation* bufferAlloc) {
-						return m_Allocations.find(bufferAlloc->buffer.Offset);
+						return m_Allocations.find(bufferAlloc->buffer.m_Offset);
 					}
 
 					auto find(VulkanBuffer* buffer) {
-						return m_Allocations.find(buffer->Offset);
+						return m_Allocations.find(buffer->m_Offset);
 					}
 
 					auto find(VkDeviceSize offset) {
@@ -177,12 +182,14 @@ namespace ng {
 
 			FreeSpaces m_FreeSpaces;
 
+			std::mutex m_Mutex;
+
 		public:
 
-			VkDeviceMemory vkBufferMemory;
-			VkBuffer vkBuffer;
-
 			VulkanBufferRegionAllocator(VulkanBufferRegionAllocatorCreateInfo createInfo);
+
+			VulkanBufferRegionAllocator(const VulkanBufferRegionAllocator &) = delete;
+			VulkanBufferRegionAllocator(VulkanBufferRegionAllocator &&) = delete;
 
 			uint32 increaseBufferCopies(VulkanBuffer* buffer);
 			
@@ -194,15 +201,18 @@ namespace ng {
 			bool isInBufferRegion(VulkanBuffer* buffer);
 			
 			/**  d  **/
-			VulkanBuffer createBuffer(VkDeviceSize size);
+			VkResult createBuffer(VulkanBuffer* vulkanBuffer, VulkanBufferCreateInfo createInfo);
 
-			VulkanBuffer createBuffer(VkDeviceSize freeSpaceOffset, VkDeviceSize freeSpaceSize, VkDeviceSize size);
+			VkResult createBuffer(VulkanBuffer* vulkanBuffer, VkDeviceSize freeSpaceOffset, VkDeviceSize freeSpaceSize, VulkanBufferCreateInfo createInfo);
+
+			/**  w  **/
+			VkResult write(VulkanBuffer* vulkanBuffer, void* newData, VkDeviceSize newDataSize);
 
 			/**  f  **/
 			void freeBuffer(VulkanBuffer* buffer);
 
 			/**  d  **/
-			void defragment(VkCommandBuffer defragCommandBuffer);
+			void defragment(VkCommandBuffer defragCommandBuffer, std::unique_lock<std::mutex>* lock);
 
 		};
 	}

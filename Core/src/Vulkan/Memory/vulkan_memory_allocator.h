@@ -12,9 +12,7 @@ namespace ng {
 	namespace vulkan {
 
 		struct VulkanMemoryAllocatorCreateInfo {
-			graphics::VulkanDevice* vulkanDevice;
-			VkCommandPool commandPool;
-			VkQueue queue;
+			VulkanDevice* vulkanDevice;
 			VkDeviceSize defaultAllocationSize;
 			VkMemoryAlignment memoryAlignment;
 			VkBufferUsageFlags usage;
@@ -24,30 +22,22 @@ namespace ng {
 		class VulkanMemoryAllocator {
 		private:
 
-			graphics::VulkanDevice* VulkanDevice;
+			VulkanDevice* m_VulkanDevice = nullptr;
 
-			VkCommandPool CommandPool;
+			std::vector<VulkanBufferRegionAllocator*> m_BufferRegionAllocators;
 
-			VkQueue Queue;
+			/*  create new VulkanBufferRegionAllocator  */
+			VkResult createVBRA();
 
-			std::mutex AllocatorMutex;
+			VkDeviceSize m_DefaultAllocationSize;
 
-			VkBuffer StagingBuffer;
-			VkDeviceMemory StagingBufferMemory;
+			VkMemoryAlignment m_MemoryAlignment;
 
-			std::vector<VulkanBufferRegionAllocator*> BufferRegionAllocators;
+			VkBufferUsageFlags m_Usage;
 
-			VkResult createBFA();
+			VkMemoryPropertyFlags m_MemoryProperties;
 
-		public:
-
-			VkDeviceSize defaultAllocationSize;
-
-			VkMemoryAlignment memoryAlignment;
-
-			VkBufferUsageFlags usage;
-
-			VkMemoryPropertyFlags memoryProperties;
+			std::unique_lock<std::mutex> m_Lock; 
 
 		public:
 
@@ -55,11 +45,14 @@ namespace ng {
 
 			VulkanMemoryAllocator(VulkanMemoryAllocatorCreateInfo createInfo);
 
+			VulkanMemoryAllocator(const VulkanMemoryAllocator &) = delete;
+			VulkanMemoryAllocator(VulkanMemoryAllocator &&) = delete;
+
 			~VulkanMemoryAllocator();
 
 			void init(VulkanMemoryAllocatorCreateInfo createInfo);
 
-			VulkanBuffer createBuffer(VkDeviceSize size);
+			VkResult createBuffer(VulkanBuffer* vulkanBuffer, VulkanBufferCreateInfo createInfo);
 
 			void defragment(uint32 defragmentNum = UINT32_MAX);
 

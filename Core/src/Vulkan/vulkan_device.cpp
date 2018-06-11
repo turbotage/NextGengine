@@ -364,6 +364,34 @@ VkResult ng::vulkan::VulkanDevice::createBuffer(VkBufferUsageFlags usage, VkMemo
 	return VK_SUCCESS;
 }
 
+VkResult ng::vulkan::VulkanDevice::copyDataToBuffer(VkBuffer dstBuffer, VkDeviceSize offset, VkDeviceSize size, void * data)
+{
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+
+	VkCommandBuffer commandBuffer = createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, memoryCommandPool, true);
+
+	createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		size,
+		&stagingBuffer,
+		&stagingBufferMemory,
+		data
+	);
+
+	VkBufferCopy copyRegion = {};
+	copyRegion.srcOffset = 0;
+	copyRegion.dstOffset = offset;
+	copyRegion.size = size;
+	vkCmdCopyBuffer(commandBuffer, stagingBuffer, dstBuffer, 1, &copyRegion);
+
+	flushCommandBuffer(commandBuffer, memoryCommandPool, transferQueue, true);
+
+	vkDestroyBuffer(logicalDevice, stagingBuffer, nullptr);
+	vkFreeMemory(logicalDevice, stagingBufferMemory, nullptr);
+
+}
+
 uint32 ng::vulkan::VulkanDevice::getMemoryScore()
 {
 	uint32 score = 0;

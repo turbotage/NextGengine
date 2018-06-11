@@ -2,23 +2,25 @@
 #include "../vulkan_device.h"
 #include "../../debug.h"
 #include "vulkan_memory_allocator.h"
+#include "vulkan_buffer.h"
+#include "../Threading/vulkan_synchronisation.h"
 
 #define DEFAULT_ALLOC_SIZE 536870912
 
-VkResult ng::vulkan::VulkanMemoryAllocator::createBFA()
+VkResult ng::vulkan::VulkanMemoryAllocator::createVBRA()
 {
 	VulkanBufferRegionAllocatorCreateInfo bfaCreateInfo;
-	bfaCreateInfo.vulkanDevice = VulkanDevice;
-	bfaCreateInfo.memorySize = defaultAllocationSize;
-	bfaCreateInfo.memoryAlignment = memoryAlignment;
+	bfaCreateInfo.vulkanDevice = m_VulkanDevice;
+	bfaCreateInfo.memorySize = m_DefaultAllocationSize;
+	bfaCreateInfo.memoryAlignment = m_MemoryAlignment;
 
 	VulkanBufferRegionAllocator* bfa = new VulkanBufferRegionAllocator(bfaCreateInfo);
-	VkResult res = VulkanDevice->createBuffer(usage, memoryProperties, defaultAllocationSize, &bfa->buffer, &bfa->bufferMemory);
+	VkResult res = m_VulkanDevice->createBuffer(m_Usage, m_MemoryProperties, m_DefaultAllocationSize, &bfa->m_VkBuffer, &bfa->m_VkBufferMemory);
 	if (res != VK_SUCCESS) {
 		delete bfa;
 	}
 	else {
-		BufferRegionAllocators.push_back(bfa);
+		m_BufferRegionAllocators.push_back(bfa);
 	}
 
 	return res;
@@ -41,33 +43,26 @@ ng::vulkan::VulkanMemoryAllocator::~VulkanMemoryAllocator()
 
 void ng::vulkan::VulkanMemoryAllocator::init(VulkanMemoryAllocatorCreateInfo createInfo)
 {
-	this->VulkanDevice = createInfo.vulkanDevice;
-	this->CommandPool = createInfo.commandPool;
-	this->Queue = createInfo.queue;
+	this->m_VulkanDevice = createInfo.vulkanDevice;
 
-	this->defaultAllocationSize = createInfo.defaultAllocationSize;
-	this->memoryAlignment = createInfo.memoryAlignment;
-	this->usage = createInfo.usage;
-	this->memoryProperties = createInfo.memoryProperties;
+	this->m_DefaultAllocationSize = createInfo.defaultAllocationSize;
+	this->m_MemoryAlignment = createInfo.memoryAlignment;
+	this->m_Usage = createInfo.usage;
+	this->m_MemoryProperties = createInfo.memoryProperties;
 
-	VulkanDevice->createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		defaultAllocationSize,
-		&StagingBuffer,
-		&StagingBufferMemory
-	);
-
-	createBFA();
+	createVBRA();
 	
 }
 
-ng::vulkan::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(VkDeviceSize size)
+VkResult ng::vulkan::VulkanMemoryAllocator::createBuffer(VulkanBuffer* vulkanBuffer, VulkanBufferCreateInfo createInfo)
 {
-	VkDeviceSize allocSize = size + memoryAlignment - (size % memoryAlignment);
+	VkDeviceSize allocSize = createInfo.size + m_MemoryAlignment - (createInfo.size % m_MemoryAlignment);
 	
-	assert(allocSize <= defaultAllocationSize);
+	assert(allocSize <= m_DefaultAllocationSize);
 
-	for (int i = 0; i < BufferRegionAllocators.size() - 1; ++i) {
+	createInfo.size = allocSize;
+
+	for (int i = 0; i < m_BufferRegionAllocators.size() - 1; ++i) {
 		bool someSuitable = false;
 
 		std::pair<VkDeviceSize, VkDeviceSize> bestFitFreeSpace;
@@ -75,18 +70,18 @@ ng::vulkan::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(Vk
 
 		VkDeviceSize currentSpaceDifference;
 		int suitableBufferRegionIndex = 0;
-		bestFitFreeSpace = BufferRegionAllocators[0]->findSuitableFreeSpace(allocSize);
+		bestFitFreeSpace = m_BufferRegionAllocators[0]->findSuitableFreeSpace(allocSize);
 		if (bestFitFreeSpace.second != 0) {
 			someSuitable = true;
 		}
 		currentSpaceDifference = bestFitFreeSpace.second - allocSize;
 
-		for (int i = 1; i < BufferRegionAllocators.size(); ++i) {
-			tmpFreeSpace = BufferRegionAllocators[i]->findSuitableFreeSpace(allocSize);
+		for (int i = 1; i < m_BufferRegionAllocators.size(); ++i) {
+			tmpFreeSpace = m_BufferRegionAllocators[i]->findSuitableFreeSpace(allocSize);
 			if (tmpFreeSpace.second != 0) {
 				someSuitable = true;
 			}
-			if (currentSpaceDifference >(allocSize - tmpFreeSpace.second)) {
+			if (currentSpaceDifference > (allocSize - tmpFreeSpace.second)) {
 				bestFitFreeSpace = tmpFreeSpace;
 				currentSpaceDifference = allocSize - tmpFreeSpace.second;
 				suitableBufferRegionIndex = i;
@@ -94,13 +89,14 @@ ng::vulkan::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(Vk
 		}
 
 		if (!someSuitable) {
-			if (createBFA() != VK_SUCCESS) { //out of memory, defragment...
-				defragment(2);
+			VkResult res = createVBRA();
+			if (res != VK_SUCCESS) { //out of memory, defragment...
+				return res;
 			}
 			continue;
 		}
 
-		return BufferRegionAllocators[suitableBufferRegionIndex]->createBuffer(bestFitFreeSpace.first, bestFitFreeSpace.second, allocSize);
+		m_BufferRegionAllocators[suitableBufferRegionIndex]->createBuffer(vulkanBuffer, bestFitFreeSpace.first, bestFitFreeSpace.second, createInfo);
 	}
 
 	LOGI("could not create buffer, fatal error!!");
@@ -109,15 +105,36 @@ ng::vulkan::VulkanBuffer ng::memory::vma::VulkanMemoryAllocator::createBuffer(Vk
 
 void ng::vulkan::VulkanMemoryAllocator::defragment(uint32 defragmentNum = UINT32_MAX)
 {
-	for (int i = 0; (i < BufferRegionAllocators.size()) && (i < defragmentNum); ++i) {
+	VkCommandBuffer commandBuffer = m_VulkanDevice->createCommandBuffer(
+		VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		m_VulkanDevice->memoryCommandPool,
+		true
+	);
+
+	bool isLocked = false;
+
+	for (int i = 0; (i < m_BufferRegionAllocators.size()) && (i < defragmentNum); ++i) {
 		uint32 highestCountIndex = 0;
-		for (int j = 0; j < BufferRegionAllocators.size() - 1; ++j) {
-			if (BufferRegionAllocators[j+1]->getFreeSpaceCount() > BufferRegionAllocators[j]->getFreeSpaceCount()) {
+		for (int j = 0; j < m_BufferRegionAllocators.size() - 1; ++j) {
+			if (m_BufferRegionAllocators[j+1]->getFreeSpaceCount() > m_BufferRegionAllocators[j]->getFreeSpaceCount()) {
 				highestCountIndex = j+1;
 			}
 		}
 
-		BufferRegionAllocators[highestCountIndex]->defragment();
+		if (!isLocked) {
+			isLocked = true;
+			m_BufferRegionAllocators[highestCountIndex]->defragment(commandBuffer, &m_Lock);
+		}
+		else {
+			m_BufferRegionAllocators[highestCountIndex]->defragment(commandBuffer, nullptr);
+		}
+	}
 
+	vkQueueWaitIdle(m_VulkanDevice->computeQueue);
+	vkQueueWaitIdle(m_VulkanDevice->graphicsQueue);
+
+	m_VulkanDevice->flushCommandBuffer(commandBuffer, m_VulkanDevice->memoryCommandPool, m_VulkanDevice->transferQueue, true);
+	if (isLocked) {
+		m_Lock.unlock();
 	}
 }

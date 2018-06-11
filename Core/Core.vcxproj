@@ -103,6 +103,7 @@
     <ClInclude Include="src\SceneGraph\scene_graph.h" />
     <ClInclude Include="src\Vulkan\Pipelines\vulkan_graphics_pipeline.h" />
     <ClInclude Include="src\Vulkan\Pipelines\vulkan_pipeline.h" />
+    <ClInclude Include="src\Vulkan\Threading\vulkan_synchronisation.h" />
     <ClInclude Include="src\Vulkan\vulkan_base.h" />
     <ClInclude Include="src\Vulkan\GraphicsObjects\vulkan_model.h" />
     <ClInclude Include="src\math\dyn_mat.h" />

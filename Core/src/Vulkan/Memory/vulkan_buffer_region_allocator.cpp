@@ -1,33 +1,42 @@
 #include "../vulkan_device.h"
 #include "vulkan_buffer_region_allocator.h"
+#include "../Threading/vulkan_synchronisation.h"
 
 //VkBufferRegionAllocator
 
 ng::vulkan::VulkanBufferRegionAllocator::VulkanBufferRegionAllocator(VulkanBufferRegionAllocatorCreateInfo createInfo)
-	: m_VulkanDevice(createInfo.vulkanDevice), m_MemorySize(createInfo.memorySize), m_MemoryAlignment(createInfo.memoryAlignment)
 {
+	m_VulkanDevice = createInfo.vulkanDevice;
+	m_VkBufferMemory = createInfo.vkBufferMemory;
+	m_VkBuffer = createInfo.vkBuffer;
+	m_MemorySize = createInfo.memorySize;
+	m_MemoryAlignment = createInfo.memoryAlignment;
+
 	m_FreeMemorySize = m_MemorySize;
 }
 
 uint32 ng::vulkan::VulkanBufferRegionAllocator::increaseBufferCopies(VulkanBuffer * buffer)
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	return m_Buffers.increaseBufferCopies(buffer);
 }
 
 std::pair<VkDeviceSize, VkDeviceSize> ng::vulkan::VulkanBufferRegionAllocator::findSuitableFreeSpace(VkDeviceSize size)
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	return m_FreeSpaces.findSuitableFreeSpace(size);
 }
 
 uint32 ng::vulkan::VulkanBufferRegionAllocator::getFreeSpaceCount()
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	return m_FreeSpaces.size();
 }
 
 bool ng::vulkan::VulkanBufferRegionAllocator::isInBufferRegion(VulkanBuffer* buffer)
 {
 
-	if (*buffer->VkBuffer == this->vkBuffer) {
+	if (buffer->m_VkBuffer == this->m_VkBuffer) {
 		return true;
 	}
 	/*
@@ -41,49 +50,97 @@ bool ng::vulkan::VulkanBufferRegionAllocator::isInBufferRegion(VulkanBuffer* buf
 	return false;
 }
 
-ng::vulkan::VulkanBuffer ng::vulkan::VulkanBufferRegionAllocator::createBuffer(VkDeviceSize size)
+VkResult ng::vulkan::VulkanBufferRegionAllocator::createBuffer(VulkanBuffer* vulkanBuffer, VulkanBufferCreateInfo createInfo)
 {
 
-	VkDeviceSize allocSize = size + m_MemoryAlignment -(size % m_MemoryAlignment); //fix size to right mem-alignment
+	VkDeviceSize allocSize = createInfo.size + m_MemoryAlignment -(createInfo.size % m_MemoryAlignment); //fix size to right mem-alignment
+
+	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	auto freeSpaceRet = m_FreeSpaces.findSuitableFreeSpace(allocSize);
 
-	VulkanBufferCreateInfo createInfo;
-	createInfo.bufferRegionAllocator = this;
-	createInfo.offset = freeSpaceRet.first;
-	createInfo.size = allocSize;
-	createInfo.vkBuffer = &vkBuffer;
+	VulkanBuffer::VulkanBufferInternalCreateInfo internalCreateInfo;
+	internalCreateInfo.bufferRegionAllocator = this;
+	internalCreateInfo.offset = freeSpaceRet.first;
+	internalCreateInfo.size = allocSize;
+	internalCreateInfo.vkBuffer = m_VkBuffer;
+	internalCreateInfo.data = createInfo.data;
+	internalCreateInfo.dataSize = createInfo.dataSize;
+	internalCreateInfo.onUpdateCallback = createInfo.onUpdateCallback;
 
-	//printf("Alloc offset: %" PRIu64 " , Alloc size : %" PRIu32 "\n", buffer.offset, buffer.size); //show allocation parameters
-	auto it = m_Buffers.emplace(createInfo);
+	auto it = m_Buffers.emplace(internalCreateInfo);
+	it.first->second.copiedBuffers.push_back(vulkanBuffer);
 
-	//buffer.setOffsetAndSizeIterator(allocationRet);
+	//set the values of the calling buffer
+	vulkanBuffer->m_BufferRegionAllocator = this;
+	vulkanBuffer->m_Offset = internalCreateInfo.offset;
+	vulkanBuffer->m_Size = internalCreateInfo.size;
+	vulkanBuffer->m_VkBuffer = m_VkBuffer;
+	vulkanBuffer->m_Data = internalCreateInfo.data;
+	vulkanBuffer->m_DataSize = internalCreateInfo.dataSize;
+	vulkanBuffer->m_OnUpdateCallback = internalCreateInfo.onUpdateCallback;
 
 	m_FreeSpaces.erase(freeSpaceRet.first, freeSpaceRet.second); //remove the old freespace
-																 //insert the new freespace
-	m_FreeSpaces.insert(createInfo.offset + createInfo.size, freeSpaceRet.second - createInfo.size);
+	m_FreeSpaces.insert(internalCreateInfo.offset + internalCreateInfo.size, freeSpaceRet.second - internalCreateInfo.size); //insert the new freespace
 	m_FreeMemorySize -= allocSize;
-	return it.first->second.buffer;
+
+	if (createInfo.data != nullptr) {
+		return write(vulkanBuffer, createInfo.data, createInfo.dataSize);
+	}
+	return VK_SUCCESS;
 }
 
-ng::vulkan::VulkanBuffer ng::vulkan::VulkanBufferRegionAllocator::createBuffer(VkDeviceSize freeSpaceOffset, VkDeviceSize freeSpaceSize, VkDeviceSize size)
+VkResult ng::vulkan::VulkanBufferRegionAllocator::createBuffer(VulkanBuffer* vulkanBuffer, VkDeviceSize freeSpaceOffset, VkDeviceSize freeSpaceSize, VulkanBufferCreateInfo createInfo)
 {
-	VulkanBufferCreateInfo createInfo;
-	createInfo.bufferRegionAllocator = this;
-	createInfo.offset = freeSpaceOffset;
-	createInfo.size = size;
-	createInfo.vkBuffer = &vkBuffer;
 
-	auto it = m_Buffers.emplace(createInfo);
+	VulkanBuffer::VulkanBufferInternalCreateInfo internalCreateInfo;
+	internalCreateInfo.bufferRegionAllocator = this;
+	internalCreateInfo.offset = freeSpaceOffset;
+	internalCreateInfo.size = createInfo.size;
+	internalCreateInfo.vkBuffer = m_VkBuffer;
+	internalCreateInfo.data = createInfo.data;
+	internalCreateInfo.dataSize = createInfo.dataSize;
+	internalCreateInfo.onUpdateCallback = createInfo.onUpdateCallback;
+
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
+	auto it = m_Buffers.emplace(internalCreateInfo);
+	it.first->second.copiedBuffers.push_back(vulkanBuffer);
+	
+	//set the values of the calling buffer
+	vulkanBuffer->m_BufferRegionAllocator = this;
+	vulkanBuffer->m_Offset = internalCreateInfo.offset;
+	vulkanBuffer->m_Size = internalCreateInfo.size;
+	vulkanBuffer->m_VkBuffer = m_VkBuffer;
+	vulkanBuffer->m_Data = internalCreateInfo.data;
+	vulkanBuffer->m_DataSize = internalCreateInfo.dataSize;
+	vulkanBuffer->m_OnUpdateCallback = internalCreateInfo.onUpdateCallback;
 
 	m_FreeSpaces.erase(freeSpaceOffset, freeSpaceSize);
-	m_FreeSpaces.insert(freeSpaceOffset + size, freeSpaceSize - size);
-	return it.first->second.buffer;
+	m_FreeSpaces.insert(freeSpaceOffset + createInfo.size, freeSpaceSize - createInfo.size);
+	m_FreeMemorySize -= createInfo.size;
+
+	if (createInfo.data != nullptr) {
+		return write(vulkanBuffer, createInfo.data, createInfo.dataSize);
+	}
+	return VK_SUCCESS;
+}
+
+VkResult ng::vulkan::VulkanBufferRegionAllocator::write(VulkanBuffer * vulkanBuffer, void * newData, VkDeviceSize newDataSize)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	m_VulkanDevice->copyDataToBuffer(m_VkBuffer, vulkanBuffer->m_Offset, newDataSize, newData);
+	auto it = m_Buffers.find(vulkanBuffer);
+	it->second.buffer.m_Data = newData;
+	it->second.buffer.m_DataSize = newDataSize;
+	for (auto& copiedBuffer : it->second.copiedBuffers) {
+		copiedBuffer->update(vulkanBuffer->m_Offset, vulkanBuffer->m_Size, newData, newDataSize);
+	}
 }
 
 void ng::vulkan::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buffer)
 {
-
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	//print a VkDeviceSize printf("New FreeSpace offset: %" PRIu64 " , New FreeSpace size : %" PRIu32 "\n", freeSpace.second, freeSpace.first); //show allocation parameters
 
 	auto currentAllocIt = m_Buffers.find(buffer);
@@ -95,13 +152,13 @@ void ng::vulkan::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buffer)
 	else if (currentAllocIt->second.copiedBuffers.size() == 1) {
 		auto it = std::find(currentAllocIt->second.copiedBuffers.begin(), currentAllocIt->second.copiedBuffers.end(), buffer);
 		currentAllocIt->second.copiedBuffers.erase(it);
-		if (currentAllocIt->second.buffer.Data != nullptr) {
-			free(currentAllocIt->second.buffer.Data);
+		if (currentAllocIt->second.buffer.m_Data != nullptr) {
+			free(currentAllocIt->second.buffer.m_Data);
 		}
 	}
 	else if (currentAllocIt->second.copiedBuffers.size() == 0) { //gets called when buffer goes out of scope just return- prevents never ending freeBuffer recursive loop
-		if (currentAllocIt->second.buffer.Data != nullptr) {
-			free(currentAllocIt->second.buffer.Data);
+		if (currentAllocIt->second.buffer.m_Data != nullptr) {
+			free(currentAllocIt->second.buffer.m_Data);
 		}
 		return;
 	}
@@ -116,44 +173,44 @@ void ng::vulkan::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buffer)
 		auto prevAllocIt = --currentAllocIt;
 		auto nextAllocIt = ++currentAllocIt;
 		//if there is freespace to the right and left of the allocation
-		if ((prevAllocIt->first + prevAllocIt->second.buffer.Size != currentAllocIt->first) && (currentAllocIt->first + currentAllocIt->second.buffer.Size != nextAllocIt->first)) {
+		if ((prevAllocIt->first + prevAllocIt->second.buffer.m_Size != currentAllocIt->first) && (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != nextAllocIt->first)) {
 			/* remove the freespaces to the right and left,
 			and insert new one starting at rigth offset with size of all 3 blocks
 			(right freespace, allocation, left freespace)*/
-			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.Size);
-			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.Size);
+			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.m_Size);
+			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
 			VkDeviceSize newFreeSpaceOffset = prevFreeSpace.first;
-			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.Size + nextFreeSpace.second;
+			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(prevFreeSpace.first, prevFreeSpace.second);
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
 
 			m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 		}
 		//if there is freespace to the left
-		else if (prevAllocIt->first + prevAllocIt->second.buffer.Size != currentAllocIt->first) {
+		else if (prevAllocIt->first + prevAllocIt->second.buffer.m_Size != currentAllocIt->first) {
 			/*remove the freespace to the left and insert new one starting at left
 			freespace offset with size (left freespace size) + (old allocation size)*/
-			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.Size);
+			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.m_Size);
 			VkDeviceSize newFreeSpaceOffset = prevFreeSpace.first;
-			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.Size;
+			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.m_Size;
 			m_FreeSpaces.erase(prevFreeSpace.first, prevFreeSpace.second);
 
 			m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 		}
 		//if there is freespace to the right
-		else if (currentAllocIt->first + currentAllocIt->second.buffer.Size != nextAllocIt->first) {
+		else if (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != nextAllocIt->first) {
 			/*remove the freespace to the left and insert new one starting at left
 			freespace offset with size (left freespace size) + (old allocation size)*/
-			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.Size);
+			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
 			VkDeviceSize newFreeSpaceOffset = currentAllocIt->first;
-			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.Size + nextFreeSpace.second;
+			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
 
 			m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 		}
 		//if allocation isn't surrounded by any freespaces
 		else {
-			m_FreeSpaces.insert(currentAllocIt->first, currentAllocIt->second.buffer.Size);
+			m_FreeSpaces.insert(currentAllocIt->first, currentAllocIt->second.buffer.m_Size);
 		}
 	}
 	//if this is the only allocation there is
@@ -165,13 +222,13 @@ void ng::vulkan::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buffer)
 	else if (currentAllocIt == m_Buffers.begin()) {
 		auto nextAllocIt = ++currentAllocIt;
 		//if there is freespace to the right and left of the allocation
-		if ((currentAllocIt->first != 0) && (currentAllocIt->first + currentAllocIt->second.buffer.Size != nextAllocIt->first)) {
+		if ((currentAllocIt->first != 0) && (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != nextAllocIt->first)) {
 			/* remove the freespaces to the right and left,
 			and insert new one starting at rigth offset with size of all 3 blocks
 			(right freespace, allocation, left freespace)*/
 			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(0);
-			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.Size);
-			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.Size + nextFreeSpace.second;
+			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
+			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(0, prevFreeSpace.second);
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
 
@@ -180,63 +237,63 @@ void ng::vulkan::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buffer)
 		//if there is freespace to the left
 		else if (currentAllocIt->first != 0) {
 			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(0);
-			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.Size;
+			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.m_Size;
 			m_FreeSpaces.erase(0, prevFreeSpace.second);
 
 			m_FreeSpaces.insert(0, newFreeSpaceSize);
 		}
 		//if there is freespace to the right
-		else if (currentAllocIt->first + currentAllocIt->second.buffer.Size != nextAllocIt->first){
-			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.Size);
-			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.Size + nextFreeSpace.second;
+		else if (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != nextAllocIt->first){
+			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
+			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
 
 			m_FreeSpaces.insert(currentAllocIt->first, newFreeSpaceSize);
 		}
 		//if allocation isn't surrounded by any freespaces
 		else {
-			m_FreeSpaces.insert(0, currentAllocIt->second.buffer.Size);
+			m_FreeSpaces.insert(0, currentAllocIt->second.buffer.m_Size);
 		}
 	}
 	//if this is the last allocation
 	else {
 		auto prevAllocIt = --currentAllocIt;
 		//if there is freespace to the right and left of the allocation
-		if ((prevAllocIt->first + prevAllocIt->second.buffer.Size != currentAllocIt->first) && (currentAllocIt->first + currentAllocIt->second.buffer.Size != m_MemorySize)) {
+		if ((prevAllocIt->first + prevAllocIt->second.buffer.m_Size != currentAllocIt->first) && (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != m_MemorySize)) {
 			/* remove the freespaces to the right and left,
 			and insert new one starting at rigth offset with size of all 3 blocks
 			(right freespace, allocation, left freespace)*/
-			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.Size);
-			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.Size);
+			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.m_Size);
+			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
 			VkDeviceSize newFreeSpaceOffset = prevFreeSpace.first;
-			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.Size + nextFreeSpace.second;
+			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(prevFreeSpace.first, prevFreeSpace.second);
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
 
 			m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 		}
 		//if there is freespace to the left
-		else if (prevAllocIt->first + prevAllocIt->second.buffer.Size != currentAllocIt->first) {
+		else if (prevAllocIt->first + prevAllocIt->second.buffer.m_Size != currentAllocIt->first) {
 			/*remove the freespace to the left and insert new one starting at left
 			freespace offset with size (left freespace size) + (old allocation size)*/
-			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.Size);
+			auto prevFreeSpace = m_FreeSpaces.findSpaceWithOffset(prevAllocIt->first + prevAllocIt->second.buffer.m_Size);
 			VkDeviceSize newFreeSpaceOffset = prevFreeSpace.first;
-			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.Size;
+			VkDeviceSize newFreeSpaceSize = prevFreeSpace.second + currentAllocIt->second.buffer.m_Size;
 			m_FreeSpaces.erase(prevFreeSpace.first, prevFreeSpace.second);
 
 			m_FreeSpaces.insert(newFreeSpaceOffset, newFreeSpaceSize);
 		}
 		//if there is freespace to the right
-		else if (currentAllocIt->first + currentAllocIt->second.buffer.Size != m_MemorySize) {
-			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.Size);
-			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.Size + nextFreeSpace.second;
+		else if (currentAllocIt->first + currentAllocIt->second.buffer.m_Size != m_MemorySize) {
+			auto nextFreeSpace = m_FreeSpaces.findSpaceWithOffset(currentAllocIt->first + currentAllocIt->second.buffer.m_Size);
+			VkDeviceSize newFreeSpaceSize = currentAllocIt->second.buffer.m_Size + nextFreeSpace.second;
 			m_FreeSpaces.erase(nextFreeSpace.first, nextFreeSpace.second);
 
 			m_FreeSpaces.insert(currentAllocIt->first, newFreeSpaceSize);
 		}
 		//if allocation isn't surrounded by any freespaces
 		else {
-			m_FreeSpaces.insert(currentAllocIt->first, currentAllocIt->second.buffer.Size);
+			m_FreeSpaces.insert(currentAllocIt->first, currentAllocIt->second.buffer.m_Size);
 		}
 	}
 
@@ -244,8 +301,10 @@ void ng::vulkan::VulkanBufferRegionAllocator::freeBuffer(VulkanBuffer* buffer)
 	m_Buffers.erase(currentAllocIt);
 }
 
-void ng::vulkan::VulkanBufferRegionAllocator::defragment(VkCommandBuffer defragCommandBuffer)
+void ng::vulkan::VulkanBufferRegionAllocator::defragment(VkCommandBuffer defragCommandBuffer, std::unique_lock<std::mutex>* lock)
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
 	m_FreeSpaces.clear();
 
 	VkDeviceSize offset = 0;
@@ -261,36 +320,47 @@ void ng::vulkan::VulkanBufferRegionAllocator::defragment(VkCommandBuffer defragC
 	int i = 0;
 	for (auto it = m_Buffers.begin(); it != m_Buffers.end(); ++it ) {
 		
-		copyRegions.emplace_back(it->second.buffer.Offset, offset, it->second.buffer.DataSize);
+		copyRegions.emplace_back(it->second.buffer.m_Offset, offset, it->second.buffer.m_DataSize);
 
-		VulkanBufferCreateInfo createInfo = {
-			this,
-			offset,
-			it->second.buffer.Size,
-			it->second.buffer.DataSize,
-			&this->vkBuffer,
-			it->second.buffer.Data,
-			it->second.buffer.OnUpdate
-		};
+		VulkanBuffer::VulkanBufferInternalCreateInfo createInternalInfo;
 
-		auto it2 = newBuffers.emplace(createInfo);
+		createInternalInfo.bufferRegionAllocator = this;
+		createInternalInfo.offset = offset;
+		createInternalInfo.size = it->second.buffer.m_Size;
+		createInternalInfo.vkBuffer = this->m_VkBuffer;
+		createInternalInfo.data = it->second.buffer.m_Data;
+		createInternalInfo.dataSize = it->second.buffer.m_DataSize;
+		createInternalInfo.onUpdateCallback = it->second.buffer.m_OnUpdateCallback;
+
+		auto it2 = newBuffers.emplace(createInternalInfo);
 		newBuffers.setBufferCopies(&it->second.buffer ,&it->second.copiedBuffers);
 
-		lastOffset = offset + it->second.buffer.Size;
-		offset += it->second.buffer.Size;
+		lastOffset = offset + it->second.buffer.m_Size;
+		offset += it->second.buffer.m_Size;
 		++i;
+	}
+
+	if (lock != nullptr) {
+		lock->lock();
 	}
 
 	m_Buffers.clear();
 	m_FreeSpaces.clear();
 	m_Buffers = newBuffers;
 
-	for (auto& buffer : m_Buffers) {
-		buffer.second.buffer.OnUpdate();
+	for (auto& originalBuffer : m_Buffers) {
+		for (auto& buffer : originalBuffer.second.copiedBuffers) {
+			buffer->update(
+				originalBuffer.second.buffer.m_Offset,
+				originalBuffer.second.buffer.m_Size,
+				originalBuffer.second.buffer.m_Data,
+				originalBuffer.second.buffer.m_DataSize
+			);
+		}
 	}
 
 	m_FreeSpaces.insert(lastOffset, m_MemorySize - lastOffset);
 
-	vkCmdCopyBuffer(defragCommandBuffer, vkBuffer, vkBuffer, copyRegions.size(), copyRegions.data());
+	vkCmdCopyBuffer(defragCommandBuffer, m_VkBuffer, m_VkBuffer, copyRegions.size(), copyRegions.data());
 }
 
