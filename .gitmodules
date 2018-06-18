@@ -1,0 +1,3 @@
+[submodule "NgMath"]
+	path = NgMath
+	url = https://github.com/turbotage/NgMath.git

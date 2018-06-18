@@ -35,7 +35,6 @@ uint32 ng::vulkan::VulkanBufferRegionAllocator::getFreeSpaceCount()
 
 bool ng::vulkan::VulkanBufferRegionAllocator::isInBufferRegion(VulkanBuffer* buffer)
 {
-
 	if (buffer->m_VkBuffer == this->m_VkBuffer) {
 		return true;
 	}
