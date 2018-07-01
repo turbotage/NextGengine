@@ -1,5 +1,5 @@
 #include "vulkan_texture.h"
-#include "../Memory/vulkan_buffer.h"
+#include "Memory\vulkan_buffer.h"
 
 #include <gli\gli.hpp>
 
@@ -48,6 +48,6 @@ void ng::vulkan::VulkanTexture2D::loadFromFile(std::string filename, VulkanDevic
 
 	VkMemoryRequirements memReqs;
 	
-	VkCommandBuffer copyCmd = vulkanDevice->createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+	VkCommandBuffer copyCmd = vulkanDevice->createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, , true);
 
 }

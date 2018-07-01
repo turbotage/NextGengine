@@ -1,1 +1,406 @@
-﻿
+﻿  queue.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\threading\queue.h(12): error C2461: 'ng::threading::Queue<T>': constructor syntax missing formal parameters
+  c:\users\turbotage\source\repos\nextgengine\core\src\threading\queue.h(26): note: see reference to class template instantiation 'ng::threading::Queue<T>' being compiled
+  render_state.cpp
+  renderable_node.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  camera_node.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  deferred_renderer.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(3): error C2039: 'vulkan': is not a member of 'ng'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.h(7): note: see declaration of 'ng'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(3): error C2039: 'DeferredRenderer': is not a member of 'ng'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.h(7): note: see declaration of 'ng'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(3): error C3083: 'vulkan': the symbol to the left of a '::' must be a type
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(3): error C3083: 'DeferredRenderer': the symbol to the left of a '::' must be a type
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(4): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(15): error C2660: 'vkCreateDescriptorPool': function does not take 0 arguments
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(21): warning C4508: 'DeferredRenderer': function should return a value; 'void' return type assumed
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(23): error C2039: 'vulkan': is not a member of 'ng'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.h(7): note: see declaration of 'ng'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(23): error C2039: 'DeferredRenderer': is not a member of 'ng'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.h(7): note: see declaration of 'ng'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(23): error C3083: 'vulkan': the symbol to the left of a '::' must be a type
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(23): error C3083: 'DeferredRenderer': the symbol to the left of a '::' must be a type
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(24): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(24): error C2084: function 'int DeferredRenderer(void)' already has a body
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\renderers\deferred_renderer.cpp(3): note: see previous definition of 'DeferredRenderer'
+  vulkan_buffer.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.h(127): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.h(164): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer.cpp(3): fatal error C1083: Cannot open include file: '../../Math/hash_functions.h': No such file or directory
+  culling_walker.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  movement_properties.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\props\movement_properties.h(3): fatal error C1083: Cannot open include file: '../Math/vec3f.h': No such file or directory
+  renderable.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\entities\entity.h(3): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  collidable.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\props\collidable.h(4): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  object.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\props\collidable.h(4): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  general_bv.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\boundingvolumes\aabb.h(3): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  bounding_sphere.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\boundingvolumes\bounding_sphere.h(3): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  physical_properties.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\props\physical_properties.h(3): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  binary_tree.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\datastructures\binary_tree.h(30): error C2244: 'ng::dstructs::BinaryTree<T>::search': unable to match function definition to an existing declaration
+  c:\users\turbotage\source\repos\nextgengine\core\src\datastructures\binary_tree.h(29): note: see declaration of 'ng::dstructs::BinaryTree<T>::search'
+  c:\users\turbotage\source\repos\nextgengine\core\src\datastructures\binary_tree.h(30): note: definition
+  c:\users\turbotage\source\repos\nextgengine\core\src\datastructures\binary_tree.h(30): note: 'void ng::dstructs::BinaryTree<T>::search(T)'
+  c:\users\turbotage\source\repos\nextgengine\core\src\datastructures\binary_tree.h(30): note: existing declarations
+  c:\users\turbotage\source\repos\nextgengine\core\src\datastructures\binary_tree.h(30): note: 'ng::dstructs::BinaryTree<T>::BinaryTreeNode *ng::dstructs::BinaryTree<T>::search(T)'
+  aabb.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\boundingvolumes\aabb.h(3): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  camera.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\camera.h(3): fatal error C1083: Cannot open include file: 'Math\plane.h': No such file or directory
+  oc_tree.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\entities\mesh.h(3): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  group_node.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  scene_graph.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  Generating Code...
+  Compiling...
+  vulkan_graphics_pipeline.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(3): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(5): error C2065: 'window': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(8): error C2039: 'swapChainImageFormat': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(51): error C3861: 'readFile': identifier not found
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(57): error C3861: 'readFile': identifier not found
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(63): error C3861: 'readFile': identifier not found
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(101): error C2039: 'swapChainExtent': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(101): error C2228: left of '.width' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(102): error C2039: 'swapChainExtent': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(102): error C2228: left of '.height' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(108): error C2039: 'swapChainExtent': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+  vulkan_pipeline.cpp
+  vulkan_base.cpp
+  vulkan_model.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\graphicsobjects\vulkan_model.cpp(2): fatal error C1083: Cannot open include file: '../../Math/hash_functions.h': No such file or directory
+  model.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\entities\mesh.h(3): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  mesh.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\entities\mesh.h(3): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  entity.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\entities\entity.h(3): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  debug.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\debug.cpp(17): warning C4002: too many actual parameters for macro 'LOGI'
+  main.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\source\repos\nextgengine\core\main.cpp(55): warning C4305: 'initializing': truncation from 'int' to 'ng::vulkan::VulkanDeviceTypeFlags'
+c:\users\turbotage\source\repos\nextgengine\core\main.cpp(87): warning C4305: 'initializing': truncation from 'int' to 'ng::vulkan::VulkanDeviceTypeFlags'
+c:\users\turbotage\source\repos\nextgengine\core\main.cpp(106): warning C4305: 'initializing': truncation from 'ng::vulkan::VulkanDeviceTypeBits' to 'ng::vulkan::VulkanDeviceTypeFlags'
+c:\users\turbotage\source\repos\nextgengine\core\main.cpp(122): warning C4305: 'initializing': truncation from 'int' to 'ng::vulkan::VulkanDeviceTypeFlags'
+  vertex.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\graphicsobjects\vertex.h(3): fatal error C1083: Cannot open include file: '../../math/Vec2f.h': No such file or directory
+  window.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+  allocator.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(26): error C2065: 'Block': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(26): error C2923: 'std::shared_ptr': 'Block' is not a valid template type argument for parameter '_Ty'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(175): error C2059: syntax error: ')'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(184): error C2059: syntax error: 'if'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(184): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(196): error C2059: syntax error: 'if'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(196): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(206): error C2059: syntax error: 'else'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(206): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(220): error C2059: syntax error: '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(220): error C2143: syntax error: missing ';' before '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(92): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1483): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(std::shared_ptr<Block> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1470): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(const std::shared_ptr<Block> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(92): note: while trying to match the argument list '(std::shared_ptr, std::shared_ptr<Block>)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(92): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(95): error C2675: unary '->': 'std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(95): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(95): error C2039: 'size': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(95): error C2672: 'std::list<SimpleBlock,std::allocator<_Ty>>::emplace_front': no matching overloaded function found
+          with
+          [
+              _Ty=SimpleBlock
+          ]
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(100): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1483): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(std::shared_ptr<Block> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1470): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(const std::shared_ptr<Block> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(100): note: while trying to match the argument list '(std::shared_ptr, std::shared_ptr<Block>)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(100): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(103): error C2675: unary '->': 'std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(103): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(103): error C2039: 'size': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(103): error C2672: 'std::list<SimpleBlock,std::allocator<_Ty>>::emplace_front': no matching overloaded function found
+          with
+          [
+              _Ty=SimpleBlock
+          ]
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(112): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1483): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(std::shared_ptr<Block> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1470): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(const std::shared_ptr<Block> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(112): note: while trying to match the argument list '(std::shared_ptr, std::shared_ptr<Block>)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(112): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(115): error C2675: unary '->': 'std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(115): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(115): error C2039: 'size': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(115): error C2672: 'std::list<SimpleBlock,std::allocator<_Ty>>::emplace_front': no matching overloaded function found
+          with
+          [
+              _Ty=SimpleBlock
+          ]
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(121): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(121): note: while trying to match the argument list '(std::shared_ptr, nullptr)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(121): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(134): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1483): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(std::shared_ptr<Block> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1470): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(const std::shared_ptr<Block> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(134): note: while trying to match the argument list '(std::shared_ptr, std::shared_ptr<Block>)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(134): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(137): error C2675: unary '->': 'std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(137): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(137): error C2039: 'size': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(137): error C2672: 'std::list<SimpleBlock,std::allocator<_Ty>>::emplace_front': no matching overloaded function found
+          with
+          [
+              _Ty=SimpleBlock
+          ]
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(141): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1483): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(std::shared_ptr<Block> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1470): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(const std::shared_ptr<Block> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(141): note: while trying to match the argument list '(std::shared_ptr, std::shared_ptr<Block>)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(141): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(144): error C2675: unary '->': 'std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(144): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(144): error C2039: 'size': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(144): error C2672: 'std::list<SimpleBlock,std::allocator<_Ty>>::emplace_front': no matching overloaded function found
+          with
+          [
+              _Ty=SimpleBlock
+          ]
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(152): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1483): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(std::shared_ptr<Block> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1470): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =<Block>(const std::shared_ptr<Block> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(152): note: while trying to match the argument list '(std::shared_ptr, std::shared_ptr<Block>)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(152): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(155): error C2675: unary '->': 'std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(155): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(155): error C2039: 'size': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(155): error C2672: 'std::list<SimpleBlock,std::allocator<_Ty>>::emplace_front': no matching overloaded function found
+          with
+          [
+              _Ty=SimpleBlock
+          ]
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(161): error C2678: binary '=': no operator found which takes a left-hand operand of type 'std::shared_ptr' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1476): note: could be 'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(std::shared_ptr<_Other> &&) noexcept'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1463): note: or       'std::shared_ptr<_Other> &std::shared_ptr<_Other>::operator =(const std::shared_ptr<_Other> &) noexcept'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(161): note: while trying to match the argument list '(std::shared_ptr, nullptr)'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(161): error C2582: 'operator =' function is unavailable in 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(174): error C2675: unary '->': 'const std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(174): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(175): error C2675: unary '->': 'const std::shared_ptr' does not define this operator or a conversion to a type acceptable to the predefined operator
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(175): error C2039: 'offset': is not a member of 'std::shared_ptr'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\memory(1316): note: see declaration of 'std::shared_ptr'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(175): error C2143: syntax error: missing ';' before '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(256): error C2662: 'void std::shared_ptr<_Other>::reset(void) noexcept': cannot convert 'this' pointer from 'std::shared_ptr' to 'std::shared_ptr<_Other> &'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(256): note: Reason: cannot convert from 'std::shared_ptr' to 'std::shared_ptr<_Other>'
+  c:\users\turbotage\source\repos\nextgengine\core\src\memory\allocator.h(256): note: Conversion requires a second user-defined-conversion operator or constructor
+  uniform_grid.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\entities\mesh.h(3): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  scene_node.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  transform_node.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\scenegraph\scene_node.h(5): fatal error C1083: Cannot open include file: '../Math/mat4f.h': No such file or directory
+  vulkan_buffer_region_allocator.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.h(127): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.h(164): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.cpp(305): error C2082: redefinition of formal parameter 'lock'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.cpp(363): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+  vulkan_memory_allocator.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.h(127): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_buffer_region_allocator.h(164): warning C4267: 'return': conversion from 'size_t' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_memory_allocator.cpp(106): error C2572: 'ng::vulkan::VulkanMemoryAllocator::defragment': redefinition of default argument: parameter 1
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_memory_allocator.h(57): note: see declaration of 'ng::vulkan::VulkanMemoryAllocator::defragment'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\memory\vulkan_memory_allocator.cpp(116): warning C4018: '<': signed/unsigned mismatch
+  vulkan_device.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(62): error C2572: 'ng::vulkan::VulkanDevice::getMemoryTypeIndex': redefinition of default argument: parameter 1
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.h(103): note: see declaration of 'ng::vulkan::VulkanDevice::getMemoryTypeIndex'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(167): error C2572: 'ng::vulkan::VulkanDevice::createLogicalDevice': redefinition of default argument: parameter 1
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.h(109): note: see declaration of 'ng::vulkan::VulkanDevice::createLogicalDevice'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(168): error C2572: 'ng::vulkan::VulkanDevice::createLogicalDevice': redefinition of default argument: parameter 2
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.h(109): note: see declaration of 'ng::vulkan::VulkanDevice::createLogicalDevice'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(282): error C2572: 'ng::vulkan::VulkanDevice::createCommandBuffer': redefinition of default argument: parameter 1
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.h(120): note: see declaration of 'ng::vulkan::VulkanDevice::createCommandBuffer'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(408): warning C4018: '<': signed/unsigned mismatch
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(413): warning C4018: '<': signed/unsigned mismatch
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(418): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(421): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(421): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(425): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(428): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(428): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(432): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(435): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(435): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(438): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(479): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(509): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(513): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_device.cpp(531): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+  vulkan_swapchain.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_swapchain.cpp(58): warning C4552: '!=': operator has no effect; expected operator with side-effect
+  vulkan_framebuffer.cpp
+  Generating Code...
+  Compiling...
+  vulkan_tools.cpp
+  vulkan_texture.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_texture.h(32): error C2079: 'ng::vulkan::VulkanTexture::textureBuffer' uses undefined class 'ng::vulkan::VulkanBuffer'
+c:\users\turbotage\source\libs\gli\include\gli\type.hpp(11): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
+  thread_pool.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\threading\queue.h(12): error C2461: 'ng::threading::Queue<T>': constructor syntax missing formal parameters
+  c:\users\turbotage\source\repos\nextgengine\core\src\threading\queue.h(26): note: see reference to class template instantiation 'ng::threading::Queue<T>' being compiled
+c:\users\turbotage\source\repos\nextgengine\core\src\threading\queue.h(12): error C2461: 'ng::threading::Queue<std::function<void (void)>>': constructor syntax missing formal parameters
+  c:\users\turbotage\source\repos\nextgengine\core\src\threading\thread_pool.h(25): note: see reference to class template instantiation 'ng::threading::Queue<std::function<void (void)>>' being compiled
+  tools.cpp
+  vulkan_thread_pool.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(69): error C2365: 'ng::vulkan::VulkanThreadPool::VulkanThread::stop': redefinition; previous definition was 'data member'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(52): note: see declaration of 'ng::vulkan::VulkanThreadPool::VulkanThread::stop'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(70): error C2059: syntax error: '='
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(70): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3927: '->': trailing return type is not allowed after a non-function declarator
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3484: syntax error: expected '->' before the return type
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3613: missing return type after '->' ('int' assumed)
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3646: 'notify_all': unknown override specifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C2059: syntax error: '('
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(74): error C2059: syntax error: '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(74): error C2143: syntax error: missing ';' before '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(74): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(59): error C3867: 'ng::vulkan::VulkanThreadPool::VulkanThread::run': non-standard syntax; use '&' to create a pointer to member
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2065: 'VulkanThread': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2923: 'std::vector': 'VulkanThread' is not a valid template type argument for parameter '_Ty'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2133: 'ng::vulkan::m_WorkPool': unknown size
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2512: 'std::vector': no appropriate default constructor available
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\vector(662): note: see declaration of 'std::vector'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(80): error C2059: syntax error: 'public'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(82): error C2059: syntax error: 'const'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(84): error C2059: syntax error: 'const'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2143: syntax error: missing ')' before '&&'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2143: syntax error: missing ';' before '&&'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2059: syntax error: ')'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2059: syntax error: '='
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(87): error C2588: '::~VulkanThreadPool': illegal global destructor
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(87): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(87): error C2373: 'ng::vulkan::VulkanThreadPool': redefinition; different type modifiers
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(99): error C2653: 'VulkanThreadPool': is not a class or namespace name
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(128): error C2059: syntax error: '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(128): error C2143: syntax error: missing ';' before '}'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_tools.h(16): error C2143: syntax error: missing ';' before '{'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_tools.h(16): error C2447: '{': missing function header (old-style formal list?)
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(5): error C2511: 'ng::vulkan::VulkanThreadPool::VulkanThreadPool(const int,ng::vulkan::VulkanDevice *,bool)': overloaded member function not found in 'ng::vulkan::VulkanThreadPool'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(16): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(13): error C2662: 'decltype(auto) std::vector<_Ty,_Alloc>::emplace_back<int&>(int &)': cannot convert 'this' pointer from 'std::vector' to 'std::vector<_Ty,_Alloc> &'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(13): note: Reason: cannot convert from 'std::vector' to 'std::vector<_Ty,_Alloc>'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(13): note: Conversion requires a second user-defined-conversion operator or constructor
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(15): error C2678: binary '[': no operator found which takes a left-hand operand of type 'std::vector' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\vector(1815): note: could be 'const _Ty &std::vector<_Ty,_Alloc>::operator [](const _Vector_alloc<_Alloc_types>::_Val_types::size_type) const'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.13.26128\include\vector(1801): note: or       '_Ty &std::vector<_Ty,_Alloc>::operator [](const _Vector_alloc<_Alloc_types>::_Val_types::size_type)'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(15): note: while trying to match the argument list '(std::vector, int)'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(15): error C2228: left of '.commandPool' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(20): error C2600: 'ng::vulkan::VulkanThreadPool::~VulkanThreadPool': cannot define a compiler-generated special member function (must be declared in the class first)
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): error C2662: '_Vector_alloc<_Alloc_types>::_Val_types::size_type std::vector<_Ty,_Alloc>::size(void) noexcept const': cannot convert 'this' pointer from 'std::vector' to 'const std::vector<_Ty,_Alloc> &'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): note: Reason: cannot convert from 'std::vector' to 'const std::vector<_Ty,_Alloc>'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): note: Conversion requires a second user-defined-conversion operator or constructor
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): note: This diagnostic occurred in the compiler generated function 'ng::vulkan::VulkanThreadPool::~VulkanThreadPool(void)'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(26): error C2039: 'shutdown': is not a member of 'ng::vulkan::VulkanThreadPool'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(16): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(29): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(29): error C3312: no callable 'begin' function found for type 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(29): error C3312: no callable 'end' function found for type 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(30): error C2065: 'worker': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(30): error C2228: left of '.stop' must have class/struct/union
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(30): note: type is 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(33): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(33): error C2228: left of '.size' must have class/struct/union
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(33): note: type is 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(34): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(34): error C2228: left of '.size' must have class/struct/union
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(34): note: type is 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(35): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(35): error C2228: left of '.thread' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(35): error C2228: left of '.joinable' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(36): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(36): error C2228: left of '.thread' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(36): error C2228: left of '.join' must have class/struct/union
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): error C2228: left of '.erase' must have class/struct/union
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): note: type is 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): error C2228: left of '.begin' must have class/struct/union
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): note: type is 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(44): error C2039: 'getSecondaryCommandBuffer': is not a member of 'ng::vulkan::VulkanThreadPool'
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(16): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2065: 'm_VulkanDevice': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2227: left of '->createCommandBuffer' must point to class/struct/union/generic type
+  c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): note: type is 'unknown-type'
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2228: left of '.commandPool' must have class/struct/union
+  vulkan_debug.cpp
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(126): warning C4065: switch statement contains 'default' but no 'case' labels
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(100): warning C4102: 'caseVK_NOT_READY': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(101): warning C4102: 'caseVK_TIMEOUT': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(102): warning C4102: 'caseVK_EVENT_SET': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(103): warning C4102: 'caseVK_EVENT_RESET': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(104): warning C4102: 'caseVK_INCOMPLETE': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(105): warning C4102: 'caseVK_ERROR_OUT_OF_HOST_MEMORY': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(106): warning C4102: 'caseVK_ERROR_OUT_OF_DEVICE_MEMORY': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(107): warning C4102: 'caseVK_ERROR_INITIALIZATION_FAILED': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(108): warning C4102: 'caseVK_ERROR_DEVICE_LOST': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(109): warning C4102: 'caseVK_ERROR_MEMORY_MAP_FAILED': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(110): warning C4102: 'caseVK_ERROR_LAYER_NOT_PRESENT': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(111): warning C4102: 'caseVK_ERROR_EXTENSION_NOT_PRESENT': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(112): warning C4102: 'caseVK_ERROR_FEATURE_NOT_PRESENT': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(113): warning C4102: 'caseVK_ERROR_INCOMPATIBLE_DRIVER': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(114): warning C4102: 'caseVK_ERROR_TOO_MANY_OBJECTS': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(115): warning C4102: 'caseVK_ERROR_FORMAT_NOT_SUPPORTED': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(116): warning C4102: 'caseVK_ERROR_SURFACE_LOST_KHR': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(117): warning C4102: 'caseVK_ERROR_NATIVE_WINDOW_IN_USE_KHR': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(118): warning C4102: 'caseVK_SUBOPTIMAL_KHR': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(119): warning C4102: 'caseVK_ERROR_OUT_OF_DATE_KHR': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(120): warning C4102: 'caseVK_ERROR_INCOMPATIBLE_DISPLAY_KHR': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(121): warning C4102: 'caseVK_ERROR_VALIDATION_FAILED_EXT': unreferenced label
+c:\users\turbotage\source\repos\nextgengine\core\src\vulkan\vulkan_debug.cpp(122): warning C4102: 'caseVK_ERROR_INVALID_SHADER_NV': unreferenced label
+  Generating Code...

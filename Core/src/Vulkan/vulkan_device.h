@@ -55,6 +55,8 @@ namespace ng {
 
 		class VulkanDevice
 		{
+		private:
+			bool m_CleanupCalled = false;
 		public:
 			VkPhysicalDevice physicalDevice;
 
@@ -69,7 +71,7 @@ namespace ng {
 			std::vector<std::string> supportedExtensions;
 			std::vector<std::string> enabledExtensions;
 
-			VkDevice logicalDevice;
+			VkDevice logicalDevice = VK_NULL_HANDLE;
 
 			QueueFamilyIndices queueFamilyIndices;
 
@@ -93,9 +95,12 @@ namespace ng {
 			VulkanDevice(VkPhysicalDevice physicalDevice);
 			void init(VkPhysicalDevice physicalDevice);
 
+			VulkanDevice(const VulkanDevice&) = delete;
+
+			void cleanup();
 			~VulkanDevice();
 
-			uint32 getMemoryTypeIndex(uint32 typeBits, VkMemoryPropertyFlags properties, VkBool32 *memTypeFound = nullptr);
+			int32 getMemoryTypeIndex(uint32 typeBits, VkMemoryPropertyFlags properties);
 
 			int32 getQueueFamilyIndex(VkQueueFlagBits queueFlags);
 
@@ -123,7 +128,7 @@ namespace ng {
 				VkBuffer *buffer,
 				VkDeviceMemory *memory,
 				void *data = nullptr);
-
+			
 			VkResult copyDataToBuffer(VkBuffer dstBuffer, 
 				VkDeviceSize offset, 
 				VkDeviceSize dataSize, 

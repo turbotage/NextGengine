@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{F74A2EF4-F86C-4507-AE3E-3486EC8F1626}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F71F55E2-E37E-49CB-A2FB-4A042EDC6F45} = {F71F55E2-E37E-49CB-A2FB-4A042EDC6F45}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NgMath", "NgMath\NgMath\NgMath.vcxproj", "{F71F55E2-E37E-49CB-A2FB-4A042EDC6F45}"
 EndProject

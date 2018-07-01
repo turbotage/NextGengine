@@ -130,6 +130,7 @@ void ng::vulkan::VulkanMemoryAllocator::defragment(uint32 defragmentNum = UINT32
 		}
 	}
 
+	vkQueueWaitIdle(m_VulkanDevice->transferQueue);
 	vkQueueWaitIdle(m_VulkanDevice->computeQueue);
 	vkQueueWaitIdle(m_VulkanDevice->graphicsQueue);
 

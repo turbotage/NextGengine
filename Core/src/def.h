@@ -16,6 +16,7 @@
 #include <shared_mutex>
 #include <future>
 #include <memory>
+#include <functional>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>

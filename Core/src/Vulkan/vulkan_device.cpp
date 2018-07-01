@@ -44,32 +44,33 @@ void ng::vulkan::VulkanDevice::init(VkPhysicalDevice physicalDevice)
 	}
 }
 
-ng::vulkan::VulkanDevice::~VulkanDevice() 
+void ng::vulkan::VulkanDevice::cleanup()
 {
-
+	m_CleanupCalled = true;
+	if (logicalDevice != VK_NULL_HANDLE) {
+		vkDestroyDevice(logicalDevice, nullptr);
+	}
 }
 
-uint32 ng::vulkan::VulkanDevice::getMemoryTypeIndex(uint32 typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr)
+ng::vulkan::VulkanDevice::~VulkanDevice()
+{
+	if (!m_CleanupCalled) {
+		cleanup();
+	}
+}
+
+int32 ng::vulkan::VulkanDevice::getMemoryTypeIndex(uint32 typeBits, VkMemoryPropertyFlags properties)
 {
 	for (uint32 i = 0; i < memoryProperties.memoryTypeCount; ++i) {
 		if ((typeBits & 1) == 1) {
 			if ((memoryProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-				if (memTypeFound) {
-					*memTypeFound = true;
-				}
 				return i;
 			}
 		}
 		typeBits >>= 1;
 	}
-	if (memTypeFound) {
-		*memTypeFound = false;
-		return 0;
-	}
-	else {
-		LOGD("no found matching memory type");
-		throw std::runtime_error("Could not find a matching memory type");
-	}
+	LOGD("no found matching memory type");
+	return -1;
 }
 
 int32 ng::vulkan::VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlags) 

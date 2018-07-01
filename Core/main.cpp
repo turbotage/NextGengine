@@ -41,7 +41,7 @@ public:
 
 		std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
 		std::vector<VulkanDevice> vulkanDevices(deviceCount);
-		std::vector<uint32> scores;
+		std::vector<uint32> scores(deviceCount);
 		vkEnumeratePhysicalDevices(base.instance, &deviceCount, physicalDevices.data());
 
 		if (deviceCount == 1) {
@@ -68,8 +68,8 @@ public:
 
 			auto devicePos = std::max_element(scores.begin(), scores.end());
 			if (scores[*devicePos] != 0) {
-				graphicsDevice = vulkanDevices[*devicePos];
-				computeDevice = vulkanDevices[*devicePos];
+				graphicsDevice.init(physicalDevices[*devicePos]);
+				computeDevice.init(physicalDevices[*devicePos]);
 				return;
 			}
 			else {
@@ -90,7 +90,7 @@ public:
 			}
 			auto devicePos = std::max_element(scores.begin(), scores.end());
 			if (scores[*devicePos] != 0) {
-				graphicsDevice = vulkanDevices[*devicePos];
+				graphicsDevice.init(physicalDevices[*devicePos]);
 			}
 			else {
 				throw std::runtime_error("found no suitable graphics vulkan-device");
@@ -109,7 +109,7 @@ public:
 			}
 			auto devicePos2 = std::max_element(scores.begin(), scores.end());
 			if (scores[*devicePos2] != 0) {
-				computeDevice = vulkanDevices[*devicePos2];
+				computeDevice.init(physicalDevices[*devicePos2]);
 			}
 			else {
 				for (uint16 i = 0; i < deviceCount; ++i) {
@@ -135,8 +135,8 @@ public:
 
 				auto devicePos = std::max_element(scores.begin(), scores.end());
 				if (scores[*devicePos] != 0) {
-					graphicsDevice = vulkanDevices[*devicePos];
-					computeDevice = vulkanDevices[*devicePos];
+					graphicsDevice.init(physicalDevices[*devicePos]);
+					computeDevice.init(physicalDevices[*devicePos]);
 					return;
 				}
 				else {
