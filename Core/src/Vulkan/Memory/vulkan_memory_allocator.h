@@ -1,61 +1,65 @@
 #pragma once
 
-#include "vulkan_buffer_region_allocator.h"
+#include "../vulkan_device.h"
+#include "vulkan_buffer_allocator.h"
+#include "vulkan_image_allocator.h"
+
+#define MEMORY_ALIGNMENT 16
 
 namespace ng {
 	namespace vulkan {
-		class VulkanDevice;
-	}
-}
 
-namespace ng {
-	namespace vulkan {
+		namespace ng {
+			namespace vulkan {
 
-		struct VulkanMemoryAllocatorCreateInfo {
-			VulkanDevice* vulkanDevice;
-			VkDeviceSize defaultAllocationSize;
-			VkMemoryAlignment memoryAlignment;
-			VkBufferUsageFlags usage;
-			VkMemoryPropertyFlags memoryProperties;
-		};
+				/*TODO : maybe add priorities to the allocations, that is to say which allocations that is prefered to stay
+				in device-memory, shouldn't be swapped if not absolutely neccesary	*/
 
-		class VulkanMemoryAllocator {
-		private:
+				enum eVulkanMemoryAllocatorMemoryType {
+					VMA_DEVICE_LOCAL_ONLY,
+					VMA_DEVICE_LOCAL_HOST_VISIBLE,
+				};
+				 
+				class VulkanMemoryAllocator {
+				private:
+					VulkanDevice* m_VulkanDevice;
 
-			VulkanDevice* m_VulkanDevice = nullptr;
+					//device-local props
+					VkMemoryPropertyFlags m_DefaultDeviceLocalMemFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+					VkMemoryAlignment m_DefaultDeviceLocalMemAlignment = 64;
+					VkDeviceSize m_DefaultDeviceLocalAllocSize = 268435456; //256 MB
 
-			std::vector<VulkanBufferRegionAllocator*> m_BufferRegionAllocators;
+					//device-local host-visible props
+					VkMemoryPropertyFlags m_DefaultDeviceLocalHostVisibleMemFlags =
+						VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+					VkMemoryAlignment m_DefaultDeviceLocalHostVisibleMemAlignment = 64;
+					VkDeviceSize m_DefaultDeviceLocalHostVisibleAllocSize = 67108864; //64 MB
 
-			/*  create new VulkanBufferRegionAllocator  */
-			VkResult createVBRA();
 
-			VkDeviceSize m_DefaultAllocationSize;
+					//device-local only
+					VulkanBufferAllocator m_DeviceLocalBufferAllocator;
 
-			VkMemoryAlignment m_MemoryAlignment;
+					//device-local host-visible
+					VulkanBufferAllocator m_DeviceLocalHostVisibleBufferAllocator;
+					
+					//device-local only
+					VulkanImageAllocator m_DeviceLocalImageAllocator;
 
-			VkBufferUsageFlags m_Usage;
+					//deivce-local host-visible
+					VulkanImageAllocator m_DeviceLocalHostVisibleImageAllocator;
 
-			VkMemoryPropertyFlags m_MemoryProperties;
+				public:
 
-			std::unique_lock<std::mutex> m_Lock; 
+					VulkanMemoryAllocator(VulkanDevice* vulkanDevice);
 
-		public:
+					VkResult createBuffer(VulkanBuffer* buffer, VulkanBufferCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType);
 
-			VulkanMemoryAllocator();
+					VkResult createImage(VulkanImage* image, VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType);
 
-			VulkanMemoryAllocator(VulkanMemoryAllocatorCreateInfo createInfo);
+				};
 
-			VulkanMemoryAllocator(const VulkanMemoryAllocator &) = delete;
-			VulkanMemoryAllocator(VulkanMemoryAllocator &&) = delete;
+			}
+		}
 
-			~VulkanMemoryAllocator();
-
-			void init(VulkanMemoryAllocatorCreateInfo createInfo);
-
-			VkResult createBuffer(VulkanBuffer* vulkanBuffer, VulkanBufferCreateInfo createInfo);
-
-			void defragment(uint32 defragmentNum = UINT32_MAX);
-
-		};
 	}
 }
