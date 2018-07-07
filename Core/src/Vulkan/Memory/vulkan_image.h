@@ -25,14 +25,10 @@ namespace ng {
 			VulkanBufferChunk* m_DeviceChunk = nullptr;
 			std::shared_ptr<VulkanAllocation> m_DeviceAllocation = nullptr;
 
-			std::shared_ptr<VulkanAllocation> m_PossibleSwapAlloc = nullptr;
-
 		public:
 			/* will return false if this is host local memory only */
 			bool moveToDevice() {
-				if (m_PossibleSwapAlloc == nullptr) {
-					m_DeviceChunk
-				}
+				auto it = m_DeviceChunk->getClosestAllocationMatch(m_StagingAllocation->size);
 			}
 
 			bool free() {

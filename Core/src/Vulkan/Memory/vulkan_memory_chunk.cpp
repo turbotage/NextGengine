@@ -23,6 +23,15 @@ std::list<ng::vulkan::Block>::iterator ng::vulkan::VulkanMemoryChunk::getClosest
 	return smallestIt;
 }
 
+std::list<ng::vulkan::Block>::iterator ng::vulkan::VulkanMemoryChunk::getFreeBlock(VkDeviceSize offset, VkDeviceSize size)
+{
+	for (auto it = freeBlocks.begin(); it != freeBlocks.end(); ++it) {
+		if ((it->offset + it->size) == (offset + size)) {
+			return it;
+		}
+	}
+}
+
 std::list<ng::vulkan::VulkanAllocation>::iterator ng::vulkan::VulkanMemoryChunk::getClosestAllocationMatch(VkDeviceSize size)
 {
 	std::list<VulkanAllocation>::iterator smallestIt = allocations.end();
@@ -39,6 +48,24 @@ std::list<ng::vulkan::VulkanAllocation>::iterator ng::vulkan::VulkanMemoryChunk:
 		}
 	}
 
+	if (smallestIt == allocations.end()) {
+		LOGD("found no matching allocation for block swap");
+	}
+	return smallestIt;
+}
+
+void ng::vulkan::VulkanMemoryChunk::changeAllocationSize(std::shared_ptr<VulkanAllocation> alloc, VkDeviceSize newSize, VkDeviceSize newDataSize)
+{
+	auto it = getFreeBlock(alloc->offset, alloc->size);
+	
+	alloc->size = newSize;
+	alloc->dataSize = newDataSize;
+
+	VkDeviceSize newFreeBlockOffset = alloc->offset + alloc->size;
+	VkDeviceSize newFreeBlockSize = it->offset + it->size - newFreeBlockOffset;
+
+	freeBlocks.erase(it);
+	freeBlocks.emplace_front(newFreeBlockOffset, newFreeBlockSize);
 }
 
 std::shared_ptr<ng::vulkan::VulkanAllocation> ng::vulkan::VulkanMemoryChunk::allocate(VulkanAllocationCreateInfo createInfo) {
@@ -206,5 +233,24 @@ void ng::vulkan::VulkanMemoryChunk::free(const VulkanAllocation& alloc) {
 }
 
 void ng::vulkan::VulkanMemoryChunk::defragment(VulkanDevice* vulkanDevice) {
+	freeBlocks.erase(freeBlocks.begin(), freeBlocks.end());
 
+	VkDeviceSize offset = 0;
+	
+	std::vector<VkBufferCopy> copyRegions(allocations.size());
+
+	VkBufferCopy tempCopy;
+
+	for (auto it = allocations.begin(); it != allocations.end(); ++it) {
+		tempCopy.srcOffset = it->offset;
+		tempCopy.dstOffset = offset;
+		tempCopy.size = it->size;
+
+		it->offset = offset;
+
+		copyRegions.emplace_back(tempCopy.srcOffset, tempCopy.dstOffset, tempCopy.size);
+		offset = it->offset + it->size;
+	}
+
+	freeBlocks.emplace_front(0, this->size);
 }

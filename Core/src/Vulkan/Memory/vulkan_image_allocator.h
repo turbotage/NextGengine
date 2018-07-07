@@ -16,14 +16,27 @@ namespace ng {
 			VkMemoryAlignment m_MemoryAlignment;
 			VkBufferUsageFlags m_BufferUsage;
 
+			/*  When buffers should reside in device-local memory when used this are the vulkan-memory-chunks that holds the buffers for staging,
+			the data will always be available here in the staging chunks to enable fast swapping. If the buffers should be non device-local, perhaps */
+			std::forward_list<VulkanImageChunk> m_StagingChunks;
+
+			/*  The vulkan-memory-chunks holding the buffers when they reside in device-local memory,
+			never used for host visible only buffers  */
+			std::forward_list<VulkanImageChunk> m_DeviceChunks;
+
+			std::forward_list<VulkanImageChunk>::iterator addChunk(std::forward_list<VulkanImageChunk>* chunks, VkResult* result = nullptr);
+
+			VkDeviceSize getAlignedSize(VkDeviceSize size);
+
 		public:
 
-			VulkanImageAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize) {
-				m_VulkanDevice = vulkanDevice;
-				m_MemoryFlags = flags;
-				m_MemoryAlignment = alignment;
-				m_StandardChunkSize = standardAllocSize;
-			}
+			VulkanImageAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize);
+
+			VulkanImageAllocator(const VulkanImageAllocator& other) = delete;
+
+			VulkanImageAllocator(VulkanBuffer &&) = delete;
+
+			void createImage(VulkanImageCreateInfo createInfo, VulkanImage* image);
 
 		};
 

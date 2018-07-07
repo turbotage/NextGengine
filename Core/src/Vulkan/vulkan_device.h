@@ -97,6 +97,8 @@ namespace ng {
 
 			VulkanDevice(const VulkanDevice&) = delete;
 
+			VulkanDevice(VulkanBuffer &&) = delete;
+
 			void cleanup();
 			~VulkanDevice();
 

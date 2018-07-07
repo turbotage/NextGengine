@@ -25,13 +25,19 @@ namespace ng {
 			}
 
 		};
-
+		
 		struct VulkanAllocationCreateInfo {
 			VkDeviceSize size;
 			VkDeviceSize dataSize;
 		};
 
 		class VulkanAllocation {
+			friend class VulkanBuffer;
+			friend class VulkanImage;
+			
+			/* Ptr to the Staging VulkanAllocation corresponding to a device allocation, 
+			OBS!! Only used for device-local vulkan-allocations */
+			VulkanAllocation* m_StagingPtr = nullptr; 
 		public:
 			VkDeviceSize offset;
 			VkDeviceSize size;
@@ -53,18 +59,15 @@ namespace ng {
 			std::atomic<bool> hasFailedToFindMatch; //will be reset after defragmentation
 			std::atomic<VkDeviceSize> lastFailedAllocateSize; //will be reset after defragmentation
 
-			VkDeviceMemory memory;
 			VkDeviceSize size;
 
 			VkDeviceSize totalFreeSpace;
 
 			std::list<Block> freeBlocks; // not sorted at all
-			std::list<VulkanAllocation> allocations; //sorted by offset
-
-													 /*    */
-			VulkanMemoryChunk(VkDeviceSize size) {
-				size = size;
-			}
+			std::list<VulkanAllocation> allocations; // sorted by offset
+			
+			/*    */
+			VulkanMemoryChunk(VkDeviceSize size) {this->size = size; }
 
 			VkDeviceSize getTotalFreeSpace() { return totalFreeSpace; }
 
@@ -73,7 +76,11 @@ namespace ng {
 			/* returns iterator to freeBlocks.end() if no element found */
 			std::list<Block>::iterator getClosestMatch(VkDeviceSize size);
 
+			std::list<Block>::iterator getFreeBlock(VkDeviceSize offset, VkDeviceSize size);
+
 			std::list<VulkanAllocation>::iterator getClosestAllocationMatch(VkDeviceSize size);
+
+			void changeAllocationSize(std::shared_ptr<VulkanAllocation> alloc, VkDeviceSize newSize, VkDeviceSize newDataSize);
 
 			/* createInfo.size must be correctly aligned */
 			std::shared_ptr<VulkanAllocation> allocate(VulkanAllocationCreateInfo createInfo);
@@ -91,6 +98,7 @@ namespace ng {
 		class VulkanBufferChunk : public VulkanMemoryChunk {
 		public:
 
+			VkDeviceMemory memory;
 			VkBuffer buffer;
 
 			VkResult create(VulkanDevice* vulkanDevice,
@@ -131,7 +139,7 @@ namespace ng {
 
 				vkBindBufferMemory(vulkanDevice->logicalDevice, buffer, memory, 0);
 
-				freeBlocks.emplace_front(0, size);
+				freeBlocks.emplace_front(0, this->size);
 				totalFreeSpace = size;
 			}
 
@@ -139,6 +147,7 @@ namespace ng {
 
 		class VulkanImageChunk : public VulkanMemoryChunk {
 
+			VkDeviceMemory memory;
 
 			VkResult create(VulkanDevice* vulkanDevice,
 				VkMemoryPropertyFlags flags,

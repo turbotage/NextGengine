@@ -34,22 +34,16 @@ namespace ng {
 			never used for host visible only buffers  */
 			std::forward_list<VulkanBufferChunk> m_DeviceChunks;
 
-			std::forward_list<VulkanBufferChunk>::iterator addChunk(std::forward_list<VulkanBufferChunk>* chunks, VkResult* result = nullptr) {
-				auto it = &chunks->emplace_front(m_StandardChunkSize, m_MemoryAlignment);
-				VkResult res = it->create(m_VulkanDevice, m_MemoryFlags, m_BufferUsage);
-				if (result != nullptr) {
-					*result = res;
-				}
-			}
+			std::forward_list<VulkanBufferChunk>::iterator addChunk(std::forward_list<VulkanBufferChunk>* chunks, VkResult* result = nullptr);
 
 			VkDeviceSize getAlignedSize(VkDeviceSize size);
 
 			/* DeviceMemory : { Heap 0, MemoryType 0 }, StagingMemory : { Heap 2, MemoryType 2 } */
-			VkResult createDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
+			//VkResult createDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
 
 			/* DeviceMemory : { Heap 1, MemoryType 1 }, StagingMemory : { Heap 2, MemoryType 2 },
 			OBS! Does the same thing as createDeviceLocalWithStaging */
-			VkResult createMappableDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
+			//VkResult createMappableDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
 
 
 		public:
@@ -57,6 +51,8 @@ namespace ng {
 			VulkanBufferAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize);
 
 			VulkanBufferAllocator(const VulkanBufferAllocator& other) = delete;
+
+			VulkanBufferAllocator(VulkanBuffer &&) = delete;
 
 			void createBuffer(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
 
