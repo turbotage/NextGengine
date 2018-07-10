@@ -29,7 +29,7 @@ namespace ng {
 			VkDeviceSize getAlignedSize(VkDeviceSize size);
 
 		public:
-
+			
 			VulkanImageAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize);
 
 			VulkanImageAllocator(const VulkanImageAllocator& other) = delete;
@@ -37,6 +37,10 @@ namespace ng {
 			VulkanImageAllocator(VulkanBuffer &&) = delete;
 
 			void createImage(VulkanImageCreateInfo createInfo, VulkanImage* image);
+
+			void defragmentDeviceMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true);
+
+			void defragmentStagingMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true);
 
 		};
 

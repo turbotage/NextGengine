@@ -13,16 +13,16 @@ namespace ng {
 
 		class VulkanImage {
 		private:
-			friend class VulkanBufferAllocator;
+			friend class VulkanImageAllocator;
 			VulkanImageAllocator* m_ImageAllocator;
 
 			//should always exist
 			VkImage m_StagingImage = VK_NULL_HANDLE;
-			VulkanBufferChunk* m_StagingChunk = nullptr;
+			VulkanImageChunk* m_StagingChunk = nullptr;
 			std::shared_ptr<VulkanAllocation> m_StagingAllocation = nullptr;
 
 			VkImage m_DeviceImage = VK_NULL_HANDLE;
-			VulkanBufferChunk* m_DeviceChunk = nullptr;
+			VulkanImageChunk* m_DeviceChunk = nullptr;
 			std::shared_ptr<VulkanAllocation> m_DeviceAllocation = nullptr;
 
 		public:

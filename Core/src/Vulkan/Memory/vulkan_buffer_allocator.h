@@ -28,13 +28,13 @@ namespace ng {
 
 			/*  When buffers should reside in device-local memory when used this are the vulkan-memory-chunks that holds the buffers for staging,
 			the data will always be available here in the staging chunks to enable fast swapping. If the buffers should be non device-local, perhaps */
-			std::forward_list<VulkanBufferChunk> m_StagingChunks;
+			std::list<VulkanBufferChunk> m_StagingChunks;
 
 			/*  The vulkan-memory-chunks holding the buffers when they reside in device-local memory,
 			never used for host visible only buffers  */
-			std::forward_list<VulkanBufferChunk> m_DeviceChunks;
+			std::list<VulkanBufferChunk> m_DeviceChunks;
 
-			std::forward_list<VulkanBufferChunk>::iterator addChunk(std::forward_list<VulkanBufferChunk>* chunks, VkResult* result = nullptr);
+			std::list<VulkanBufferChunk>::iterator addChunk(std::list<VulkanBufferChunk>* chunks, VkResult* result = nullptr);
 
 			VkDeviceSize getAlignedSize(VkDeviceSize size);
 
@@ -46,6 +46,7 @@ namespace ng {
 			//VkResult createMappableDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
 
 
+
 		public:
 
 			VulkanBufferAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize);
@@ -55,6 +56,10 @@ namespace ng {
 			VulkanBufferAllocator(VulkanBuffer &&) = delete;
 
 			void createBuffer(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
+
+			void defragmentDeviceMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true);
+
+			void defragmentStagingMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true);
 
 		};
 

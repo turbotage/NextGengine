@@ -7,6 +7,12 @@
 namespace ng {
 	namespace vulkan {
 	
+		//used for setting VkImageCopies or VkBufferCopies // just cast to VkBufferCopy or VkImageCopy
+		struct VulkanCopyRegion {
+			VkDeviceSize srcOffset;
+			VkDeviceSize dstOffset;
+			VkDeviceSize size;
+		};
 
 		struct Block {
 			VkDeviceSize offset;
@@ -91,8 +97,8 @@ namespace ng {
 
 			void free(const VulkanAllocation& alloc);
 
-			void defragment(VulkanDevice* vulkanDevice);
-
+			void defragment(std::vector<VulkanCopyRegion>* copyRegions);
+			
 		};
 
 		class VulkanBufferChunk : public VulkanMemoryChunk {

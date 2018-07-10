@@ -97,7 +97,7 @@ namespace ng {
 
 			VulkanDevice(const VulkanDevice&) = delete;
 
-			VulkanDevice(VulkanBuffer &&) = delete;
+			VulkanDevice(VulkanDevice &&) = delete;
 
 			void cleanup();
 			~VulkanDevice();
@@ -120,6 +120,9 @@ namespace ng {
 				VkCommandPoolCreateFlags createFlags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 
 			VkCommandBuffer createCommandBuffer(VkCommandBufferLevel level, VkCommandPool commandPool, bool begin = false);
+
+			std::vector<VkCommandBuffer> createCommandBuffers(VkCommandBufferLevel level, uint16 bufferCount,
+				VkCommandPool commandPool, bool begin = false);
 
 			void flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free = true);
 

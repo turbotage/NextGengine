@@ -1,6 +1,6 @@
 #include "vulkan_buffer_allocator.h"
 
-std::forward_list<ng::vulkan::VulkanBufferChunk>::iterator ng::vulkan::VulkanBufferAllocator::addChunk(std::forward_list<VulkanBufferChunk>* chunks, VkResult* result = nullptr) {
+std::list<ng::vulkan::VulkanBufferChunk>::iterator ng::vulkan::VulkanBufferAllocator::addChunk(std::list<VulkanBufferChunk>* chunks, VkResult* result = nullptr) {
 	auto it = &chunks->emplace_front(m_StandardChunkSize, m_MemoryAlignment);
 	VkResult res = it->create(m_VulkanDevice, m_MemoryFlags, m_BufferUsage);
 	if (result != nullptr) {
@@ -66,8 +66,10 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			}
 
 		}
+
 		if (!hasStaging) {
-			//if this is the second time we arives here the program can't continue from here
+			/* if this is the second time we arives here the program can't continue from here,
+			we couldn't add another chunk and no new allocation could be found after a full defragmentation */
 			if (i == 1) {
 				LOGD("couldn't find staging memory for vulkanBuffer");
 				debug::exitFatal("couldn't find staging memory for vulkanBuffer", -1);
@@ -76,11 +78,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			auto it = addChunk(&m_StagingChunks, &result);
 			if (result != VK_SUCCESS) {
 
-				for (auto& chunk : m_StagingChunks) {
-					if (chunk.getTotalFreeSpace() >= createInfo.size) {
-						chunk.defragment(m_VulkanDevice);
-					}
-				}
+				defragmentStagingMem();
 				continue;
 			}
 
@@ -126,19 +124,16 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 		}
 		if (!inDeviceMemory) {
 			//if this is the second time we arives here the program can't continue from here
-			if (i == 2) {
-				LOGD("couldn't find staging memory for vulkanBuffer");
-				debug::exitFatal("couldn't find staging memory for vulkanBuffer", -1);
+			if (i == 1) {
+				LOGD("couldn't find device-memory for vulkanBuffer");
+				//debug::exitFatal("couldn't find staging memory for vulkanBuffer", -1);
+				break; // no need to continue we can't do more
 			}
 			VkResult result;
 			auto it = addChunk(&m_DeviceChunks, &result);
 			if (result != VK_SUCCESS) {
 
-				for (auto& chunk : m_StagingChunks) {
-					if (chunk.getTotalFreeSpace() >= createInfo.size) {
-						chunk.defragment(m_VulkanDevice);
-					}
-				}
+				defragmentDeviceMem();
 				continue;
 			}
 
@@ -160,6 +155,75 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			//should try to defrag chunks and then try again
 			LOGD("failed to create Staging Buffer")
 		}
+	}
+
+}
+
+void ng::vulkan::VulkanBufferAllocator::defragmentDeviceMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true)
+{
+	if (chunksDefragNum > m_DeviceChunks.size()) {
+		chunksDefragNum = m_DeviceChunks.size();
+	}
+
+	std::vector<std::vector<VulkanCopyRegion>> listOfCopyRegions(chunksDefragNum);
+	
+	std::vector<VkCommandBuffer> commandBuffers = m_VulkanDevice->createCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY, chunksDefragNum,
+		m_VulkanDevice->memoryCommandPool, true);
+
+	
+	int i = 0;
+	for (auto it = m_DeviceChunks.begin(); (i < chunksDefragNum) && (it != m_DeviceChunks.end()); ++it) {
+		it->defragment(&listOfCopyRegions[i]);
+
+		vkCmdCopyBuffer(commandBuffers[i], it->buffer, it->buffer, listOfCopyRegions[i].size(), reinterpret_cast<VkBufferCopy*>(listOfCopyRegions[i].data()));
+		
+		VULKAN_CHECK_RESULT(vkEndCommandBuffer(commandBuffers[i]));
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffers[i];
+
+		VULKAN_CHECK_RESULT(vkQueueSubmit(m_VulkanDevice->transferQueue, 1, &submitInfo, VK_NULL_HANDLE));
+
+		++i;
+	}
+
+	if (waitUntilComplete) {
+		vkQueueWaitIdle(m_VulkanDevice->transferQueue);
+	}
+
+}
+
+void ng::vulkan::VulkanBufferAllocator::defragmentStagingMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete)
+{
+	if (chunksDefragNum > m_StagingChunks.size()) {
+		chunksDefragNum = m_StagingChunks.size();
+	}
+
+	std::vector<std::vector<VulkanCopyRegion>> listOfCopyRegions(chunksDefragNum);
+
+	std::vector<VkCommandBuffer> commandBuffers = m_VulkanDevice->createCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY, chunksDefragNum,
+		m_VulkanDevice->memoryCommandPool, true);
+
+	int i = 0;
+	for (auto it = m_StagingChunks.begin(); (i < chunksDefragNum) && (it != m_StagingChunks.end()); ++it) {
+		it->defragment(&listOfCopyRegions[i]);
+
+		vkCmdCopyBuffer(commandBuffers[i], it->buffer, it->buffer, listOfCopyRegions[i].size(), reinterpret_cast<VkBufferCopy*>(listOfCopyRegions[i].data()));
+
+		VULKAN_CHECK_RESULT(vkEndCommandBuffer(commandBuffers[i]));
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffers[i];
+
+		VULKAN_CHECK_RESULT(vkQueueSubmit(m_VulkanDevice->transferQueue, 1, &submitInfo, VK_NULL_HANDLE));
+
+		++i;
+	}
+
+	if (waitUntilComplete) {
+		vkQueueWaitIdle(m_VulkanDevice->transferQueue);
 	}
 
 }

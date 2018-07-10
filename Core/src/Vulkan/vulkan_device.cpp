@@ -289,6 +289,28 @@ VkCommandBuffer ng::vulkan::VulkanDevice::createCommandBuffer(VkCommandBufferLev
 	return commandBuffer;
 }
 
+std::vector<VkCommandBuffer> ng::vulkan::VulkanDevice::createCommandBuffers(VkCommandBufferLevel level, uint16 bufferCount, VkCommandPool commandPool, bool begin)
+{
+	VkCommandBufferAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.commandPool = commandPool;
+	allocInfo.level = level;
+	allocInfo.commandBufferCount = bufferCount;
+
+	std::vector<VkCommandBuffer> commandBuffers(bufferCount);
+
+	VULKAN_CHECK_RESULT(vkAllocateCommandBuffers(logicalDevice, &allocInfo, commandBuffers.data()))
+
+	if (begin) {
+		for (int i = 0; i < bufferCount; ++i) {
+			VkCommandBufferBeginInfo beginInfo = {};
+			VULKAN_CHECK_RESULT(vkBeginCommandBuffer(commandBuffers[i], &beginInfo));
+		}
+	}
+
+	return commandBuffers;
+}
+
 void ng::vulkan::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free)
 {
 	if (commandBuffer == VK_NULL_HANDLE) {

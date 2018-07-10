@@ -232,14 +232,11 @@ void ng::vulkan::VulkanMemoryChunk::free(const VulkanAllocation& alloc) {
 
 }
 
-void ng::vulkan::VulkanMemoryChunk::defragment(VulkanDevice* vulkanDevice) {
+void ng::vulkan::VulkanMemoryChunk::defragment(std::vector<VulkanCopyRegion>* copyRegions) {
 	freeBlocks.erase(freeBlocks.begin(), freeBlocks.end());
 
 	VkDeviceSize offset = 0;
-	
-	std::vector<VkBufferCopy> copyRegions(allocations.size());
-
-	VkBufferCopy tempCopy;
+	VulkanCopyRegion tempCopy;
 
 	for (auto it = allocations.begin(); it != allocations.end(); ++it) {
 		tempCopy.srcOffset = it->offset;
@@ -248,7 +245,7 @@ void ng::vulkan::VulkanMemoryChunk::defragment(VulkanDevice* vulkanDevice) {
 
 		it->offset = offset;
 
-		copyRegions.emplace_back(tempCopy.srcOffset, tempCopy.dstOffset, tempCopy.size);
+		copyRegions->emplace_back(tempCopy.srcOffset, tempCopy.dstOffset, tempCopy.size);
 		offset = it->offset + it->size;
 	}
 
