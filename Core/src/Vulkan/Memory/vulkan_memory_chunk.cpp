@@ -251,3 +251,55 @@ void ng::vulkan::VulkanMemoryChunk::defragment(std::vector<VulkanCopyRegion>* co
 
 	freeBlocks.emplace_front(0, this->size);
 }
+
+VkResult ng::vulkan::VulkanBufferChunk::create(VulkanDevice* vulkanDevice,
+	VkMemoryPropertyFlags flags,
+	VkBufferUsageFlags usage)
+{
+
+	VkBufferCreateInfo bufferInfo = {};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	VkResult result = vkCreateBuffer(vulkanDevice->logicalDevice, &bufferInfo, nullptr, &buffer);
+	if (result != VK_SUCCESS) {
+		LOGD("failed to create chunk buffer");
+		return result;
+	}
+
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(vulkanDevice->logicalDevice, buffer, &memRequirements);
+
+	VkBool32 memTypeFound;
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = vulkanDevice->getMemoryTypeIndex(memRequirements.memoryTypeBits, flags);
+	if (allocInfo.memoryTypeIndex == -1) {
+		LOGD("found no matching memory type");
+		debug::exitFatal("found no matching memory type", -1);
+	}
+
+	result = vkAllocateMemory(vulkanDevice->logicalDevice, &allocInfo, nullptr, &memory);
+	if (result != VK_SUCCESS) {
+		LOGD("failed to create chunk memory");
+		return result;
+	}
+
+	vkBindBufferMemory(vulkanDevice->logicalDevice, buffer, memory, 0);
+
+	freeBlocks.emplace_front(0, this->size);
+	totalFreeSpace = size;
+}
+
+VkResult ng::vulkan::VulkanImageChunk::create(VulkanDevice * vulkanDevice, VkMemoryPropertyFlags flags)
+{
+
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = size;
+	allocInfo.memoryTypeIndex = 
+
+}
