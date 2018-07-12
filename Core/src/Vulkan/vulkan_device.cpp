@@ -311,7 +311,7 @@ std::vector<VkCommandBuffer> ng::vulkan::VulkanDevice::createCommandBuffers(VkCo
 	return commandBuffers;
 }
 
-void ng::vulkan::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free)
+void ng::vulkan::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free = true)
 {
 	if (commandBuffer == VK_NULL_HANDLE) {
 		return;

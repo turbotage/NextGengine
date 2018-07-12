@@ -2,7 +2,8 @@
 
 #include "../../def.h"
 #include "vulkan_buffer.h"
-#include "vulkan_memory_chunk.h"
+#include "vulkan_buffer_chunk.h"
+#include "vulkan_image_chunk.h"
 
 namespace ng {
 	namespace vulkan {
@@ -36,7 +37,7 @@ namespace ng {
 
 			std::list<VulkanBufferChunk>::iterator addChunk(std::list<VulkanBufferChunk>* chunks, VkResult* result = nullptr);
 
-			VkDeviceSize getAlignedSize(VkDeviceSize size);
+			//VkDeviceSize getAlignedSize(VkDeviceSize size);
 
 			/* DeviceMemory : { Heap 0, MemoryType 0 }, StagingMemory : { Heap 2, MemoryType 2 } */
 			//VkResult createDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);

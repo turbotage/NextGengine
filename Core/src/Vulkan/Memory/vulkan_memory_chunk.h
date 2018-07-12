@@ -6,13 +6,6 @@
 
 namespace ng {
 	namespace vulkan {
-	
-		//used for setting VkImageCopies or VkBufferCopies // just cast to VkBufferCopy or VkImageCopy
-		struct VulkanCopyRegion {
-			VkDeviceSize srcOffset;
-			VkDeviceSize dstOffset;
-			VkDeviceSize size;
-		};
 
 		struct Block {
 			VkDeviceSize offset;
@@ -30,97 +23,6 @@ namespace ng {
 				return (left.offset + left.size) == right;
 			}
 
-		};
-		
-		struct VulkanAllocationCreateInfo {
-			VkDeviceSize size;
-			VkDeviceSize dataSize;
-		};
-
-		class VulkanAllocation {
-			friend class VulkanBuffer;
-			friend class VulkanImage;
-			
-			/* Ptr to the Staging VulkanAllocation corresponding to a device allocation, 
-			OBS!! Only used for device-local vulkan-allocations */
-			VulkanAllocation* m_StagingPtr = nullptr; 
-		public:
-			VkDeviceSize offset;
-			VkDeviceSize size;
-			VkDeviceSize dataSize;
-
-			static bool offsetSmallerThan(const VkDeviceSize& offset, const VulkanAllocation& block) {
-				return offset < block.offset;
-			}
-
-			static bool sizeSmallerThan(const VkDeviceSize& size, const VulkanAllocation& block) {
-				return size < block.size;
-			}
-
-		};
-
-		class VulkanMemoryChunk
-		{
-		public:
-			std::atomic<bool> hasFailedToFindMatch; //will be reset after defragmentation
-			std::atomic<VkDeviceSize> lastFailedAllocateSize; //will be reset after defragmentation
-
-			VkDeviceSize size;
-
-			VkDeviceSize totalFreeSpace;
-
-			std::list<Block> freeBlocks; // not sorted at all
-			std::list<VulkanAllocation> allocations; // sorted by offset
-			
-			/*    */
-			VulkanMemoryChunk(VkDeviceSize size) {this->size = size; }
-
-			VkDeviceSize getTotalFreeSpace() { return totalFreeSpace; }
-
-			uint64 getNumFreeSpaces() { return freeBlocks.size(); }
-
-			/* returns iterator to freeBlocks.end() if no element found */
-			std::list<Block>::iterator getClosestMatch(VkDeviceSize size);
-
-			std::list<Block>::iterator getFreeBlock(VkDeviceSize offset, VkDeviceSize size);
-
-			std::list<VulkanAllocation>::iterator getClosestAllocationMatch(VkDeviceSize size);
-
-			void changeAllocationSize(std::shared_ptr<VulkanAllocation> alloc, VkDeviceSize newSize, VkDeviceSize newDataSize);
-
-			/* createInfo.size must be correctly aligned */
-			std::shared_ptr<VulkanAllocation> allocate(VulkanAllocationCreateInfo createInfo);
-
-			/*  Will only create the new free block, won't erase the free block corrensponding to the freeBlock argument.
-			Deletion of old freeSpace should be done after this function returns, will however change the var satoring the totalFreeSpace*/
-			std::shared_ptr<VulkanAllocation> allocate(Block freeBlock, VulkanAllocationCreateInfo createInfo);
-
-			void free(const VulkanAllocation& alloc);
-
-			void defragment(std::vector<VulkanCopyRegion>* copyRegions);
-			
-		};
-
-		class VulkanBufferChunk : public VulkanMemoryChunk {
-		public:
-
-			VkDeviceMemory memory;
-			VkBuffer buffer;
-
-			VkResult create(VulkanDevice* vulkanDevice,
-				VkMemoryPropertyFlags flags,
-				VkBufferUsageFlags usage);
-
-		};
-
-		class VulkanImageChunk : public VulkanMemoryChunk {
-
-			VkDeviceMemory memory;
-			uint32 memoryTypeIndex;
-
-			VkResult create(VulkanDevice* vulkanDevice,
-				uint32 memoryTypeIndex,
-				VkMemoryPropertyFlags flags);
 		};
 
 	}

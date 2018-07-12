@@ -20,7 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Vulkan\Memory\vulkan_buffer_allocator.cpp" />
+    <ClCompile Include="src\Vulkan\Memory\vulkan_buffer_chunk.cpp" />
     <ClCompile Include="src\Vulkan\Memory\vulkan_image_allocator.cpp" />
+    <ClCompile Include="src\Vulkan\Memory\vulkan_image_chunk.cpp" />
     <ClCompile Include="src\Vulkan\Memory\vulkan_memory_allocator.cpp" />
     <ClCompile Include="src\Vulkan\Memory\vulkan_memory_chunk.cpp" />
     <ClCompile Include="src\Threading\queue.cpp" />
@@ -73,8 +75,10 @@
   <ItemGroup>
     <ClInclude Include="src\Vulkan\Memory\vulkan_buffer.h" />
     <ClInclude Include="src\Vulkan\Memory\vulkan_buffer_allocator.h" />
+    <ClInclude Include="src\Vulkan\Memory\vulkan_buffer_chunk.h" />
     <ClInclude Include="src\Vulkan\Memory\vulkan_image.h" />
     <ClInclude Include="src\Vulkan\Memory\vulkan_image_allocator.h" />
+    <ClInclude Include="src\Vulkan\Memory\vulkan_image_chunk.h" />
     <ClInclude Include="src\Vulkan\Memory\vulkan_memory_allocator.h" />
     <ClInclude Include="src\Vulkan\Memory\vulkan_memory_chunk.h" />
     <ClInclude Include="src\Threading\queue.h" />

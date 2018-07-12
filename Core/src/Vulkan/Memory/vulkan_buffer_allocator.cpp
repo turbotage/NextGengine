@@ -7,13 +7,14 @@ std::list<ng::vulkan::VulkanBufferChunk>::iterator ng::vulkan::VulkanBufferAlloc
 		*result = res;
 	}
 }
-
+/*
 VkDeviceSize ng::vulkan::VulkanBufferAllocator::getAlignedSize(VkDeviceSize size) {
 	//should never be read and written to at the same time so no data race, no need to lock mutex
 	if (size % m_MemoryAlignment != 0) {
 		size = size + (m_MemoryAlignment - (size % m_MemoryAlignment));
 	}
 }
+*/
 
 ng::vulkan::VulkanBufferAllocator::VulkanBufferAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize) {
 	m_VulkanDevice = vulkanDevice;
@@ -35,8 +36,6 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 
 	bool hasStaging = false;
 	bool inDeviceMemory = false;
-
-	createInfo.size = getAlignedSize(createInfo.size);
 
 	//staging-memory 
 	for (int i = 0; i < 2 && !hasStaging; ++i) {
@@ -165,7 +164,7 @@ void ng::vulkan::VulkanBufferAllocator::defragmentDeviceMem(uint16 chunksDefragN
 		chunksDefragNum = m_DeviceChunks.size();
 	}
 
-	std::vector<std::vector<VulkanCopyRegion>> listOfCopyRegions(chunksDefragNum);
+	std::vector<std::vector<VkBufferCopy>> listOfCopyRegions(chunksDefragNum);
 	
 	std::vector<VkCommandBuffer> commandBuffers = m_VulkanDevice->createCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY, chunksDefragNum,
 		m_VulkanDevice->memoryCommandPool, true);
@@ -200,7 +199,7 @@ void ng::vulkan::VulkanBufferAllocator::defragmentStagingMem(uint16 chunksDefrag
 		chunksDefragNum = m_StagingChunks.size();
 	}
 
-	std::vector<std::vector<VulkanCopyRegion>> listOfCopyRegions(chunksDefragNum);
+	std::vector<std::vector<VkBufferCopy>> listOfCopyRegions(chunksDefragNum);
 
 	std::vector<VkCommandBuffer> commandBuffers = m_VulkanDevice->createCommandBuffers(VK_COMMAND_BUFFER_LEVEL_PRIMARY, chunksDefragNum,
 		m_VulkanDevice->memoryCommandPool, true);
