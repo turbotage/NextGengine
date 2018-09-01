@@ -1,48 +1,36 @@
 #pragma once
 
-#include "../../def.h"
+#include "../vulkan_device.h"
 #include "vulkan_image.h"
-#include "vulkan_image_chunk.h"
 
 namespace ng {
 	namespace vulkan {
 
 		class VulkanImageAllocator {
 		private:
+			friend class VulkanImage;
+			friend class VulkanTexture2D;
+			friend class VulkanTextureArray;
+
 			VulkanDevice* m_VulkanDevice;
 
-			VkDeviceSize m_StandardChunkSize;
-			VkMemoryPropertyFlags m_MemoryFlags;
-			VkMemoryAlignment m_MemoryAlignment;
-			VkBufferUsageFlags m_BufferUsage;
+			std::list<VulkanImage*> m_Images;
 
-			uint32 memoryTypeIndex;
-
-			/*  When buffers should reside in device-local memory when used this are the vulkan-memory-chunks that holds the buffers for staging,
-			the data will always be available here in the staging chunks to enable fast swapping. If the buffers should be non device-local, perhaps */
-			std::list<VulkanImageChunk> m_StagingChunks;
-
-			/*  The vulkan-memory-chunks holding the buffers when they reside in device-local memory,
-			never used for host visible only buffers  */
-			std::list<VulkanImageChunk> m_DeviceChunks;
-
-			std::list<VulkanImageChunk>::iterator addChunk(std::forward_list<VulkanImageChunk>* chunks, VkResult* result = nullptr);
-
-			VkDeviceSize getAlignedSize(VkDeviceSize size);
+			std::list<VulkanImageAllocation> m_Allocations;
 
 		public:
 			
-			VulkanImageAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize);
+			VulkanImageAllocator(VulkanDevice* vulkanDevice);
 
 			VulkanImageAllocator(const VulkanImageAllocator& other) = delete;
 
 			VulkanImageAllocator(VulkanImageAllocator &&) = delete;
 
-			void createImage(VulkanImageCreateInfo createInfo, VulkanImage* image);
+			void createTexture2D(VulkanImageCreateInfo createInfo, VulkanTexture2D* image);
 
-			void defragmentDeviceMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true);
+			void createTextureArray(VulkanImageCreateInfo createInfo, VulkanTextureArray* image);
 
-			void defragmentStagingMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true);
+			void freeImage(VulkanImage* image);
 
 		};
 

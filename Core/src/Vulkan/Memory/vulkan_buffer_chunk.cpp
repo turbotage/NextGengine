@@ -74,7 +74,7 @@ std::shared_ptr<ng::vulkan::VulkanBufferAllocation> ng::vulkan::VulkanBufferChun
 	//if freespace is in front or in back
 	if ((freeBlock.offset + freeBlock.size == this->size) || (freeBlock.offset == 0)) {
 		if ((freeBlock.offset + freeBlock.size == this->size)) {
-			ret = std::make_shared<VulkanBufferAllocation>(&allocations.emplace_back(freeBlock.offset, createInfo.size, createInfo.dataSize));
+			ret = std::shared_ptr<VulkanBufferAllocation>(&allocations.emplace_back(freeBlock.offset, createInfo.size, createInfo.dataSize));
 
 			freeBlocks.emplace_front(ret->offset + ret->size, freeBlock.size - ret->size);
 
@@ -83,7 +83,7 @@ std::shared_ptr<ng::vulkan::VulkanBufferAllocation> ng::vulkan::VulkanBufferChun
 			return ret;
 		}
 		else {
-			ret = std::make_shared<VulkanBufferAllocation>(&allocations.emplace_front(freeBlock.offset, freeBlock.size, createInfo.dataSize));
+			ret = std::shared_ptr<VulkanBufferAllocation>(&allocations.emplace_front(freeBlock.offset, freeBlock.size, createInfo.dataSize));
 
 			freeBlocks.emplace_front(ret->offset + ret->size, freeBlock.size - ret->size);
 
@@ -92,11 +92,12 @@ std::shared_ptr<ng::vulkan::VulkanBufferAllocation> ng::vulkan::VulkanBufferChun
 			return ret;
 		}
 	}
-
+	
+	//if freespace isn't in front or in back
 	auto lastIt = allocations.begin();
 	for (auto it = lastIt; it != allocations.end(); ++it) {
 		if (freeBlock.offset == (it->offset + it->size)) {
-			ret = std::make_shared<VulkanBufferAllocation>(*allocations.emplace(it++, freeBlock.offset, freeBlock.size, createInfo.dataSize));
+			ret = std::shared_ptr<VulkanBufferAllocation>(&(*allocations.emplace(it++, freeBlock.offset, freeBlock.size, createInfo.dataSize)));
 
 			freeBlocks.emplace_front(ret->offset + ret->size, freeBlock.size - ret->size);
 
@@ -195,19 +196,21 @@ VkResult ng::vulkan::VulkanBufferChunk::create(VulkanDevice* vulkanDevice,
 	VkBufferUsageFlags usage) {
 
 	VkBufferCreateInfo bufferInfo = {};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = size;
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO; 
+	bufferInfo.size = this->size;
 	bufferInfo.usage = usage;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	VkResult result = vkCreateBuffer(vulkanDevice->logicalDevice, &bufferInfo, nullptr, &buffer);
+	VkResult result = vkCreateBuffer(vulkanDevice->logicalDevice, &bufferInfo, nullptr, &this->buffer);
 	if (result != VK_SUCCESS) {
 		LOGD("failed to create chunk buffer");
 		return result;
 	}
 
 	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(vulkanDevice->logicalDevice, buffer, &memRequirements);
+	vkGetBufferMemoryRequirements(vulkanDevice->logicalDevice, this->buffer, &memRequirements);
+
+	this->size = memRequirements.size;
 
 	VkBool32 memTypeFound;
 	VkMemoryAllocateInfo allocInfo = {};
@@ -219,15 +222,15 @@ VkResult ng::vulkan::VulkanBufferChunk::create(VulkanDevice* vulkanDevice,
 		debug::exitFatal("found no matching memory type", -1);
 	}
 
-	result = vkAllocateMemory(vulkanDevice->logicalDevice, &allocInfo, nullptr, &memory);
+	result = vkAllocateMemory(vulkanDevice->logicalDevice, &allocInfo, nullptr, &this->memory);
 	if (result != VK_SUCCESS) {
 		LOGD("failed to create chunk memory");
 		return result;
 	}
 
-	vkBindBufferMemory(vulkanDevice->logicalDevice, buffer, memory, 0);
+	vkBindBufferMemory(vulkanDevice->logicalDevice, this->buffer, this->memory, 0);
 
 	freeBlocks.emplace_front(0, this->size);
-	totalFreeSpace = size;
+	totalFreeSpace = this->size;
 }
 

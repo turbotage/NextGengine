@@ -68,8 +68,6 @@ namespace ng {
 
 		};
 
-		void exitFatal(std::string message, int32 exitCode);
-
 	}
 
 }

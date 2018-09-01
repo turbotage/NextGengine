@@ -18,7 +18,6 @@ namespace ng {
 
 			VkPipelineLayout pipelineLayout;
 
-
 			std::vector<VkShaderModule> shaderModules;
 
 		protected:

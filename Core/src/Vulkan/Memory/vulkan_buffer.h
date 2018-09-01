@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vulkan_buffer_allocator.h"
+#include "vulkan_buffer_chunk.h"
 #include "vulkan_memory_chunk.h"
 
 namespace ng {
@@ -85,3 +86,4 @@ namespace ng {
 
 	}
 }
+

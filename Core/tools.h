@@ -1,9 +1,4 @@
 #pragma once
 
+#include "src/def.h"
 
-class Tools
-{
-public:
-	Tools();
-	~Tools();
-};

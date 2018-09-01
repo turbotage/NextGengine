@@ -71,6 +71,10 @@ namespace ng {
 
 			SwapchainSupportDetails querySwapchainSupport();
 
+			void cleanup();
+
+			
+
 		};
 	}
 }

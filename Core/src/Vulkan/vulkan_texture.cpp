@@ -28,9 +28,8 @@ std::size_t ng::vulkan::VulkanTexture::hash(VulkanTexture const& texture)
 
 void ng::vulkan::VulkanTexture2D::loadFromFile(std::string filename, VulkanDevice * vulkanDevice, VkFormat format, VkQueue copyQueue, VkImageUsageFlags imageUsageFlags, VkImageLayout imageLayout, bool forceLinear)
 {
-	using namespace gli::gli;
 
-	texture2d texture2D(load(filename.c_str()));
+	gli::texture2d texture2D(gli::load(filename.c_str()));
 
 	assert(!texture2D.empty());
 
@@ -49,5 +48,7 @@ void ng::vulkan::VulkanTexture2D::loadFromFile(std::string filename, VulkanDevic
 	VkMemoryRequirements memReqs;
 	
 	VkCommandBuffer copyCmd = vulkanDevice->createCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, , true);
+
+
 
 }

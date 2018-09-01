@@ -23,9 +23,9 @@ VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createBuffer(VulkanBuffe
 VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createImage(VulkanImage * image, VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType)
 {
 	if (memoryType == VMA_DEVICE_LOCAL_ONLY) {
-		
+		m_DeviceLocalImageAllocator.createImage(createInfo, image);
 	}
 	else if (memoryType == VMA_DEVICE_LOCAL_HOST_VISIBLE) {
-
+		m_DeviceLocalHostVisibleImageAllocator.createImage(createInfo, image);
 	}
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <assert.h>
 #include <math.h>
 #include <complex>
@@ -105,6 +106,24 @@ namespace tools {
 		return buffer;
 	}
 
+	bool fileExists(std::string filename) {
+		std::ifstream f(filename.c_str());
+		return !f.fail();
+	}
+
+	void exitFatal(std::string message, int32 exitCode) {
+		std::cout << message << std::endl;
+		exit(exitCode);
+	}
+
+	class Tools
+	{
+	public:
+		Tools();
+		~Tools();
+	};
 
 
 }
+
+#include "debug.h"

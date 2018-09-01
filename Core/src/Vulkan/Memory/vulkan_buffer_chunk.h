@@ -28,7 +28,7 @@ namespace ng {
 			static bool sizeSmallerThan(const VkDeviceSize& size, const VulkanBufferAllocation& block) {
 				return size < block.size;
 			}
-
+		
 		};
 
 		class VulkanBufferChunk
@@ -47,7 +47,7 @@ namespace ng {
 			std::list<Block> freeBlocks; // not sorted at all
 			std::list<VulkanBufferAllocation> allocations; // sorted by offset
 
-													 /*    */
+			/*    */
 			VulkanBufferChunk(VkDeviceSize size) { this->size = size; }
 
 			VkResult create(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkBufferUsageFlags usage);
@@ -62,7 +62,7 @@ namespace ng {
 			std::list<Block>::iterator getFreeBlock(VkDeviceSize offset, VkDeviceSize size);
 
 			std::list<VulkanBufferAllocation>::iterator getClosestAllocationMatch(VkDeviceSize size);
-
+			
 			void changeAllocationSize(std::shared_ptr<VulkanBufferAllocation> alloc, VkDeviceSize newSize, VkDeviceSize newDataSize);
 
 			/*  Will only create the new free block, won't erase the free block corrensponding to the freeBlock argument.

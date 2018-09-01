@@ -12,9 +12,3 @@ ng::debug::Debug::~Debug()
 {
 }
 
-void ng::debug::exitFatal(std::string message, int32 exitCode)
-{
-	LOGI("Fatal error : %s", message.c_str());
-	exit(exitCode);
-}
-

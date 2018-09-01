@@ -18,14 +18,14 @@ namespace ng {
 			VkDevice * Device;
 			Window * Window;
 		public:
-			int pipelineIndex;
+			std::string pipelineName;
 
-			VkPipeline graphicsPipeline;
 			VkRenderPass renderPass;
 			VkPipelineLayout pipelineLayout;
 
 			VkShaderModule vertShaderModule = VK_NULL_HANDLE;
 			VkShaderModule tessellShaderModule = VK_NULL_HANDLE;
+			VkShaderModule geometryShader = VK_NULL_HANDLE;
 			VkShaderModule fragShaderModule = VK_NULL_HANDLE;
 
 			void createRenderPass(VkDevice* device, Window* window);

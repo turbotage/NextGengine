@@ -3,7 +3,6 @@
 #include "../../def.h"
 #include "vulkan_buffer.h"
 #include "vulkan_buffer_chunk.h"
-#include "vulkan_image_chunk.h"
 
 namespace ng {
 	namespace vulkan {

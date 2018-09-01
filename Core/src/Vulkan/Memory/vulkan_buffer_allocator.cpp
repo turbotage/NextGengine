@@ -53,7 +53,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			auto freeBlockIt = chunk.getClosestMatch(createInfo.size);
 
 			if (freeBlockIt != chunk.freeBlocks.end()) {
-				VulkanAllocationCreateInfo allocInfo;
+				VulkanBufferAllocationCreateInfo allocInfo;
 				allocInfo.size = createInfo.size;
 				allocInfo.dataSize = createInfo.dataSize;
 				buffer->m_StagingAllocation = chunk.allocate(*freeBlockIt, allocInfo);
@@ -84,7 +84,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			auto freeBlockIt = it->getClosestMatch(createInfo.size);
 
 			if (freeBlockIt != it->freeBlocks.end()) {
-				VulkanAllocationCreateInfo allocInfo;
+				VulkanBufferAllocationCreateInfo allocInfo;
 				allocInfo.size = createInfo.size;
 				allocInfo.dataSize = createInfo.dataSize;
 				buffer->m_StagingAllocation = it->allocate(*freeBlockIt, allocInfo);
@@ -100,13 +100,13 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 	}
 
 	//device-memory
-	for (int i = 0; i < 2 && !hasStaging; ++i) {
+	for (int i = 0; i < 2 && !inDeviceMemory; ++i) {
 		for (auto& chunk : m_DeviceChunks) {
 
 			auto freeBlockIt = chunk.getClosestMatch(createInfo.size);
 
 			if (freeBlockIt != chunk.freeBlocks.end()) {
-				VulkanAllocationCreateInfo allocInfo;
+				VulkanBufferAllocationCreateInfo allocInfo;
 				allocInfo.size = createInfo.size;
 				allocInfo.dataSize = createInfo.dataSize;
 				buffer->m_DeviceAllocation = chunk.allocate(*freeBlockIt, allocInfo);
@@ -139,7 +139,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			auto freeBlockIt = it->getClosestMatch(createInfo.size);
 
 			if (freeBlockIt != it->freeBlocks.end()) {
-				VulkanAllocationCreateInfo allocInfo;
+				VulkanBufferAllocationCreateInfo allocInfo;
 				allocInfo.size = createInfo.size;
 				allocInfo.dataSize = createInfo.dataSize;
 				buffer->m_StagingAllocation = it->allocate(*freeBlockIt, allocInfo);

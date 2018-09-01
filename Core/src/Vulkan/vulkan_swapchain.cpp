@@ -220,4 +220,17 @@ ng::vulkan::SwapchainSupportDetails ng::vulkan::VulkanSwapchain::querySwapchainS
 	return details;
 }
 
+void ng::vulkan::VulkanSwapchain::cleanup()
+{
+	if (swapChain != VK_NULL_HANDLE) {
+		for (uint32 i = 0; i < imageCount; ++i) {
+			vkDestroyImageView(vulkanDevice->logicalDevice, buffers[i].view, nullptr);
+		}
+	}
+	if (surface != VK_NULL_HANDLE) {
+		fpDestroySwapchainKHR(vulkanDevice->logicalDevice, swapChain, nullptr);
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+	}
+}
+
 
