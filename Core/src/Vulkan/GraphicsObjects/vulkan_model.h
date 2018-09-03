@@ -7,28 +7,29 @@
 namespace ng {
 	namespace vulkan {
 
+		struct ModelPart {
+			uint32 vertexOffset;
+			uint32 indexOffset;
+
+			uint32 indexCount;
+		};
+
 		class VulkanModel
 		{
-		public: //types
-			struct ModelPart {
-				uint32 vertexOffset;
-				uint32 indexOffset;
-
-				uint32 indexCount;
-			};
-			
-		public: //members
+		private: //members
 			
 			/**  Vertex-Index Buffer Object  **/
 			VulkanBuffer VIBO;
 
 			std::vector<ModelPart> modelParts;
 
-			ng::vulkan::VulkanTexture textureArray;
+			/* is -1 if this is a single layer texture, 
+			otherwise it specifies which layer in the texture-array the models texture is */
+			uint32 textureLayer;
+			/* can be cast to VulkanTexture2D or VulkanTextureArray*/
+			ng::vulkan::VulkanTexture texture;
 			
-			float hqLodDistance;
-			float mqLodDistance;
-			float lqLodDistance;
+			std::vector<float> lodDistances;
 
 			
 		public: //member functions

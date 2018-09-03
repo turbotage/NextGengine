@@ -107,6 +107,8 @@ namespace ng {
 
 		};
 
+		typedef VulkanImage VulkanTexture;
+
 		class VulkanTexture2D : VulkanImage {
 		private:
 
@@ -396,10 +398,6 @@ namespace ng {
 			}
 
 		};
-
-		typedef VulkanImage VulkanTexture2D;
-		typedef VulkanImage VulkanTextureArray;
-		typedef VulkanImage VulkanTextureCubeMap;
 
 	}
 }
