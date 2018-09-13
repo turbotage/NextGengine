@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene_node.h"
-#include "../Math/plane.h"
+#include "plane.h"
 
 namespace ng {
 	namespace scenegraph {
@@ -21,21 +21,21 @@ namespace ng {
 			float halfWidth;
 			float halfHeight;
 
-			ng::math::Vec3f forward;
-			ng::math::Vec3f up;
-			ng::math::Vec3f right;
+			ngm::Vec3f forward;
+			ngm::Vec3f up;
+			ngm::Vec3f right;
 
-			ng::math::Vec3f rightPlaneNormal;
-			ng::math::Vec3f leftPlaneNormal;
-			ng::math::Vec3f topPlaneNormal;
-			ng::math::Vec3f bottomPlaneNormal;
+			ngm::Vec3f rightPlaneNormal;
+			ngm::Vec3f leftPlaneNormal;
+			ngm::Vec3f topPlaneNormal;
+			ngm::Vec3f bottomPlaneNormal;
 
-			ng::math::Plane farPlane;
-			ng::math::Plane nearPlane;
-			ng::math::Plane rightPlane;
-			ng::math::Plane leftPlane;
-			ng::math::Plane topPlane;
-			ng::math::Plane bottomPlane;
+			ngm::Plane farPlane;
+			ngm::Plane nearPlane;
+			ngm::Plane rightPlane;
+			ngm::Plane leftPlane;
+			ngm::Plane topPlane;
+			ngm::Plane bottomPlane;
 
 
 			CameraNode(float fov, float viewDistance, float htwRatio);

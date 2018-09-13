@@ -9,8 +9,8 @@ namespace ng {
 		class Queue
 		{
 		private:
-			std::queue<T> Queue;
-			std::mutex Mutex;
+			std::queue<T> m_Queue;
+			std::mutex m_Mutex;
 		public:
 			Queue();
 			~Queue();
@@ -39,35 +39,35 @@ namespace ng {
 		template<typename T>
 		bool Queue<T>::empty()
 		{
-			std::lock_guard<std::mutex> lock(Mutex);
-			return Queue.empty();
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			return m_Queue.empty();
 		}
 
 		template<typename T>
 		int Queue<T>::size()
 		{
-			std::lock_guard<std::mutex> lock(Mutex);
-			return Queue.size();
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			return m_Queue.size();
 		}
 
 		template<typename T>
 		void Queue<T>::enqueue(T& t)
 		{
-			std::lock_guard<std::mutex> lock(Mutex);
-			Queue.push(t);
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			m_Queue.push(t);
 		}
 
 		template<typename T>
 		bool Queue<T>::dequeue(T& t)
 		{
-			std::lock_guard<std::mutex> lock(Mutex);
+			std::lock_guard<std::mutex> lock(m_Mutex);
 
-			if (Queue.empty()) {
+			if (m_Queue.empty()) {
 				return false;
 			}
-			t = std::move(Queue.front());
+			t = std::move(m_Queue.front());
 
-			Queue.pop();
+			m_Queue.pop();
 			return true;
 		}
 

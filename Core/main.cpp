@@ -30,6 +30,11 @@ public:
 	
 public:
 
+	Application() 
+	{
+
+	}
+
 	void createPhysicalDevices() {
 
 		uint32 deviceCount = 0;
@@ -177,15 +182,21 @@ public:
 
 	}
 
-	void run();
+	void run() {
 
-	void cleanup();
+	}
+
+	void cleanup() {
+
+	}
 
 };
 
 int main(int argc, char* argv[]){
 
 	using namespace ng::vulkan;
+
+	Application app;
 
 	getchar();
 	return 0;

@@ -6,20 +6,20 @@
 #include "src\Math\dyn_mat.h"
 
 void testOfMat4() {
-	ng::math::Vec3f A(3, 2, 6);
+	ngm::Vec3f A(3, 2, 6);
 	std::cout << A << std::endl;
-	ng::math::Vec4f one(4, 5, 6, 7);
+	ngm::Vec4f one(4, 5, 6, 7);
 	std::cout << one << std::endl;
-	ng::math::Vec4f two(2, 7, 3, 4);
+	ngm::Vec4f two(2, 7, 3, 4);
 	std::cout << two << std::endl;
-	ng::math::Vec4f three(1, 2, 1, 7);
+	ngm::Vec4f three(1, 2, 1, 7);
 	std::cout << three << std::endl;
-	ng::math::Vec4f four(2, 9, 3, 1);
+	ngm::Vec4f four(2, 9, 3, 1);
 	std::cout << four << std::endl;
 
-	ng::math::Mat4f mat1(one, two, three, four);
+	ngm::Mat4f mat1(one, two, three, four);
 	std::cout << mat1 << std::endl;
-	ng::math::Mat4f mat2(four, two, one, four);
+	ngm::Mat4f mat2(four, two, one, four);
 	std::cout << mat2 << std::endl;
 
 	std::cout << one.mul(two) << std::endl;

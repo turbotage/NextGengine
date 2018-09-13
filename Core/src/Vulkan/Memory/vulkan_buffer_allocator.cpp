@@ -1,6 +1,7 @@
 #include "vulkan_buffer_allocator.h"
+#include "vulkan_buffer.h"
 
-std::list<ng::vulkan::VulkanBufferChunk>::iterator ng::vulkan::VulkanBufferAllocator::addChunk(std::list<VulkanBufferChunk>* chunks, VkResult* result = nullptr) {
+std::list<ng::vulkan::VulkanBufferChunk>::iterator ng::vulkan::VulkanBufferAllocator::addChunk(std::list<VulkanBufferChunk>* chunks, VkResult* result) {
 	auto it = &chunks->emplace_front(m_StandardChunkSize, m_MemoryAlignment);
 	VkResult res = it->create(m_VulkanDevice, m_MemoryFlags, m_BufferUsage);
 	if (result != nullptr) {
@@ -16,11 +17,21 @@ VkDeviceSize ng::vulkan::VulkanBufferAllocator::getAlignedSize(VkDeviceSize size
 }
 */
 
-ng::vulkan::VulkanBufferAllocator::VulkanBufferAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize) {
-	m_VulkanDevice = vulkanDevice;
-	m_MemoryFlags = flags;
-	m_MemoryAlignment = alignment;
-	m_StandardChunkSize = standardAllocSize;
+ng::vulkan::VulkanBufferAllocator::VulkanBufferAllocator()
+{
+}
+
+ng::vulkan::VulkanBufferAllocator::VulkanBufferAllocator(VulkanBufferAllocatorCreateInfo createInfo)
+{
+	create(createInfo);
+}
+
+void ng::vulkan::VulkanBufferAllocator::create(VulkanBufferAllocatorCreateInfo createInfo)
+{
+	m_VulkanDevice = createInfo.vulkanDevice;
+	m_MemoryFlags = createInfo.memoryFlags;
+	m_MemoryAlignment = createInfo.alignment;
+	m_StandardChunkSize = createInfo.standardChunkSize;
 }
 
 void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer) {
@@ -29,7 +40,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 		/* DeviceMemory : { Heap 0, MemoryType 0 }, StagingMemory : { Heap 2, MemoryType 2 } */
 		//createDeviceLocal(createInfo, buffer);
 	}
-	else if (m_MemoryFlags == VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) {
+	else if (m_MemoryFlags == (VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
 		/* DeviceMemory : { Heap 1, MemoryType 1 }, StagingMemory : { Heap 2, MemoryType 2 }, */
 		//createMappableDeviceLocal(createInfo, buffer);
 	}
@@ -71,7 +82,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 			we couldn't add another chunk and no new allocation could be found after a full defragmentation */
 			if (i == 1) {
 				LOGD("couldn't find staging memory for vulkanBuffer");
-				debug::exitFatal("couldn't find staging memory for vulkanBuffer", -1);
+				tools::exitFatal("couldn't find staging memory for vulkanBuffer", -1);
 			}
 			VkResult result;
 			auto it = addChunk(&m_StagingChunks, &result);
@@ -158,7 +169,7 @@ void ng::vulkan::VulkanBufferAllocator::createBuffer(VulkanBufferCreateInfo crea
 
 }
 
-void ng::vulkan::VulkanBufferAllocator::defragmentDeviceMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete = true)
+void ng::vulkan::VulkanBufferAllocator::defragmentDeviceMem(uint16 chunksDefragNum, bool waitUntilComplete)
 {
 	if (chunksDefragNum > m_DeviceChunks.size()) {
 		chunksDefragNum = m_DeviceChunks.size();
@@ -193,7 +204,7 @@ void ng::vulkan::VulkanBufferAllocator::defragmentDeviceMem(uint16 chunksDefragN
 
 }
 
-void ng::vulkan::VulkanBufferAllocator::defragmentStagingMem(uint16 chunksDefragNum = UINT16_MAX, bool waitUntilComplete)
+void ng::vulkan::VulkanBufferAllocator::defragmentStagingMem(uint16 chunksDefragNum, bool waitUntilComplete)
 {
 	if (chunksDefragNum > m_StagingChunks.size()) {
 		chunksDefragNum = m_StagingChunks.size();

@@ -219,7 +219,7 @@ VkResult ng::vulkan::VulkanBufferChunk::create(VulkanDevice* vulkanDevice,
 	allocInfo.memoryTypeIndex = vulkanDevice->getMemoryTypeIndex(memRequirements.memoryTypeBits, flags);
 	if (allocInfo.memoryTypeIndex == -1) {
 		LOGD("found no matching memory type");
-		debug::exitFatal("found no matching memory type", -1);
+		tools::exitFatal("found no matching memory type", -1);
 	}
 
 	result = vkAllocateMemory(vulkanDevice->logicalDevice, &allocInfo, nullptr, &this->memory);

@@ -1,4 +1,5 @@
 #include "camera_node.h"
+#include "quaternion.h"
 
 ng::scenegraph::CameraNode::CameraNode(float fov, float viewDistance, float htwRatio)
 	: fov(fov), farClipDistance(viewDistance)
@@ -7,11 +8,11 @@ ng::scenegraph::CameraNode::CameraNode(float fov, float viewDistance, float htwR
 	float r = farClipDistance / cos(fov);
 	halfWidth = sin(fov) * r;
 	halfHeight = halfWidth * htwRatio;
-	forward = ng::math::Vec3f(0.0f, 0.0f, 1.0f);
-	up = ng::math::Vec3f(0.0f, 1.0f, 0.0f);
-	right = ng::math::Vec3f(1.0f, 0.0f, 0.0f);
+	forward = ngm::Vec3f(0.0f, 0.0f, 1.0f);
+	up = ngm::Vec3f(0.0f, 1.0f, 0.0f);
+	right = ngm::Vec3f(1.0f, 0.0f, 0.0f);
 
-	ng::math::Vec3f temp;
+	ngm::Vec3f temp;
 	temp = (farClipDistance * forward);
 	rightPlaneNormal = up.cross(temp + halfWidth * right);
 	leftPlaneNormal = (temp - halfWidth * right).cross(up);
@@ -29,9 +30,9 @@ ng::scenegraph::CameraNode::CameraNode(float fov, float viewDistance, float htwR
 void ng::scenegraph::CameraNode::onUpdate(float time)
 {
 	//TOTO the newRotation should be set by user input
-	ng::math::Quaternion newRotation;
+	ngm::Quaternion newRotation;
 
-	newRotation.rotate4(forward, up, right, ng::math::Vec3f(0.0f,0.0f,0.0f));
+	newRotation.rotate4(forward, up, right, ngm::Vec3f(0.0f,0.0f,0.0f));
 	newRotation.rotate4(rightPlaneNormal, leftPlaneNormal, topPlaneNormal, bottomPlaneNormal);
 
 	farPlane.setPlane(forward, m_Position + (farClipDistance * forward));

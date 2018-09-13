@@ -24,43 +24,43 @@ namespace ng {
 		/**  Read the macros to understand the functions  **/
 		class CullingFlags {
 		private:
-			uint8 CullingFlags;
+			uint8 m_CullingFlags;
 		public:
 
 			void setBeenCulledTrue() {
-				CullingFlags |= 1;
+				m_CullingFlags |= 1;
 			}
 
 			void setBeenCulledFalse() {
-				CullingFlags &= ~1;
+				m_CullingFlags &= ~1;
 			}
 
 			bool hasBeenCulled() {
-				return ((CullingFlags) & 1);
+				return ((m_CullingFlags) & 1);
 			}
 
 			void setFlags(uint8 flags) {
-				CullingFlags = flags;
+				m_CullingFlags = flags;
 			}
 
 			uint8 getFlags() {
-				return CullingFlags;
+				return m_CullingFlags;
 			}
 
 			bool nothingInFrustrum() {
-				return ((CullingFlags >> 1) & 1U);
+				return ((m_CullingFlags >> 1) & 1U);
 			}
 
 			bool allInFrustrum() {
-				return ((CullingFlags >> 2) & 1U);
+				return ((m_CullingFlags >> 2) & 1U);
 			}
 
 			bool modelInFrustrum() {
-				return ((CullingFlags >> 3) & 1U);
+				return ((m_CullingFlags >> 3) & 1U);
 			}
 
 			bool aabbInFrustrum() {
-				return ((CullingFlags >> 4) & 1U);
+				return ((m_CullingFlags >> 4) & 1U);
 			}
 			
 		};
@@ -71,7 +71,7 @@ namespace ng {
 
 			Scene* Scene;
 
-			std::map<ng::math::Vec3f, RenderableNode*>* ToBeRenderedPtr;
+			std::map<ngm::Vec3f, RenderableNode*>* ToBeRenderedPtr;
 
 			void addToRendering(ng::scenegraph::SceneNode* node);
 

@@ -2,9 +2,18 @@
 #include "vulkan_image.h"
 #include <gli/gli.hpp>
 
-ng::vulkan::VulkanImageAllocator::VulkanImageAllocator(VulkanDevice * vulkanDevice)
+ng::vulkan::VulkanImageAllocator::VulkanImageAllocator()
 {
+}
 
+ng::vulkan::VulkanImageAllocator::VulkanImageAllocator(VulkanImageAllocatorCreateInfo createInfo)
+{
+	create(createInfo);
+}
+
+void ng::vulkan::VulkanImageAllocator::create(VulkanImageAllocatorCreateInfo createInfo)
+{
+	m_VulkanDevice = createInfo.vulkanDevice;
 }
 
 void ng::vulkan::VulkanImageAllocator::createTexture2D(VulkanImageCreateInfo createInfo, VulkanTexture2D * image)

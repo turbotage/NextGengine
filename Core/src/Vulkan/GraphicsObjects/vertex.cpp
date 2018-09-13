@@ -24,7 +24,7 @@ bool ng::vulkan::Vertex4Component::operator==(const Vertex4Component & other) co
 		(uv == other.uv)
 		&&
 		(color == other.color);
-}
+} 
 
 
 bool ng::vulkan::Vertex3Component::operator==(const Vertex3Component & other) const

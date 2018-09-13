@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/Vec3f.h"
+#include "vec3f.h"
 #include "../def.h"
 #include <vector>
 

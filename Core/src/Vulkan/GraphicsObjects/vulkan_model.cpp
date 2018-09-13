@@ -30,6 +30,6 @@ ng::vulkan::VulkanModel ng::vulkan::VulkanModel::operator=(const VulkanModel & m
 std::size_t ng::vulkan::VulkanModel::hash(VulkanModel const & model)
 {
 	std::size_t ret = VulkanBuffer::hash(model.VIBO);
-	ng::math::hashCombine(ret, ng::vulkan::VulkanTexture::hash(model.textureArray));
+	ngm::hashCombine(ret, ng::vulkan::VulkanTexture::hash(model.textureArray));
 	return ret;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Math\plane.h"
-#include "Math\quaternion.h"
+#include "plane.h"
+#include "quaternion.h"
 
 class Camera
 {
@@ -21,32 +21,32 @@ public:
 	float halfWidth;
 	float halfHeight;
 
-	ng::math::Quaternion Rotation;
-	ng::math::Vec3f Position;
+	ngm::Quaternion Rotation;
+	ngm::Vec3f Position;
 
-	ng::math::Plane rightPlane;
-	ng::math::Plane leftPlane;
-	ng::math::Plane topPlane;
-	ng::math::Plane bottomPlane;
+	ngm::Plane rightPlane;
+	ngm::Plane leftPlane;
+	ngm::Plane topPlane;
+	ngm::Plane bottomPlane;
 
-	ng::math::Plane nearPlane;
-	ng::math::Plane farPlane;
-	ng::math::Plane cullPlane1;
-	ng::math::Plane	cullPlane2;
+	ngm::Plane nearPlane;
+	ngm::Plane farPlane;
+	ngm::Plane cullPlane1;
+	ngm::Plane	cullPlane2;
 
-	ng::math::Vec3f forward;
-	ng::math::Vec3f up;
-	ng::math::Vec3f right;
+	ngm::Vec3f forward;
+	ngm::Vec3f up;
+	ngm::Vec3f right;
 
-	ng::math::Vec3f rightPlaneNormal;
-	ng::math::Vec3f leftPlaneNormal;
-	ng::math::Vec3f topPlaneNormal;
-	ng::math::Vec3f bottomPlaneNormal;
+	ngm::Vec3f rightPlaneNormal;
+	ngm::Vec3f leftPlaneNormal;
+	ngm::Vec3f topPlaneNormal;
+	ngm::Vec3f bottomPlaneNormal;
 
 	Camera(float fov, float viewDistance, float htwRatio);
 	~Camera();
 
-	void update(ng::math::Vec3f positionChange, ng::math::Quaternion rotationChange);
+	void update(ngm::Vec3f positionChange, ngm::Quaternion rotationChange);
 
 };
 

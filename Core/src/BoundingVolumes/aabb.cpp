@@ -5,7 +5,7 @@ ng::bvolumes::AABB::AABB()
 
 }
 
-ng::bvolumes::AABB::AABB(ng::math::Vec3f * position, ng::math::Vec3f max, ng::math::Vec3f min)
+ng::bvolumes::AABB::AABB(ngm::Vec3f * position, ngm::Vec3f max, ngm::Vec3f min)
 {
 	this->position = position;
 	this->max = max;
@@ -77,44 +77,44 @@ void ng::bvolumes::AABB::setMinZ(float minZ)
 	min.z = minZ - position->z;
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint0()
+ngm::Vec3f ng::bvolumes::AABB::getPoint0()
 {
 	return *position + max;
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint1()
+ngm::Vec3f ng::bvolumes::AABB::getPoint1()
 {
-	return *position + ng::math::Vec3f(min.x, max.y, max.z);
+	return *position + ngm::Vec3f(min.x, max.y, max.z);
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint2()
+ngm::Vec3f ng::bvolumes::AABB::getPoint2()
 {
-	return *position + ng::math::Vec3f(min.x, max.y, min.z);
+	return *position + ngm::Vec3f(min.x, max.y, min.z);
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint3()
+ngm::Vec3f ng::bvolumes::AABB::getPoint3()
 {
-	return *position + ng::math::Vec3f(max.x, max.y, min.z);
+	return *position + ngm::Vec3f(max.x, max.y, min.z);
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint4()
+ngm::Vec3f ng::bvolumes::AABB::getPoint4()
 {
-	return *position + ng::math::Vec3f(max.x, min.y, max.z);
+	return *position + ngm::Vec3f(max.x, min.y, max.z);
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint5()
+ngm::Vec3f ng::bvolumes::AABB::getPoint5()
 {
-	return *position + ng::math::Vec3f(min.x, min.y, max.z);
+	return *position + ngm::Vec3f(min.x, min.y, max.z);
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint6()
+ngm::Vec3f ng::bvolumes::AABB::getPoint6()
 {
-	return *position + ng::math::Vec3f(min.x, min.y, min.z);
+	return *position + ngm::Vec3f(min.x, min.y, min.z);
 }
 
-ng::math::Vec3f ng::bvolumes::AABB::getPoint7()
+ngm::Vec3f ng::bvolumes::AABB::getPoint7()
 {
-	return *position + ng::math::Vec3f(max.x, min.y, min.z);
+	return *position + ngm::Vec3f(max.x, min.y, min.z);
 }
 
 

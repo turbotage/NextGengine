@@ -1,5 +1,6 @@
 #include "deferred_renderer.h"
 
+/*
 ng::vulkan::DeferredRenderer::DeferredRenderer()
 {
 	VkDescriptorPoolSize poolSize = {};
@@ -25,3 +26,4 @@ ng::vulkan::DeferredRenderer::~DeferredRenderer()
 
 
 }
+*/

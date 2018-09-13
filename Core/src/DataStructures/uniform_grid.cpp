@@ -19,7 +19,7 @@ ng::dstructs::GridIndex getDirection(float pitch, float yaw) {
 
 }
 
-ng::dstructs::GridIndex ng::dstructs::UniformGrid::getIndex(ng::math::Vec3f position)
+ng::dstructs::GridIndex ng::dstructs::UniformGrid::getIndex(ngm::Vec3f position)
 {
 	GridIndex ret;
 	if (position.x >= 0) {
@@ -43,9 +43,9 @@ ng::dstructs::GridIndex ng::dstructs::UniformGrid::getIndex(ng::math::Vec3f posi
 	return ret;
 }
 
-ng::math::Vec3f ng::dstructs::UniformGrid::getCenterPosition(const GridIndex * index)
+ngm::Vec3f ng::dstructs::UniformGrid::getCenterPosition(const GridIndex * index)
 {
-	ng::math::Vec3f ret;
+	ngm::Vec3f ret;
 	if (index->x >= 0) {
 		ret.x = (index->x * GridSize) - (GridSize / 2);
 	}
@@ -70,7 +70,7 @@ ng::math::Vec3f ng::dstructs::UniformGrid::getCenterPosition(const GridIndex * i
 
 std::vector<ng::dstructs::GridIndex*>* ng::dstructs::UniformGrid::gridIndicesCulling(Camera & cam)
 {
-	ng::math::Vec3f eulerAngles = cam.Rotation.eulerAngles(); //pitch, roll, yaw
+	ngm::Vec3f eulerAngles = cam.Rotation.eulerAngles(); //pitch, roll, yaw
 
 	/*
 	Vertical Plane					  Horizontal Plane
@@ -145,7 +145,7 @@ ng::dstructs::UniformGrid::UniformGrid()
 	
 }
 
-ng::dstructs::UniformGrid::UniformGrid(ng::math::Vec3f worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects)
+ng::dstructs::UniformGrid::UniformGrid(ngm::Vec3f worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects)
 	: GridSize(gridSize), WorldSizeMultipler(worldSizeMultiplier)
 {
 	float t = gridSize * 0.5;

@@ -1,17 +1,21 @@
 #pragma once
 
 #include "../../def.h"
-#include "vulkan_buffer.h"
 #include "vulkan_buffer_chunk.h"
 
 namespace ng {
 	namespace vulkan {
 
+		struct VulkanBufferCreateInfo;
+		class VulkanBuffer;
 
-		/*
-		void createBuffer(VulkanBufferCreateInfo createInfo, VulkanBuffer& buffer) :
-		copy the data from createInfo.data to allocation in staging buffer,
-		*/
+		struct VulkanBufferAllocatorCreateInfo {
+			VulkanDevice* vulkanDevice;
+			VkMemoryPropertyFlags memoryFlags;
+			VkMemoryAlignment alignment;
+			VkDeviceSize standardChunkSize;
+		};
+
 		class VulkanBufferAllocator
 		{
 		private:
@@ -44,16 +48,17 @@ namespace ng {
 			/* DeviceMemory : { Heap 1, MemoryType 1 }, StagingMemory : { Heap 2, MemoryType 2 },
 			OBS! Does the same thing as createDeviceLocalWithStaging */
 			//VkResult createMappableDeviceLocal(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
-
-
-
 		public:
 
-			VulkanBufferAllocator(VulkanDevice* vulkanDevice, VkMemoryPropertyFlags flags, VkMemoryAlignment alignment, VkDeviceSize standardAllocSize);
+			VulkanBufferAllocator();
+
+			VulkanBufferAllocator(VulkanBufferAllocatorCreateInfo createInfo);
 
 			VulkanBufferAllocator(const VulkanBufferAllocator& other) = delete;
 
 			VulkanBufferAllocator(VulkanBuffer &&) = delete;
+
+			void create(VulkanBufferAllocatorCreateInfo createInfo);
 
 			void createBuffer(VulkanBufferCreateInfo createInfo, VulkanBuffer* buffer);
 

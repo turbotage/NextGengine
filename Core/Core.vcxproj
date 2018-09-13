@@ -30,7 +30,6 @@
     <ClCompile Include="src\SceneGraph\renderable_node.cpp" />
     <ClCompile Include="src\SceneGraph\camera_node.cpp" />
     <ClCompile Include="src\Vulkan\Renderers\deferred_renderer.cpp" />
-    <ClCompile Include="src\Vulkan\Memory\OldAllocator\vulkan_buffer_old.cpp" />
     <ClCompile Include="src\SceneGraph\culling_walker.cpp" />
     <ClCompile Include="src\Props\movement_properties.cpp" />
     <ClCompile Include="src\Props\renderable.cpp" />
@@ -60,8 +59,6 @@
     <ClCompile Include="src\DataStructures\uniform_grid.cpp" />
     <ClCompile Include="src\SceneGraph\scene_node.cpp" />
     <ClCompile Include="src\SceneGraph\transform_node.cpp" />
-    <ClCompile Include="src\Vulkan\Memory\OldAllocator\vulkan_buffer_region_allocator_old.cpp" />
-    <ClCompile Include="src\Vulkan\Memory\OldAllocator\vulkan_memory_allocator_old.cpp" />
     <ClCompile Include="src\Vulkan\vulkan_device.cpp" />
     <ClCompile Include="src\Vulkan\vulkan_swapchain.cpp" />
     <ClCompile Include="src\Vulkan\vulkan_framebuffer.cpp" />
@@ -85,7 +82,6 @@
     <ClInclude Include="src\SceneGraph\renderable_node.h" />
     <ClInclude Include="src\SceneGraph\camera_node.h" />
     <ClInclude Include="src\Vulkan\Renderers\deferred_renderer.h" />
-    <ClInclude Include="src\Vulkan\Memory\OldAllocator\vulkan_buffer_old.h" />
     <ClInclude Include="src\SceneGraph\culling_walker.h" />
     <ClInclude Include="src\Props\movement_properties.h" />
     <ClInclude Include="src\Props\renderable.h" />
@@ -117,8 +113,6 @@
     <ClInclude Include="test_code.h" />
     <ClInclude Include="src\Memory\allocator.h" />
     <ClInclude Include="src\DataStructures\uniform_grid.h" />
-    <ClInclude Include="src\Vulkan\Memory\OldAllocator\vulkan_buffer_region_allocator_old.h" />
-    <ClInclude Include="src\Vulkan\Memory\OldAllocator\vulkan_memory_allocator_old.h" />
     <ClInclude Include="src\Vulkan\vulkan_device.h" />
     <ClInclude Include="src\Vulkan\vulkan_swapchain.h" />
     <ClInclude Include="src\Vulkan\vulkan_framebuffer.h" />

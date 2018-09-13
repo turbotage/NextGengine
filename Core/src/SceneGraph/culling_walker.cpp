@@ -83,7 +83,7 @@ ng::scenegraph::CullingFlags ng::scenegraph::CullingWalker::isInView(RenderableN
 
 	ng::bvolumes::AABB* aabb = &node->m_AABB;
 
-	ng::math::Vec3f p0, p1, p2, p3, p4, p5, p6, p7;
+	ngm::Vec3f p0, p1, p2, p3, p4, p5, p6, p7;
 
 	float a, b, c, d;
 

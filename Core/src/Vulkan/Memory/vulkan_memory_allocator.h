@@ -19,10 +19,16 @@ namespace ng {
 					VMA_DEVICE_LOCAL_ONLY,
 					VMA_DEVICE_LOCAL_HOST_VISIBLE,
 				};
-				 
+				
+				struct VulkanMemoryAllocatorCreateInfo {
+					VulkanDevice* vulkanDevice;
+				};
+
 				class VulkanMemoryAllocator {
 				private:
 					VulkanDevice* m_VulkanDevice;
+
+					bool hasBeenCreated = false;
 
 					//device-local props
 					VkMemoryPropertyFlags m_DefaultDeviceLocalMemFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
@@ -50,11 +56,17 @@ namespace ng {
 
 				public:
 
-					VulkanMemoryAllocator(VulkanDevice* vulkanDevice);
+					VulkanMemoryAllocator();
 
-					VkResult createBuffer(VulkanBuffer* buffer, VulkanBufferCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType);
+					VulkanMemoryAllocator(VulkanMemoryAllocatorCreateInfo createInfo);
 
-					VkResult createImage(VulkanImage* image, VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType);
+					void create(VulkanMemoryAllocatorCreateInfo createInfo);
+
+					VkResult createBuffer(VulkanBufferCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanBuffer* buffer);
+
+					VkResult createTexture2D(VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanTexture2D* image);
+
+					VkResult createTextureArray(VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanTextureArray* image);
 
 				};
 

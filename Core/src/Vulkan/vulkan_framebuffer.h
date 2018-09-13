@@ -30,6 +30,10 @@ namespace ng {
 			VkImageCreateFlags usage;
 		};
 
+		struct VulkanFramebufferCreateInfo {
+			VulkanDevice* vulkanDevice;
+		};
+
 		class VulkanFramebuffer {
 		private:
 
@@ -47,8 +51,11 @@ namespace ng {
 
 		public:
 
-			VulkanFramebuffer(VulkanDevice* vulkanDevice);
+			VulkanFramebuffer();
+			VulkanFramebuffer(VulkanFramebufferCreateInfo createInfo);
 			~VulkanFramebuffer();
+
+			void init(VulkanFramebufferCreateInfo createInfo);
 
 			uint32 addAttachment(VulkanAttachmentCreateInfo attachmentCreateInfo);
 

@@ -31,10 +31,13 @@ bool ng::vulkan::VulkanFramebufferAttachment::isDepthStencil()
 	return(hasDepth() || hasStencil());
 }
 
-ng::vulkan::VulkanFramebuffer::VulkanFramebuffer(VulkanDevice * vulkanDevice)
+ng::vulkan::VulkanFramebuffer::VulkanFramebuffer()
 {
-	assert(vulkanDevice);
-	this->vulkanDevice = vulkanDevice;
+}
+
+ng::vulkan::VulkanFramebuffer::VulkanFramebuffer(VulkanFramebufferCreateInfo createInfo)
+{
+	init(createInfo);
 }
 
 ng::vulkan::VulkanFramebuffer::~VulkanFramebuffer()
@@ -48,6 +51,11 @@ ng::vulkan::VulkanFramebuffer::~VulkanFramebuffer()
 	vkDestroySampler(vulkanDevice->logicalDevice, sampler, nullptr);
 	vkDestroyRenderPass(vulkanDevice->logicalDevice, renderPass, nullptr);
 	vkDestroyFramebuffer(vulkanDevice->logicalDevice, framebuffer, nullptr);
+}
+
+void ng::vulkan::VulkanFramebuffer::init(VulkanFramebufferCreateInfo createInfo)
+{
+	this->vulkanDevice = createInfo.vulkanDevice;
 }
 
 uint32 ng::vulkan::VulkanFramebuffer::addAttachment(VulkanAttachmentCreateInfo attachmentCreateInfo)

@@ -5,6 +5,7 @@
 namespace ng {
 	namespace dstructs {
 
+		/*
 		template <typename T>
 		class BinaryTree
 		{
@@ -67,6 +68,7 @@ namespace ng {
 				}
 			}
 		}
+		*/
 
 	}
 }

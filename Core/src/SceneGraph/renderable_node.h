@@ -9,7 +9,7 @@ namespace ng {
 	namespace scenegraph {
 
 		struct InstanceData {
-			ng::math::Mat4f transformation;
+			ngm::Mat4f transformation;
 			uint32 textureArrayIndex;
 		};
 

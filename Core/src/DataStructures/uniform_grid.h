@@ -12,7 +12,7 @@
 namespace ng {
 	namespace dstructs {
 
-		typedef ng::math::Vec3f GridIndex;
+		typedef ngm::Vec3f GridIndex;
 
 		class UniformGrid
 		{
@@ -21,19 +21,19 @@ namespace ng {
 			float GridSize;
 			float GridIndexRadius;
 
-			ng::math::Vec3f WorldSizeMultipler;
+			ngm::Vec3f WorldSizeMultipler;
 
 			std::unordered_multimap<GridIndex, ng::entity::Model*> Collidables;
 
 		public:
 
-			GridIndex getIndex(ng::math::Vec3f position);
-			ng::math::Vec3f getCenterPosition(const GridIndex* index);
+			GridIndex getIndex(ngm::Vec3f position);
+			ngm::Vec3f getCenterPosition(const GridIndex* index);
 
 			
 
 			UniformGrid();
-			UniformGrid(ng::math::Vec3f worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
+			UniformGrid(ngm::Vec3f worldSizeMultiplier, float gridSize, uint16 expectedNumOfObjects);
 			~UniformGrid();
 		};
 	}
@@ -43,7 +43,7 @@ namespace std {
 	template<> struct hash<ng::dstructs::GridIndex> {
 		size_t operator()(ng::dstructs::GridIndex const& index) const {
 			std::vector<short> v{ index.x, index.y, index.z };
-			return ng::math::hashCombineMany(&v);
+			return ngm::hashCombineMany(&v);
 		}
 	};
 }

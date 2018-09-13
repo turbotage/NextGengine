@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/mat4f.h"
+#include "mat4f.h"
 #include "entity.h"
 #include <vector>
 #include "../Vulkan/GraphicsObjects/vertex.h"

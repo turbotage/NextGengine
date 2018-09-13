@@ -130,21 +130,21 @@ ng::scenegraph::SceneNode::SceneNode()
 
 }
 
-const ng::math::Vec3f& ng::scenegraph::SceneNode::getPosition()
+const ngm::Vec3f& ng::scenegraph::SceneNode::getPosition()
 {
 	return m_Position;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::rotate(const ng::math::Vec3f& rotationAxis, float angle, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Vec3f& rotationAxis, float angle, bool updateBV = true)
 {
-	m_WorldTransform *= ng::math::Mat4f::rotation(rotationAxis, angle);
+	m_WorldTransform *= ngm::Mat4f::rotation(rotationAxis, angle);
 	if (updateBV) {
 		updateBoundingVolumes(&this->m_AABB, true);
 	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::rotate(const ng::math::Mat4f& rotationMatrix, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Mat4f& rotationMatrix, bool updateBV = true)
 {
 	m_WorldTransform *= rotationMatrix;
 	if (updateBV) {
@@ -153,37 +153,37 @@ const ng::math::Mat4f& ng::scenegraph::SceneNode::rotate(const ng::math::Mat4f& 
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::rotate(const ng::math::Quaternion& rotationQuaternion, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Quaternion& rotationQuaternion, bool updateBV = true)
 {
-	m_WorldTransform *= ng::math::Mat4f::rotation(rotationQuaternion);
+	m_WorldTransform *= ngm::Mat4f::rotation(rotationQuaternion);
 	if (updateBV) {
 		updateBoundingVolumes(&this->m_AABB, true);
 	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::rotateAround(const ng::math::Vec3f& rotationPoint, const ng::math::Vec3f& rotationAxis, float angle, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotateAround(const ngm::Vec3f& rotationPoint, const ngm::Vec3f& rotationAxis, float angle, bool updateBV = true)
 {
 	// T(x, y, z) * R * T(-x, -y, -z)
-	m_WorldTransform *= ng::math::Mat4f::translation(rotationPoint);
-	m_WorldTransform *= ng::math::Mat4f::rotation(rotationAxis, angle);
-	m_WorldTransform *= ng::math::Mat4f::translation(-1.0f*rotationPoint);
+	m_WorldTransform *= ngm::Mat4f::translation(rotationPoint);
+	m_WorldTransform *= ngm::Mat4f::rotation(rotationAxis, angle);
+	m_WorldTransform *= ngm::Mat4f::translation(-1.0f*rotationPoint);
 	if (updateBV) {
 		updateBoundingVolumes(&this->m_AABB, true);
 	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::translate(const ng::math::Vec3f& translation, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Vec3f& translation, bool updateBV = true)
 {
-	m_WorldTransform *= ng::math::Mat4f::translation(translation);
+	m_WorldTransform *= ngm::Mat4f::translation(translation);
 	if (updateBV) {
 		updateBoundingVolumes(&this->m_AABB, true);
 	}
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::translate(const ng::math::Mat4f& translationMatrix, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Mat4f& translationMatrix, bool updateBV = true)
 {
 	m_WorldTransform *= translationMatrix;
 	if (updateBV) {
@@ -192,7 +192,7 @@ const ng::math::Mat4f& ng::scenegraph::SceneNode::translate(const ng::math::Mat4
 	return m_WorldTransform;
 }
 
-const ng::math::Mat4f& ng::scenegraph::SceneNode::transform(const ng::math::Mat4f& transformation, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::transform(const ngm::Mat4f& transformation, bool updateBV = true)
 {
 	m_WorldTransform *= transformation;
 	if (updateBV) {
@@ -216,7 +216,7 @@ void ng::scenegraph::SceneNode::update(float time)
 			m_LocalRotation->angularAcceleration += (m_LocalRotation->angularJerk * time);
 		}
 		if (m_LinearMovement != nullptr ) {
-			translate(ng::math::Mat4f::translation(m_LinearMovement->velocity * time));
+			translate(ngm::Mat4f::translation(m_LinearMovement->velocity * time));
 			m_LinearMovement->velocity = m_LinearMovement->acceleration * time;
 			m_LinearMovement->acceleration = m_LinearMovement->jerk * time;
 		}
@@ -227,9 +227,9 @@ void ng::scenegraph::SceneNode::update(float time)
 /*
 void ng::scenegraph::SceneNode::setCombinedCenter()
 {
-	BoundingSphere.centerPos = ng::math::Vec3f(0.0f, 0.0f, 0.0f);
+	BoundingSphere.centerPos = ngm::Vec3f(0.0f, 0.0f, 0.0f);
 
-	ng::math::Vec3f dirVec;
+	ngm::Vec3f dirVec;
 	for (int i = 0; i < Children.size(); ++i) {
 		BoundingSphere.centerPos += (Children[i]->getCenterPosition() * Children[i]->getBoundingSphereRadius());
 	}

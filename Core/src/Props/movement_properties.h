@@ -1,30 +1,30 @@
 #pragma once
 
-#include "../Math/vec3f.h"
+#include "vec3f.h"
 
 namespace ng {
 	namespace props {
 
 		struct PointRotation {
-			ng::math::Vec3f rotationPoint;
-			ng::math::Vec3f rotationAxis;
+			ngm::Vec3f rotationPoint;
+			ngm::Vec3f rotationAxis;
 			float angularVelocity;
 			float angularAcceleration;
 			float angularJerk;
 		};
 
 		struct LocalRotation {
-			ng::math::Vec3f rotationAxis;
+			ngm::Vec3f rotationAxis;
 			float angularVelocity;
 			float angularAcceleration;
 			float angularJerk;
 		};
 
-		typedef ng::math::Vec3f Velocity;
+		typedef ngm::Vec3f Velocity;
 
-		typedef ng::math::Vec3f Acceleration;
+		typedef ngm::Vec3f Acceleration;
 
-		typedef ng::math::Vec3f Jerk;
+		typedef ngm::Vec3f Jerk;
 
 		struct LinearMovement {
 			Velocity velocity;

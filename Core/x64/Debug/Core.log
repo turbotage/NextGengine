@@ -1,6 +1,619 @@
-﻿  vulkan_image_allocator.cpp
-c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_image_allocator.h(33): error C2143: syntax error: missing ';' before '*'
-c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_image_allocator.h(33): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_image_allocator.h(33): error C2238: unexpected token(s) preceding ';'
-c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_image_allocator.h(39): error C2061: syntax error: identifier 'VulkanDevice'
-c:\c&c++\libs\gli\include\gli\type.hpp(11): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
+﻿  vulkan_buffer_allocator.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_allocator.cpp(175): warning C4267: '=': conversion from 'size_t' to 'uint16', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_allocator.cpp(188): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_allocator.cpp(210): warning C4267: '=': conversion from 'size_t' to 'uint16', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_allocator.cpp(222): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\xmemory0(920): error C2661: 'ng::vulkan::VulkanBufferChunk::VulkanBufferChunk': no overloaded function takes 2 arguments
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\list(762): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,VkDeviceSize&,VkMemoryAlignment&>(_Alloc &,_Objty *const ,VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::_List_node<ng::vulkan::VulkanBufferChunk,std::_Default_allocator_traits<std::allocator<ng::vulkan::VulkanBufferChunk>>::void_pointer>>,
+              _Ty=ng::vulkan::VulkanBufferChunk,
+              _Objty=ng::vulkan::VulkanBufferChunk
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\list(767): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,VkDeviceSize&,VkMemoryAlignment&>(_Alloc &,_Objty *const ,VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::_List_node<ng::vulkan::VulkanBufferChunk,std::_Default_allocator_traits<std::allocator<ng::vulkan::VulkanBufferChunk>>::void_pointer>>,
+              _Ty=ng::vulkan::VulkanBufferChunk,
+              _Objty=ng::vulkan::VulkanBufferChunk
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\list(1001): note: see reference to function template instantiation 'std::_List_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *std::_List_buy<_Ty,_Alloc>::_Buynode<VkDeviceSize&,VkMemoryAlignment&>(std::_List_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *,std::_List_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *,VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Ty=ng::vulkan::VulkanBufferChunk,
+              _Alloc=std::allocator<ng::vulkan::VulkanBufferChunk>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\list(1004): note: see reference to function template instantiation 'std::_List_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *std::_List_buy<_Ty,_Alloc>::_Buynode<VkDeviceSize&,VkMemoryAlignment&>(std::_List_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *,std::_List_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *,VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Ty=ng::vulkan::VulkanBufferChunk,
+              _Alloc=std::allocator<ng::vulkan::VulkanBufferChunk>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\list(967): note: see reference to function template instantiation 'void std::list<ng::vulkan::VulkanBufferChunk,std::allocator<_Ty>>::_Insert<VkDeviceSize&,VkMemoryAlignment&>(std::_List_unchecked_const_iterator<std::_List_val<std::_List_simple_types<_Ty>>,std::_Iterator_base0>,VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Ty=ng::vulkan::VulkanBufferChunk
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\list(968): note: see reference to function template instantiation 'void std::list<ng::vulkan::VulkanBufferChunk,std::allocator<_Ty>>::_Insert<VkDeviceSize&,VkMemoryAlignment&>(std::_List_unchecked_const_iterator<std::_List_val<std::_List_simple_types<_Ty>>,std::_Iterator_base0>,VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Ty=ng::vulkan::VulkanBufferChunk
+          ]
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_allocator.cpp(5): note: see reference to function template instantiation 'ng::vulkan::VulkanBufferChunk &std::list<ng::vulkan::VulkanBufferChunk,std::allocator<_Ty>>::emplace_front<VkDeviceSize&,VkMemoryAlignment&>(VkDeviceSize &,VkMemoryAlignment &)' being compiled
+          with
+          [
+              _Ty=ng::vulkan::VulkanBufferChunk
+          ]
+  vulkan_buffer_chunk.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_chunk.cpp(215): warning C4101: 'memTypeFound': unreferenced local variable
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\xmemory0(920): error C2661: 'VkBufferCopy::VkBufferCopy': no overloaded function takes 3 arguments
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\vector(949): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,VkDeviceSize&,VkDeviceSize&,VkDeviceSize&>(_Alloc &,_Objty *const ,VkDeviceSize &,VkDeviceSize &,VkDeviceSize &)' being compiled
+          with
+          [
+              _Alloc=std::allocator<VkBufferCopy>,
+              _Ty=VkBufferCopy,
+              _Objty=VkBufferCopy
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\vector(951): note: see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,VkDeviceSize&,VkDeviceSize&,VkDeviceSize&>(_Alloc &,_Objty *const ,VkDeviceSize &,VkDeviceSize &,VkDeviceSize &)' being compiled
+          with
+          [
+              _Alloc=std::allocator<VkBufferCopy>,
+              _Ty=VkBufferCopy,
+              _Objty=VkBufferCopy
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\vector(965): note: see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_back_with_unused_capacity<VkDeviceSize&,VkDeviceSize&,VkDeviceSize&>(VkDeviceSize &,VkDeviceSize &,VkDeviceSize &)' being compiled
+          with
+          [
+              _Ty=VkBufferCopy
+          ]
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_buffer_chunk.cpp(184): note: see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::emplace_back<VkDeviceSize&,VkDeviceSize&,VkDeviceSize&>(VkDeviceSize &,VkDeviceSize &,VkDeviceSize &)' being compiled
+          with
+          [
+              _Ty=VkBufferCopy
+          ]
+  vulkan_image.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_image.cpp(169): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+  vulkan_image_allocator.cpp
+c:\c&c++\libs\gli\include\gli\core\format.inl(27): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(27): error C3646: 'BlockExtent': unknown override specifier
+c:\c&c++\libs\gli\include\gli\core\format.inl(27): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\c&c++\libs\gli\include\gli\core\format.inl(39): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(39): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(40): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(40): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(41): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(41): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(42): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(42): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(43): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(43): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(44): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(44): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(45): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(45): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(46): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(46): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(48): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(48): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(49): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(49): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(50): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(50): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(51): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(51): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(52): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(52): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(53): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(53): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(54): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(54): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(56): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(56): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(57): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(57): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(58): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(58): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(59): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(59): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(60): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(60): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(61): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(61): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(62): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(62): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(64): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(64): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(65): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(65): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(66): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(66): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(67): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(67): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(68): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(68): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(69): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(69): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(70): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(70): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(72): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(72): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(73): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(73): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(74): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(74): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(75): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(75): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(76): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(76): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(77): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(77): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(78): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(78): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(80): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(80): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(81): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(81): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(82): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(82): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(83): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(83): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(84): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(84): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(85): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(85): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(86): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(86): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(88): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(88): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(89): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(89): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(90): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(90): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(91): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(91): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(92): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(92): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(93): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(93): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(94): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(94): fatal error C1003: error count exceeds 100; stopping compilation
+  vulkan_memory_allocator.cpp
+  vulkan_memory_chunk.cpp
+  renderable_node.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+  camera_node.cpp
+  culling_walker.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\culling_walker.h(74): error C2039: 'map': is not a member of 'std'
+  c:\users\turbotage\documents\gitrepos\nextgengine\ngmath\ngmath\src\vec4f.h(48): note: see declaration of 'std'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\culling_walker.h(74): error C2143: syntax error: missing ';' before '<'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\culling_walker.h(74): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\culling_walker.h(74): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+  movement_properties.cpp
+  camera.cpp
+  oc_tree.cpp
+  group_node.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(6): error C2065: 'm_BoundingSphere': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(6): error C2228: left of '.center' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(6): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(10): error C2065: 'm_BoundingSphere': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(10): error C2228: left of '.centerPos' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(10): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(10): error C2039: 'getCenterPosition': is not a member of 'ng::scenegraph::SceneNode'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(20): note: see declaration of 'ng::scenegraph::SceneNode'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(10): error C2039: 'getBoundingSphereRadius': is not a member of 'ng::scenegraph::SceneNode'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(20): note: see declaration of 'ng::scenegraph::SceneNode'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(13): error C2065: 'm_BoundingSphere': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(13): error C2228: left of '.centerPos' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\group_node.cpp(13): note: type is 'unknown-type'
+  scene_graph.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+  vulkan_graphics_pipeline.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(3): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(5): error C2065: 'window': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(8): error C2039: 'swapChainImageFormat': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(51): error C3861: 'readFile': identifier not found
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(57): error C3861: 'readFile': identifier not found
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(63): error C3861: 'readFile': identifier not found
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(101): error C2039: 'swapChainExtent': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(101): error C2228: left of '.width' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(102): error C2039: 'swapChainExtent': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(102): error C2228: left of '.height' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(108): error C2039: 'swapChainExtent': is not a member of 'ng::vulkan::Window'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\window.h(32): note: see declaration of 'ng::vulkan::Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(200): error C2065: 'graphicsPipeline': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.cpp(207): error C2065: 'graphicsPipeline': undeclared identifier
+  vulkan_pipeline.cpp
+  vulkan_model.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\graphicsobjects\vulkan_model.cpp(2): fatal error C1083: Cannot open include file: '../../Math/hash_functions.h': No such file or directory
+  model.cpp
+  main.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\main.cpp(60): warning C4305: 'initializing': truncation from 'int' to 'ng::vulkan::VulkanDeviceTypeFlags'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\main.cpp(92): warning C4305: 'initializing': truncation from 'int' to 'ng::vulkan::VulkanDeviceTypeFlags'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\main.cpp(111): warning C4305: 'initializing': truncation from 'ng::vulkan::VulkanDeviceTypeBits' to 'ng::vulkan::VulkanDeviceTypeFlags'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\main.cpp(127): warning C4305: 'initializing': truncation from 'int' to 'ng::vulkan::VulkanDeviceTypeFlags'
+  vertex.cpp
+  Generating Code...
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\datastructures\oc_tree.cpp(11): error C4716: 'ng::dstructs::OcTree::getEnclosedIndices': must return a value
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\datastructures\oc_tree.cpp(20): error C4716: 'ng::dstructs::OcTree::getObjects': must return a value
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\camera.cpp(8): error C4716: 'Camera::isInView': must return a value
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_memory_allocator.cpp(54): error C4716: 'ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createBuffer': must return a value
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_memory_allocator.cpp(64): error C4716: 'ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTexture2D': must return a value
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\memory\vulkan_memory_allocator.cpp(74): error C4716: 'ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTextureArray': must return a value
+  Compiling...
+  window.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+  allocator.cpp
+  uniform_grid.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\datastructures\uniform_grid.h(6): fatal error C1083: Cannot open include file: '../Math/Vec3f.h': No such file or directory
+  scene_node.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(55): error C2572: 'ng::scenegraph::SceneNode::updateBoundingVolumes': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(67): note: see declaration of 'ng::scenegraph::SceneNode::updateBoundingVolumes'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(55): error C2572: 'ng::scenegraph::SceneNode::updateBoundingVolumes': redefinition of default argument: parameter 2
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(67): note: see declaration of 'ng::scenegraph::SceneNode::updateBoundingVolumes'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(138): error C2572: 'ng::scenegraph::SceneNode::rotate': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(80): note: see declaration of 'ng::scenegraph::SceneNode::rotate'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(147): error C2572: 'ng::scenegraph::SceneNode::rotate': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(82): note: see declaration of 'ng::scenegraph::SceneNode::rotate'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(156): error C2572: 'ng::scenegraph::SceneNode::rotate': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(84): note: see declaration of 'ng::scenegraph::SceneNode::rotate'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(165): error C2572: 'ng::scenegraph::SceneNode::rotateAround': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(86): note: see declaration of 'ng::scenegraph::SceneNode::rotateAround'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(177): error C2572: 'ng::scenegraph::SceneNode::translate': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(89): note: see declaration of 'ng::scenegraph::SceneNode::translate'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(186): error C2572: 'ng::scenegraph::SceneNode::translate': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(91): note: see declaration of 'ng::scenegraph::SceneNode::translate'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.cpp(195): error C2572: 'ng::scenegraph::SceneNode::transform': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\scenegraph\scene_node.h(94): note: see declaration of 'ng::scenegraph::SceneNode::transform'
+  transform_node.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\pipelines\vulkan_graphics_pipeline.h(31): error C2061: syntax error: identifier 'Window'
+  vulkan_device.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(158): error C2572: 'ng::vulkan::VulkanDevice::createLogicalDevice': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.h(111): note: see declaration of 'ng::vulkan::VulkanDevice::createLogicalDevice'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(159): error C2572: 'ng::vulkan::VulkanDevice::createLogicalDevice': redefinition of default argument: parameter 2
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.h(111): note: see declaration of 'ng::vulkan::VulkanDevice::createLogicalDevice'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(273): error C2572: 'ng::vulkan::VulkanDevice::createCommandBuffer': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.h(122): note: see declaration of 'ng::vulkan::VulkanDevice::createCommandBuffer'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(314): error C2572: 'ng::vulkan::VulkanDevice::flushCommandBuffer': redefinition of default argument: parameter 1
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.h(127): note: see declaration of 'ng::vulkan::VulkanDevice::flushCommandBuffer'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(421): warning C4018: '<': signed/unsigned mismatch
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(426): warning C4018: '<': signed/unsigned mismatch
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(431): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(434): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(434): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(438): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(441): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(441): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(445): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(448): warning C4806: '|': unsafe operation: no value of type 'bool' promoted to type 'VkMemoryPropertyFlagBits' can equal the given constant
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(448): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(451): warning C4244: '+=': conversion from 'VkDeviceSize' to 'uint32', possible loss of data
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(492): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(522): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(526): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_device.cpp(544): warning C4806: '&': unsafe operation: no value of type 'ng::vulkan::VulkanDeviceTypeFlags' promoted to type 'ng::vulkan::VulkanDeviceTypeBits' can equal the given constant
+  vulkan_texture.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_texture.h(32): error C2079: 'ng::vulkan::VulkanTexture::textureBuffer' uses undefined class 'ng::vulkan::VulkanBuffer'
+c:\c&c++\libs\gli\include\gli\core\format.inl(27): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(27): error C3646: 'BlockExtent': unknown override specifier
+c:\c&c++\libs\gli\include\gli\core\format.inl(27): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\c&c++\libs\gli\include\gli\core\format.inl(39): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(39): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(40): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(40): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(41): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(41): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(42): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(42): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(43): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(43): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(44): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(44): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(45): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(45): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(46): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(46): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(48): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(48): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(49): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(49): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(50): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(50): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(51): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(51): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(52): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(52): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(53): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(53): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(54): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(54): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(56): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(56): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(57): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(57): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(58): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(58): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(59): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(59): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(60): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(60): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(61): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(61): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(62): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(62): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(64): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(64): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(65): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(65): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(66): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(66): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(67): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(67): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(68): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(68): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(69): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(69): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(70): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(70): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(72): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(72): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(73): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(73): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(74): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(74): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(75): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(75): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(76): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(76): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(77): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(77): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(78): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(78): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(80): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(80): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(81): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(81): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(82): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(82): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(83): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(83): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(84): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(84): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(85): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(85): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(86): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(86): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(88): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(88): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(89): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(89): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(90): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(90): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(91): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(91): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(92): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(92): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(93): error C2039: 'u8vec3': is not a member of 'glm'
+  c:\c&c++\libs\glm\include\glm\ext\vector_uint1_precision.hpp(21): note: see declaration of 'glm'
+c:\c&c++\libs\gli\include\gli\core\format.inl(93): error C3861: 'u8vec3': identifier not found
+c:\c&c++\libs\gli\include\gli\core\format.inl(93): fatal error C1003: error count exceeds 100; stopping compilation
+  vulkan_thread_pool.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(69): error C2365: 'ng::vulkan::VulkanThreadPool::VulkanThread::stop': redefinition; previous definition was 'data member'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(52): note: see declaration of 'ng::vulkan::VulkanThreadPool::VulkanThread::stop'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(70): error C2059: syntax error: '='
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(70): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3927: '->': trailing return type is not allowed after a non-function declarator
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3484: syntax error: expected '->' before the return type
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3613: missing return type after '->' ('int' assumed)
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C3646: 'notify_all': unknown override specifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C2059: syntax error: '('
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(71): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(74): error C2059: syntax error: '}'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(74): error C2143: syntax error: missing ';' before '}'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(74): error C2238: unexpected token(s) preceding ';'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(59): error C3867: 'ng::vulkan::VulkanThreadPool::VulkanThread::run': non-standard syntax; use '&' to create a pointer to member
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2065: 'VulkanThread': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2923: 'std::vector': 'VulkanThread' is not a valid template type argument for parameter '_Ty'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C3203: 'allocator': unspecialized class template can't be used as a template argument for template parameter '_Alloc', expected a real type
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2133: 'ng::vulkan::m_WorkPool': unknown size
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(76): error C2641: cannot deduce template argument for 'std::vector'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(80): error C2059: syntax error: 'public'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(82): error C2059: syntax error: 'const'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(84): error C2059: syntax error: 'const'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2143: syntax error: missing ')' before '&&'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2143: syntax error: missing ';' before '&&'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2059: syntax error: ')'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): error C2059: syntax error: '='
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(87): error C2588: '::~VulkanThreadPool': illegal global destructor
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(87): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(87): error C2373: 'ng::vulkan::VulkanThreadPool': redefinition; different type modifiers
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(85): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(99): error C2653: 'VulkanThreadPool': is not a class or namespace name
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(128): error C2059: syntax error: '}'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(128): error C2143: syntax error: missing ';' before '}'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_tools.h(16): error C2143: syntax error: missing ';' before '{'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_tools.h(16): error C2447: '{': missing function header (old-style formal list?)
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(5): error C2511: 'ng::vulkan::VulkanThreadPool::VulkanThreadPool(const int,ng::vulkan::VulkanDevice *,bool)': overloaded member function not found in 'ng::vulkan::VulkanThreadPool'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(16): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(13): error C2662: 'decltype(auto) std::vector<_Ty,_Alloc>::emplace_back<int&>(int &)': cannot convert 'this' pointer from 'std::vector' to 'std::vector<_Ty,_Alloc> &'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(13): note: Reason: cannot convert from 'std::vector' to 'std::vector<_Ty,_Alloc>'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(13): note: Conversion requires a second user-defined-conversion operator or constructor
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(15): error C2678: binary '[': no operator found which takes a left-hand operand of type 'std::vector' (or there is no acceptable conversion)
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\vector(1813): note: could be 'const _Ty &std::vector<_Ty,_Alloc>::operator [](const vector<_Ty,_Alloc>::_Vector_alloc<std::_Vec_base_types<_Ty,_Alloc>>::size_type) const'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.14.26428\include\vector(1799): note: or       '_Ty &std::vector<_Ty,_Alloc>::operator [](const vector<_Ty,_Alloc>::_Vector_alloc<std::_Vec_base_types<_Ty,_Alloc>>::size_type)'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(15): note: while trying to match the argument list '(std::vector, int)'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(15): error C2228: left of '.commandPool' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(20): error C2600: 'ng::vulkan::VulkanThreadPool::~VulkanThreadPool': cannot define a compiler-generated special member function (must be declared in the class first)
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): error C2662: 'vector<_Ty,_Alloc>::_Vector_alloc<std::_Vec_base_types<_Ty,_Alloc>>::size_type std::vector<_Ty,_Alloc>::size(void) noexcept const': cannot convert 'this' pointer from 'std::vector' to 'const std::vector<_Ty,_Alloc> &'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): note: Reason: cannot convert from 'std::vector' to 'const std::vector<_Ty,_Alloc>'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): note: Conversion requires a second user-defined-conversion operator or constructor
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(21): note: This diagnostic occurred in the compiler generated function 'ng::vulkan::VulkanThreadPool::~VulkanThreadPool(void)'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(26): error C2039: 'shutdown': is not a member of 'ng::vulkan::VulkanThreadPool'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(16): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(29): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(29): error C3312: no callable 'begin' function found for type 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(29): error C3312: no callable 'end' function found for type 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(30): error C2065: 'worker': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(30): error C2228: left of '.stop' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(30): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(33): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(33): error C2228: left of '.size' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(33): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(34): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(34): error C2228: left of '.size' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(34): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(35): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(35): error C2228: left of '.thread' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(35): error C2228: left of '.joinable' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(36): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(36): error C2228: left of '.thread' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(36): error C2228: left of '.join' must have class/struct/union
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): error C2228: left of '.erase' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): error C2228: left of '.begin' must have class/struct/union
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(37): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(44): error C2039: 'getSecondaryCommandBuffer': is not a member of 'ng::vulkan::VulkanThreadPool'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.h(16): note: see declaration of 'ng::vulkan::VulkanThreadPool'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2065: 'm_VulkanDevice': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2227: left of '->createCommandBuffer' must point to class/struct/union/generic type
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): note: type is 'unknown-type'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2065: 'm_WorkPool': undeclared identifier
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\threading\vulkan_thread_pool.cpp(46): error C2228: left of '.commandPool' must have class/struct/union
+  vulkan_debug.cpp
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(126): warning C4065: switch statement contains 'default' but no 'case' labels
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(100): warning C4102: 'caseVK_NOT_READY': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(101): warning C4102: 'caseVK_TIMEOUT': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(102): warning C4102: 'caseVK_EVENT_SET': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(103): warning C4102: 'caseVK_EVENT_RESET': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(104): warning C4102: 'caseVK_INCOMPLETE': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(105): warning C4102: 'caseVK_ERROR_OUT_OF_HOST_MEMORY': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(106): warning C4102: 'caseVK_ERROR_OUT_OF_DEVICE_MEMORY': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(107): warning C4102: 'caseVK_ERROR_INITIALIZATION_FAILED': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(108): warning C4102: 'caseVK_ERROR_DEVICE_LOST': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(109): warning C4102: 'caseVK_ERROR_MEMORY_MAP_FAILED': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(110): warning C4102: 'caseVK_ERROR_LAYER_NOT_PRESENT': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(111): warning C4102: 'caseVK_ERROR_EXTENSION_NOT_PRESENT': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(112): warning C4102: 'caseVK_ERROR_FEATURE_NOT_PRESENT': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(113): warning C4102: 'caseVK_ERROR_INCOMPATIBLE_DRIVER': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(114): warning C4102: 'caseVK_ERROR_TOO_MANY_OBJECTS': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(115): warning C4102: 'caseVK_ERROR_FORMAT_NOT_SUPPORTED': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(116): warning C4102: 'caseVK_ERROR_SURFACE_LOST_KHR': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(117): warning C4102: 'caseVK_ERROR_NATIVE_WINDOW_IN_USE_KHR': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(118): warning C4102: 'caseVK_SUBOPTIMAL_KHR': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(119): warning C4102: 'caseVK_ERROR_OUT_OF_DATE_KHR': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(120): warning C4102: 'caseVK_ERROR_INCOMPATIBLE_DISPLAY_KHR': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(121): warning C4102: 'caseVK_ERROR_VALIDATION_FAILED_EXT': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(122): warning C4102: 'caseVK_ERROR_INVALID_SHADER_NV': unreferenced label
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(131): error C2039: 'exitFatal': is not a member of 'ng::debug'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\debug.h(27): note: see declaration of 'ng::debug'
+c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(131): error C2664: 'void ng::vulkan::debug::exitFatal(std::string,VkResult)': cannot convert argument 2 from 'int32' to 'VkResult'
+  c:\users\turbotage\documents\gitrepos\nextgengine\core\src\vulkan\vulkan_debug.cpp(131): note: Conversion to enumeration type requires an explicit cast (static_cast, C-style cast or function-style cast)
+  Generating Code...

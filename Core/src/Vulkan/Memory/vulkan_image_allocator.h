@@ -6,6 +6,10 @@
 namespace ng {
 	namespace vulkan {
 
+		struct VulkanImageAllocatorCreateInfo {
+			VulkanDevice* vulkanDevice;
+		};
+
 		class VulkanImageAllocator {
 		private:
 			friend class VulkanImage;
@@ -20,7 +24,11 @@ namespace ng {
 
 		public:
 			
-			VulkanImageAllocator(VulkanDevice* vulkanDevice);
+			VulkanImageAllocator();
+
+			VulkanImageAllocator(VulkanImageAllocatorCreateInfo createInfo);
+
+			void create(VulkanImageAllocatorCreateInfo createInfo);
 
 			VulkanImageAllocator(const VulkanImageAllocator& other) = delete;
 

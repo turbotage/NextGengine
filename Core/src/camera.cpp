@@ -14,11 +14,11 @@ Camera::Camera(float fov, float viewDistance, float htwRatio)
 	float r = farPlaneDistance / cos(fieldOfView);
 	halfWidth = sin(fieldOfView) * r;
 	halfHeight = halfWidth * htwRatio;
-	forward = ng::math::Vec3f(0.0f, 0.0f, 1.0f);
-	up = ng::math::Vec3f(0.0f, 1.0f, 0.0f);
-	right = ng::math::Vec3f(1.0f, 0.0f, 0.0f);
+	forward = ngm::Vec3f(0.0f, 0.0f, 1.0f);
+	up = ngm::Vec3f(0.0f, 1.0f, 0.0f);
+	right = ngm::Vec3f(1.0f, 0.0f, 0.0f);
 
-	ng::math::Vec3f temp;
+	ngm::Vec3f temp;
 	temp = (farPlaneDistance * forward);
 	rightPlaneNormal = up.cross(temp + halfWidth*right);
 	leftPlaneNormal = (temp - halfWidth * right).cross(up);
@@ -32,7 +32,7 @@ Camera::~Camera()
 
 }
 
-void Camera::update(ng::math::Vec3f positionChange, ng::math::Quaternion rotationChange)
+void Camera::update(ngm::Vec3f positionChange, ngm::Quaternion rotationChange)
 {
 	Position += positionChange;
 	Rotation *= rotationChange;

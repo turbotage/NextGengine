@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/Vec3f.h"
+#include "vec3f.h"
 
 namespace ng {
 	namespace bvolumes {
@@ -16,16 +16,16 @@ namespace ng {
 			//		6		7
 
 			//is local origin, therefore smaller x is negative x and bigger is positive x, and so on for y and z aswell
-			ng::math::Vec3f* position;
+			ngm::Vec3f* position;
 
-			ng::math::Vec3f max; // +x, +y, +z
-			ng::math::Vec3f min; // -x, -y, -z
+			ngm::Vec3f max; // +x, +y, +z
+			ngm::Vec3f min; // -x, -y, -z
 
 		public:
 
 			AABB();
 
-			AABB(ng::math::Vec3f* position, ng::math::Vec3f max, ng::math::Vec3f min);
+			AABB(ngm::Vec3f* position, ngm::Vec3f max, ngm::Vec3f min);
 
 			~AABB();
 
@@ -51,14 +51,14 @@ namespace ng {
 			float minZ();
 			void setMinZ(float minZ);
 
-			ng::math::Vec3f getPoint0();
-			ng::math::Vec3f getPoint1();
-			ng::math::Vec3f getPoint2();
-			ng::math::Vec3f getPoint3();
-			ng::math::Vec3f getPoint4();
-			ng::math::Vec3f getPoint5();
-			ng::math::Vec3f getPoint6();
-			ng::math::Vec3f getPoint7();
+			ngm::Vec3f getPoint0();
+			ngm::Vec3f getPoint1();
+			ngm::Vec3f getPoint2();
+			ngm::Vec3f getPoint3();
+			ngm::Vec3f getPoint4();
+			ngm::Vec3f getPoint5();
+			ngm::Vec3f getPoint6();
+			ngm::Vec3f getPoint7();
 
 		};
 	}

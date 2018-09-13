@@ -1,16 +1,49 @@
 #include "vulkan_memory_allocator.h"
+#include "vulkan_buffer.h"
 
-ng::vulkan::ng::vulkan::VulkanMemoryAllocator::VulkanMemoryAllocator(VulkanDevice * vulkanDevice)
-	: m_VulkanDevice(vulkanDevice),
-	m_DeviceLocalBufferAllocator(vulkanDevice, m_DefaultDeviceLocalHostVisibleMemFlags, m_DefaultDeviceLocalHostVisibleMemAlignment, m_DefaultDeviceLocalAllocSize),
-	m_DeviceLocalHostVisibleBufferAllocator(vulkanDevice, m_DefaultDeviceLocalHostVisibleMemFlags, m_DefaultDeviceLocalHostVisibleMemAlignment, m_DefaultDeviceLocalHostVisibleAllocSize),
-	m_DeviceLocalImageAllocator(vulkanDevice, m_DefaultDeviceLocalHostVisibleMemFlags, m_DefaultDeviceLocalHostVisibleMemAlignment, m_DefaultDeviceLocalAllocSize),
-	m_DeviceLocalHostVisibleImageAllocator(vulkanDevice, m_DefaultDeviceLocalHostVisibleMemFlags, m_DefaultDeviceLocalHostVisibleMemAlignment, m_DefaultDeviceLocalAllocSize)
+ng::vulkan::ng::vulkan::VulkanMemoryAllocator::VulkanMemoryAllocator()
 {
 
 }
 
-VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createBuffer(VulkanBuffer * buffer, VulkanBufferCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType)
+ng::vulkan::ng::vulkan::VulkanMemoryAllocator::VulkanMemoryAllocator(VulkanMemoryAllocatorCreateInfo createInfo)
+{
+	create(createInfo);
+}
+
+void ng::vulkan::ng::vulkan::VulkanMemoryAllocator::create(VulkanMemoryAllocatorCreateInfo createInfo)
+{
+	if (hasBeenCreated) {
+		return;
+	}
+
+	m_VulkanDevice = createInfo.vulkanDevice;
+
+	VulkanBufferAllocatorCreateInfo bufferAllocatorInfo;
+	bufferAllocatorInfo.vulkanDevice = m_VulkanDevice;
+	bufferAllocatorInfo.memoryFlags = m_DefaultDeviceLocalMemFlags;
+	bufferAllocatorInfo.alignment = m_DefaultDeviceLocalMemAlignment;
+	bufferAllocatorInfo.standardChunkSize = m_DefaultDeviceLocalAllocSize;
+
+	m_DeviceLocalBufferAllocator.create(bufferAllocatorInfo);
+
+	//vulkanDevice is same as earlier, need not be set
+	bufferAllocatorInfo.memoryFlags = m_DefaultDeviceLocalHostVisibleMemFlags;
+	bufferAllocatorInfo.alignment = m_DefaultDeviceLocalHostVisibleMemAlignment;
+	bufferAllocatorInfo.standardChunkSize = m_DefaultDeviceLocalHostVisibleAllocSize;
+
+	m_DeviceLocalBufferAllocator.create(bufferAllocatorInfo);
+
+	VulkanImageAllocatorCreateInfo imageAllocatorInfo;
+	imageAllocatorInfo.vulkanDevice = m_VulkanDevice;
+
+	m_DeviceLocalImageAllocator.create(imageAllocatorInfo);
+
+	m_DeviceLocalHostVisibleImageAllocator.create(imageAllocatorInfo);
+	
+}
+
+VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createBuffer(VulkanBufferCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanBuffer * buffer)
 {
 	if (memoryType == VMA_DEVICE_LOCAL_ONLY) {
 		m_DeviceLocalBufferAllocator.createBuffer(createInfo, buffer);
@@ -20,12 +53,22 @@ VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createBuffer(VulkanBuffe
 	}
 }
 
-VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createImage(VulkanImage * image, VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType)
+VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTexture2D(VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanTexture2D * image)
 {
 	if (memoryType == VMA_DEVICE_LOCAL_ONLY) {
-		m_DeviceLocalImageAllocator.createImage(createInfo, image);
+		m_DeviceLocalImageAllocator.createTexture2D(createInfo, image);
 	}
 	else if (memoryType == VMA_DEVICE_LOCAL_HOST_VISIBLE) {
-		m_DeviceLocalHostVisibleImageAllocator.createImage(createInfo, image);
+		m_DeviceLocalHostVisibleImageAllocator.createTexture2D(createInfo, image);
+	}
+}
+
+VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTextureArray(VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanTextureArray * image)
+{
+	if (memoryType == VMA_DEVICE_LOCAL_ONLY) {
+		m_DeviceLocalImageAllocator.createTextureArray(createInfo, image);
+	}
+	else if (memoryType == VMA_DEVICE_LOCAL_HOST_VISIBLE) {
+		m_DeviceLocalHostVisibleImageAllocator.createTextureArray(createInfo, image);
 	}
 }
