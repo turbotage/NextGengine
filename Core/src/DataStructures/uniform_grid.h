@@ -3,16 +3,17 @@
 #include <unordered_map>
 
 #include "../Entities/model.h"
-#include "../Math/Vec3f.h"
-#include "../Math/hash_functions.h"
-#include "../Math/Vec3f.h"
+#include "vec3f.h"
+#include "vec3s.h"
+#include "hash_functions.h"
+#include "vec3f.h"
 #include "../camera.h"
 
 
 namespace ng {
 	namespace dstructs {
 
-		typedef ngm::Vec3f GridIndex;
+		typedef ngm::Vec3s GridIndex;
 
 		class UniformGrid
 		{

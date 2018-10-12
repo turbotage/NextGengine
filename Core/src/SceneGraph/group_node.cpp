@@ -3,19 +3,12 @@
 
 void ng::scenegraph::GroupNode::setCombinedCenter()
 {
-	m_BoundingSphere.center = ngm::Vec3f(0.0f, 0.0f, 0.0f);
-
-	ngm::Vec3f dirVec;
-	for (int i = 0; i < m_Children.size(); ++i) {
-		m_BoundingSphere.centerPos += (m_Children[i]->getCenterPosition() * m_Children[i]->getBoundingSphereRadius());
-	}
-
-	m_BoundingSphere.centerPos /= (float)m_Children.size();
+	
 }
 
 void ng::scenegraph::GroupNode::onUpdate(float time)
 {
-	setCombinedCenter();
+	
 }
 
 

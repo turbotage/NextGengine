@@ -1,7 +1,7 @@
 #include "oc_tree.h"
 
 
-
+/*
 std::vector<ng::dstructs::OcTree::Node*> ng::dstructs::OcTree::getEnclosedIndices(ng::entity::Object * object)
 {
 	Node* currentNode = startNode;
@@ -18,3 +18,4 @@ std::vector<ng::entity::Object>* ng::dstructs::OcTree::getObjects(std::vector<ui
 		
 	}
 }
+*/

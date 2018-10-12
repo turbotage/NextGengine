@@ -1,6 +1,6 @@
 #include "uniform_grid.h"
 #include <math.h>
-#include "../Math/Vec2f.h"
+#include "vec2f.h"
 
 ng::dstructs::GridIndex getDirection(float pitch, float yaw) {
 

@@ -401,5 +401,7 @@ void ng::vulkan::VulkanTexture2D::free()
 	m_ImageAllocator->freeImage(this);
 }
 
-
-
+std::size_t ng::vulkan::VulkanImage::hash(VulkanImage const & image)
+{
+	return (size_t)image.m_Allocation.get();
+}

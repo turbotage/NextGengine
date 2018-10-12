@@ -15,9 +15,10 @@ namespace ng {
 		class VulkanGraphicsPipeline : public VulkanPipeline
 		{
 		private:
-			VkDevice * Device;
-			Window * Window;
+			VulkanDevice * m_VulkanDevice;
+			Window * m_Window;
 		public:
+
 			std::string pipelineName;
 
 			VkRenderPass renderPass;
@@ -28,7 +29,7 @@ namespace ng {
 			VkShaderModule geometryShader = VK_NULL_HANDLE;
 			VkShaderModule fragShaderModule = VK_NULL_HANDLE;
 
-			void createRenderPass(VkDevice* device, Window* window);
+			void createRenderPass(VulkanDevice* device, Window* window);
 			void freeRenderPass();
 
 			void createGraphicsPipeline(std::vector<std::pair<std::string, NgShaderType>>* shaderPaths);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../def.h"
 #include "camera_node.h"
 
 namespace ng {

@@ -15,6 +15,8 @@ namespace ng {
 		};
 
 		class VulkanBase {
+		private:
+
 		public:
 			//Instance Extensions
 			std::vector<VkExtensionProperties> installedExtensions;

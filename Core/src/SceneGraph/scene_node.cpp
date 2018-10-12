@@ -52,7 +52,7 @@ void ng::scenegraph::SceneNode::rebuildBoundingVolume()
 	m_AABB.setMinZ(zmin);
 }
 
-void ng::scenegraph::SceneNode::updateBoundingVolumes(ng::bvolumes::AABB* updatedAABB = nullptr, bool isLocal = false)
+void ng::scenegraph::SceneNode::updateBoundingVolumes(ng::bvolumes::AABB* updatedAABB, bool isLocal)
 {
 	//if this was the first bv to change just call parent bv change and then return
 	if (isLocal) {
@@ -135,7 +135,7 @@ const ngm::Vec3f& ng::scenegraph::SceneNode::getPosition()
 	return m_Position;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Vec3f& rotationAxis, float angle, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Vec3f& rotationAxis, float angle, bool updateBV)
 {
 	m_WorldTransform *= ngm::Mat4f::rotation(rotationAxis, angle);
 	if (updateBV) {
@@ -144,7 +144,7 @@ const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Vec3f& rotationAx
 	return m_WorldTransform;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Mat4f& rotationMatrix, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Mat4f& rotationMatrix, bool updateBV)
 {
 	m_WorldTransform *= rotationMatrix;
 	if (updateBV) {
@@ -153,7 +153,7 @@ const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Mat4f& rotationMa
 	return m_WorldTransform;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Quaternion& rotationQuaternion, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Quaternion& rotationQuaternion, bool updateBV)
 {
 	m_WorldTransform *= ngm::Mat4f::rotation(rotationQuaternion);
 	if (updateBV) {
@@ -162,7 +162,7 @@ const ngm::Mat4f& ng::scenegraph::SceneNode::rotate(const ngm::Quaternion& rotat
 	return m_WorldTransform;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::rotateAround(const ngm::Vec3f& rotationPoint, const ngm::Vec3f& rotationAxis, float angle, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::rotateAround(const ngm::Vec3f& rotationPoint, const ngm::Vec3f& rotationAxis, float angle, bool updateBV)
 {
 	// T(x, y, z) * R * T(-x, -y, -z)
 	m_WorldTransform *= ngm::Mat4f::translation(rotationPoint);
@@ -174,7 +174,7 @@ const ngm::Mat4f& ng::scenegraph::SceneNode::rotateAround(const ngm::Vec3f& rota
 	return m_WorldTransform;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Vec3f& translation, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Vec3f& translation, bool updateBV)
 {
 	m_WorldTransform *= ngm::Mat4f::translation(translation);
 	if (updateBV) {
@@ -183,7 +183,7 @@ const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Vec3f& transla
 	return m_WorldTransform;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Mat4f& translationMatrix, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Mat4f& translationMatrix, bool updateBV)
 {
 	m_WorldTransform *= translationMatrix;
 	if (updateBV) {
@@ -192,7 +192,7 @@ const ngm::Mat4f& ng::scenegraph::SceneNode::translate(const ngm::Mat4f& transla
 	return m_WorldTransform;
 }
 
-const ngm::Mat4f& ng::scenegraph::SceneNode::transform(const ngm::Mat4f& transformation, bool updateBV = true)
+const ngm::Mat4f& ng::scenegraph::SceneNode::transform(const ngm::Mat4f& transformation, bool updateBV)
 {
 	m_WorldTransform *= transformation;
 	if (updateBV) {

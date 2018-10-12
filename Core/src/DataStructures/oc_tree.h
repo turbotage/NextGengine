@@ -31,9 +31,9 @@ namespace ng {
 
 		public:
 
-			std::vector<Node*> getEnclosedIndices(ng::entity::Object* object);
+			//std::vector<Node*> getEnclosedIndices(ng::entity::Object* object);
 
-			std::vector<ng::entity::Object>* getObjects(std::vector<uint8> nodeIndex);
+			//std::vector<ng::entity::Object>* getObjects(std::vector<uint8> nodeIndex);
 
 
 

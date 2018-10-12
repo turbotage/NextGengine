@@ -6,9 +6,9 @@ namespace ng {
 		namespace debug {
 
 #ifdef NDEBUG
-			const bool enableValidationLayers = false;
+			bool enableValidationLayers = false;
 #else
-			const bool enableValidationLayers = true;
+			bool enableValidationLayers = true;
 #endif
 
 			std::vector<const char*> validationLayers = {
@@ -66,6 +66,11 @@ bool ng::vulkan::debug::checkValidationLayerSupport()
 		}
 	}
 	return true;
+}
+
+void ng::vulkan::debug::setValidationLayers(bool enabled)
+{
+	enableValidationLayers = enabled;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL ng::vulkan::debug::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64 obj, size_t location, int32 code, const char * layerPrefix, const char * msg, void * userData)
@@ -128,5 +133,5 @@ std::string ng::vulkan::debug::errorString(VkResult errorCode)
 
 void ng::vulkan::debug::exitFatal(std::string message, VkResult result)
 {
-	ng::debug::exitFatal(message, (int32)result);
+	tools::exitFatal(message, (int32)result);
 }

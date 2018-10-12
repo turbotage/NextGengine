@@ -51,6 +51,8 @@ VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createBuffer(VulkanBuffe
 	else if (memoryType == VMA_DEVICE_LOCAL_HOST_VISIBLE){
 		m_DeviceLocalHostVisibleBufferAllocator.createBuffer(createInfo, buffer);
 	}
+
+	return VK_SUCCESS;
 }
 
 VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTexture2D(VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanTexture2D * image)
@@ -61,6 +63,8 @@ VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTexture2D(VulkanIm
 	else if (memoryType == VMA_DEVICE_LOCAL_HOST_VISIBLE) {
 		m_DeviceLocalHostVisibleImageAllocator.createTexture2D(createInfo, image);
 	}
+
+	return VK_SUCCESS;
 }
 
 VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTextureArray(VulkanImageCreateInfo createInfo, eVulkanMemoryAllocatorMemoryType memoryType, VulkanTextureArray * image)
@@ -71,4 +75,6 @@ VkResult ng::vulkan::ng::vulkan::VulkanMemoryAllocator::createTextureArray(Vulka
 	else if (memoryType == VMA_DEVICE_LOCAL_HOST_VISIBLE) {
 		m_DeviceLocalHostVisibleImageAllocator.createTextureArray(createInfo, image);
 	}
+
+	return VK_SUCCESS;
 }

@@ -81,8 +81,21 @@ namespace ng {
 				m_StagingAllocation.reset();
 			}
 
+			/* if two vulkan-buffers uses the same stagingchunk, their hashes will be equal  */
+			static std::size_t hash(VulkanBuffer const& buffer) {
+				return (size_t)(buffer.m_StagingChunk);
+			}
+
 		};
 
 	}
+}
+
+namespace std {
+	template<> struct hash<ng::vulkan::VulkanBuffer> {
+		size_t operator()(ng::vulkan::VulkanBuffer const& buffer) const {
+			return ng::vulkan::VulkanBuffer::hash(buffer);
+		}
+	};
 }
 

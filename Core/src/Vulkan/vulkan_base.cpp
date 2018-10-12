@@ -41,7 +41,7 @@ void ng::vulkan::VulkanBase::createInstance(std::vector<const char*> requiredExt
 void ng::vulkan::VulkanBase::createDebugCallback()
 {
 	debugReportFlags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
-	debug::setupDebugging(instance, debugReportFlags, debugReportCallback);
+	ng::vulkan::debug::setupDebugging(instance, debugReportFlags, debugReportCallback);
 }
 
 ng::vulkan::VulkanBase::VulkanBase()

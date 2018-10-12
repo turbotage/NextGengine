@@ -106,6 +106,8 @@ namespace ng {
 
 			virtual void free() = 0;
 
+			static std::size_t hash(VulkanImage const& image);
+
 		};
 
 		typedef VulkanImage VulkanTexture;
@@ -125,6 +127,7 @@ namespace ng {
 			void freeFromDevice() override;
 
 			void free() override;
+
 		};
 
 		class VulkanTextureArray : VulkanImage {

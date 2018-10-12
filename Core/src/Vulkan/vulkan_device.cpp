@@ -155,8 +155,8 @@ std::pair<int32, int32> ng::vulkan::VulkanDevice::getGraphicsAndPresentQueueFami
 
 void ng::vulkan::VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures,
 	std::vector<const char*> enabledExtensions,
-	VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT,
-	VkSurfaceKHR surface = nullptr
+	VkQueueFlags requestedQueueTypes,
+	VkSurfaceKHR surface
 )
 {
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
@@ -270,7 +270,7 @@ VkCommandPool ng::vulkan::VulkanDevice::createCommandPool(uint32 queueFamilyInde
 	return cmdPool;
 }
 
-VkCommandBuffer ng::vulkan::VulkanDevice::createCommandBuffer(VkCommandBufferLevel level, VkCommandPool commandPool, bool begin = false)
+VkCommandBuffer ng::vulkan::VulkanDevice::createCommandBuffer(VkCommandBufferLevel level, VkCommandPool commandPool, bool begin)
 {
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
 	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -311,7 +311,7 @@ std::vector<VkCommandBuffer> ng::vulkan::VulkanDevice::createCommandBuffers(VkCo
 	return commandBuffers;
 }
 
-void ng::vulkan::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free = true)
+void ng::vulkan::VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffer, VkCommandPool commandPool, VkQueue queue, bool free)
 {
 	if (commandBuffer == VK_NULL_HANDLE) {
 		return;
@@ -413,6 +413,7 @@ VkResult ng::vulkan::VulkanDevice::copyDataToBuffer(VkBuffer dstBuffer, VkDevice
 	vkDestroyBuffer(logicalDevice, stagingBuffer, nullptr);
 	vkFreeMemory(logicalDevice, stagingBufferMemory, nullptr);
 
+	return VK_SUCCESS;
 }
 
 uint32 ng::vulkan::VulkanDevice::getMemoryScore()

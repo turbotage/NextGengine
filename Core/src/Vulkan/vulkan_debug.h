@@ -13,6 +13,9 @@ namespace ng {
 
 			bool checkValidationLayerSupport();
 
+			/* should only be set once before enabaling debugging */
+			void setValidationLayers(bool enabled);
+
 			std::vector<const char*> getDebugValidationLayers();
 
 			VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

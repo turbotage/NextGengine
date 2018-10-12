@@ -1,11 +1,11 @@
 #include "vulkan_graphics_pipeline.h"
 
-void ng::vulkan::VulkanGraphicsPipeline::createRenderPass(VkDevice* device, Window* window)
+void ng::vulkan::VulkanGraphicsPipeline::createRenderPass(VulkanDevice* device, Window* window)
 {
-	Window = window;
-	Device = device;
+	m_Window = window;
+	m_VulkanDevice = device;
 	VkAttachmentDescription colorAttachment = {};
-	colorAttachment.format = Window->swapChainImageFormat;
+	colorAttachment.format = m_Window->swapChainImageFormat;
 	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -30,7 +30,7 @@ void ng::vulkan::VulkanGraphicsPipeline::createRenderPass(VkDevice* device, Wind
 	renderPassInfo.subpassCount = 1;
 	renderPassInfo.pSubpasses = &subpass;
 
-	if (vkCreateRenderPass(*Device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+	if (vkCreateRenderPass(m_VulkanDevice->logicalDevice, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create render pass!");
 	}
 
@@ -38,7 +38,7 @@ void ng::vulkan::VulkanGraphicsPipeline::createRenderPass(VkDevice* device, Wind
 
 void ng::vulkan::VulkanGraphicsPipeline::freeRenderPass()
 {
-	vkDestroyRenderPass(*Device, renderPass, nullptr);
+	vkDestroyRenderPass(m_VulkanDevice->logicalDevice, renderPass, nullptr);
 }
 
 void ng::vulkan::VulkanGraphicsPipeline::createGraphicsPipeline(std::vector<std::pair<std::string, NgShaderType>>* shaderPaths)
@@ -48,20 +48,20 @@ void ng::vulkan::VulkanGraphicsPipeline::createGraphicsPipeline(std::vector<std:
 		{
 		case ng::vulkan::VERTEX_SHADER_BIT:
 		{
-			auto vertCode = readFile(shaderPath.first);
-			vertShaderModule = createShaderModule(Device, vertCode);
+			auto vertCode = tools::readFile(shaderPath.first);
+			vertShaderModule = createShaderModule(m_Device, vertCode);
 		}
 			break;
 		case ng::vulkan::TESSELLATION_SHADER_BIT:
 		{
-			auto tessellCode = readFile(shaderPath.first);
-			tessellShaderModule = createShaderModule(Device, tessellCode);
+			auto tessellCode = tools::readFile(shaderPath.first);
+			tessellShaderModule = createShaderModule(m_Device, tessellCode);
 		}
 			break;
 		case ng::vulkan::FRAGMENT_SHADER_BIT:
 		{
-			auto fragCode = readFile(shaderPath.first);
-			fragShaderModule = createShaderModule(Device, fragCode);
+			auto fragCode = tools::readFile(shaderPath.first);
+			fragShaderModule = createShaderModule(m_Device, fragCode);
 		}
 			break;
 		default:
@@ -98,14 +98,14 @@ void ng::vulkan::VulkanGraphicsPipeline::createGraphicsPipeline(std::vector<std:
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float)Window->swapChainExtent.width;
-	viewport.height = (float)Window->swapChainExtent.height;
+	viewport.width = (float)m_Window->swapChainExtent.width;
+	viewport.height = (float)m_Window->swapChainExtent.height;
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
 	VkRect2D scissor = {};
 	scissor.offset = { 0, 0 };
-	scissor.extent = Window->swapChainExtent;
+	scissor.extent = m_Window->swapChainExtent;
 
 	VkPipelineViewportStateCreateInfo viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -174,7 +174,7 @@ void ng::vulkan::VulkanGraphicsPipeline::createGraphicsPipeline(std::vector<std:
 	pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 	pipelineLayoutInfo.pPushConstantRanges = 0; // Optional
 
-	if (vkCreatePipelineLayout(*Device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+	if (vkCreatePipelineLayout(*m_Device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
 
@@ -197,22 +197,22 @@ void ng::vulkan::VulkanGraphicsPipeline::createGraphicsPipeline(std::vector<std:
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.basePipelineIndex = -1;
-	if (vkCreateGraphicsPipelines(*Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+	if (vkCreateGraphicsPipelines(*m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create graphics pipeline");
 	}
 }
 
 void ng::vulkan::VulkanGraphicsPipeline::freeGraphicsPipeline()
 {
-	vkDestroyPipeline(*Device, graphicsPipeline, nullptr);
-	vkDestroyPipelineLayout(*Device, pipelineLayout, nullptr);
+	vkDestroyPipeline(*m_Device, m_Pipeline, nullptr);
+	vkDestroyPipelineLayout(*m_Device, pipelineLayout, nullptr);
 	if (vertShaderModule != VK_NULL_HANDLE) {
-		vkDestroyShaderModule(*Device, vertShaderModule, nullptr);
+		vkDestroyShaderModule(*m_Device, vertShaderModule, nullptr);
 	}
 	if (tessellShaderModule != VK_NULL_HANDLE) {
-		vkDestroyShaderModule(*Device, tessellShaderModule, nullptr);
+		vkDestroyShaderModule(*m_Device, tessellShaderModule, nullptr);
 	}
 	if (fragShaderModule != VK_NULL_HANDLE) {
-		vkDestroyShaderModule(*Device, fragShaderModule, nullptr);
+		vkDestroyShaderModule(*m_Device, fragShaderModule, nullptr);
 	}
 }

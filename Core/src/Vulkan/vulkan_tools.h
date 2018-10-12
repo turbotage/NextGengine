@@ -19,6 +19,7 @@ namespace ng {
 		class VulkanTools
 		{
 		public:
+
 			VulkanTools();
 			~VulkanTools();
 

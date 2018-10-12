@@ -49,6 +49,8 @@ namespace ng {
 			std::vector<VkImage> images;
 			std::vector<SwapchainBuffer> buffers;
 
+			
+
 			uint32 queueNodeIndex = UINT32_MAX;
 
 		public:

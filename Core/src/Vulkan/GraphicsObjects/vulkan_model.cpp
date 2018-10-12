@@ -1,5 +1,5 @@
 #include "vulkan_model.h"
-#include "../../Math/hash_functions.h"
+#include "hash_functions.h"
 
 void ng::vulkan::VulkanModel::init(VulkanBase* vulkanBase, VkDescriptorSetLayout * descriptorSetLayout)
 {
@@ -29,7 +29,7 @@ ng::vulkan::VulkanModel ng::vulkan::VulkanModel::operator=(const VulkanModel & m
 
 std::size_t ng::vulkan::VulkanModel::hash(VulkanModel const & model)
 {
-	std::size_t ret = VulkanBuffer::hash(model.VIBO);
-	ngm::hashCombine(ret, ng::vulkan::VulkanTexture::hash(model.textureArray));
+	size_t ret = VulkanBuffer::hash(model.VIBO);
+	ngm::hashCombine(ret, ng::vulkan::VulkanTexture::hash(model.texture));
 	return ret;
 }

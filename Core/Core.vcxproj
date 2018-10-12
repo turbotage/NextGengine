@@ -68,6 +68,7 @@
     <ClCompile Include="tools.cpp" />
     <ClCompile Include="src\Vulkan\Threading\vulkan_thread_pool.cpp" />
     <ClCompile Include="src\Vulkan\vulkan_debug.cpp" />
+    <ClCompile Include="src\Vulkan\vulkan_application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Vulkan\Memory\vulkan_buffer.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="tools.h" />
     <ClInclude Include="src\Vulkan\Threading\vulkan_thread_pool.h" />
     <ClInclude Include="src\Vulkan\vulkan_debug.h" />
+    <ClInclude Include="src\Vulkan\vulkan_application.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CompiledShaders\frag.spv" />
