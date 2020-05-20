@@ -13,8 +13,6 @@ namespace ngv {
 
 	/*  TEXTURES  */
 
-	using MipData = std::pair<vk::Extent3D, vk::DeviceSize>;
-
 	class VulkanImageAllocation;
 
 	struct VulkanImageCreateInfo {
@@ -73,7 +71,7 @@ namespace ngv {
 	};
 
 
-	class VulkanBufferAllocations;
+	class VulkanBufferAllocation;
 
 	struct VulkanBufferCreateInfo {
 		vk::BufferCreateInfo bufferCreateInfo;
@@ -102,15 +100,14 @@ namespace ngv {
 	private:
 
 	private:
+		friend class VulkanAllocator;
 
 		VulkanBufferCreateInfo m_CreateInfo;
 
-		std::weak_ptr<VulkanBufferAllocation> m_Allocations;
+		std::weak_ptr<VulkanBufferAllocation> m_pAllocation;
 
-		std::shared_ptr<std::set<VulkanImage*>> m_pBuffers;
+		std::shared_ptr<std::set<VulkanBuffer*>> m_pBuffers;
 
 	};
-
-
 }
 
