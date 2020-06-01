@@ -15,6 +15,16 @@ vk::DeviceSize ngv::VulkanAllocator::getAlignedSize(vk::DeviceSize size, vk::Dev
 	return size;
 }
 
+vk::DeviceSize ngv::VulkanAllocator::getRecommendedPageSize(vk::BufferUsageFlags usageFlags)
+{
+	if (usageFlags & vk::BufferUsageFlagBits::eVertexBuffer) {
+
+	}
+	else if (usageFlags & vk::BufferUsageFlagBits::eRayTracingKHR) {
+
+	}
+}
+
 
 
 void ngv::VulkanAllocator::init(VulkanAllocatorCreateInfo createInfo)
@@ -110,7 +120,9 @@ bool ngv::VulkanAllocator::giveImageAllocation(VulkanImage& image)
 	if (foundPageList != nullptr) { //there are similar image pages
 		if (foundPageCanAllocate) { //there are similar image pages that can allocate for this image
 			auto it = findImagePage(image.m_CreateInfo, foundPageList, result);
-			image.m_pAllocation = it->getAllocation();
+			auto temp = it->getAllocation();
+			temp->images.insert(&image);
+			image.m_pAllocation = temp;
 			return true;
 		}
 		else { //there are similar image pages but none that can allocate
@@ -118,7 +130,9 @@ bool ngv::VulkanAllocator::giveImageAllocation(VulkanImage& image)
 			if (result != vk::Result::eSuccess) {
 				return false;
 			}
-			image.m_pAllocation = it->getAllocation();
+			auto temp = it->getAllocation();
+			temp->images.insert(&image);
+			image.m_pAllocation = temp;
 			return true;
 		}
 	}
@@ -127,8 +141,10 @@ bool ngv::VulkanAllocator::giveImageAllocation(VulkanImage& image)
 		if (result != vk::Result::eSuccess) {
 			return false;
 		}
-		image.m_pAllocation = it->getAllocation();
-
+		auto temp = it->getAllocation();
+		temp->images.insert(&image);
+		image.m_pAllocation = temp;
+		return true;
 	}
 
 }
@@ -159,6 +175,7 @@ bool ngv::VulkanAllocator::giveBufferAllocation(VulkanBuffer& buffer)
 	bool inDevice = true;
 
 	bool foundPage = false;
+	bool foundPageCanAllocate = false;
 	VulkanBufferPage* pFoundPage;
 
 	std::list<VulkanBufferPage>& searchList = m_DeviceBufferPages;
@@ -167,11 +184,28 @@ bool ngv::VulkanAllocator::giveBufferAllocation(VulkanBuffer& buffer)
 		searchList = m_HostBufferPages;
 	}
 	for (auto& page : searchList) {
-		page.isSuitable(buffer.m_CreateInfo);
-		if (page.enoughSpaceWithoutDefrag(buffer.m_CreateInfo.bufferCreateInfo.size)) {
+		if (page.isSuitable(buffer.m_CreateInfo)) {
 			foundPage = true;
 			pFoundPage = &page;
+			if (page.enoughSpaceWithoutDefrag(buffer.m_CreateInfo.bufferCreateInfo.size)) {
+				foundPageCanAllocate = true;
+			}
 		}
+	}
+
+	if (foundPage) {
+		if (foundPageCanAllocate) {
+			auto temp = pFoundPage->getAllocation(buffer.m_CreateInfo.bufferCreateInfo.size);
+			temp->buffers.insert(&buffer);
+			buffer.m_pAllocation = temp;
+			return true;
+		}
+		else {
+
+		}
+	}
+	else {
+
 	}
 
 }
@@ -299,6 +333,11 @@ std::list<ngv::VulkanImagePage>::iterator ngv::VulkanAllocator::createImagePage(
 
 }
 
+std::list<ngv::VulkanBufferPage>::iterator ngv::VulkanAllocator::createBufferPage(const VulkanBufferCreateInfo& createInfo, vk::Result& result, bool inDevice)
+{
+	
+}
+
 std::list<ngv::VulkanImagePage>::iterator ngv::VulkanAllocator::findImagePage(const VulkanImageCreateInfo& createInfo, std::shared_ptr<std::list<VulkanImagePage>> pPageList, vk::Result& result)
 {
 	// TODO: choose the one that already has the most allocations used
@@ -373,6 +412,14 @@ ngv::VulkanBufferAllocation::VulkanBufferAllocation() {}
 
 ngv::VulkanBufferPage::VulkanBufferPage() {}
 
+std::shared_ptr<ngv::VulkanBufferAllocation> ngv::VulkanBufferPage::getAllocation(vk::DeviceSize requiredSize)
+{
+	auto ret = std::make_shared<VulkanBufferAllocation>();
+	ret->pBufferPage = this;
+	ret->freeAllocation = this->allocator.allocate(requiredSize);
+
+}
+
 bool ngv::VulkanBufferPage::isSuitable(const VulkanBufferCreateInfo& createInfo)
 {
 	if ((createInfo.memoryPropertyFlags == memoryPage->memoryPropertyFlags) &&
@@ -393,11 +440,6 @@ bool ngv::VulkanBufferPage::enoughSpaceWithoutDefrag(vk::DeviceSize requiredSize
 bool ngv::VulkanBufferPage::enoughSpace(vk::DeviceSize requiredSize)
 {
 	return allocator.enoughSpace(requiredSize);
-}
-
-vk::DeviceSize ngv::VulkanBufferPage::getAlignedSize(vk::DeviceSize unalignedSize)
-{
-	return vk::DeviceSize();
 }
 
 

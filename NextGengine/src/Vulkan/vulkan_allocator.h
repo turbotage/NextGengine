@@ -106,6 +106,8 @@ namespace ngv {
 
 		static vk::DeviceSize getAlignedSize(vk::DeviceSize size, vk::DeviceSize alignment);
 
+		static vk::DeviceSize getRecommendedPageSize(vk::BufferUsageFlags usageFlags);
+
 	private:
 
 		/* <--------- CREATE MEMORY PAGES ----------> */
@@ -120,8 +122,6 @@ namespace ngv {
 		/* <--------- FIND ITERATORS -----------> */
 		std::list<VulkanImagePage>::iterator findImagePage(const VulkanImageCreateInfo& createInfo, 
 			std::shared_ptr<std::list<VulkanImagePage>> pPageList, vk::Result& result);
-
-		std::list<VulkanBufferPage>::iterator findBufferPage(const VulkanBufferCreateInfo& createInfo, vk::Result& result);
 
 		std::list<VulkanUniformBufferPage>::iterator findUniformBufferPage(const VulkanUniformBufferCreateInfo& createInfo,
 			std::shared_ptr<std::list<VulkanUniformBufferPage>> pPageList, vk::Result& result);
@@ -251,7 +251,7 @@ namespace ngv {
 
 		VulkanBufferPage* pBufferPage;
 
-		VulkanFreeAllocation freeAllocations;
+		VulkanFreeAllocation freeAllocation;
 
 		std::set<VulkanBuffer*> buffers;
 
@@ -262,6 +262,8 @@ namespace ngv {
 	class VulkanBufferPage {
 	public:
 		VulkanBufferPage();
+
+		std::shared_ptr<VulkanBufferAllocation> getAllocation(vk::DeviceSize requiredSize);
 
 		bool isSuitable(const VulkanBufferCreateInfo& createInfo);
 
