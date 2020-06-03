@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.8)
 
 
 # Add source to this project's executable.
-set(SOURCES "src/NextGengine.cpp" "src/NextGengine.h" "src/Vulkan/vulkan_context.cpp" "src/Vulkan/vulkan_window.cpp" "src/Vulkan/vulkan_debug.cpp" "src/Vulkan/vulkan_swapchain.cpp" "src/Vulkan/vulkan_allocator.cpp" "src/Vulkan/vulkan_storage.cpp" "src/Vulkan/vulkan_abstract_allocators.cpp")
+set(SOURCES "src/NextGengine.cpp" "src/NextGengine.h" "src/Vulkan/vulkan_context.cpp" "src/Vulkan/vulkan_window.cpp" "src/Vulkan/vulkan_debug.cpp" "src/Vulkan/vulkan_swapchain.cpp" "src/Vulkan/vulkan_allocator.cpp" "src/Memory/abstract_allocators.cpp")
 
 add_executable (NextGengine ${SOURCES})
 

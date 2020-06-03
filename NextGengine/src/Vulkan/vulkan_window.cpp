@@ -1,5 +1,4 @@
 #include "vulkan_window.h"
-#include "vulkan_window.h"
 
 #include "vulkandef.h"
 

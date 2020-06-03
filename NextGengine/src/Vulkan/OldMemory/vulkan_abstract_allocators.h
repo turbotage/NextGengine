@@ -48,6 +48,7 @@ namespace ngv {
 
 	/* Free Allocator */
 
+	//size must always be a multiple of blockSize
 	struct VulkanFreeAllocatorCreateInfo {
 		vk::DeviceSize size;
 		vk::DeviceSize blockSize;
