@@ -1,10 +1,58 @@
 #include "abstract_allocators.h"
+#include "abstract_allocators.h"
+#include "abstract_allocators.h"
+#include "abstract_allocators.h"
+#include "abstract_allocators.h"
+#include "abstract_allocators.h"
+#include "abstract_allocators.h"
+#include "abstract_allocators.h"
 
-ng::AbstractFreeListAllocator::AbstractFreeListAllocator(uint64 size)
+// <====================== ABSTRACT FREE LIST ALLOCATION ============================>
+// public
+uint64 ng::AbstractFreeListAllocation::getSize() {
+	return m_Size;
+}
+
+uint64 ng::AbstractFreeListAllocation::getOffset()
 {
-	this->m_Size = size;
-	m_FreeBlocksByOffset.emplace(0, size);
-	m_FreeBlocksBySize.emplace(size, 0);
+	return m_AlignedOffset;
+}
+
+uint64 ng::AbstractFreeListAllocation::getTotalSize()
+{
+	return m_TotalSize;
+}
+
+uint64 ng::AbstractFreeListAllocation::getPaddedOffset()
+{
+	return m_PaddingOffset;
+}
+
+std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocation::make(const std::shared_ptr<AbstractFreeListAllocator> pAllocator)
+{
+	return std::unique_ptr<AbstractFreeListAllocation>(new AbstractFreeListAllocation(pAllocator));
+}
+
+ng::AbstractFreeListAllocation::~AbstractFreeListAllocation()
+{
+	if (auto spt = m_pAllocator.lock()) {
+		spt->free(shared_from_this());
+	}
+}
+
+//private
+ng::AbstractFreeListAllocation::AbstractFreeListAllocation(const std::shared_ptr<AbstractFreeListAllocator> pAllocator)
+{
+	m_pAllocator = pAllocator;
+}
+
+
+
+// <======================= ABSTRACT FREE LIST ALLOCATOR =================================>
+// public
+std::unique_ptr<AbstractFreeListAllocator> ng::AbstractFreeListAllocator::make(uint64 size)
+{
+	return std::unique_ptr<AbstractFreeListAllocator>(new AbstractFreeListAllocator(size));
 }
 
 bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
@@ -16,14 +64,15 @@ bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
 	return false;
 }
 
-bool ng::AbstractFreeListAllocator::allocate(uint64 size, uint64 alignment, std::shared_ptr<AbstractFreeListAllocation> pAlloc)
+std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::allocate(uint64 size, uint64 alignment)
 {
 	auto freeBlock = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (freeBlock != m_FreeBlocksBySize.end()) {
-		pAlloc->paddingOffset = freeBlock->second; // freeBlock offset
-		pAlloc->alignedOffset = (freeBlock->second + alignment) - (freeBlock->second % alignment);
-		pAlloc->totalSize = size + (pAlloc->alignedOffset - pAlloc->paddingOffset);
-		pAlloc->size = size;
+		std::unique_ptr<AbstractFreeListAllocation> pAlloc = std::make_unique<AbstractFreeListAllocation>(shared_from_this());
+		pAlloc->m_PaddingOffset = freeBlock->second; // freeBlock offset
+		pAlloc->m_AlignedOffset = (freeBlock->second + alignment) - (freeBlock->second % alignment);
+		pAlloc->m_TotalSize = size + (pAlloc->alignedOffset - pAlloc->paddingOffset);
+		pAlloc->m_Size = size;
 
 		uint64_t newFreeBlockOffset = (pAlloc->alignedOffset + pAlloc->size);
 		uint64_t newFreeBlockSize = (freeBlock->first + freeBlock->second) - newFreeBlockOffset;
@@ -39,12 +88,20 @@ bool ng::AbstractFreeListAllocator::allocate(uint64 size, uint64 alignment, std:
 		}
 
 		m_UsedBlocksByOffset.emplace(pAlloc->paddingOffset, pAlloc->totalSize);
+		return pAlloc;
 	}
-	return false;
+	return nullptr;
 }
 
 bool ng::AbstractFreeListAllocator::free(std::shared_ptr<AbstractFreeListAllocation> pAlloc)
 {
+	//check that this allocation isn't from another allocator (or from no allocator)
+	{
+		if (pAlloc.get() != this) {
+			return false;
+		}
+	}
+
 	auto usedBlock = m_UsedBlocksByOffset.find(pAlloc->paddingOffset);
 	if (usedBlock != m_UsedBlocksByOffset.end()) {
 		// 4 cases (1: nether left block nor right block is free) (2: left block is free right block isn't) 
@@ -144,10 +201,11 @@ bool ng::AbstractFreeListAllocator::free(std::shared_ptr<AbstractFreeListAllocat
 		m_FreeBlocksByOffset.emplace(newFreeBlockOffset, newFreeBlockSize);
 
 		// reset allocation
-		pAlloc->alignedOffset = 0;
-		pAlloc->paddingOffset = 0;
-		pAlloc->totalSize = 0;
-		pAlloc->size = 0;
+		pAlloc->m_pAllocator.reset();
+		pAlloc->m_AlignedOffset = 0;
+		pAlloc->m_PaddingOffset = 0;
+		pAlloc->m_TotalSize = 0;
+		pAlloc->m_Size = 0;
 
 		return true;
 	}
@@ -170,4 +228,12 @@ std::string ng::AbstractFreeListAllocator::getFreeBlocksString()
 		ret += std::string(" (") + std::to_string(block.first) + std::string(",") + std::to_string(block.second) + std::string(") ");
 	}
 	return ret;
+}
+
+
+ng::AbstractFreeListAllocator::AbstractFreeListAllocator(uint64 size)
+{
+	this->m_Size = size;
+	m_FreeBlocksByOffset.emplace(0, size);
+	m_FreeBlocksBySize.emplace(size, 0);
 }

@@ -1,13 +1,18 @@
 ﻿# CMakeList.txt : CMake project for NextGengine, include source and define
 # project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
 
+
+cmake_minimum_required (VERSION 3.14)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Add source to this project's executable.
-set(SOURCES "src/NextGengine.cpp" "src/NextGengine.h" "src/Vulkan/vulkan_context.cpp" "src/Vulkan/vulkan_window.cpp" "src/Vulkan/vulkan_debug.cpp" "src/Vulkan/vulkan_swapchain.cpp" "src/Vulkan/vulkan_allocator.cpp" "src/Memory/abstract_allocators.cpp")
+set(SOURCES  "NextGengine.h")
 
-add_executable (NextGengine ${SOURCES})
+add_library(NextGengine ${SOURCES})
+add_subdirectory("src")
 
 # Vulkan
 find_package(Vulkan REQUIRED)
@@ -37,3 +42,4 @@ target_link_libraries(NextGengine glm)
 #dissable compiling unecessary glm stuff
 add_subdirectory("lib/gli")
 target_link_libraries(NextGengine gli)
+

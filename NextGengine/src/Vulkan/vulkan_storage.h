@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../def.h"
 #include "vulkandef.h"
-#include "vulkan_allocator.h"
 
 #include <list>
 
@@ -13,7 +13,10 @@ namespace ngv {
 
 	/*  TEXTURES  */
 
-	class VulkanImageAllocation;
+
+	class VulkanAllocator;
+	class VulkanMemoryPage;
+	class VulkanMemoryAllocation;
 
 	struct VulkanImageCreateInfo {
 		vk::ImageCreateInfo imageCreateInfo;
@@ -30,62 +33,44 @@ namespace ngv {
 	class VulkanImage {
 	public:
 
-		VulkanImage();
+		static std::unique_ptr<VulkanImage> make();
 
-		VulkanImage(VulkanImage& image);
-
-		~VulkanImage();
-
-		vk::ImageCreateInfo getImageCreateInfo();
-
-		vk::MemoryPropertyFlags getMemoryPropertyFlags();
-
-		bool hasAllocation();
-
-		bool hasSameAllocation(VulkanImage& image);
-
-		/* Swap two allocations */
-		bool swapAllocation(VulkanImage& withAllocation);
-
-		/* Uploads the image-data to the allocation, note that this will effect every image that references the same allocation*/
-		bool upload(vk::CommandBuffer, const VulkanAllocator& allocator, const void* data, const vk::ImageLayout layout);
-
-
+		~VulkanImage() = default;
 
 		static ImageBlockParams getBlockParams(vk::Format format);
 
 		static uint32 mipScale(uint32 value, uint32 mipLevel);
 
+		vk::ImageCreateInfo ngv::VulkanImage::getImageCreateInfo();
+
+		vk::MemoryPropertyFlags ngv::VulkanImage::getMemoryPropertyFlags();
+
 	private:
 
 	private:
 		friend class VulkanAllocator;
+		
+		vk::ImageCreateInfo m_ImageCreateInfo;
+		vk::MemoryPropertyFlags m_MemoryPropertyFlags;
 
-		VulkanImageCreateInfo m_CreateInfo;
 
-		std::weak_ptr<VulkanImageAllocation> m_pAllocation;
+		vk::ImageViewType m_ViewType;
 
-		std::shared_ptr<std::set<VulkanImage*>> m_pImages;
 
 
 	};
-
-
-	class VulkanBufferAllocation;
 
 	struct VulkanBufferCreateInfo {
 		vk::BufferCreateInfo bufferCreateInfo;
 		vk::MemoryPropertyFlags memoryPropertyFlags;
 	};
 
-	class VulkanBuffer {
+	class VulkanBuffer : public ng::MakeConstructed<VulkanBuffer> {
 	public:
 
-		VulkanBuffer();
+		static std::unique_ptr<VulkanBuffer> make();
 
-		VulkanBuffer(VulkanBuffer& buffer);
-
-		~VulkanBuffer();
+		~VulkanBuffer() = default; // allocations should be RAII deallocated
 
 		vk::BufferCreateInfo getBufferCreateInfo();
 
@@ -93,20 +78,27 @@ namespace ngv {
 
 		bool hasAllocation();
 
-		bool hasSameAllocation(VulkanBuffer& buffer);
+		bool hasSameAllocation(std::raw_ptr<VulkanBuffer> buffer);
 
 		bool swapAllocation(VulkanBuffer& withAllocation);
 
 	private:
+		VulkanBuffer() = default;
+		VulkanBuffer(const VulkanBuffer&) = delete;
+		VulkanBuffer& operator=(const VulkanBuffer&) = delete;
 
 	private:
 		friend class VulkanAllocator;
+		vk::BufferCreateInfo m_BufferCreateInfo;
+		vk::MemoryPropertyFlags m_MemoryPropertyFlags;
 
-		VulkanBufferCreateInfo m_CreateInfo;
+		vk::UniqueBuffer m_Buffer;
+		vk::MemoryRequirements m_MemoryRequirements;
+		uint32 m_MemoryTypeIndex;
 
-		std::weak_ptr<VulkanBufferAllocation> m_pAllocation;
 
-		std::shared_ptr<std::set<VulkanBuffer*>> m_pBuffers;
+		std::unique_ptr<VulkanMemoryAllocation> m_pAllocation;
+		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
 
 	};
 }

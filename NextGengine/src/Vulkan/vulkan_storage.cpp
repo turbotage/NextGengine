@@ -1,79 +1,13 @@
 #include "vulkan_storage.h"
 
-#include <set>
+#include "vulkan_allocator.h"
 
 
-ngv::VulkanImage::VulkanImage()
+
+
+std::unique_ptr<ngv::VulkanImage> ngv::VulkanImage::make()
 {
-	m_pImages = std::make_shared<std::set<VulkanImage*>>();
-	m_pImages->insert(this);
-}
-
-ngv::VulkanImage::VulkanImage(VulkanImage& image)
-{
-	m_pImages->erase(this);
-	m_pImages = image.m_pImages;
-	m_pImages->insert(this);
-	m_pAllocation = image.m_pAllocation;
-	m_CreateInfo = image.m_CreateInfo;
-}
-
-ngv::VulkanImage::~VulkanImage()
-{
-	m_pImages->erase(this);
-}
-
-vk::ImageCreateInfo ngv::VulkanImage::getImageCreateInfo()
-{
-	return m_CreateInfo.imageCreateInfo;
-}
-
-vk::MemoryPropertyFlags ngv::VulkanImage::getMemoryPropertyFlags()
-{
-	return m_CreateInfo.memoryPropertyFlags;
-}
-
-bool ngv::VulkanImage::hasAllocation()
-{
-	if (m_pAllocation.lock()) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool ngv::VulkanImage::hasSameAllocation(VulkanImage& image)
-{
-	if (m_pAllocation.lock() == image.m_pAllocation.lock()) {
-		return true;
-	}
-	return false;
-}
-
-bool ngv::VulkanImage::swapAllocation(VulkanImage& withAllocation)
-{
-	// swap allocation 
-	std::weak_ptr<VulkanImageAllocation> tempAlloc = withAllocation.m_pAllocation.lock();
-	// set the images in the other image chain to point to this allocation
-	for (auto& image : *withAllocation.m_pImages) {
-		image->m_pAllocation = m_pAllocation;
-	}
-	// set the images in this image chain to point to the other allocation
-	for (auto& image : *m_pImages) {
-		image->m_pAllocation = tempAlloc;
-	}
-
-}
-
-//only supports 
-bool ngv::VulkanImage::upload(vk::CommandBuffer, , const vk::ImageLayout layout)
-{
-	if (!hasAllocation()) {
-		return false;
-	}
-	auto alloc = m_pAllocation.lock();
-
+    return std::unique_ptr<VulkanImage>(new VulkanImage());
 }
 
 ngv::ImageBlockParams ngv::VulkanImage::getBlockParams(vk::Format format)
@@ -280,138 +214,47 @@ uint32 ngv::VulkanImage::mipScale(uint32 value, uint32 mipLevel)
     return std::max(value >> mipLevel, (uint32_t)1);
 }
 
-
-
-
-
-
-
-
-
-/* OLD IMPLEMENTATION
-ngv::VulkanImage::VulkanImage()
+vk::ImageCreateInfo ngv::VulkanImage::getImageCreateInfo()
 {
+    return m_ImageCreateInfo;
 }
 
-ngv::VulkanImage::VulkanImage(VulkanImage& image)
+vk::MemoryPropertyFlags ngv::VulkanImage::getMemoryPropertyFlags()
 {
-	// Append this new image to the end of the image doubly linked list and update it's current texture reference list
-	{
-		//make sure we don't try to copy a image allready pointing to the same allocation
-		ngv::VulkanImage* pImage = &image;
-		while (pImage->m_Prev != nullptr) {
-			if (pImage == this) {
-				return;
-			}
-			pImage = pImage->m_Prev;
-		}
-		pImage = &image;
-		while (pImage->m_Next != nullptr) {
-			if (pImage == this) {
-				return;
-			}
-			pImage = pImage->m_Next;
-		}
-
-		// fix the old reference list if there is one
-		if (this->m_Prev != nullptr) {
-			this->m_Prev->m_Next = this->m_Next;
-		}
-		if (this->m_Next != nullptr) {
-			this->m_Next->m_Prev = this->m_Prev;
-		}
-		if (this->m_Allocation != nullptr) {
-			this->m_Allocation->images.erase(this);
-			this->m_Allocation = nullptr;
-		}
-
-		//append to end
-		pImage->m_Next = this;
-		this->m_Prev = pImage;
-		//set new allocation and add this images as a reference in the allocation
-		this->m_Allocation = image.m_Allocation;
-		this->m_Allocation->addReference(this);
-	}
-
+    return m_MemoryPropertyFlags;
 }
 
-ngv::VulkanImage::~VulkanImage()
+std::unique_ptr<ngv::VulkanBuffer> ngv::VulkanBuffer::make()
 {
-	// fix the old reference list if there is one
-	if (this->m_Prev != nullptr) {
-		this->m_Prev->m_Next = this->m_Next;
-	}
-	if (this->m_Next != nullptr) {
-		this->m_Next->m_Prev = this->m_Prev;
-	}
-	if (this->m_Allocation != nullptr) {
-		this->m_Allocation->images.erase(this);
-		this->m_Allocation = nullptr;
-	}
+    return std::unique_ptr<VulkanBuffer>(new VulkanBuffer());
 }
 
-bool ngv::VulkanImage::hasAllocation()
+vk::BufferCreateInfo ngv::VulkanBuffer::getBufferCreateInfo()
 {
-	if (m_Allocation != nullptr) {
-		return true;
-	}
-	else {
-		return false;
-	}
+    return m_BufferCreateInfo;
 }
 
-bool ngv::VulkanImage::hasSameAllocation(VulkanImage& image)
+vk::MemoryPropertyFlags ngv::VulkanBuffer::getMemoryPropertyFlags()
 {
-	if (this->m_Allocation == image.m_Allocation) {
-		return true;
-	}
-	return false;
+    return m_MemoryPropertyFlags;
 }
 
-bool ngv::VulkanImage::swapAllocation(VulkanImage& withAllocation)
+bool ngv::VulkanBuffer::hasAllocation()
 {
-	// we should not swap i this image already have a allocation or if we are trying to swap with no allocation
-	if (this->hasAllocation() || !withAllocation.hasAllocation()) {
-		return false;
-	}
-
-	// make this image point to the existing allocation (withAllocation) are pointing to
-	this->m_Allocation = withAllocation.m_Allocation;
-
-	//make the (withAllocation) chain have no allocation
-	for (auto& image : withAllocation.m_Allocation->images) {
-		image->m_Allocation = nullptr;
-	}
-
-	// clear the allocation reference list referencing the withAllocation chain
-	this->m_Allocation->images.clear();
-	// add all images in this image chain to the allocation
-	this->m_Allocation->addReference(this);
-	ngv::VulkanImage* pImage = this->m_Prev;
-	while (pImage != nullptr) {
-		pImage->m_Allocation = this->m_Allocation;
-		m_Allocation->addReference(pImage);
-		pImage = pImage->m_Prev;
-	}
-	pImage = this->m_Next;
-	while (pImage != nullptr) {
-		pImage->m_Allocation = this->m_Allocation;
-		m_Allocation->addReference(pImage);
-		pImage = pImage->m_Next;
-	}
-
+    if (auto spt = m_pMemoryPage.lock()) {
+        return true;
+    }
+    return false;
 }
 
-
-bool ngv::VulkanImageAllocation::hasReference(VulkanImage* reference)
+bool ngv::VulkanBuffer::hasSameAllocation(std::raw_ptr<VulkanBuffer> buffer)
 {
-	return (images.find(reference) != images.end());
+    if (auto spt1 = m_pMemoryPage.lock()) {
+        if (auto spt2 = buffer->m_pMemoryPage.lock()) {
+            if (m_pAllocation == buffer->m_pAllocation) { // equiv to m_pAllocation.get() == buffer->m_pAllocation.get()
+                return true;
+            }
+        }
+    }
+    return false;
 }
-
-void ngv::VulkanImageAllocation::addReference(VulkanImage* reference)
-{
-	images.insert(reference);
-}
-
-*/
-

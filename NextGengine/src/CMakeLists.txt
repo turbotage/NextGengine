@@ -1,23 +1,23 @@
-﻿# CMakeList.txt : CMake project for NextGengine, include source and define
-# project specific logic here.
-#
+﻿cmake_minimum_required (VERSION 3.14)
 
-#cmake_minimum_required (VERSION 3.8)
-
-#dissable compiling unecessary glfw stuff
-#set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-#set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-#set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 
-#add_subdirectory("C:/C&C++/libs/glfw_source")
+set(VULKAN_SOURCES "Vulkan/vulkan_allocator.cpp" 
+					"Vulkan/vulkan_context.cpp" 
+					"Vulkan/vulkan_debug.cpp" 
+					"Vulkan/vulkan_device.cpp" 
+					"Vulkan/vulkan_instance.cpp" 
+					"Vulkan/vulkan_pipeline.cpp" 
+					"Vulkan/vulkan_renderpass.cpp"
+					"Vulkan/vulkan_storage.cpp"
+					"Vulkan/vulkan_swapchain.cpp"
+					"Vulkan/vulkan_utility.cpp"
+					"Vulkan/vulkan_window.cpp")
 
-#find_package(glfw3 3.3 REQUIRED)
-#find_package(Vulkan REQUIRED)
+set(MEMORY_SOURCES "Memory/abstract_allocators.cpp"
+					"Memory/abstract_allocators.h")
 
-# Add source to this project's executable.
-#add_executable (NextGengine "NextGengine.cpp" "NextGengine.h" "Vulkan/vulkan_base.cpp" "Vulkan/vulkan_instance.cpp")
-
-# TODO: Add tests and install targets if needed.
-#target_link_libraries(NextGengine glfw)
-#target_link_libraries(NextGengine Vulkan::vulkan)
+target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES})

@@ -70,9 +70,6 @@ namespace ngv {
 		GLFWwindow* m_Window{ nullptr };
 
 
-
-
-
 	};
 
 }

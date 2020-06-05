@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "def.h"
-
+#include "src/def.h"
+#include "src/Vulkan/vulkan_context.h"
 
 // TODO: Reference additional headers your program requires here
 
