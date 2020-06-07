@@ -20,4 +20,7 @@ set(VULKAN_SOURCES "Vulkan/vulkan_allocator.cpp"
 set(MEMORY_SOURCES "Memory/abstract_allocators.cpp"
 					"Memory/abstract_allocators.h")
 
-target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES})
+set(THREADING_SOURCES "Threading/thread_pool.cpp"
+						"Threading/thread_safe_queue.cpp")
+
+target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} ${THREADING_SOURCES})

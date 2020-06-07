@@ -4,6 +4,27 @@
 
 namespace ngv {
 
+	class VulkanDevice {
+	public:
+
+		VulkanDevice() {}
+
+		void setDevice(vk::UniqueDevice device);
+
+		void setPhysicalDevice(vk::PhysicalDevice physicalDevice);
+
+		const vk::Device device() const;
+
+		const vk::PhysicalDevice physicalDevice() const;
+
+		const vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties() const;
+
+	private:
+		vk::UniqueDevice m_Device;
+		vk::PhysicalDevice m_PhysicalDevice;
+		vk::PhysicalDeviceMemoryProperties m_MemProps;
+	};
+
 	/// Factory for devices.
 	class VulkanDeviceMaker {
 	public:

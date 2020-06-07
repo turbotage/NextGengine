@@ -70,6 +70,65 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 	m_Ok = true;
 }
 
+void ngv::VulkanContext::dumpCaps(std::ostream& os) const
+{
+	os << "Memory Types\n";
+	for (uint32 i = 0; i != m_MemProps.memoryTypeCount; ++i) {
+		os << "  type" << i << " heap" << m_MemProps.memoryTypes[i].heapIndex << " " << vk::to_string(m_MemProps.memoryTypes[i].propertyFlags);
+	}
+	os << "Heaps\n";
+	for (uint32 i = 0; i != m_MemProps.memoryHeapCount; ++i) {
+		os << "  heap" << vk::to_string(m_MemProps.memoryHeaps[i].flags) << " " << m_MemProps.memoryHeaps[i].size << "\n";
+	}
+}
+
+const vk::Instance ngv::VulkanContext::instance() const
+{
+	return *m_Instance;
+}
+
+const vk::Device ngv::VulkanContext::device() const
+{
+	return *m_Device;
+}
+
+const vk::Queue ngv::VulkanContext::graphicsQueue() const
+{
+	return m_Device->getQueue(m_GraphicsQueueFamilyIndex, 0);
+}
+
+const vk::Queue ngv::VulkanContext::computeQueue() const
+{
+	return vk::Queue();
+}
+
+const vk::PhysicalDevice& ngv::VulkanContext::physicalDevice() const
+{
+	return m_PhysicalDevice;
+}
+
+const vk::PipelineCache ngv::VulkanContext::pipelineCache() const
+{
+	return *m_PipelineCache;
+}
+
+uint32_t ngv::VulkanContext::graphicsQueueFamilyIndex() const
+{
+	return m_GraphicsQueueFamilyIndex;
+}
+
+uint32 ngv::VulkanContext::computeQueueFamilyIndex() const
+{
+	return m_ComputeQueueFamilyIndex;
+}
+
+const vk::PhysicalDeviceMemoryProperties& ngv::VulkanContext::memProps() const
+{
+	return m_MemProps;
+}
+
+
+
 ngv::VulkanContext::~VulkanContext()
 {
 	if (m_Device) {
@@ -88,4 +147,9 @@ ngv::VulkanContext::~VulkanContext()
 		m_DebugCallback.reset();
 		m_Instance.reset();
 	}
+}
+
+bool ngv::VulkanContext::ok() const
+{
+	return m_Ok;
 }

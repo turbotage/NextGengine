@@ -2,259 +2,480 @@
 
 #include "vulkan_allocator.h"
 
+#include "vulkan_utility.h"
+
+#include "vulkan_device.h"
 
 
 
-std::unique_ptr<ngv::VulkanImage> ngv::VulkanImage::make()
+
+
+// <==================== VULKAN BUFFER ==========================>
+
+std::unique_ptr<ngv::VulkanBuffer> ngv::VulkanBuffer::make(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer)
 {
-    return std::unique_ptr<VulkanImage>(new VulkanImage());
+	return std::unique_ptr<VulkanBuffer>(new VulkanBuffer(device, info, hostBuffer));
 }
 
-ngv::ImageBlockParams ngv::VulkanImage::getBlockParams(vk::Format format)
+vk::Buffer ngv::VulkanBuffer::buffer() const
 {
-    switch (format) {
-    case vk::Format::eR4G4UnormPack8: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR4G4B4A4UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eB4G4R4A4UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR5G6B5UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eB5G6R5UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR5G5B5A1UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eB5G5R5A1UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eA1R5G5B5UnormPack16: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8Unorm: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8Snorm: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8Uscaled: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8Sscaled: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8Uint: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8Sint: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8Srgb: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eR8G8Unorm: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8Snorm: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8Uscaled: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8Sscaled: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8Uint: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8Sint: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8Srgb: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR8G8B8Unorm: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8Snorm: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8Uscaled: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8Sscaled: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8Uint: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8Sint: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8Srgb: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Unorm: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Snorm: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Uscaled: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Sscaled: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Uint: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Sint: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eB8G8R8Srgb: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eR8G8B8A8Unorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR8G8B8A8Snorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR8G8B8A8Uscaled: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR8G8B8A8Sscaled: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR8G8B8A8Uint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR8G8B8A8Sint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR8G8B8A8Srgb: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Unorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Snorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Uscaled: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Sscaled: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Uint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Sint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eB8G8R8A8Srgb: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8UnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8SnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8UscaledPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8SscaledPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8UintPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8SintPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA8B8G8R8SrgbPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2R10G10B10UnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2R10G10B10SnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2R10G10B10UscaledPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2R10G10B10SscaledPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2R10G10B10UintPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2R10G10B10SintPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2B10G10R10UnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2B10G10R10SnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2B10G10R10UscaledPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2B10G10R10SscaledPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2B10G10R10UintPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eA2B10G10R10SintPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16Unorm: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16Snorm: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16Uscaled: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16Sscaled: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16Uint: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16Sint: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16Sfloat: return ImageBlockParams{ 1, 1, 2 };
-    case vk::Format::eR16G16Unorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16Snorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16Uscaled: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16Sscaled: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16Uint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16Sint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16Sfloat: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR16G16B16Unorm: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16Snorm: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16Uscaled: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16Sscaled: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16Uint: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16Sint: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16Sfloat: return ImageBlockParams{ 1, 1, 6 };
-    case vk::Format::eR16G16B16A16Unorm: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR16G16B16A16Snorm: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR16G16B16A16Uscaled: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR16G16B16A16Sscaled: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR16G16B16A16Uint: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR16G16B16A16Sint: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR16G16B16A16Sfloat: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR32Uint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR32Sint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR32Sfloat: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eR32G32Uint: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR32G32Sint: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR32G32Sfloat: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR32G32B32Uint: return ImageBlockParams{ 1, 1, 12 };
-    case vk::Format::eR32G32B32Sint: return ImageBlockParams{ 1, 1, 12 };
-    case vk::Format::eR32G32B32Sfloat: return ImageBlockParams{ 1, 1, 12 };
-    case vk::Format::eR32G32B32A32Uint: return ImageBlockParams{ 1, 1, 16 };
-    case vk::Format::eR32G32B32A32Sint: return ImageBlockParams{ 1, 1, 16 };
-    case vk::Format::eR32G32B32A32Sfloat: return ImageBlockParams{ 1, 1, 16 };
-    case vk::Format::eR64Uint: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR64Sint: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR64Sfloat: return ImageBlockParams{ 1, 1, 8 };
-    case vk::Format::eR64G64Uint: return ImageBlockParams{ 1, 1, 16 };
-    case vk::Format::eR64G64Sint: return ImageBlockParams{ 1, 1, 16 };
-    case vk::Format::eR64G64Sfloat: return ImageBlockParams{ 1, 1, 16 };
-    case vk::Format::eR64G64B64Uint: return ImageBlockParams{ 1, 1, 24 };
-    case vk::Format::eR64G64B64Sint: return ImageBlockParams{ 1, 1, 24 };
-    case vk::Format::eR64G64B64Sfloat: return ImageBlockParams{ 1, 1, 24 };
-    case vk::Format::eR64G64B64A64Uint: return ImageBlockParams{ 1, 1, 32 };
-    case vk::Format::eR64G64B64A64Sint: return ImageBlockParams{ 1, 1, 32 };
-    case vk::Format::eR64G64B64A64Sfloat: return ImageBlockParams{ 1, 1, 32 };
-    case vk::Format::eB10G11R11UfloatPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eE5B9G9R9UfloatPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eD16Unorm: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eX8D24UnormPack32: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eD32Sfloat: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eS8Uint: return ImageBlockParams{ 1, 1, 1 };
-    case vk::Format::eD16UnormS8Uint: return ImageBlockParams{ 1, 1, 3 };
-    case vk::Format::eD24UnormS8Uint: return ImageBlockParams{ 1, 1, 4 };
-    case vk::Format::eD32SfloatS8Uint: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eBc1RgbUnormBlock: return ImageBlockParams{ 4, 4, 8 };
-    case vk::Format::eBc1RgbSrgbBlock: return ImageBlockParams{ 4, 4, 8 };
-    case vk::Format::eBc1RgbaUnormBlock: return ImageBlockParams{ 4, 4, 8 };
-    case vk::Format::eBc1RgbaSrgbBlock: return ImageBlockParams{ 4, 4, 8 };
-    case vk::Format::eBc2UnormBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc2SrgbBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc3UnormBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc3SrgbBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc4UnormBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc4SnormBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc5UnormBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc5SnormBlock: return ImageBlockParams{ 4, 4, 16 };
-    case vk::Format::eBc6HUfloatBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eBc6HSfloatBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eBc7UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eBc7SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEtc2R8G8B8UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEtc2R8G8B8SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEtc2R8G8B8A1UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEtc2R8G8B8A1SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEtc2R8G8B8A8UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEtc2R8G8B8A8SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEacR11UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEacR11SnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEacR11G11UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eEacR11G11SnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc4x4UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc4x4SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc5x4UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc5x4SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc5x5UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc5x5SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc6x5UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc6x5SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc6x6UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc6x6SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc8x5UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc8x5SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc8x6UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc8x6SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc8x8UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc8x8SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x5UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x5SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x6UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x6SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x8UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x8SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x10UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc10x10SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc12x10UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc12x10SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc12x12UnormBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::eAstc12x12SrgbBlock: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc12BppUnormBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc14BppUnormBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc22BppUnormBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc24BppUnormBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc12BppSrgbBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc14BppSrgbBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc22BppSrgbBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    case vk::Format::ePvrtc24BppSrgbBlockIMG: return ImageBlockParams{ 0, 0, 0 };
-    }
-    return ImageBlockParams{ 0, 0, 0 };
+	return *m_Buffer;
 }
 
-uint32 ngv::VulkanImage::mipScale(uint32 value, uint32 mipLevel)
+const vk::BufferCreateInfo ngv::VulkanBuffer::getBufferCreateInfo() const
 {
-    return std::max(value >> mipLevel, (uint32_t)1);
+	return m_BufferCreateInfo;
 }
 
-vk::ImageCreateInfo ngv::VulkanImage::getImageCreateInfo()
+const vk::MemoryPropertyFlags ngv::VulkanBuffer::getMemoryPropertyFlags() const
 {
-    return m_ImageCreateInfo;
+	return m_MemoryPropertyFlags;
 }
 
-vk::MemoryPropertyFlags ngv::VulkanImage::getMemoryPropertyFlags()
+void* ngv::VulkanBuffer::map()
 {
-    return m_MemoryPropertyFlags;
+	auto spt = m_pMemoryPage.lock();
+#ifndef NDEBUG
+	if (spt == nullptr)	return false;
+	if (m_pAllocation == nullptr) return false;
+#endif
+
+	spt->device().mapMemory(spt->memory(), m_pAllocation->getOffset(), m_BufferCreateInfo.size);
 }
 
-std::unique_ptr<ngv::VulkanBuffer> ngv::VulkanBuffer::make()
+void ngv::VulkanBuffer::unmap()
 {
-    return std::unique_ptr<VulkanBuffer>(new VulkanBuffer());
+	auto spt = m_pMemoryPage.lock();
+	return spt->device().unmapMemory(spt->memory());
 }
 
-vk::BufferCreateInfo ngv::VulkanBuffer::getBufferCreateInfo()
+bool ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) const
 {
-    return m_BufferCreateInfo;
+	auto spt = m_pMemoryPage.lock();
+
+#ifndef NDEBUG
+	if (size == 0) return false;
+	if (spt == nullptr)	return false;
+	if (m_pAllocation == nullptr) return false;
+#endif
+
+	std::lock_guard<std::mutex> lock(spt->pageMutex);
+	vk::Device ldevice = spt->device();
+	vk::DeviceMemory mem = spt->memory();
+	vk::DeviceSize offset = m_pAllocation->getOffset();
+
+	void* ptr = ldevice.mapMemory(mem, offset, size);
+	memcpy(ptr, value, (size_t)size);
+	vk::MappedMemoryRange mr{ mem, offset, size };
+	ldevice.flushMappedMemoryRanges(mr);
+	ldevice.unmapMemory(mem);
+	return true;
 }
 
-vk::MemoryPropertyFlags ngv::VulkanBuffer::getMemoryPropertyFlags()
+bool ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
 {
-    return m_MemoryPropertyFlags;
+#ifndef NDEBUG
+	if (size == 0) return false;
+	auto spt = m_pMemoryPage.lock();
+	if (spt == nullptr)	return false;
+	if (m_pAllocation == nullptr) return false;
+#endif
+
+	using buf = vk::BufferUsageFlagBits;
+	using pfb = vk::MemoryPropertyFlagBits;
+	stagingBuffer->updateLocal(value, size);
+
+	vk::BufferCopy bc{ 0, 0, size};
+	cb.copyBuffer(stagingBuffer->buffer(), *m_Buffer, bc);
+	return true;
+}
+
+void ngv::VulkanBuffer::barrier(vk::CommandBuffer cb, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, vk::AccessFlags srcAccessMask, vk::AccessFlags dstAccessMask, uint32 srcQueueFamilyIndex, uint32 dstQueueFamilyIndex) const
+{
+	vk::BufferMemoryBarrier bmb{ srcAccessMask, dstAccessMask, srcQueueFamilyIndex, dstQueueFamilyIndex, *m_Buffer, 0, VK_WHOLE_SIZE };
+	cb.pipelineBarrier(srcStageMask, dstStageMask, dependencyFlags, nullptr, bmb, nullptr);
+}
+
+bool ngv::VulkanBuffer::flush(const VulkanDevice& device)
+{
+	auto spt = m_pMemoryPage.lock();
+	if (!spt) {
+		return false;
+	}
+	vk::DeviceMemory memory = spt->memory();
+	vk::MappedMemoryRange mr{ memory, m_pAllocation->getOffset(), m_BufferCreateInfo.size };
+	device.device().flushMappedMemoryRanges(mr);
+	return true;
+}
+
+bool ngv::VulkanBuffer::invalidate(const VulkanDevice& device)
+{
+	auto spt = m_pMemoryPage.lock();
+	if (!spt) {
+		return false;
+	}
+	vk::DeviceMemory memory = spt->memory();
+	vk::MappedMemoryRange mr{ memory, m_pAllocation->getOffset(), m_BufferCreateInfo.size };
+	device.device().invalidateMappedMemoryRanges(mr);
+	return true;
 }
 
 bool ngv::VulkanBuffer::hasAllocation()
 {
-    if (auto spt = m_pMemoryPage.lock()) {
-        return true;
-    }
-    return false;
+	if (auto spt = m_pMemoryPage.lock()) {
+		return true;
+	}
+	return false;
 }
 
-bool ngv::VulkanBuffer::hasSameAllocation(std::raw_ptr<VulkanBuffer> buffer)
+bool ngv::VulkanBuffer::hasSameAllocation(const ngv::VulkanBuffer& buffer)
 {
-    if (auto spt1 = m_pMemoryPage.lock()) {
-        if (auto spt2 = buffer->m_pMemoryPage.lock()) {
-            if (m_pAllocation == buffer->m_pAllocation) { // equiv to m_pAllocation.get() == buffer->m_pAllocation.get()
-                return true;
-            }
-        }
-    }
-    return false;
+	if (auto spt1 = m_pMemoryPage.lock()) {
+		if (auto spt2 = buffer.m_pMemoryPage.lock()) {
+			if (m_pAllocation == buffer.m_pAllocation) { // equiv to m_pAllocation.get() == buffer->m_pAllocation.get()
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void ngv::VulkanBuffer::create(ngv::VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer)
+{
+	m_BufferCreateInfo = info;
+	m_MemoryPropertyFlags =
+		(hostBuffer) ? vk::MemoryPropertyFlagBits::eDeviceLocal : vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible;
+	m_Buffer = device.device().createBufferUnique(info);
+
+	m_MemoryRequirements = device.device().getBufferMemoryRequirements(*m_Buffer);
+
+	m_MemoryTypeIndex = ngv::findMemoryTypeIndex(device.physicalDeviceMemoryProperties(), m_MemoryRequirements.memoryTypeBits, m_MemoryPropertyFlags);
+
+	m_Created = true;
+}
+
+ngv::VulkanBuffer::VulkanBuffer(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer)
+{
+	create(device, info, hostBuffer);
+}
+
+
+
+
+
+
+
+
+
+
+// <=============== VULKAN IMAGE ========================>
+
+std::unique_ptr<ngv::VulkanImage> ngv::VulkanImage::make(VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage)
+{
+	return std::unique_ptr<VulkanImage>(new VulkanImage(device, info, viewType, aspectMask, hostImage));
+}
+
+vk::Image ngv::VulkanImage::image() const
+{
+	return *m_Image;
+}
+
+vk::ImageView ngv::VulkanImage::imageView() const
+{
+	return *m_ImageView;
+}
+
+vk::Format ngv::VulkanImage::format() const
+{
+	return m_ImageCreateInfo.format;
+}
+
+vk::Extent3D ngv::VulkanImage::extent() const
+{
+	return m_ImageCreateInfo.extent;
+}
+
+void ngv::VulkanImage::clear(vk::CommandBuffer cb, const std::array<float, 4> color)
+{
+	setLayout(cb, vk::ImageLayout::eTransferDstOptimal);
+	vk::ClearColorValue ccv(color);
+	vk::ImageSubresourceRange range(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1);
+	cb.clearColorImage(*m_Image, vk::ImageLayout::eTransferDstOptimal, ccv, range);
+}
+
+void ngv::VulkanImage::copy(vk::CommandBuffer cb, ngv::VulkanImage& srcImage)
+{
+	srcImage.setLayout(cb, vk::ImageLayout::eTransferSrcOptimal);
+	setLayout(cb, vk::ImageLayout::eTransferDstOptimal);
+	for (uint32 mipLevel = 0; mipLevel != m_ImageCreateInfo.mipLevels; ++mipLevel) {
+		vk::ImageCopy region{};
+		region.srcSubresource = { vk::ImageAspectFlagBits::eColor, mipLevel, 0,1 };
+		region.dstSubresource = { vk::ImageAspectFlagBits::eColor, mipLevel, 0, 1 };
+		region.extent = m_ImageCreateInfo.extent;
+		cb.copyImage(srcImage.image(), vk::ImageLayout::eTransferSrcOptimal, *m_Image, vk::ImageLayout::eTransferDstOptimal, region);
+	}
+}
+
+void ngv::VulkanImage::copy(vk::CommandBuffer cb, vk::Buffer buffer, uint32 mipLevel, uint32 arrayLayer, uint32 width, uint32 height, uint32 depth, uint32 offset)
+{
+	setLayout(cb, vk::ImageLayout::eTransferDstOptimal);
+	vk::BufferImageCopy region{};
+	region.bufferOffset = offset;
+	vk::Extent3D extent;
+	extent.width = width;
+	extent.height = height;
+	extent.depth = depth;
+	region.imageSubresource = { vk::ImageAspectFlagBits::eColor, mipLevel, arrayLayer, 1 };
+	region.imageExtent = extent;
+	cb.copyBufferToImage(buffer, *m_Image, vk::ImageLayout::eTransferDstOptimal, region);
+}
+
+void ngv::VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
+{
+	stagingBuffer->updateLocal(value, size);
+
+	auto bp = ngv::getBlockParams(m_ImageCreateInfo.format);
+	vk::Buffer buf = stagingBuffer->buffer();
+	uint32 offset = 0;
+	for (uint32 mipLevel = 0; mipLevel != m_ImageCreateInfo.mipLevels; ++mipLevel) {
+		auto width = mipScale(m_ImageCreateInfo.extent.width, mipLevel);
+		auto height = mipScale(m_ImageCreateInfo.extent.height, mipLevel);
+		auto depth = mipScale(m_ImageCreateInfo.extent.depth, mipLevel);
+		for (uint32 face = 0; face != m_ImageCreateInfo.arrayLayers; ++face) {
+			copy(cb, buf, mipLevel, face, width, height, depth, offset);
+			offset += ((bp.bytesPerBlock + 3) & ~3) * (width * height);
+		}
+	}
+	setLayout(cb, vk::ImageLayout::eShaderReadOnlyOptimal);
+}
+
+const vk::ImageCreateInfo ngv::VulkanImage::imageCreateInfo() const
+{
+	return m_ImageCreateInfo;
+}
+
+const vk::MemoryPropertyFlags ngv::VulkanImage::memoryPropertyFlags() const
+{
+	return m_MemoryPropertyFlags;
+}
+
+void ngv::VulkanImage::setLayout(vk::CommandBuffer cb, vk::ImageLayout newLayout, vk::ImageAspectFlags aspectMask)
+{
+	if (newLayout == m_CurrentLayout) {
+		return;
+	}
+	vk::ImageLayout oldLayout = m_CurrentLayout;
+	m_CurrentLayout = newLayout;
+
+	vk::ImageMemoryBarrier imageMemoryBarriers = {};
+	imageMemoryBarriers.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imageMemoryBarriers.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imageMemoryBarriers.oldLayout = oldLayout;
+	imageMemoryBarriers.newLayout = newLayout;
+	imageMemoryBarriers.image = *m_Image;
+	imageMemoryBarriers.subresourceRange = { aspectMask, 0, m_ImageCreateInfo.mipLevels, 0, m_ImageCreateInfo.arrayLayers };
+
+	vk::PipelineStageFlags srcStageMask{ vk::PipelineStageFlagBits::eTopOfPipe };
+	vk::PipelineStageFlags dstStageMask{ vk::PipelineStageFlagBits::eTopOfPipe };
+	vk::DependencyFlags dependencyFlags{};
+	vk::AccessFlags srcMask{};
+	vk::AccessFlags dstMask{};
+
+	typedef vk::ImageLayout il;
+	typedef vk::AccessFlagBits afb;
+
+	switch (oldLayout) {
+	case il::eUndefined: break;
+	case il::eGeneral: srcMask = afb::eTransferWrite; break;
+	case il::eColorAttachmentOptimal: srcMask = afb::eColorAttachmentWrite; break;
+	case il::eDepthStencilAttachmentOptimal: srcMask = afb::eDepthStencilAttachmentWrite; break;
+	case il::eDepthStencilReadOnlyOptimal: srcMask = afb::eDepthStencilAttachmentRead; break;
+	case il::eShaderReadOnlyOptimal: srcMask = afb::eShaderRead; break;
+	case il::eTransferSrcOptimal: srcMask = afb::eTransferRead; break;
+	case il::eTransferDstOptimal: srcMask = afb::eTransferWrite; break;
+	case il::ePreinitialized: srcMask = afb::eTransferWrite | afb::eHostWrite; break;
+	case il::ePresentSrcKHR: srcMask = afb::eMemoryRead; break;
+	}
+
+	switch (newLayout) {
+	case il::eUndefined: break;
+	case il::eGeneral: dstMask = afb::eTransferWrite; break;
+	case il::eColorAttachmentOptimal: dstMask = afb::eColorAttachmentWrite; break;
+	case il::eDepthStencilAttachmentOptimal: dstMask = afb::eDepthStencilAttachmentWrite; break;
+	case il::eDepthStencilReadOnlyOptimal: dstMask = afb::eDepthStencilAttachmentRead; break;
+	case il::eShaderReadOnlyOptimal: dstMask = afb::eShaderRead; break;
+	case il::eTransferSrcOptimal: dstMask = afb::eTransferRead; break;
+	case il::eTransferDstOptimal: dstMask = afb::eTransferWrite; break;
+	case il::ePreinitialized: dstMask = afb::eTransferWrite; break;
+	case il::ePresentSrcKHR: dstMask = afb::eMemoryRead; break;
+	}
+
+	imageMemoryBarriers.srcAccessMask = srcMask;
+	imageMemoryBarriers.dstAccessMask = dstMask;
+	auto memoryBarriers = nullptr;
+	auto bufferMemoryBarriers = nullptr;
+	cb.pipelineBarrier(srcStageMask, dstStageMask, dependencyFlags, memoryBarriers, bufferMemoryBarriers, imageMemoryBarriers);
+
+}
+
+void ngv::VulkanImage::setCurrentLayout(vk::ImageLayout oldLayout)
+{
+	m_CurrentLayout = oldLayout;
+}
+
+bool ngv::VulkanImage::hasAllocation()
+{
+	if (auto spt = m_pMemoryPage.lock()) {
+		return true;
+	}
+	return false;
+}
+
+bool ngv::VulkanImage::hasSameAllocation(const VulkanImage& image)
+{
+	if (auto spt1 = m_pMemoryPage.lock()) {
+		if (auto spt2 = image.m_pMemoryPage.lock()) {
+			if (m_pAllocation == image.m_pAllocation) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void ngv::VulkanImage::create(ngv::VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage)
+{
+	m_ImageCreateInfo = info;
+	m_MemoryPropertyFlags =
+		(hostImage) ? vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible : vk::MemoryPropertyFlagBits::eDeviceLocal;
+	m_CurrentLayout = info.initialLayout;
+
+	m_Image = device.device().createImageUnique(info);
+
+	if (!hostImage) {
+		vk::ImageViewCreateInfo viewInfo{};
+		viewInfo.image = *m_Image;
+		viewInfo.viewType = viewType;
+		viewInfo.format = info.format;
+		viewInfo.components = { vk::ComponentSwizzle::eR, vk::ComponentSwizzle::eG, vk::ComponentSwizzle::eB, vk::ComponentSwizzle::eA };
+		viewInfo.subresourceRange = vk::ImageSubresourceRange{ aspectMask, 0, info.mipLevels, 0, info.arrayLayers };
+		m_ImageView = device.device().createImageViewUnique(viewInfo);
+	}
+
+	m_MemoryRequirements = device.device().getImageMemoryRequirements(*m_Image);
+
+
+	m_MemoryTypeIndex = ngv::findMemoryTypeIndex(device.physicalDeviceMemoryProperties(), m_MemoryRequirements.memoryTypeBits, m_MemoryPropertyFlags);
+
+	m_Created = true;
+}
+
+ngv::VulkanImage::VulkanImage(VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage)
+{
+	create(device, info, viewType, aspectMask, hostImage);
+}
+
+
+
+
+
+
+
+
+
+// <=============================== VERTEX BUFFER ====================================>
+std::unique_ptr<ngv::VertexBuffer> ngv::VertexBuffer::make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+{
+	return std::unique_ptr<VertexBuffer>(new VertexBuffer(device, size, hostBuffer));
+}
+
+ngv::VertexBuffer::VertexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+{
+	vk::BufferCreateInfo ci{};
+	ci.size = size;
+	ci.usage = vk::BufferUsageFlagBits::eVertexBuffer | 
+		vk::BufferUsageFlagBits::eTransferDst | 
+		vk::BufferUsageFlagBits::eTransferSrc;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	create(device, ci, hostBuffer);
+}
+
+
+
+
+
+
+
+
+
+
+// <====================================== INDEX BUFFER ======================================>
+std::unique_ptr<ngv::IndexBuffer> ngv::IndexBuffer::make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+{
+	return std::unique_ptr<IndexBuffer>(new IndexBuffer(device, size, hostBuffer));
+}
+
+ngv::IndexBuffer::IndexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+{
+	vk::BufferCreateInfo ci{};
+	ci.size = size;
+	ci.usage = vk::BufferUsageFlagBits::eIndexBuffer | 
+		vk::BufferUsageFlagBits::eTransferDst | 
+		vk::BufferUsageFlagBits::eTransferSrc;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	create(device, ci, hostBuffer);
+}
+
+
+
+
+
+
+
+
+
+// <===================================== UNIFORM BUFFER ===========================================>
+std::unique_ptr<ngv::UniformBuffer> ngv::UniformBuffer::make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+{
+	return std::unique_ptr<UniformBuffer>(new UniformBuffer(device, size, hostBuffer));
+}
+
+ngv::UniformBuffer::UniformBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+{
+	vk::BufferCreateInfo ci{};
+	ci.size = size;
+	ci.usage = vk::BufferUsageFlagBits::eUniformBuffer |
+		vk::BufferUsageFlagBits::eTransferDst |
+		vk::BufferUsageFlagBits::eTransferSrc;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	create(device, ci, hostBuffer);
+}
+
+
+
+
+
+
+
+
+
+
+// <===================================== TEXTURE 2D =================================================>
+std::unique_ptr<ngv::Texture2D> ngv::Texture2D::make(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags,bool hostImage = false)
+{
+	return std::unique_ptr<Texture2D>(new Texture2D(device, width, height, mipLevels, format, hostImage));
+}
+
+ngv::Texture2D::Texture2D(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags, bool hostImage)
+{
+	vk::ImageCreateInfo ci{};
+	ci.flags = {};
+	ci.imageType = vk::ImageType::e2D;
+	ci.format = format;
+	ci.extent = vk::Extent3D{ width, height, 1U };
+	ci.mipLevels = mipLevels;
+	ci.arrayLayers = 1;
+	ci.samples = sampleFlags;
+
+	//LEFT HERE
 }

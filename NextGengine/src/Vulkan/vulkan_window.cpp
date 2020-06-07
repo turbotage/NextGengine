@@ -4,162 +4,114 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
-bool ngv::Window::init() {
-	return GLFW_TRUE == glfwInit();
+ngv::Window::Window(const vk::Instance& instance, const vk::Device& device, const vk::PhysicalDevice& physicalDevice, uint32 graphicsQueueFamilyIndex, uint32 width, uint32 height, const char* title)
+{
+	m_Width = width;
+	m_Height = height;
+
+	glfwInit();
+
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+	m_pWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);
+
+	vk::SurfaceKHR surface;
+	glfwCreateWindowSurface(instance, m_pWindow,
+		nullptr, reinterpret_cast<VkSurfaceKHR*>(&surface));
+
+	
+
 }
 
-void ngv::Window::terminate() {
-	glfwTerminate();
-}
-
-std::vector<std::string> ngv::Window::getRequiredInstanceExtensions() {
-	std::vector<std::string> result;
-	uint32 count = 0;
-	const char** names = glfwGetRequiredInstanceExtensions(&count);
-	if (names && count) {
-		for (uint32 i = 0; i < count; ++i) {
-			result.emplace_back(names[i]);
+void ngv::Window::init(const vk::Instance& instance, const vk::Device& device, const vk::PhysicalDevice& physicalDevice, uint32 graphicsQueueFamilyIndex, vk::SurfaceKHR surface)
+{
+	m_Surface = surface;
+	m_Instance = instance;
+	m_Device = device;
+	
+	m_PresentQueueFamily = 0;
+	auto& pd = physicalDevice;
+	auto qprops = pd.getQueueFamilyProperties();
+	bool found = false;
+	for (uint32 qi = 0; qi != qprops.size(); ++qi) {
+		auto& qprop = qprops[qi];
+		if (pd.getSurfaceSupportKHR(qi, m_Surface) && 
+			(qprop.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics) {
+			m_PresentQueueFamily = qi;
+			found = true;
+			break;
 		}
 	}
-	return result;
-}
 
-vk::SurfaceKHR ngv::Window::createWindowSurface(GLFWwindow* window, const vk::Instance& instance, const vk::AllocationCallbacks* pAllocator)
-{
-	VkSurfaceKHR rawSurface;
-	vk::Result result = static_cast<vk::Result>(glfwCreateWindowSurface(
-		(VkInstance)instance, window, reinterpret_cast<const VkAllocationCallbacks*>(pAllocator), &rawSurface));
-	return vk::createResultValue(result, rawSurface, "vk::CommandBuffer::begin");
-}
-
-vk::SurfaceKHR ngv::Window::createSurface(const vk::Instance& instance, const vk::AllocationCallbacks* pAllocator)
-{
-	return createWindowSurface(m_Window, instance, pAllocator);
-}
-
-void ngv::Window::swapBuffers() const
-{
-	glfwSwapBuffers(m_Window);
-}
-
-void ngv::Window::createWindow(const glm::uvec2& size, const glm::ivec2& position)
-{
-	m_Window = glfwCreateWindow(size.x, size.y, "Window Title", nullptr, nullptr);
-	if (position != glm::ivec2{ INT_MIN, INT_MIN }) {
-		glfwSetWindowPos(m_Window, position.x, position.y);
+	if (!found) {
+		std::cout << "No Vulkan present queues found\n";
+		return;
 	}
-	glfwSetWindowUserPointer(m_Window, this);
-	glfwSetKeyCallback(m_Window, keyboardHandler);
-	glfwSetMouseButtonCallback(m_Window, mouseButtonHandler);
-	glfwSetCursorPosCallback(m_Window, mouseMoveHandler);
-	glfwSetWindowCloseCallback(m_Window, closeHandler);
-	glfwSetFramebufferSizeCallback(m_Window, framebufferSizeHandler);
-	glfwSetScrollCallback(m_Window, mouseScrollHandler);
-}
 
-void ngv::Window::destroyWindow()
-{
-	glfwDestroyWindow(m_Window);
-	m_Window = nullptr;
-}
-
-void ngv::Window::makeCurrent() const
-{
-	glfwMakeContextCurrent(m_Window);
-}
-
-void ngv::Window::present() const
-{
-	glfwSwapBuffers(m_Window);
-}
-
-void ngv::Window::showWindow(bool show)
-{
-	if (show) {
-		glfwShowWindow(m_Window);
+	auto fmts = pd.getSurfaceFormatsKHR(m_Surface);
+	m_SwapChainImageFormat = fmts[0].format;
+	m_SwapChainColorSpace = fmts[0].colorSpace;
+	if (fmts.size() == 1 && m_SwapChainImageFormat == vk::Format::eUndefined) {
+		m_SwapChainImageFormat = vk::Format::eB8G8R8A8Unorm;
+		m_SwapChainColorSpace = vk::ColorSpaceKHR::eSrgbNonlinear;
 	}
 	else {
-		glfwHideWindow(m_Window);
+		for (auto& fmt : fmts) {
+			if (fmt.format == vk::Format::eB8G8R8A8Unorm) {
+				m_SwapChainImageFormat = fmt.format;
+				m_SwapChainColorSpace = fmt.colorSpace;
+			}
+		}
 	}
-}
 
-void ngv::Window::setTitle(const std::string& title)
-{
-	glfwSetWindowTitle(m_Window, title.c_str());
-}
+	auto surfaceCaps = pd.getSurfaceCapabilitiesKHR(m_Surface);
+	m_Width = surfaceCaps.currentExtent.width;
+	m_Height = surfaceCaps.currentExtent.height;
 
-void ngv::Window::setSizeLimits(const glm::uvec2& minSize, const glm::uvec2& maxSize)
-{
-	glfwSetWindowSizeLimits(m_Window, minSize.x, minSize.y, (maxSize.x != 0) ? maxSize.x : minSize.x, (maxSize.y != 0) ? maxSize.y : minSize.y);
-}
-
-void ngv::Window::runWindowLoop(const std::function<void()>& frameHandler)
-{
-	while (0 == glfwWindowShouldClose(m_Window)) {
-		glfwPollEvents();
-		frameHandler();
+	auto pms = pd.getSurfacePresentModesKHR(m_Surface);
+	vk::PresentModeKHR presentMode = pms[0];
+	if (std::find(pms.begin(), pms.end(), vk::PresentModeKHR::eFifo) != pms.end()) {
+		presentMode = vk::PresentModeKHR::eFifo;
 	}
-}
-
-void ngv::Window::onKeyEvent(int key, int scancode, int action, int mods)
-{
-	switch (action) {
-		case GLFW_PRESS:
-			onKeyPressed(key, mods);
-		case GLFW_RELEASE:
-			onKeyReleased(key, mods);
-		default:
-			break;
+	else {
+		std::cout << "No fifo mode available\n";
+		return;
 	}
-}
 
-void ngv::Window::onMouseButtonEvent(int button, int action, int mods)
-{
-	switch (action) {
-		case GLFW_PRESS:
-			onMousePressed(button, mods);
-			break;
-		case GLFW_RELEASE:
-			onMouseReleased(button, mods);
-			break;
-		default:
-			break;
+	vk::SwapchainCreateInfoKHR swapinfo{};
+	std::array<uint32_t, 2> queueFamilyIndices = { graphicsQueueFamilyIndex, m_PresentQueueFamily };
+	bool sameQueues = queueFamilyIndices[0] == queueFamilyIndices[1];
+	vk::SharingMode sharingMode = !sameQueues ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive;
+	swapinfo.imageExtent = surfaceCaps.currentExtent;
+	swapinfo.surface = m_Surface;
+	swapinfo.minImageCount = surfaceCaps.minImageCount + 1;
+	swapinfo.imageFormat = m_SwapChainImageFormat;
+	swapinfo.imageColorSpace = m_SwapChainColorSpace;
+	swapinfo.imageExtent = surfaceCaps.currentExtent;
+	swapinfo.imageArrayLayers = 1;
+	swapinfo.imageUsage = vk::ImageUsageFlagBits::eColorAttachment;
+	swapinfo.imageSharingMode = sharingMode;
+	swapinfo.queueFamilyIndexCount = !sameQueues ? 2 : 0;
+	swapinfo.pQueueFamilyIndices = queueFamilyIndices.data();
+	swapinfo.preTransform = surfaceCaps.currentTransform;;
+	swapinfo.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
+	swapinfo.presentMode = presentMode;
+	swapinfo.clipped = 1;
+	swapinfo.oldSwapchain = vk::SwapchainKHR{};
+	m_Swapchain = device.createSwapchainKHRUnique(swapinfo);
+
+	m_SwapChainImages = m_Device.getSwapchainImagesKHR(*m_Swapchain);
+	for (auto& img : m_SwapChainImages) {
+		vk::ImageViewCreateInfo ci{};
+		ci.image = img;
+		ci.viewType = vk::ImageViewType::e2D;
+		ci.format = m_SwapChainImageFormat;
+		m_SwapChainViews.emplace_back(m_Device.createImageView(ci));
 	}
-}
 
-void ngv::Window::keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	Window* example = (Window*)glfwGetWindowUserPointer(window);
-	example->onKeyEvent(key, scancode, action, mods);
-}
+	auto memprops = physicalDevice.getMemoryProperties();
+	//fix depth stencil
 
-void ngv::Window::mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
-{
-	Window* example = (Window*)glfwGetWindowUserPointer(window);
-	example->onMouseButtonEvent(button, action, mods);
-}
-
-void ngv::Window::mouseMoveHandler(GLFWwindow* window, double posx, double posy)
-{
-	Window* example = (Window*)glfwGetWindowUserPointer(window);
-	example->onMouseMoved(glm::vec2(posx, posy));
-}
-
-void ngv::Window::mouseScrollHandler(GLFWwindow* window, double xoffset, double yoffset)
-{
-	Window* example = (Window*)glfwGetWindowUserPointer(window);
-	example->onMouseScrolled((float)yoffset);
-}
-
-void ngv::Window::closeHandler(GLFWwindow* window)
-{
-	Window* example = (Window*)glfwGetWindowUserPointer(window);
-	example->onWindowClosed();
-}
-
-void ngv::Window::framebufferSizeHandler(GLFWwindow* window, int width, int height)
-{
-	Window* example = (Window*)glfwGetWindowUserPointer(window);
-	example->onWindowResized(glm::uvec2(width, height));
 }

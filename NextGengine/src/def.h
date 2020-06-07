@@ -38,7 +38,7 @@ namespace ng {
 		}
 
 		~A() = default;
-	private:
+	private: (or protected)
 		A() = default;
 		A(const A&) = delete;
 		A& operator=(const A&) = delete;

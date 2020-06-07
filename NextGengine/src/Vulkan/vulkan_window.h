@@ -10,65 +10,38 @@ namespace ngv {
 	class Window {
 	public:
 
-		static bool init();
-		static void terminate();
+		Window() {};
 
-		static std::vector<std::string> getRequiredInstanceExtensions();
+		Window(const vk::Instance& instance, const vk::Device& device,
+			const vk::PhysicalDevice& physicalDevice, uint32 graphicsQueueFamilyIndex,
+			uint32 width, uint32 height, const char* title);
 
-		static vk::SurfaceKHR createWindowSurface(
-			GLFWwindow* window, const vk::Instance& instance, const vk::AllocationCallbacks* pAllocator = nullptr);
+		void init(const vk::Instance& instance, const vk::Device& device,
+			const vk::PhysicalDevice& physicalDevice, uint32 graphicsQueueFamilyIndex, vk::SurfaceKHR surface);
 
-		vk::SurfaceKHR createSurface(const vk::Instance& instance, const vk::AllocationCallbacks* pAllocator = nullptr);
+	private:
+		GLFWwindow* m_pWindow;
 
-		void swapBuffers() const;
+		const char* m_Title;
+		uint32 m_Width, m_Height;
+
+		vk::Instance m_Instance;
+		vk::SurfaceKHR m_Surface;
+		vk::Device m_Device;
+
+		vk::UniqueSwapchainKHR m_Swapchain;
+		vk::UniqueRenderPass m_RenderPass;
+		vk::UniqueSemaphore m_ImageAcquireSemaphore;
+		vk::UniqueSemaphore m_CommandCompleteSemaphore;
+		vk::UniqueSemaphore m_DynamicSemaphore;
 		
-		void createWindow(const glm::uvec2& size, const glm::ivec2& position = { INT_MIN, INT_MIN });
+		std::vector<vk::ImageView> m_SwapChainViews;
+		std::vector<vk::Image> m_SwapChainImages;
+		vk::Format m_SwapChainImageFormat = vk::Format::eB8G8R8A8Snorm;
+		vk::ColorSpaceKHR m_SwapChainColorSpace = vk::ColorSpaceKHR::eSrgbNonlinear;
 
-		void destroyWindow();
-
-		void makeCurrent() const;
-
-		void present() const;
-
-		void showWindow(bool show = true);
-
-		void setTitle(const std::string& title);
-
-		void setSizeLimits(const glm::uvec2& minSize, const glm::uvec2& maxSize = {});
-
-		void runWindowLoop(const std::function<void()>& frameHandler);
-
-		virtual void onWindowResized(const glm::uvec2& newSize) {};
-		virtual void onWindowClosed() {};
-
-		//Keyboard handling
-		virtual void onKeyEvent(int key, int scancode, int action, int mods);
-
-		virtual void onKeyPressed(int key, int mods) {}
-		virtual void onKeyReleased(int key, int mods) {}
-
-		virtual void onMousePressed(int button, int mods) {}
-		virtual void onMouseReleased(int button, int mods) {}
-		virtual void onMouseMoved(const glm::vec2& newPos) {}
-		virtual void onMouseScrolled(float delta) {}
-
-		//Mouse handling
-		virtual void onMouseButtonEvent(int button, int action, int mods);
-
-
-	private:
-
-		static void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods);
-		static void mouseMoveHandler(GLFWwindow* window, double posx, double posy);
-		static void mouseScrollHandler(GLFWwindow* window, double xoffset, double yoffset);
-		static void closeHandler(GLFWwindow* window);
-		static void framebufferSizeHandler(GLFWwindow* window, int width, int height);
-
-	private:
-
-		GLFWwindow* m_Window{ nullptr };
-
+		uint32 m_PresentQueueFamily = 0;
+		
 
 	};
 

@@ -1,5 +1,8 @@
 #include "vulkan_allocator.h"
 
+#include "vulkan_device.h"
+#include "vulkan_utility.h"
+
 // <=================== VULKAN MEMORY ALLOCATION =======================>
 //public
 std::unique_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryAllocation::make(std::shared_ptr<VulkanMemoryPage> pMemPage)
@@ -27,9 +30,9 @@ ngv::VulkanMemoryAllocation::VulkanMemoryAllocation(std::shared_ptr<VulkanMemory
 
 // <=================== VULKAN MEMORY PAGE ===========================>
 //public
-std::unique_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryPage::make(std::shared_ptr<vk::UniqueDeviceMemory> pMemory, vk::DeviceSize size, uint32 memoryTypeIndex)
+std::unique_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryPage::make(std::shared_ptr<VulkanDevice> pDevice, std::shared_ptr<vk::UniqueDeviceMemory> pMemory, vk::DeviceSize size, uint32 memoryTypeIndex)
 {
-	return std::unique_ptr<VulkanMemoryPage>(new VulkanMemoryPage(pMemory, size, memoryTypeIndex));
+	return std::unique_ptr<VulkanMemoryPage>(new VulkanMemoryPage(pDevice, pMemory, size, memoryTypeIndex));
 }
 
 bool ngv::VulkanMemoryPage::canAllocate(vk::DeviceSize size, vk::DeviceSize alignment) {
@@ -66,12 +69,33 @@ bool ngv::VulkanMemoryPage::free(std::shared_ptr<VulkanMemoryAllocation> pMemAll
 	return true;
 }
 
+const vk::Device ngv::VulkanMemoryPage::device() const
+{
+	return m_pDevice->device();
+}
+
+const vk::PhysicalDevice ngv::VulkanMemoryPage::physicalDevice() const
+{
+	return m_pDevice->physicalDevice();
+}
+
+const vk::PhysicalDeviceMemoryProperties ngv::VulkanMemoryPage::physicalDeviceMemoryProperties() const
+{
+	return m_pDevice->physicalDeviceMemoryProperties();
+}
+
+const vk::DeviceMemory ngv::VulkanMemoryPage::memory() const
+{
+	return *(*m_pMemory);
+}
+
 //private
-ngv::VulkanMemoryPage::VulkanMemoryPage(std::shared_ptr<vk::UniqueDeviceMemory> pMemory, vk::DeviceSize size, uint32 memoryTypeIndex)
+ngv::VulkanMemoryPage::VulkanMemoryPage(std::shared_ptr<VulkanDevice> pDevice, std::shared_ptr<vk::UniqueDeviceMemory> pMemory, vk::DeviceSize size, uint32 memoryTypeIndex)
 {
 	m_pMemory = pMemory; 
 	m_Size = size;
 	m_MemoryTypeIndex = memoryTypeIndex;
+	m_pDevice = pDevice;
 	m_pAllocator = ng::AbstractFreeListAllocator::make(size);
 }
 
@@ -79,27 +103,10 @@ ngv::VulkanMemoryPage::VulkanMemoryPage(std::shared_ptr<vk::UniqueDeviceMemory> 
 // <==================== VULKAN ALLOCATOR ====================================>
 //public
 
-ngv::VulkanAllocator::VulkanAllocator(std::raw_ptr<ngv::VulkanContext> context, const VulkanMemoryStrategy& memStrategy)
-	: m_Context(context)
+ngv::VulkanAllocator::VulkanAllocator(std::shared_ptr<VulkanDevice> pDevice, const VulkanMemoryStrategy& memStrategy)
+	: m_pDevice(pDevice)
 {
 	m_MemoryStrategy = memStrategy;
-}
-
-std::unique_ptr<ngv::VulkanBuffer> ngv::VulkanAllocator::createBuffer(VulkanBufferCreateInfo createInfo, bool giveAllocation)
-{
-	std::unique_ptr<VulkanBuffer> ret = VulkanBuffer::make();
-
-	ret->m_BufferCreateInfo = createInfo.bufferCreateInfo;
-	ret->m_MemoryPropertyFlags = createInfo.memoryPropertyFlags;
-
-	ret->m_Buffer = m_Context->device.createBufferUnique(ret->m_BufferCreateInfo);
-	ret->m_MemoryRequirements = m_Context->device.getBufferMemoryRequirements(ret->m_Buffer.get());
-	ret->m_MemoryTypeIndex = m_Context->getMemoryType(ret->m_MemoryRequirements.memoryTypeBits, createInfo.memoryPropertyFlags);
-
-	if (giveAllocation) {
-		giveBufferAllocation(ret.get());
-	}
-	return ret;
 }
 
 bool ngv::VulkanAllocator::giveBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer)
@@ -130,9 +137,9 @@ bool ngv::VulkanAllocator::giveBufferAllocation(std::raw_ptr<VulkanBuffer> pBuff
 	allocInfo.memoryTypeIndex = pBuffer->m_MemoryTypeIndex;
 
 	std::shared_ptr<vk::UniqueDeviceMemory> newMemory = std::make_shared<vk::UniqueDeviceMemory>();
-	*newMemory = m_Context->device.allocateMemoryUnique(allocInfo);
+	*newMemory = m_pDevice->device().allocateMemoryUnique(allocInfo);
 
-	std::shared_ptr<VulkanMemoryPage> newPage = VulkanMemoryPage::make(newMemory, allocInfo.allocationSize, allocInfo.memoryTypeIndex);
+	std::shared_ptr<VulkanMemoryPage> newPage = VulkanMemoryPage::make(m_pDevice, newMemory, allocInfo.allocationSize, allocInfo.memoryTypeIndex);
 
 	pBuffer->m_pAllocation = newPage->allocate(pBuffer->m_MemoryRequirements.size, pBuffer->m_MemoryRequirements.alignment);
 	pBuffer->m_pMemoryPage = newPage;
@@ -144,11 +151,6 @@ bool ngv::VulkanAllocator::looseBufferAllocation(std::raw_ptr<VulkanBuffer> pBuf
 {
 	pBuffer->m_pAllocation.reset();
 	pBuffer->m_pMemoryPage.reset();
-}
-
-std::unique_ptr<ngv::VulkanImage> ngv::VulkanAllocator::createImage(VulkanImageCreateInfo createInfo, bool giveAllocation)
-{
-	
 }
 
 bool ngv::VulkanAllocator::giveImageAllocation(std::raw_ptr<VulkanImage> image)

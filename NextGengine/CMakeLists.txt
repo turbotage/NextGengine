@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Add source to this project's executable.
-set(SOURCES  "NextGengine.h")
+set(SOURCES "NextGengine.h")
 
 add_library(NextGengine ${SOURCES})
 add_subdirectory("src")

@@ -1,5 +1,33 @@
 #include "vulkan_device.h"
 
+// <====================== DEVICE ==========================>
+// public
+
+void ngv::VulkanDevice::setDevice(vk::UniqueDevice device)
+{
+    m_Device = std::move(device);
+}
+
+void ngv::VulkanDevice::setPhysicalDevice(vk::PhysicalDevice physicalDevice)
+{
+    m_PhysicalDevice = physicalDevice;
+    m_MemProps = m_PhysicalDevice.getMemoryProperties();
+}
+
+const vk::Device ngv::VulkanDevice::device() const
+{
+    return *m_Device;
+}
+
+const vk::PhysicalDevice ngv::VulkanDevice::physicalDevice() const
+{
+    return m_PhysicalDevice;
+}
+
+const vk::PhysicalDeviceMemoryProperties ngv::VulkanDevice::physicalDeviceMemoryProperties() const
+{
+    return m_MemProps;
+}
 
 
 // <============================ DEVICE MAKER ==============================>
@@ -42,6 +70,3 @@ vk::UniqueDevice ngv::VulkanDeviceMaker::createUnique(vk::PhysicalDevice physica
         (uint32_t)m_Layers.size(), m_Layers.data(),
         (uint32_t)m_DeviceExtensions.size(), m_DeviceExtensions.data() });
 }
-
-
-
