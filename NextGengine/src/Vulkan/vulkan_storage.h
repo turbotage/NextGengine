@@ -287,8 +287,17 @@ namespace ngv {
 
 
 
-	class VulkanTextureCube : public VulkanImage {
+	class TextureCube : public VulkanImage, ng::MakeConstructed<TextureCube> {
+	public:
 
+		std::unique_ptr<TextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
+
+	private:
+		TextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
+		TextureCube(const TextureCube&) = delete;
+		TextureCube& operator=(const TextureCube&) = delete;
 	};
 
 
@@ -301,10 +310,20 @@ namespace ngv {
 
 
 
-	class VulkanDepthStencilImage : public VulkanImage {
+	class DepthStencilImage : public VulkanImage, ng::MakeConstructed<DepthStencilImage> {
+	public:
 
+		std::unique_ptr<DepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
+			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
+
+	private:
+		DepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
+			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
+		DepthStencilImage(const DepthStencilImage&) = delete;
+		DepthStencilImage& operator=(const DepthStencilImage&) = delete;
 	};
 
+	// TODO: add depth stencil array
 
 
 
@@ -315,11 +334,20 @@ namespace ngv {
 
 
 
+	class ColorAttachmentImage : public VulkanImage, ng::MakeConstructed<ColorAttachmentImage> {
+	public:
 
-	class VulkanColorAttachmentImage : public VulkanImage {
+		std::unique_ptr<ColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
+			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
+	private:
+		ColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, 
+			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
+		ColorAttachmentImage(const ColorAttachmentImage&) = delete;
+		ColorAttachmentImage& operator=(const ColorAttachmentImage&) = delete;
 	};
 
+	// TODO: add color attachment array
 
 
 

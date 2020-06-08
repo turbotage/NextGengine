@@ -463,7 +463,7 @@ ngv::UniformBuffer::UniformBuffer(VulkanDevice& device, vk::DeviceSize size, boo
 // <===================================== TEXTURE 2D =================================================>
 std::unique_ptr<ngv::Texture2D> ngv::Texture2D::make(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags,bool hostImage = false)
 {
-	return std::unique_ptr<Texture2D>(new Texture2D(device, width, height, mipLevels, format, hostImage));
+	return std::unique_ptr<Texture2D>(new Texture2D(device, width, height, mipLevels, format, sampleFlags, hostImage));
 }
 
 ngv::Texture2D::Texture2D(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags, bool hostImage)
@@ -476,6 +476,120 @@ ngv::Texture2D::Texture2D(VulkanDevice& device, uint32 width, uint32 height, uin
 	ci.mipLevels = mipLevels;
 	ci.arrayLayers = 1;
 	ci.samples = sampleFlags;
-
+	ci.tiling = hostImage ? vk::ImageTiling::eLinear : vk::ImageTiling::eOptimal;
+	ci.usage = vk::ImageUsageFlagBits::eSampled | vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	ci.queueFamilyIndexCount = 0;
+	ci.pQueueFamilyIndices = nullptr;
+	ci.initialLayout = hostImage ? vk::ImageLayout::ePreinitialized : vk::ImageLayout::eUndefined;
+	create(device, ci, vk::ImageViewType::e2D, vk::ImageAspectFlagBits::eColor, hostImage);
 	//LEFT HERE
+}
+
+
+
+
+
+
+
+
+
+
+
+// <================================= TEXTURE CUBE =======================================================>
+std::unique_ptr<ngv::TextureCube> ngv::TextureCube::make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, uint32 mipLevels, vk::SampleCountFlagBits sampleFlags, bool hostImage)
+{
+	return std::unique_ptr<TextureCube>(new TextureCube(device, width, height, format, mipLevels, sampleFlags, hostImage));
+}
+
+ngv::TextureCube::TextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, uint32 mipLevels, vk::SampleCountFlagBits sampleFlags, bool hostImage)
+{
+	vk::ImageCreateInfo ci{};
+	ci.flags = { vk::ImageCreateFlagBits::eCubeCompatible };
+	ci.imageType = vk::ImageType::e2D;
+	ci.format = format;
+	ci.extent = vk::Extent3D{ width, height, 1U };
+	ci.mipLevels = mipLevels;
+	ci.arrayLayers = 6;
+	ci.samples = sampleFlags;
+	ci.tiling = hostImage ? vk::ImageTiling::eLinear : vk::ImageTiling::eOptimal;
+	ci.usage = vk::ImageUsageFlagBits::eSampled | vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	ci.queueFamilyIndexCount = 0;
+	ci.pQueueFamilyIndices = nullptr;
+	ci.initialLayout = vk::ImageLayout::ePreinitialized;
+	create(device, ci, vk::ImageViewType::eCube, vk::ImageAspectFlagBits::eColor, hostImage);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// <===================================== DEPTH STENCIL ================================================>
+std::unique_ptr<ngv::DepthStencilImage> ngv::DepthStencilImage::make(VulkanDevice& device, uint32 width, 
+	uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1)
+{
+	return std::unique_ptr<DepthStencilImage>(new DepthStencilImage(device, width, height, format, sampleFlags));
+}
+
+ngv::DepthStencilImage::DepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
+{
+	vk::ImageCreateInfo ci{};
+	ci.flags = {};
+	ci.imageType = vk::ImageType::e2D;
+	ci.format = format;
+	ci.extent = vk::Extent3D{ width, height, 1U };
+	ci.mipLevels = 1;
+	ci.arrayLayers = 1;
+	ci.samples = sampleFlags;
+	ci.tiling = vk::ImageTiling::eOptimal;
+	ci.usage = vk::ImageUsageFlagBits::eDepthStencilAttachment | vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eSampled;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	ci.queueFamilyIndexCount = 0;
+	ci.pQueueFamilyIndices = nullptr;
+	ci.initialLayout = vk::ImageLayout::eUndefined;
+	typedef vk::ImageAspectFlagBits iafb;
+	create(device, ci, vk::ImageViewType::e2D, iafb::eDepth, false);
+}
+
+
+
+
+
+
+
+
+
+
+// <========================================= COLOR ATTACHMENT ========================================>
+std::unique_ptr<ngv::ColorAttachmentImage> ngv::ColorAttachmentImage::make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
+{
+	return std::unique_ptr<ColorAttachmentImage>(new ColorAttachmentImage(device, width, height, format, sampleFlags));
+}
+
+ngv::ColorAttachmentImage::ColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
+{
+	vk::ImageCreateInfo ci{};
+	ci.flags = {};
+	ci.imageType = vk::ImageType::e2D;
+	ci.format = format;
+	ci.extent = vk::Extent3D{ width, height, 1U };
+	ci.mipLevels = 1;
+	ci.arrayLayers = 1;
+	ci.samples = sampleFlags;
+	ci.tiling = vk::ImageTiling::eOptimal;
+	ci.usage = vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eSampled;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	ci.queueFamilyIndexCount = 0;
+	ci.pQueueFamilyIndices = nullptr;
+	ci.initialLayout = vk::ImageLayout::eUndefined;
+	typedef vk::ImageAspectFlagBits iafb;
+	create(device, ci, vk::ImageViewType::e2D, iafb::eColor, false);
 }
