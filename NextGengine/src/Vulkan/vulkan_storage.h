@@ -210,6 +210,8 @@ namespace ngv {
 
 
 
+
+
 	class VertexBuffer : public VulkanBuffer, public ng::MakeConstructed<VertexBuffer> {
 	public:
 
@@ -229,6 +231,8 @@ namespace ngv {
 
 
 
+
+
 	class IndexBuffer : public VulkanBuffer, public ng::MakeConstructed<IndexBuffer> {
 	public:
 
@@ -238,7 +242,9 @@ namespace ngv {
 		IndexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 		IndexBuffer(const IndexBuffer&) = delete;
 		IndexBuffer& operator=(const IndexBuffer&) = delete;
-	};
+	}; 
+
+
 
 
 
@@ -256,6 +262,8 @@ namespace ngv {
 		UniformBuffer(const UniformBuffer&) = delete;
 		UniformBuffer& operator=(const UniformBuffer&) = delete;
 	};
+
+
 
 
 
@@ -360,6 +368,33 @@ namespace ngv {
 
 	class SamplerMaker {
 	public:
+
+		SamplerMaker();
+
+		SamplerMaker& flags(vk::SamplerCreateFlags value);
+
+		SamplerMaker& magFilter(vk::Filter filter);
+
+		SamplerMaker& minFilter(vk::Filter filter);
+
+		SamplerMaker& mipmapMode(vk::SamplerMipmapMode value);
+		SamplerMaker& addressModeU(vk::SamplerAddressMode value);
+		SamplerMaker& addressModeV(vk::SamplerAddressMode value);
+		SamplerMaker& addressModeW(vk::SamplerAddressMode value);
+		SamplerMaker& mipLodBias(float value);
+		SamplerMaker& anisotropyEnable(vk::Bool32 value);
+		SamplerMaker& maxAnisotropy(float value);
+		SamplerMaker& compareEnable(vk::Bool32 value);
+		SamplerMaker& compareOp(vk::CompareOp value);
+		SamplerMaker& minLod(float value);
+		SamplerMaker& maxLod(float value);
+		SamplerMaker& borderColor(vk::BorderColor value);
+		SamplerMaker& unnormalizedCoordinates(vk::Bool32 value);
+		
+		vk::Sampler create(vk::Device device) const;
+
+		vk::UniqueSampler createUnique(vk::Device device) const;
+
 
 	private:
 		vk::SamplerCreateInfo m_Info;

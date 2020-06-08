@@ -385,3 +385,33 @@ ngv::VulkanPipelineMaker& ngv::VulkanPipelineMaker::dynamicState(vk::DynamicStat
 {
     m_DynamicState.push_back(value); return *this;
 }
+
+
+
+
+
+
+
+
+// <========================================== COMPUTE PIPELINE MAKER ==========================================>
+
+void ngv::VulkanComputePipelineMaker::shader(vk::ShaderStageFlagBits stage, ngv::VulkanShaderModule& shader, const char* entryPoint)
+{
+    m_StageInfo.module = shader.module();
+    m_StageInfo.pName = entryPoint;
+    m_StageInfo.stage = stage;
+}
+
+ngv::VulkanComputePipelineMaker& ngv::VulkanComputePipelineMaker::module(const vk::PipelineShaderStageCreateInfo& value)
+{
+    m_StageInfo = value;
+    return *this;
+}
+
+vk::UniquePipeline ngv::VulkanComputePipelineMaker::createUnique(vk::Device device, const vk::PipelineCache& pipelineCache, const vk::PipelineLayout& pipelineLayout)
+{
+    vk::ComputePipelineCreateInfo pipelineInfo{};
+    pipelineInfo.stage = m_StageInfo;
+    pipelineInfo.layout = pipelineLayout;
+    return device.createComputePipelineUnique(pipelineCache, pipelineInfo);
+}

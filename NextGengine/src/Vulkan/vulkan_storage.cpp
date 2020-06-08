@@ -593,3 +593,140 @@ ngv::ColorAttachmentImage::ColorAttachmentImage(VulkanDevice& device, uint32 wid
 	typedef vk::ImageAspectFlagBits iafb;
 	create(device, ci, vk::ImageViewType::e2D, iafb::eColor, false);
 }
+
+
+
+
+
+
+
+
+
+
+// <==================================== SAMPLER MAKER ====================================>
+ngv::SamplerMaker::SamplerMaker()
+{
+	m_Info.magFilter = vk::Filter::eNearest;
+	m_Info.minFilter = vk::Filter::eNearest;
+	m_Info.mipmapMode = vk::SamplerMipmapMode::eNearest;
+	m_Info.addressModeU = vk::SamplerAddressMode::eRepeat;
+	m_Info.addressModeV = vk::SamplerAddressMode::eRepeat;
+	m_Info.addressModeW = vk::SamplerAddressMode::eRepeat;
+	m_Info.mipLodBias = 0.0f;
+	m_Info.anisotropyEnable = 0;
+	m_Info.maxAnisotropy = 0.0f;
+	m_Info.compareEnable = 0;
+	m_Info.compareOp = vk::CompareOp::eNever;
+	m_Info.minLod = 0;
+	m_Info.maxLod = 0;
+	m_Info.borderColor = vk::BorderColor{};
+	m_Info.unnormalizedCoordinates = 0;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::flags(vk::SamplerCreateFlags value)
+{
+	m_Info.flags = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::magFilter(vk::Filter filter)
+{
+	m_Info.magFilter = filter;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::minFilter(vk::Filter filter)
+{
+	m_Info.minFilter = filter;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::mipmapMode(vk::SamplerMipmapMode value)
+{
+	m_Info.mipmapMode = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::addressModeU(vk::SamplerAddressMode value)
+{
+	m_Info.addressModeU = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::addressModeV(vk::SamplerAddressMode value)
+{
+	m_Info.addressModeV = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::addressModeW(vk::SamplerAddressMode value)
+{
+	m_Info.addressModeW = value;
+	return *this;
+
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::mipLodBias(float value)
+{
+	m_Info.mipLodBias = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::anisotropyEnable(vk::Bool32 value)
+{
+	m_Info.anisotropyEnable = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::maxAnisotropy(float value)
+{
+	m_Info.maxAnisotropy = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::compareEnable(vk::Bool32 value)
+{
+	m_Info.compareEnable = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::compareOp(vk::CompareOp value)
+{
+	m_Info.compareOp = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::minLod(float value)
+{
+	m_Info.minLod = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::maxLod(float value)
+{
+	m_Info.maxLod = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::borderColor(vk::BorderColor value)
+{
+	m_Info.borderColor = value;
+	return *this;
+}
+
+ngv::SamplerMaker& ngv::SamplerMaker::unnormalizedCoordinates(vk::Bool32 value)
+{
+	m_Info.unnormalizedCoordinates = value;
+	return *this;
+}
+
+
+vk::Sampler ngv::SamplerMaker::create(vk::Device device) const
+{
+	return device.createSampler(m_Info);
+}
+
+vk::UniqueSampler ngv::SamplerMaker::createUnique(vk::Device device) const
+{
+	return device.createSamplerUnique(m_Info);
+}

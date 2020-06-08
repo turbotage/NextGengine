@@ -4,6 +4,10 @@
 
 namespace ngv {
 
+	//Some forward declarations
+	class VulkanShaderModule;
+
+
 
 	/// A class for building pipeline layouts.
 	/// Pipeline layouts describe the descriptor sets and push constants used by the shaders.
@@ -24,7 +28,10 @@ namespace ngv {
 
 
 
-	class VulkanShaderModule;
+
+
+
+
 	/// A class for building pipelines.
 	/// All the state of the pipeline is exposed through individual calls.
 	/// The pipeline encapsulates all the OpenGL state in a single object.
@@ -168,5 +175,35 @@ namespace ngv {
 		uint32 m_Subpass = 0;
 
 	};
+
+
+
+
+
+
+
+
+	/// Builds compute pipelines
+	class VulkanComputePipelineMaker {
+	public:
+
+		VulkanComputePipelineMaker() {}
+
+		void shader(vk::ShaderStageFlagBits stage, ngv::VulkanShaderModule& shader, const char* entryPoint = "main");
+
+		VulkanComputePipelineMaker& module(const vk::PipelineShaderStageCreateInfo& value);
+
+		vk::UniquePipeline createUnique(vk::Device device, const vk::PipelineCache& pipelineCache, const vk::PipelineLayout& pipelineLayout);
+
+	private:
+		vk::PipelineShaderStageCreateInfo m_StageInfo;
+
+	};
+
+
+
+
+
+
 
 }

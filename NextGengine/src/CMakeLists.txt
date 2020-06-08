@@ -7,7 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(VULKAN_SOURCES "Vulkan/vulkan_allocator.cpp" 
 					"Vulkan/vulkan_context.cpp" 
-					"Vulkan/vulkan_debug.cpp" 
+					"Vulkan/vulkan_debug.cpp"
+					"Vulkan/vulkan_descriptor.cpp"
 					"Vulkan/vulkan_device.cpp" 
 					"Vulkan/vulkan_instance.cpp" 
 					"Vulkan/vulkan_pipeline.cpp" 
