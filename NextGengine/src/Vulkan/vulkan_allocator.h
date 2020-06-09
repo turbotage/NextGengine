@@ -99,10 +99,12 @@ namespace ngv {
 
 		// BUFFER
 		bool giveBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer);
-		bool looseBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer);
+
+		bool giveSparseBufferAllocation(std::raw_ptr<VulkanSparseBuffer> pBuffer);
+		bool looseSparseBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer);
 
 		// IMAGE
-		bool giveImageAllocation(std::raw_ptr<VulkanImage> image);
+		bool giveImageAllocation(std::raw_ptr<VulkanImage> pImage);
 
 	private:
 

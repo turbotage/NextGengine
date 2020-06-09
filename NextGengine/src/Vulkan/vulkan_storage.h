@@ -119,6 +119,33 @@ namespace ngv {
 
 
 
+
+
+
+
+	class VulkanSparseBuffer : public ng::MakeConstructed<VulkanSparseBuffer> {
+	public:
+
+	private:
+		friend class VulkanAllocator;
+
+
+
+		vk::BufferCreateInfo m_BufferCreateInfo;
+		vk::MemoryPropertyFlags m_MemoryPropertyFlags;
+
+		vk::UniqueBuffer m_Buffer;
+
+		vk::BindSparseInfo m_BindInfo;
+
+	};
+
+
+
+
+
+
+
 	// Base Image Class
 	class VulkanImage : public ng::MakeConstructed<VulkanImage> {
 	public:

@@ -149,13 +149,29 @@ bool ngv::VulkanAllocator::giveBufferAllocation(std::raw_ptr<VulkanBuffer> pBuff
 
 bool ngv::VulkanAllocator::looseBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer)
 {
-	pBuffer->m_pAllocation.reset();
-	pBuffer->m_pMemoryPage.reset();
 }
 
-bool ngv::VulkanAllocator::giveImageAllocation(std::raw_ptr<VulkanImage> image)
+bool ngv::VulkanAllocator::giveImageAllocation(std::raw_ptr<VulkanImage> pImage)
 {
-	return false;
+	//try to find a suitable memory page
+	for (auto pPage : m_MemoryPages) {
+		if (pPage->m_MemoryTypeIndex == pImage->m_MemoryTypeIndex) {
+			pImage->m_pAllocation = pPage->allocate(pImage->m_MemoryRequirements.size, pImage->m_MemoryRequirements.alignment);
+			if (pImage->m_pAllocation != nullptr) {
+				pImage->m_pMemoryPage = pPage;
+				return true;
+			}
+		}
+	}
+
+	//no suitable page was found, create a new one
+	vk::MemoryAllocateInfo allocInfo{};
+	allocInfo.allocationSize = m_MemoryStrategy.recommendedPageSize;
+	if (pImage->m_MemoryRequirements.size > allocInfo.allocationSize) {
+		allocInfo.allocationSize = pImage->m_MemoryRequirements.size;
+
+	}
+
 }
 
 
