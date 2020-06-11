@@ -20,7 +20,7 @@ namespace ngv {
 
 
 	// Base Buffer Class
-	class VulkanBuffer : public ng::MakeConstructed<VulkanBuffer> {
+	class VulkanBuffer : public ng::MakeConstructed {
 	public:
 
 		static std::unique_ptr<VulkanBuffer> make(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
@@ -88,7 +88,7 @@ namespace ngv {
 
 		bool m_Created = false;
 
-		std::unique_ptr<VulkanMemoryAllocation> m_pAllocation;
+		std::shared_ptr<VulkanMemoryAllocation> m_pAllocation;
 		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
 
 	};
@@ -122,24 +122,44 @@ namespace ngv {
 
 
 
-
+	// NOT IMPLEMENTED, DON'T USE (Vulkan Spare Buffer)
+	/*
 	class VulkanSparseBuffer : public ng::MakeConstructed<VulkanSparseBuffer> {
 	public:
 
+		static std::unique_ptr<VulkanSparseBuffer> make(VulkanDevice& device, const vk::BufferCreateInfo& info);
+
+	protected:
+		void create(VulkanDevice& device, const vk::BufferCreateInfo& info);
+	protected:
+		VulkanSparseBuffer() = default;
+		VulkanSparseBuffer(VulkanDevice& device, const vk::BufferCreateInfo& info);
+		VulkanSparseBuffer(const VulkanSparseBuffer&) = delete;
+		VulkanSparseBuffer& operator=(const VulkanSparseBuffer&) = delete;
 	private:
 		friend class VulkanAllocator;
-
-
-
 		vk::BufferCreateInfo m_BufferCreateInfo;
 		vk::MemoryPropertyFlags m_MemoryPropertyFlags;
+		vk::BindSparseInfo m_BindInfo;
 
 		vk::UniqueBuffer m_Buffer;
+		vk::MemoryRequirements m_MemoryRequirements;
+		uint32 m_MemoryTypeIndex = 0;
 
-		vk::BindSparseInfo m_BindInfo;
+		struct SparseBufferPage {
+			vk::SparseBufferMemoryBindInfo bufferMemoryBind;
+			VkDeviceSize size;
+			uint32 index;
+
+			std::unique_ptr<VulkanMemoryAllocation> m_pAllocation;
+			std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
+		};
+		std::vector<SparseBufferPage> m_SparseBufferPages;
+
 
 	};
 
+	*/
 
 
 
@@ -147,7 +167,7 @@ namespace ngv {
 
 
 	// Base Image Class
-	class VulkanImage : public ng::MakeConstructed<VulkanImage> {
+	class VulkanImage : public ng::MakeConstructed {
 	public:
 
 		static std::unique_ptr<VulkanImage> make(VulkanDevice& device, const vk::ImageCreateInfo& info,
@@ -215,7 +235,7 @@ namespace ngv {
 
 		bool m_Created = false;
 
-		std::unique_ptr<VulkanMemoryAllocation> m_pAllocation;
+		std::shared_ptr<VulkanMemoryAllocation> m_pAllocation;
 		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
 	};
 
@@ -239,7 +259,7 @@ namespace ngv {
 
 
 
-	class VertexBuffer : public VulkanBuffer, public ng::MakeConstructed<VertexBuffer> {
+	class VertexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
 		static std::unique_ptr<VertexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -260,7 +280,7 @@ namespace ngv {
 
 
 
-	class IndexBuffer : public VulkanBuffer, public ng::MakeConstructed<IndexBuffer> {
+	class IndexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
 		static std::unique_ptr<IndexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -279,7 +299,7 @@ namespace ngv {
 
 
 
-	class UniformBuffer : public VulkanBuffer, public ng::MakeConstructed<UniformBuffer> {
+	class UniformBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
 		static std::unique_ptr<UniformBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -298,7 +318,7 @@ namespace ngv {
 
 
 
-	class Texture2D : public VulkanImage, public ng::MakeConstructed<Texture2D> {
+	class Texture2D : public VulkanImage, public ng::MakeConstructed {
 	public:
 
 		std::unique_ptr<Texture2D> make(VulkanDevice& device, uint32 width, uint32 height, 
@@ -322,7 +342,7 @@ namespace ngv {
 
 
 
-	class TextureCube : public VulkanImage, ng::MakeConstructed<TextureCube> {
+	class TextureCube : public VulkanImage, ng::MakeConstructed {
 	public:
 
 		std::unique_ptr<TextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
@@ -345,7 +365,7 @@ namespace ngv {
 
 
 
-	class DepthStencilImage : public VulkanImage, ng::MakeConstructed<DepthStencilImage> {
+	class DepthStencilImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
 		std::unique_ptr<DepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
@@ -369,7 +389,7 @@ namespace ngv {
 
 
 
-	class ColorAttachmentImage : public VulkanImage, ng::MakeConstructed<ColorAttachmentImage> {
+	class ColorAttachmentImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
 		std::unique_ptr<ColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,

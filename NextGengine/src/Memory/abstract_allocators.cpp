@@ -28,20 +28,20 @@ uint64 ng::AbstractFreeListAllocation::getPaddedOffset()
 	return m_PaddingOffset;
 }
 
-std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocation::make(const std::shared_ptr<AbstractFreeListAllocator> pAllocator)
+/*
+std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocation::make(const std::raw_ptr<AbstractFreeListAllocator> pAllocator)
 {
 	return std::unique_ptr<AbstractFreeListAllocation>(new AbstractFreeListAllocation(pAllocator));
 }
+*/
 
 ng::AbstractFreeListAllocation::~AbstractFreeListAllocation()
 {
-	if (auto spt = m_pAllocator.lock()) {
-		spt->free(shared_from_this());
-	}
+	m_pAllocator->free(this);
 }
 
 //private
-ng::AbstractFreeListAllocation::AbstractFreeListAllocation(const std::shared_ptr<AbstractFreeListAllocator> pAllocator)
+ng::AbstractFreeListAllocation::AbstractFreeListAllocation(const ng::raw_ptr<AbstractFreeListAllocator> pAllocator)
 {
 	m_pAllocator = pAllocator;
 }
@@ -50,13 +50,14 @@ ng::AbstractFreeListAllocation::AbstractFreeListAllocation(const std::shared_ptr
 
 // <======================= ABSTRACT FREE LIST ALLOCATOR =================================>
 // public
-std::unique_ptr<AbstractFreeListAllocator> ng::AbstractFreeListAllocator::make(uint64 size)
+std::unique_ptr<ng::AbstractFreeListAllocator> ng::AbstractFreeListAllocator::make(uint64 size)
 {
 	return std::unique_ptr<AbstractFreeListAllocator>(new AbstractFreeListAllocator(size));
 }
 
 bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	auto it = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (it != m_FreeBlocksBySize.end()) {
 		return true;
@@ -66,15 +67,18 @@ bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
 
 std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::allocate(uint64 size, uint64 alignment)
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
 	auto freeBlock = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (freeBlock != m_FreeBlocksBySize.end()) {
-		std::unique_ptr<AbstractFreeListAllocation> pAlloc = std::make_unique<AbstractFreeListAllocation>(shared_from_this());
+		std::unique_ptr<AbstractFreeListAllocation> pAlloc(new AbstractFreeListAllocation());
+		pAlloc->m_pAllocator = this;
 		pAlloc->m_PaddingOffset = freeBlock->second; // freeBlock offset
 		pAlloc->m_AlignedOffset = (freeBlock->second + alignment) - (freeBlock->second % alignment);
-		pAlloc->m_TotalSize = size + (pAlloc->alignedOffset - pAlloc->paddingOffset);
+		pAlloc->m_TotalSize = size + (pAlloc->m_AlignedOffset - pAlloc->m_PaddingOffset);
 		pAlloc->m_Size = size;
 
-		uint64_t newFreeBlockOffset = (pAlloc->alignedOffset + pAlloc->size);
+		uint64_t newFreeBlockOffset = (pAlloc->m_AlignedOffset + pAlloc->m_Size);
 		uint64_t newFreeBlockSize = (freeBlock->first + freeBlock->second) - newFreeBlockOffset;
 
 		// remove this freeblock from both sorted lists
@@ -87,133 +91,25 @@ std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::a
 			m_FreeBlocksByOffset.emplace(newFreeBlockOffset, newFreeBlockSize);
 		}
 
-		m_UsedBlocksByOffset.emplace(pAlloc->paddingOffset, pAlloc->totalSize);
+		m_UsedBlocksByOffset.emplace(pAlloc->m_PaddingOffset, pAlloc->m_TotalSize);
+
+		m_UsedSize += pAlloc->m_TotalSize;
 		return pAlloc;
 	}
 	return nullptr;
 }
 
-bool ng::AbstractFreeListAllocator::free(std::shared_ptr<AbstractFreeListAllocation> pAlloc)
+void ng::AbstractFreeListAllocator::free(std::unique_ptr<ng::AbstractFreeListAllocation> pAlloc)
 {
-	//check that this allocation isn't from another allocator (or from no allocator)
-	{
-		if (pAlloc.get() != this) {
-			return false;
-		}
-	}
-
-	auto usedBlock = m_UsedBlocksByOffset.find(pAlloc->paddingOffset);
-	if (usedBlock != m_UsedBlocksByOffset.end()) {
-		// 4 cases (1: nether left block nor right block is free) (2: left block is free right block isn't) 
-		//			(3: right block is free left block isn't) (4: no adjacent blocks are free)
-		bool leftBlockIsUsed;
-		bool rightBlockIsUsed;
-		uint64_t newFreeBlockOffset;
-		uint64_t newFreeBlockSize;
-
-		//left block
-		{
-
-			if (usedBlock != m_UsedBlocksByOffset.begin()) {
-				auto prevUsedBlock = std::prev(usedBlock);
-				if (prevUsedBlock->second + prevUsedBlock->first == usedBlock->first) { // left block is a used block
-					leftBlockIsUsed = true;
-					newFreeBlockOffset = usedBlock->first;
-				}
-				else { // the left block is a free block we should find it
-					leftBlockIsUsed = false;
-					auto leftFreeBlock = std::prev(m_FreeBlocksByOffset.lower_bound(usedBlock->first)); // the left block should be the block just smaller than the one just bigger than our used block
-					newFreeBlockOffset = leftFreeBlock->first; // our new free block will begin at the left block
-					//now free the left block from both freeBlocks lists
-					auto freeRange = m_FreeBlocksBySize.equal_range(leftFreeBlock->second);
-					for (auto i = freeRange.first; i != freeRange.second; ++i) {
-						if (i->second == leftFreeBlock->first) { // size sorted freeblock had same offset (correct one)
-							m_UsedBlocksByOffset.erase(i);
-							break;
-						}
-					}
-					m_FreeBlocksByOffset.erase(leftFreeBlock);
-				}
-			}
-			else { // there is no left used block
-				newFreeBlockOffset = 0;
-				if (usedBlock->first != 0) { // there is a free block to the left
-					auto leftFreeBlock = m_FreeBlocksByOffset.find(0);
-					auto freeRange = m_FreeBlocksBySize.equal_range(leftFreeBlock->second);
-					for (auto i = freeRange.first; i != freeRange.second; ++i) {
-						if (i->second == leftFreeBlock->first) {
-							m_FreeBlocksBySize.erase(i);
-							break;
-						}
-					}
-					m_FreeBlocksByOffset.erase(leftFreeBlock);
-				}
-			}
-
-		}
-
-		//right block
-		{
-
-			if (usedBlock != std::prev(m_UsedBlocksByOffset.end())) {
-				auto nextUsedBlock = std::next(usedBlock);
-				if ((usedBlock->first + usedBlock->second) == nextUsedBlock->first) { // the right block is a used block
-					rightBlockIsUsed = true;
-					newFreeBlockSize = (usedBlock->first + usedBlock->second) - newFreeBlockOffset;
-				}
-				else { // the left block is a free block
-					rightBlockIsUsed = false;
-					auto rightFreeBlock = m_FreeBlocksByOffset.find(usedBlock->first + usedBlock->second); // this isn't the last usedBlock //should never be end
-					newFreeBlockSize = (rightFreeBlock->first + rightFreeBlock->second) - newFreeBlockOffset;
-
-					auto freeRange = m_FreeBlocksBySize.equal_range(rightFreeBlock->second);
-					for (auto i = freeRange.first; i != freeRange.second; ++i) {
-						if (i->second == rightFreeBlock->second) {
-							m_FreeBlocksBySize.erase(i);
-							break;
-						}
-					}
-					m_FreeBlocksByOffset.erase(rightFreeBlock);
-				}
-			}
-			else {
-				newFreeBlockSize = this->m_Size - newFreeBlockOffset;
-				if ((usedBlock->first + usedBlock->second) != this->m_Size) { // there is a free block to the right
-					auto rightFreeBlock = m_FreeBlocksByOffset.find((usedBlock->first + usedBlock->second));
-					auto freeRange = m_FreeBlocksBySize.equal_range(rightFreeBlock->second);
-					for (auto i = freeRange.first; i != freeRange.second; ++i) {
-						if (i->second == rightFreeBlock->first) {
-							m_FreeBlocksBySize.erase(i);
-							break;
-						}
-					}
-					m_FreeBlocksByOffset.erase(rightFreeBlock);
-				}
-			}
-
-		}
-
-		//free the used block
-		m_UsedBlocksByOffset.erase(usedBlock);
-
-		//add the new block
-		m_FreeBlocksBySize.emplace(newFreeBlockSize, newFreeBlockOffset);
-		m_FreeBlocksByOffset.emplace(newFreeBlockOffset, newFreeBlockSize);
-
-		// reset allocation
-		pAlloc->m_pAllocator.reset();
-		pAlloc->m_AlignedOffset = 0;
-		pAlloc->m_PaddingOffset = 0;
-		pAlloc->m_TotalSize = 0;
-		pAlloc->m_Size = 0;
-
-		return true;
-	}
-	return false;
+	// don't lock mutex here, it is done by the private free func below
+	free(pAlloc.get());
+	// pAlloc.reset()
 }
 
 std::string ng::AbstractFreeListAllocator::getUsedBlocksString()
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
 	std::string ret = "USED BLOCKS: ";
 	for (auto& block : m_UsedBlocksByOffset) {
 		ret += std::string(" (") + std::to_string(block.first) + std::string(",") + std::to_string(block.second) + std::string(") ");
@@ -223,6 +119,8 @@ std::string ng::AbstractFreeListAllocator::getUsedBlocksString()
 
 std::string ng::AbstractFreeListAllocator::getFreeBlocksString()
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
 	std::string ret = "FREE BLOCKS: ";
 	for (auto& block : m_FreeBlocksByOffset) {
 		ret += std::string(" (") + std::to_string(block.first) + std::string(",") + std::to_string(block.second) + std::string(") ");
@@ -231,9 +129,137 @@ std::string ng::AbstractFreeListAllocator::getFreeBlocksString()
 }
 
 
+//private
 ng::AbstractFreeListAllocator::AbstractFreeListAllocator(uint64 size)
 {
 	this->m_Size = size;
 	m_FreeBlocksByOffset.emplace(0, size);
 	m_FreeBlocksBySize.emplace(size, 0);
+}
+
+void ng::AbstractFreeListAllocator::free(ng::raw_ptr<AbstractFreeListAllocation> pAlloc)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
+#ifndef NDEBUG
+	if (pAlloc->m_pAllocator != this) {
+		std::runtime_error("Tried to free non allocated FreeList allocation");
+	}
+#endif
+
+	auto usedBlock = m_UsedBlocksByOffset.find(pAlloc->m_PaddingOffset);
+
+#ifndef NDEBUG
+	if (usedBlock != m_UsedBlocksByOffset.end()) {
+		std::runtime_error("FreeList allocation to be freed not found");
+	}
+#endif
+
+	// 4 cases (1: nether left block nor right block is free) (2: left block is free right block isn't) 
+		//			(3: right block is free left block isn't) (4: no adjacent blocks are free)
+	bool leftBlockIsUsed;
+	bool rightBlockIsUsed;
+	uint64_t newFreeBlockOffset;
+	uint64_t newFreeBlockSize;
+
+	//left block
+	{
+
+		if (usedBlock != m_UsedBlocksByOffset.begin()) {
+			auto prevUsedBlock = std::prev(usedBlock);
+			if (prevUsedBlock->second + prevUsedBlock->first == usedBlock->first) { // left block is a used block
+				leftBlockIsUsed = true;
+				newFreeBlockOffset = usedBlock->first;
+			}
+			else { // the left block is a free block we should find it
+				leftBlockIsUsed = false;
+				auto leftFreeBlock = std::prev(m_FreeBlocksByOffset.lower_bound(usedBlock->first)); // the left block should be the block just smaller than the one just bigger than our used block
+				newFreeBlockOffset = leftFreeBlock->first; // our new free block will begin at the left block
+				//now free the left block from both freeBlocks lists
+				auto freeRange = m_FreeBlocksBySize.equal_range(leftFreeBlock->second);
+				for (auto i = freeRange.first; i != freeRange.second; ++i) {
+					if (i->second == leftFreeBlock->first) { // size sorted freeblock had same offset (correct one)
+						m_UsedBlocksByOffset.erase(i);
+						break;
+					}
+				}
+				m_FreeBlocksByOffset.erase(leftFreeBlock);
+			}
+		}
+		else { // there is no left used block
+			newFreeBlockOffset = 0;
+			if (usedBlock->first != 0) { // there is a free block to the left
+				auto leftFreeBlock = m_FreeBlocksByOffset.find(0);
+				auto freeRange = m_FreeBlocksBySize.equal_range(leftFreeBlock->second);
+				for (auto i = freeRange.first; i != freeRange.second; ++i) {
+					if (i->second == leftFreeBlock->first) {
+						m_FreeBlocksBySize.erase(i);
+						break;
+					}
+				}
+				m_FreeBlocksByOffset.erase(leftFreeBlock);
+			}
+		}
+
+	}
+
+	//right block
+	{
+
+		if (usedBlock != std::prev(m_UsedBlocksByOffset.end())) {
+			auto nextUsedBlock = std::next(usedBlock);
+			if ((usedBlock->first + usedBlock->second) == nextUsedBlock->first) { // the right block is a used block
+				rightBlockIsUsed = true;
+				newFreeBlockSize = (usedBlock->first + usedBlock->second) - newFreeBlockOffset;
+			}
+			else { // the left block is a free block
+				rightBlockIsUsed = false;
+				auto rightFreeBlock = m_FreeBlocksByOffset.find(usedBlock->first + usedBlock->second); // this isn't the last usedBlock //should never be end
+				newFreeBlockSize = (rightFreeBlock->first + rightFreeBlock->second) - newFreeBlockOffset;
+
+				auto freeRange = m_FreeBlocksBySize.equal_range(rightFreeBlock->second);
+				for (auto i = freeRange.first; i != freeRange.second; ++i) {
+					if (i->second == rightFreeBlock->second) {
+						m_FreeBlocksBySize.erase(i);
+						break;
+					}
+				}
+				m_FreeBlocksByOffset.erase(rightFreeBlock);
+			}
+		}
+		else {
+			newFreeBlockSize = this->m_Size - newFreeBlockOffset;
+			if ((usedBlock->first + usedBlock->second) != this->m_Size) { // there is a free block to the right
+				auto rightFreeBlock = m_FreeBlocksByOffset.find((usedBlock->first + usedBlock->second));
+				auto freeRange = m_FreeBlocksBySize.equal_range(rightFreeBlock->second);
+				for (auto i = freeRange.first; i != freeRange.second; ++i) {
+					if (i->second == rightFreeBlock->first) {
+						m_FreeBlocksBySize.erase(i);
+						break;
+					}
+				}
+				m_FreeBlocksByOffset.erase(rightFreeBlock);
+			}
+		}
+
+	}
+
+	//free the used block
+	m_UsedBlocksByOffset.erase(usedBlock);
+
+	//add the new block
+	m_FreeBlocksBySize.emplace(newFreeBlockSize, newFreeBlockOffset);
+	m_FreeBlocksByOffset.emplace(newFreeBlockOffset, newFreeBlockSize);
+
+
+	// decrease used size
+	m_UsedSize -= pAlloc->m_PaddingOffset;
+
+	// reset allocation
+	pAlloc->m_pAllocator = nullptr;
+	pAlloc->m_AlignedOffset = 0;
+	pAlloc->m_PaddingOffset = 0;
+	pAlloc->m_TotalSize = 0;
+	pAlloc->m_Size = 0;
+
 }

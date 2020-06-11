@@ -11,6 +11,8 @@ void ngv::VulkanDevice::setDevice(vk::UniqueDevice device)
 void ngv::VulkanDevice::setPhysicalDevice(vk::PhysicalDevice physicalDevice)
 {
     m_PhysicalDevice = physicalDevice;
+    m_QueueProperties = physicalDevice.getQueueFamilyProperties();
+    m_Features = physicalDevice.getFeatures();
     m_MemProps = m_PhysicalDevice.getMemoryProperties();
 }
 
@@ -27,6 +29,26 @@ const vk::PhysicalDevice ngv::VulkanDevice::physicalDevice() const
 const vk::PhysicalDeviceMemoryProperties ngv::VulkanDevice::physicalDeviceMemoryProperties() const
 {
     return m_MemProps;
+}
+
+const vk::PhysicalDeviceProperties ngv::VulkanDevice::physicalDeviceProperties() const
+{
+    return m_Properties;
+}
+
+const vk::PhysicalDeviceFeatures ngv::VulkanDevice::physicalDeviceFeatures() const
+{
+    return m_Features;
+}
+
+const vk::PhysicalDeviceFeatures ngv::VulkanDevice::enabledPhysicalDeviceFeatures() const
+{
+    return m_EnabledFeatures;
+}
+
+const std::vector<vk::QueueFamilyProperties>& ngv::VulkanDevice::queueFamilyProperties() const
+{
+    return m_QueueProperties;
 }
 
 

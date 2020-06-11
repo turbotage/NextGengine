@@ -13,6 +13,8 @@ ngv::VulkanContext::VulkanContext()
 
 ngv::VulkanContext::VulkanContext(const std::string& name)
 {
+	m_pDevice = std::make_unique<VulkanDevice>();
+
 	ngv::VulkanInstanceMaker im{};
 	im.setDefaultLayers();
 	m_Instance = im.createUnique();
@@ -20,13 +22,13 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 	m_DebugCallback = debug::VulkanDebugCallback(*m_Instance);
 
 	auto pds = m_Instance->enumeratePhysicalDevices();
-	m_PhysicalDevice = pds[0];
-	auto qprops = m_PhysicalDevice.getQueueFamilyProperties();
+	m_pDevice->setPhysicalDevice(pds[0]);
 	const auto badQueue = ~(uint32)0;
 	m_GraphicsQueueFamilyIndex = badQueue;
 	m_ComputeQueueFamilyIndex = badQueue;
 	vk::QueueFlags search = vk::QueueFlagBits::eGraphics | vk::QueueFlagBits::eCompute;
 
+	auto qprops = m_pDevice->queueFamilyProperties();
 	for (uint32 qi = 0; qi != qprops.size(); ++qi) {
 		auto& qprop = qprops[qi];
 		std::cout << vk::to_string(qprop.queueFlags) << "\n";
@@ -42,16 +44,14 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 		return;
 	}
 
-	m_MemProps = m_PhysicalDevice.getMemoryProperties();
-
 	ngv::VulkanDeviceMaker dm{};
 	dm.setDefaultLayers();
 	dm.addQueue(m_GraphicsQueueFamilyIndex);
 	if (m_ComputeQueueFamilyIndex != m_GraphicsQueueFamilyIndex) dm.addQueue(m_ComputeQueueFamilyIndex);
-	m_Device = dm.createUnique(m_PhysicalDevice);
+	m_pDevice->setDevice(dm.createUnique(m_pDevice->physicalDevice()));
 
 	vk::PipelineCacheCreateInfo pipelineCacheInfo{};
-	m_PipelineCache = m_Device->createPipelineCacheUnique(pipelineCacheInfo);
+	m_PipelineCache = m_pDevice->device().createPipelineCacheUnique(pipelineCacheInfo);
 
 	std::vector<vk::DescriptorPoolSize> poolSizes;
 	poolSizes.emplace_back(vk::DescriptorType::eUniformBuffer, 128);
@@ -64,7 +64,7 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 	descriptorPoolInfo.poolSizeCount = (uint32)poolSizes.size();
 	descriptorPoolInfo.pPoolSizes = poolSizes.data();
 	for (int i = 0; i < m_DescriptorPools.size(); ++i) {
-		m_DescriptorPools[i] = m_Device->createDescriptorPoolUnique(descriptorPoolInfo);
+		m_DescriptorPools[i] = m_pDevice->device().createDescriptorPoolUnique(descriptorPoolInfo);
 	}
 
 	m_Ok = true;
@@ -72,13 +72,14 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 
 void ngv::VulkanContext::dumpCaps(std::ostream& os) const
 {
+	auto props = m_pDevice->physicalDeviceMemoryProperties();
 	os << "Memory Types\n";
-	for (uint32 i = 0; i != m_MemProps.memoryTypeCount; ++i) {
-		os << "  type" << i << " heap" << m_MemProps.memoryTypes[i].heapIndex << " " << vk::to_string(m_MemProps.memoryTypes[i].propertyFlags);
+	for (uint32 i = 0; i != props.memoryTypeCount; ++i) {
+		os << "  type" << i << " heap" << props.memoryTypes[i].heapIndex << " " << vk::to_string(props.memoryTypes[i].propertyFlags);
 	}
 	os << "Heaps\n";
-	for (uint32 i = 0; i != m_MemProps.memoryHeapCount; ++i) {
-		os << "  heap" << vk::to_string(m_MemProps.memoryHeaps[i].flags) << " " << m_MemProps.memoryHeaps[i].size << "\n";
+	for (uint32 i = 0; i != props.memoryHeapCount; ++i) {
+		os << "  heap" << vk::to_string(props.memoryHeaps[i].flags) << " " << props.memoryHeaps[i].size << "\n";
 	}
 }
 
@@ -89,22 +90,22 @@ const vk::Instance ngv::VulkanContext::instance() const
 
 const vk::Device ngv::VulkanContext::device() const
 {
-	return *m_Device;
+	return m_pDevice->device();
 }
 
 const vk::Queue ngv::VulkanContext::graphicsQueue() const
 {
-	return m_Device->getQueue(m_GraphicsQueueFamilyIndex, 0);
+	return m_pDevice->device().getQueue(m_GraphicsQueueFamilyIndex, 0);
 }
 
 const vk::Queue ngv::VulkanContext::computeQueue() const
 {
-	return vk::Queue();
+	return m_pDevice->device().getQueue(m_ComputeQueueFamilyIndex, 0);
 }
 
 const vk::PhysicalDevice& ngv::VulkanContext::physicalDevice() const
 {
-	return m_PhysicalDevice;
+	return m_pDevice->physicalDevice();
 }
 
 const vk::PipelineCache ngv::VulkanContext::pipelineCache() const
@@ -124,15 +125,15 @@ uint32 ngv::VulkanContext::computeQueueFamilyIndex() const
 
 const vk::PhysicalDeviceMemoryProperties& ngv::VulkanContext::memProps() const
 {
-	return m_MemProps;
+	return m_pDevice->physicalDeviceMemoryProperties();
 }
 
 
 
 ngv::VulkanContext::~VulkanContext()
 {
-	if (m_Device) {
-		m_Device->waitIdle();
+	if (m_pDevice->device()) {
+		m_pDevice->device().waitIdle();
 		if (m_PipelineCache) {
 			m_PipelineCache.reset();
 		}

@@ -2,6 +2,8 @@
 
 #include "vulkandef.h"
 
+#include <vector>
+
 namespace ngv {
 
 	class VulkanDevice {
@@ -19,10 +21,22 @@ namespace ngv {
 
 		const vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties() const;
 
+		const vk::PhysicalDeviceProperties physicalDeviceProperties() const;
+
+		const vk::PhysicalDeviceFeatures physicalDeviceFeatures() const;
+
+		const vk::PhysicalDeviceFeatures enabledPhysicalDeviceFeatures() const;
+
+		const std::vector<vk::QueueFamilyProperties>& queueFamilyProperties() const;
+
 	private:
 		vk::UniqueDevice m_Device;
 		vk::PhysicalDevice m_PhysicalDevice;
 		vk::PhysicalDeviceMemoryProperties m_MemProps;
+		vk::PhysicalDeviceProperties m_Properties;
+		vk::PhysicalDeviceFeatures m_Features;
+		vk::PhysicalDeviceFeatures m_EnabledFeatures;
+		std::vector<vk::QueueFamilyProperties> m_QueueProperties;
 	};
 
 	/// Factory for devices.

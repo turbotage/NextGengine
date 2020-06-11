@@ -11,6 +11,8 @@
 
 namespace ngv {
 
+	class VulkanDevice;
+
 	class VulkanContext {
 	public:
 
@@ -51,18 +53,15 @@ namespace ngv {
 
 		vk::UniqueInstance m_Instance;
 		ngv::debug::VulkanDebugCallback m_DebugCallback;
-		vk::UniqueDevice m_Device;
-
-		vk::PhysicalDevice m_PhysicalDevice;
+		
+		std::unique_ptr<VulkanDevice> m_pDevice;
 
 		vk::UniquePipelineCache m_PipelineCache;
 		
 		std::vector<vk::UniqueDescriptorPool> m_DescriptorPools;
 
-		uint32 m_GraphicsQueueFamilyIndex;
-		uint32 m_ComputeQueueFamilyIndex;
-
-		vk::PhysicalDeviceMemoryProperties m_MemProps;
+		uint32 m_GraphicsQueueFamilyIndex = 0;
+		uint32 m_ComputeQueueFamilyIndex = 0;
 
 		bool m_Ok = false;
 	};

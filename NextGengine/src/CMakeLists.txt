@@ -24,4 +24,6 @@ set(MEMORY_SOURCES "Memory/abstract_allocators.cpp"
 set(THREADING_SOURCES "Threading/thread_pool.cpp"
 						"Threading/thread_safe_queue.cpp")
 
-target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} ${THREADING_SOURCES})
+set(LOCAL_SOURCES "ng_utility.cpp")
+
+target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} ${THREADING_SOURCES} ${LOCAL_SOURCES})

@@ -4,12 +4,13 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <mutex>
 
 namespace ng {
 
 	class AbstractFreeListAllocator;
 
-	class AbstractFreeListAllocation : public MakeConstructed<AbstractFreeListAllocation> {
+	class AbstractFreeListAllocation : ng::AllocatorConstructed {
 	public:
 		uint64 getSize();
 		uint64 getOffset();
@@ -18,20 +19,21 @@ namespace ng {
 		uint64 getPaddedOffset();
 
 		// Make Factory
-		static std::unique_ptr<AbstractFreeListAllocation> make(const std::shared_ptr<AbstractFreeListAllocator> pAllocator);
+		//static std::unique_ptr<AbstractFreeListAllocation> make(const std::raw_ptr<AbstractFreeListAllocator> pAllocator);
 			
 		~AbstractFreeListAllocation();
 
 	private:
 		// Make Factory
-		AbstractFreeListAllocation(const std::shared_ptr<AbstractFreeListAllocator> pAllocator);
+		AbstractFreeListAllocation() = default;
+		AbstractFreeListAllocation(const ng::raw_ptr<AbstractFreeListAllocator> pAllocator);
 		AbstractFreeListAllocation(const AbstractFreeListAllocation&) = delete;
 		AbstractFreeListAllocation& operator=(const AbstractFreeListAllocation&) = delete;
 
 	private:
 
 		friend class AbstractFreeListAllocator;
-		std::weak_ptr<AbstractFreeListAllocator> m_pAllocator;
+		ng::raw_ptr<AbstractFreeListAllocator> m_pAllocator;
 
 		uint64 m_PaddingOffset;
 		uint64 m_TotalSize;
@@ -41,7 +43,7 @@ namespace ng {
 	};
 
 	// TODO: some form of defragmentation
-	class AbstractFreeListAllocator : public MakeConstructed<AbstractFreeListAllocator> {
+	class AbstractFreeListAllocator : public MakeConstructed {
 	public:
 
 		static std::unique_ptr<AbstractFreeListAllocator> make(uint64 size);
@@ -50,22 +52,27 @@ namespace ng {
 
 		std::unique_ptr<AbstractFreeListAllocation> allocate(uint64 size, uint64 alignment);
 
-		bool free(std::shared_ptr<AbstractFreeListAllocation> pAlloc);
+		void free(std::unique_ptr<AbstractFreeListAllocation> pAlloc);
 
 		std::string getUsedBlocksString();
 
 		std::string getFreeBlocksString();
 
 	private:
+		AbstractFreeListAllocator() = default;
 		AbstractFreeListAllocator(uint64 size);
 		AbstractFreeListAllocator(const AbstractFreeListAllocator&) = delete;
 		AbstractFreeListAllocator& operator=(const AbstractFreeListAllocator&) = delete;
 
-
+		void free(ng::raw_ptr<AbstractFreeListAllocation> pAlloc);
 
 	private:
+		friend class AbstractFreeListAllocation;
+
+		std::mutex m_Mutex;
 
 		uint64 m_Size;
+		uint64 m_UsedSize;
 
 		//size, offset
 		std::multimap<uint64, uint64> m_FreeBlocksBySize; // sorted by size

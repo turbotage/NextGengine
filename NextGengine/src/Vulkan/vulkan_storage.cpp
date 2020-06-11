@@ -164,6 +164,37 @@ ngv::VulkanBuffer::VulkanBuffer(VulkanDevice& device, const vk::BufferCreateInfo
 
 
 
+// <============================ VULKAN SPARSE BUFFER =================================================>
+/*
+std::unique_ptr<ngv::VulkanSparseBuffer> ngv::VulkanSparseBuffer::make(VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask)
+{
+	return std::unique_ptr<VulkanSparseBuffer>(new VulkanSparseBuffer(device, info, viewType, aspectMask));
+}
+
+// <======================== VULKAN SPARSE BUFFER ====================================>
+void ngv::VulkanSparseBuffer::create(VulkanDevice& device, const vk::BufferCreateInfo& info)
+{
+	m_Buffer = device.device().createBufferUnique(info);
+	
+	m_MemoryRequirements = device.device().getBufferMemoryRequirements(*m_Buffer);
+
+	if (m_MemoryRequirements.size > device.physicalDeviceProperties().limits.sparseAddressSpaceSize) {
+		std::runtime_error("Requested sparse buffer size exceeds supported sparse address space size");
+	}
+
+	
+
+}
+
+ngv::VulkanSparseBuffer::VulkanSparseBuffer(VulkanDevice& device, const vk::BufferCreateInfo& info)
+{
+	create(device, info);
+}
+*/
+
+
+
+
 
 
 

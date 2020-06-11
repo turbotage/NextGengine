@@ -10,11 +10,8 @@ namespace ngv {
 
 	class VulkanMemoryPage;
 
-	class VulkanMemoryAllocation : public ng::MakeConstructed<VulkanMemoryAllocation> {
+	class VulkanMemoryAllocation : public ng::AllocatorConstructed {
 	public:
-
-		// Make Factory
-		static std::unique_ptr<VulkanMemoryAllocation> make(std::shared_ptr<VulkanMemoryPage> pMemPage);
 
 		~VulkanMemoryAllocation() = default;
 
@@ -22,6 +19,7 @@ namespace ngv {
 		vk::DeviceSize getOffset();
 
 	private:
+		VulkanMemoryAllocation() = default;
 		VulkanMemoryAllocation(std::shared_ptr<VulkanMemoryPage> pMemPage);
 		VulkanMemoryAllocation(const VulkanMemoryAllocation&) = delete;
 		VulkanMemoryAllocation& operator=(const VulkanMemoryAllocation&) = delete;
@@ -30,7 +28,6 @@ namespace ngv {
 		friend class VulkanMemoryPage;
 
 		std::unique_ptr<ng::AbstractFreeListAllocation> m_pAllocation;
-
 		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
 
 	};
@@ -40,23 +37,21 @@ namespace ngv {
 
 
 
-	class VulkanMemoryPage : public ng::MakeConstructed<VulkanMemoryPage> {
+	class VulkanMemoryPage : public ng::MakeConstructed, public ng::EnableSharedThis<VulkanMemoryPage> {
 	public:
 
 		// Make Factory
-		static std::unique_ptr<VulkanMemoryPage> make(std::shared_ptr<VulkanDevice> device, std::shared_ptr<vk::UniqueDeviceMemory> pMemory, vk::DeviceSize size, uint32 memoryTypeIndex);
+		static std::shared_ptr<VulkanMemoryPage> make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
 		
 		~VulkanMemoryPage() = default;
 
 		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
 
-		std::unique_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment);
+		std::shared_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment);
 
-		bool free(std::shared_ptr<VulkanMemoryAllocation> pMemAlloc);
+		void free(std::shared_ptr<VulkanMemoryAllocation> pMemAlloc);
 
-		const vk::Device device() const;
-		const vk::PhysicalDevice physicalDevice() const;
-		const vk::PhysicalDeviceMemoryProperties physicalDeviceMemoryProperties() const;
+		const VulkanDevice& vulkanDevice() const;
 		const vk::DeviceMemory memory() const;
 
 	public:
@@ -64,7 +59,7 @@ namespace ngv {
 		std::mutex pageMutex;
 
 	private:
-		VulkanMemoryPage(std::shared_ptr<VulkanDevice> device, std::shared_ptr<vk::UniqueDeviceMemory> pMemory, vk::DeviceSize size, uint32 memoryTypeIndex);
+		VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
 		VulkanMemoryPage(const VulkanMemoryPage&) = delete;
 		VulkanMemoryPage& operator=(const VulkanMemoryPage&) = delete;
 
@@ -73,12 +68,12 @@ namespace ngv {
 
 		std::unique_ptr<ng::AbstractFreeListAllocator> m_pAllocator;
 
-		std::shared_ptr<vk::UniqueDeviceMemory> m_pMemory;
+		vk::UniqueDeviceMemory m_Memory;
 		vk::DeviceSize m_Size;
 
 		uint32 m_MemoryTypeIndex;
 
-		std::shared_ptr<VulkanDevice> m_pDevice;
+		VulkanDevice& m_Device;
 
 	};
 
@@ -95,23 +90,20 @@ namespace ngv {
 	class VulkanAllocator {
 	public:
 
-		VulkanAllocator(std::shared_ptr<VulkanDevice> pDevice, const VulkanMemoryStrategy& memStrategy);
+		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
 
 		// BUFFER
-		bool giveBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer);
-
-		bool giveSparseBufferAllocation(std::raw_ptr<VulkanSparseBuffer> pBuffer);
-		bool looseSparseBufferAllocation(std::raw_ptr<VulkanBuffer> pBuffer);
+		void giveBufferAllocation(std::shared_ptr<VulkanBuffer> pBuffer);
 
 		// IMAGE
-		bool giveImageAllocation(std::raw_ptr<VulkanImage> pImage);
+		void giveImageAllocation(std::shared_ptr<VulkanImage> pImage);
 
 	private:
 
 
 	private:
 
-		std::shared_ptr<VulkanDevice> m_pDevice;
+		VulkanDevice& m_Device;
 
 		VulkanMemoryStrategy m_MemoryStrategy;
 		vk::DeviceSize m_UsedMemory = 0;
