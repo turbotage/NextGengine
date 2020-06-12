@@ -23,7 +23,7 @@ namespace ngv {
 	class VulkanBuffer : public ng::MakeConstructed {
 	public:
 
-		static std::unique_ptr<VulkanBuffer> make(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
+		static std::shared_ptr<VulkanBuffer> make(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
 
 		~VulkanBuffer() = default; // allocations should be RAII deallocated
 		
@@ -118,7 +118,7 @@ namespace ngv {
 	}
 
 
-
+	
 
 
 
@@ -170,7 +170,7 @@ namespace ngv {
 	class VulkanImage : public ng::MakeConstructed {
 	public:
 
-		static std::unique_ptr<VulkanImage> make(VulkanDevice& device, const vk::ImageCreateInfo& info,
+		static std::shared_ptr<VulkanImage> make(VulkanDevice& device, const vk::ImageCreateInfo& info,
 			vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage = false);
 
 		~VulkanImage() = default;
@@ -262,7 +262,7 @@ namespace ngv {
 	class VertexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::unique_ptr<VertexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VertexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
 		VertexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -283,7 +283,7 @@ namespace ngv {
 	class IndexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::unique_ptr<IndexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<IndexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
 		IndexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -302,7 +302,7 @@ namespace ngv {
 	class UniformBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::unique_ptr<UniformBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<UniformBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
 		UniformBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -321,7 +321,7 @@ namespace ngv {
 	class Texture2D : public VulkanImage, public ng::MakeConstructed {
 	public:
 
-		std::unique_ptr<Texture2D> make(VulkanDevice& device, uint32 width, uint32 height, 
+		static std::shared_ptr<Texture2D> make(VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 	private:
@@ -340,12 +340,10 @@ namespace ngv {
 
 
 
-
-
 	class TextureCube : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		std::unique_ptr<TextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::shared_ptr<TextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 	private:
@@ -364,11 +362,10 @@ namespace ngv {
 
 
 
-
 	class DepthStencilImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		std::unique_ptr<DepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
+		static std::shared_ptr<DepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 	private:
@@ -388,11 +385,10 @@ namespace ngv {
 
 
 
-
 	class ColorAttachmentImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		std::unique_ptr<ColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
+		static std::shared_ptr<ColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 	private:

@@ -7,27 +7,29 @@
 
 namespace ngv {
 
+	class VulkanDevice;
+	class DepthStencilImage;
+	class VulkanAllocator;
+
 	class Window {
 	public:
 
-		Window() {};
-
-		Window(const vk::Instance& instance, const vk::Device& device,
-			const vk::PhysicalDevice& physicalDevice, uint32 graphicsQueueFamilyIndex,
-			uint32 width, uint32 height, const char* title);
-
-		void init(const vk::Instance& instance, const vk::Device& device,
-			const vk::PhysicalDevice& physicalDevice, uint32 graphicsQueueFamilyIndex, vk::SurfaceKHR surface);
+		Window(const vk::Instance& instance, VulkanDevice& device, VulkanAllocator& allocator, uint32 graphicsQueueFamilyIndex, GLFWwindow* pWindow);
 
 	private:
-		GLFWwindow* m_pWindow;
+		
+		void init();
+
+	private:
 
 		const char* m_Title;
 		uint32 m_Width, m_Height;
 
 		vk::Instance m_Instance;
 		vk::SurfaceKHR m_Surface;
-		vk::Device m_Device;
+
+		VulkanDevice& m_Device;
+		VulkanAllocator& m_Allocator;
 
 		vk::UniqueSwapchainKHR m_Swapchain;
 		vk::UniqueRenderPass m_RenderPass;
@@ -37,11 +39,15 @@ namespace ngv {
 		
 		std::vector<vk::ImageView> m_SwapChainViews;
 		std::vector<vk::Image> m_SwapChainImages;
+		std::vector<vk::UniqueFramebuffer> m_Framebuffers;
 		vk::Format m_SwapChainImageFormat = vk::Format::eB8G8R8A8Snorm;
 		vk::ColorSpaceKHR m_SwapChainColorSpace = vk::ColorSpaceKHR::eSrgbNonlinear;
 
-		uint32 m_PresentQueueFamily = 0;
+		uint32 m_GraphicsQueueFamilyIndex = 0;
+		uint32 m_PresentQueueFamilyIndex = 0;
 		
+		std::shared_ptr<DepthStencilImage> m_DepthStencil;
+
 
 	};
 
