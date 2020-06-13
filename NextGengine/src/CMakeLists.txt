@@ -15,6 +15,7 @@ set(VULKAN_SOURCES "Vulkan/vulkan_allocator.cpp"
 					"Vulkan/vulkan_renderpass.cpp"
 					"Vulkan/vulkan_storage.cpp"
 					"Vulkan/vulkan_swapchain.cpp"
+					"Vulkan/vulkan_thread.cpp"
 					"Vulkan/vulkan_utility.cpp"
 					"Vulkan/vulkan_window.cpp")
 

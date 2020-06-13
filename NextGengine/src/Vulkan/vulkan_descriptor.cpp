@@ -75,7 +75,7 @@ std::vector<vk::UniqueDescriptorSet> ngv::VulkanDescriptorSetMaker::createUnique
 
 // <========================== DESCRIPTOR SET UPDATER ===============================>
 
-ngv::VulkanDescriptorSetUpdater::VulkanDescriptorSetUpdater(int maxBuffers, int maxImages, int maxBufferViews = 0)
+ngv::VulkanDescriptorSetUpdater::VulkanDescriptorSetUpdater(int maxBuffers, int maxImages, int maxBufferViews)
 {
 	m_BufferInfos.resize(maxBuffers);
 	m_ImageInfos.resize(maxImages);

@@ -10,7 +10,7 @@ ngv::VulkanInstanceMaker& ngv::VulkanInstanceMaker::setDefaultLayers()
 #ifdef VKU_SURFACE
     m_Extensions_.push_back(VKU_SURFACE);
 #endif
-    m_Extensions.push_back("VK_KHR_surface");
+    //m_Extensions.push_back("VK_KHR_surface"); // added by glfwRequiredExtensions
 #if defined( __APPLE__ ) && defined(VK_EXT_METAL_SURFACE_EXTENSION_NAME)
     m_Extensions_.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
 #endif //__APPLE__

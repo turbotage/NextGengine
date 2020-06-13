@@ -9,7 +9,7 @@ ng::ThreadPool::ThreadPool(const std::uint32_t numThreads)
     {
         for (std::uint32_t i = 0u; i < numThreads; ++i)
         {
-            m_threads.emplace_back(&ThreadPool::worker, this);
+            m_Threads.emplace_back(&ThreadPool::worker, this);
         }
     }
     catch (...)
@@ -24,7 +24,7 @@ void ng::ThreadPool::worker()
     while (!m_Done)
     {
         std::unique_ptr<IThreadTask> pTask{ nullptr };
-        if (m_workQueue.waitPop(pTask))
+        if (m_WorkQueue.waitPop(pTask))
         {
             pTask->execute();
         }
@@ -35,7 +35,7 @@ void ng::ThreadPool::destroy()
 {
     m_Done = true;
     m_WorkQueue.invalidate();
-    for (auto& thread : m_threads)
+    for (auto& thread : m_Threads)
     {
         if (thread.joinable())
         {

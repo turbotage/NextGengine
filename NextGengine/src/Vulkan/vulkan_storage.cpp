@@ -492,7 +492,7 @@ ngv::UniformBuffer::UniformBuffer(VulkanDevice& device, vk::DeviceSize size, boo
 
 
 // <===================================== TEXTURE 2D =================================================>
-std::shared_ptr<ngv::Texture2D> ngv::Texture2D::make(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags,bool hostImage = false)
+std::shared_ptr<ngv::Texture2D> ngv::Texture2D::make(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags, bool hostImage)
 {
 	return std::shared_ptr<Texture2D>(new Texture2D(device, width, height, mipLevels, format, sampleFlags, hostImage));
 }
@@ -565,7 +565,7 @@ ngv::TextureCube::TextureCube(VulkanDevice& device, uint32 width, uint32 height,
 
 // <===================================== DEPTH STENCIL ================================================>
 std::shared_ptr<ngv::DepthStencilImage> ngv::DepthStencilImage::make(VulkanDevice& device, uint32 width,
-	uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1)
+	uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
 {
 	return std::shared_ptr<DepthStencilImage>(new DepthStencilImage(device, width, height, format, sampleFlags));
 }

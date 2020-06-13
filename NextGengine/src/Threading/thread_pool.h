@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <type_traits>
+#include <future>
 
 namespace ng {
 
@@ -50,7 +51,7 @@ namespace ng {
 		{
 		public:
 			TaskFuture(std::future<T>&& future)
-				:m_future{ std::move(future) }
+				:m_Future{ std::move(future) }
 			{
 			}
 
@@ -60,20 +61,20 @@ namespace ng {
 			TaskFuture& operator=(TaskFuture&& other) = default;
 			~TaskFuture(void)
 			{
-				if (m_future.valid())
+				if (m_Future.valid())
 				{
-					m_future.get();
+					m_Future.get();
 				}
 			}
 
 			auto get(void)
 			{
-				return m_future.get();
+				return m_Future.get();
 			}
 
 
 		private:
-			std::future<T> m_future;
+			std::future<T> m_Future;
 		};
 
 	private:
@@ -105,7 +106,7 @@ namespace ng {
 		{
 		public:
 			ThreadTask(Func&& func)
-				:m_func{ std::move(func) }
+				: m_Func{ std::move(func) }
 			{
 			}
 
@@ -120,17 +121,17 @@ namespace ng {
 			 */
 			void execute() override
 			{
-				m_func();
+				m_Func();
 			}
 
 		private:
-			Func m_func;
+			Func m_Func;
 		};
 
 	private:
 		std::atomic_bool m_Done;
 		ThreadSafeQueue<std::unique_ptr<IThreadTask>> m_WorkQueue;
-		std::vector<std::thread> m_Thread;
+		std::vector<std::thread> m_Threads;
 
 	};
 

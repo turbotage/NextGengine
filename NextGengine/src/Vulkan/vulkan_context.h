@@ -29,6 +29,8 @@ namespace ngv {
 		const vk::Queue graphicsQueue() const;
 		/// Get the queue used to submit compute jobs
 		const vk::Queue computeQueue() const;
+		/// Get the vulkanDevice
+		VulkanDevice& vulkanDevice() const;
 		/// Get the physical device.
 		const vk::PhysicalDevice& physicalDevice() const;
 		/// Get the default pipeline cache (you can use your own if you like).

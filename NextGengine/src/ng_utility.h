@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 // Class helpers
 namespace ng {
 

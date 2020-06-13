@@ -1,5 +1,7 @@
 #include "vulkan_context.h"
 
+#include <GLFW/glfw3.h>
+
 #include "vulkan_instance.h"
 #include "vulkan_debug.h"
 #include "vulkan_device.h"
@@ -17,6 +19,13 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 
 	ngv::VulkanInstanceMaker im{};
 	im.setDefaultLayers();
+
+	uint32 nWindowExtensions;
+	auto windowExtension = glfwGetRequiredInstanceExtensions(&nWindowExtensions);
+	for (int i = 0; i < nWindowExtensions; ++i) {
+		im.addExtension(windowExtension[i]);
+	}
+
 	m_Instance = im.createUnique();
 
 	m_DebugCallback = debug::VulkanDebugCallback(*m_Instance);
@@ -103,6 +112,11 @@ const vk::Queue ngv::VulkanContext::computeQueue() const
 	return m_pDevice->device().getQueue(m_ComputeQueueFamilyIndex, 0);
 }
 
+ngv::VulkanDevice& ngv::VulkanContext::vulkanDevice() const
+{
+	return *m_pDevice;
+}
+
 const vk::PhysicalDevice& ngv::VulkanContext::physicalDevice() const
 {
 	return m_pDevice->physicalDevice();
@@ -127,8 +141,6 @@ const vk::PhysicalDeviceMemoryProperties& ngv::VulkanContext::memProps() const
 {
 	return m_pDevice->physicalDeviceMemoryProperties();
 }
-
-
 
 ngv::VulkanContext::~VulkanContext()
 {
