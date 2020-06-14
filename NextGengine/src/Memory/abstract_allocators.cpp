@@ -74,7 +74,16 @@ std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::a
 		std::unique_ptr<AbstractFreeListAllocation> pAlloc(new AbstractFreeListAllocation());
 		pAlloc->m_pAllocator = this;
 		pAlloc->m_PaddingOffset = freeBlock->second; // freeBlock offset
-		pAlloc->m_AlignedOffset = (freeBlock->second + alignment) - (freeBlock->second % alignment);
+		//set aligned offset
+		{
+			uint64 rem = (freeBlock->second + alignment) % alignment;
+			if (rem == 0) {
+				pAlloc->m_AlignedOffset = freeBlock->second;
+			}
+			else {
+				pAlloc->m_AlignedOffset = freeBlock->second + alignment - rem;
+			}
+		}
 		pAlloc->m_TotalSize = size + (pAlloc->m_AlignedOffset - pAlloc->m_PaddingOffset);
 		pAlloc->m_Size = size;
 
@@ -104,6 +113,12 @@ void ng::AbstractFreeListAllocator::free(std::unique_ptr<ng::AbstractFreeListAll
 	// don't lock mutex here, it is done by the private free func below
 	free(pAlloc.get());
 	// pAlloc.reset()
+}
+
+uint64 ng::AbstractFreeListAllocator::getUsedSize()
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	return m_UsedSize;
 }
 
 std::string ng::AbstractFreeListAllocator::getUsedBlocksString()

@@ -2,11 +2,10 @@
 # project specific logic here.
 
 
-cmake_minimum_required (VERSION 3.14)
+cmake_minimum_required (VERSION 3.17)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
+add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 
 # Add source to this project's executable.
 set(SOURCES "NextGengine.h")
@@ -42,4 +41,8 @@ target_link_libraries(NextGengine glm)
 #dissable compiling unecessary glm stuff
 add_subdirectory("lib/gli")
 target_link_libraries(NextGengine gli)
+
+# SET C++ STANDARD
+target_compile_features(NextGengine PUBLIC cxx_std_17)
+set_target_properties(NextGengine PROPERTIES CXX_EXTENSIONS OFF)
 

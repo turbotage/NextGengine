@@ -1,6 +1,7 @@
 #include "../NextGengine/NextGengine.h"
 
 #include <iostream>
+#include <filesystem>
 
 int main() {
 	
@@ -24,7 +25,7 @@ int main() {
 		ngv::VulkanDevice& device = context.vulkanDevice();
 
 		ngv::VulkanMemoryStrategy memStrategy;
-		memStrategy.maxMemoryUsage = 2 * 1024 * 1024 * 1024;
+		memStrategy.maxMemoryUsage = 2 * 1024 * 1024 * 1024LL;
 		memStrategy.recommendedPageSize = 256 * 1024 * 1024;
 
 		ngv::VulkanAllocator allocator{ device, memStrategy };
@@ -36,8 +37,13 @@ int main() {
 			exit(1);
 		}
 
+		//ngv::VulkanShaderModule vertShader{ device.device(), "" };
+			
+		std::cout << ng::getShaderDirectoryPath("NextGengine") << std::endl;
 
 
+		std::string a;
+		std::cin >> a;
 
 	}
 

@@ -166,3 +166,4 @@ bool ngv::VulkanContext::ok() const
 {
 	return m_Ok;
 }
+

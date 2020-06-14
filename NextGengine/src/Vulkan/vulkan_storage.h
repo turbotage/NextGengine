@@ -31,7 +31,6 @@ namespace ngv {
 		const vk::BufferCreateInfo getBufferCreateInfo() const;
 		const vk::MemoryPropertyFlags getMemoryPropertyFlags() const;
 
-
 		void* map();
 		void unmap();
 
@@ -170,10 +169,11 @@ namespace ngv {
 	class VulkanImage : public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanImage> make(VulkanDevice& device, const vk::ImageCreateInfo& info,
-			vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage = false);
+		static std::shared_ptr<VulkanImage> make(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 
 		~VulkanImage() = default;
+
+		void createImageView(vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask);
 
 		// GETTERS
 		vk::Image image() const;
@@ -196,10 +196,10 @@ namespace ngv {
 		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size);
 
 		template<typename T>
-		bool upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values);
+		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values);
 
 		template<typename T>
-		bool upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value);
+		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value);
 
 		void setLayout(vk::CommandBuffer cb, vk::ImageLayout newLayout, vk::ImageAspectFlags aspectMask = vk::ImageAspectFlagBits::eColor);
 
@@ -211,13 +211,11 @@ namespace ngv {
 
 	protected:
 
-		void create(VulkanDevice& device, const vk::ImageCreateInfo& info,
-			vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage = false);
+		void create(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 
 	protected:
 		VulkanImage() = default;
-		VulkanImage(VulkanDevice& device, const vk::ImageCreateInfo& info,
-			vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage = false);
+		VulkanImage(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 		VulkanImage(const VulkanImage&) = delete;
 		VulkanImage& operator=(const VulkanImage&) = delete;
 
@@ -240,15 +238,15 @@ namespace ngv {
 	};
 
 	template<typename T>
-	inline bool VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values)
+	inline void VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values)
 	{
-		return upload(cb, stagingBuffer, (void*)values.data(), (uint32)values.size());
+		upload(cb, stagingBuffer, (void*)values.data(), (uint32)values.size());
 	}
 
 	template<typename T>
-	inline bool VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value)
+	inline void VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value)
 	{
-		return upload(cb, stagingBuffer, (void*)&value, sizeof(T));
+		upload(cb, stagingBuffer, (void*)&value, sizeof(T));
 	}
 
 
@@ -324,6 +322,8 @@ namespace ngv {
 		static std::shared_ptr<Texture2D> make(VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
+		void createImageView();
+
 	private:
 		Texture2D(VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
@@ -345,6 +345,8 @@ namespace ngv {
 
 		static std::shared_ptr<TextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
+
+		void createImageView();
 
 	private:
 		TextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
@@ -368,6 +370,8 @@ namespace ngv {
 		static std::shared_ptr<DepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
+		void createImageView();
+
 	private:
 		DepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
@@ -390,6 +394,8 @@ namespace ngv {
 
 		static std::shared_ptr<ColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
+
+		void createImageView();
 
 	private:
 		ColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, 

@@ -37,6 +37,13 @@ namespace ngv {
 
 
 
+
+
+
+
+
+
+
 	class VulkanMemoryPage : public ng::MakeConstructed, public ng::EnableSharedThis<VulkanMemoryPage> {
 	public:
 
@@ -53,6 +60,8 @@ namespace ngv {
 
 		const VulkanDevice& vulkanDevice() const;
 		const vk::DeviceMemory memory() const;
+
+		vk::DeviceSize getUsedSize();
 
 	public:
 
@@ -82,6 +91,13 @@ namespace ngv {
 
 
 
+
+
+
+
+
+
+
 	struct VulkanMemoryStrategy {
 		vk::DeviceSize recommendedPageSize = 256 * 1000 * 1000; // 256 mb
 		vk::DeviceSize maxMemoryUsage = 3LL * 4LL * 256LL * 1000LL * 1000LL;
@@ -98,15 +114,19 @@ namespace ngv {
 		// IMAGE
 		void giveImageAllocation(std::shared_ptr<VulkanImage> pImage);
 
+		vk::DeviceSize getUsedMemory();
+
 	private:
 
+		vk::DeviceSize getUsedMemoryP();
 
 	private:
+
+		std::mutex m_Mutex;
 
 		VulkanDevice& m_Device;
 
 		VulkanMemoryStrategy m_MemoryStrategy;
-		vk::DeviceSize m_UsedMemory = 0;
 
 		struct BufferRequirements {
 			vk::BufferCreateInfo createInfo;

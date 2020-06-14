@@ -54,6 +54,8 @@ namespace ng {
 
 		void free(std::unique_ptr<AbstractFreeListAllocation> pAlloc);
 
+		uint64 getUsedSize();
+
 		std::string getUsedBlocksString();
 
 		std::string getFreeBlocksString();

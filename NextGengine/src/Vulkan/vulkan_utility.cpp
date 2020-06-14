@@ -5,6 +5,8 @@
 #include <functional>
 #include <algorithm>
 
+#include <filesystem>
+
 uint32 ngv::findMemoryTypeIndex(const vk::PhysicalDeviceMemoryProperties& memprops, uint32 memoryTypeBits, vk::MemoryPropertyFlags searchFlags)
 {
     for (int i = 0; i != memprops.memoryTypeCount; ++i, memoryTypeBits >>= 1) {
@@ -341,5 +343,10 @@ std::ostream& ngv::VulkanShaderModule::write(std::ostream& os)
     os << "};\n\n";
     return os;
 }
+
+
+
+
+
 
 

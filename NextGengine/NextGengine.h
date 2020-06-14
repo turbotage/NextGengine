@@ -9,6 +9,7 @@
 #include "src/Vulkan/vulkan_allocator.h"
 #include "src/Vulkan/vulkan_context.h"
 #include "src/Vulkan/vulkan_window.h"
+#include "src/Vulkan/vulkan_utility.h"
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>

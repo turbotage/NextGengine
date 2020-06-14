@@ -36,11 +36,12 @@ void* ngv::VulkanBuffer::map()
 {
 	auto spt = m_pMemoryPage.lock();
 #ifndef NDEBUG
-	if (spt == nullptr)	return false;
-	if (m_pAllocation == nullptr) return false;
+	if (spt == nullptr) {
+		std::runtime_error("Tried to map buffer without allocation");
+	}
 #endif
 
-	spt->vulkanDevice().device().mapMemory(spt->memory(), m_pAllocation->getOffset(), m_BufferCreateInfo.size);
+	return spt->vulkanDevice().device().mapMemory(spt->memory(), m_pAllocation->getOffset(), m_BufferCreateInfo.size);
 }
 
 void ngv::VulkanBuffer::unmap()
@@ -75,10 +76,13 @@ bool ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 bool ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
 {
 #ifndef NDEBUG
-	if (size == 0) return false;
+	if (size == 0) {
+		std::runtime_error("Tried to upload data with size 0 to buffer");
+	}
 	auto spt = m_pMemoryPage.lock();
-	if (spt == nullptr)	return false;
-	if (m_pAllocation == nullptr) return false;
+	if (spt == nullptr) {
+		std::runtime_error("Tried to upload to buffer without allocation");
+	}
 #endif
 
 	using buf = vk::BufferUsageFlagBits;
@@ -201,9 +205,34 @@ ngv::VulkanSparseBuffer::VulkanSparseBuffer(VulkanDevice& device, const vk::Buff
 
 // <=============== VULKAN IMAGE ========================>
 
-std::shared_ptr<ngv::VulkanImage> ngv::VulkanImage::make(VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage)
+std::shared_ptr<ngv::VulkanImage> ngv::VulkanImage::make(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage)
 {
-	return std::shared_ptr<VulkanImage>(new VulkanImage(device, info, viewType, aspectMask, hostImage));
+	return std::shared_ptr<VulkanImage>(new VulkanImage(device, info, hostImage));
+}
+
+void ngv::VulkanImage::createImageView(vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask)
+{
+	auto spt = m_pMemoryPage.lock();
+#ifndef NDEBUG
+	if (!spt) {
+		std::runtime_error("Tried to create image view for image without allocation");
+	}
+#endif
+	bool hostImage = true;
+	if (m_MemoryPropertyFlags = vk::MemoryPropertyFlagBits::eDeviceLocal) {
+		hostImage = false;
+	}
+
+	if (!hostImage) {
+		vk::ImageViewCreateInfo viewInfo{};
+		viewInfo.image = *m_Image;
+		viewInfo.viewType = viewType;
+		viewInfo.format = m_ImageCreateInfo.format;
+		viewInfo.components = { vk::ComponentSwizzle::eR, vk::ComponentSwizzle::eG, vk::ComponentSwizzle::eB, vk::ComponentSwizzle::eA };
+		viewInfo.subresourceRange = vk::ImageSubresourceRange{ aspectMask, 0, m_ImageCreateInfo.mipLevels, 0, m_ImageCreateInfo.arrayLayers };
+		m_ImageView = spt->vulkanDevice().device().createImageViewUnique(viewInfo);
+	}
+
 }
 
 vk::Image ngv::VulkanImage::image() const
@@ -374,7 +403,7 @@ bool ngv::VulkanImage::hasSameAllocation(const VulkanImage& image)
 	return false;
 }
 
-void ngv::VulkanImage::create(ngv::VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage)
+void ngv::VulkanImage::create(ngv::VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage)
 {
 	m_ImageCreateInfo = info;
 	m_MemoryPropertyFlags =
@@ -383,27 +412,16 @@ void ngv::VulkanImage::create(ngv::VulkanDevice& device, const vk::ImageCreateIn
 
 	m_Image = device.device().createImageUnique(info);
 
-	if (!hostImage) {
-		vk::ImageViewCreateInfo viewInfo{};
-		viewInfo.image = *m_Image;
-		viewInfo.viewType = viewType;
-		viewInfo.format = info.format;
-		viewInfo.components = { vk::ComponentSwizzle::eR, vk::ComponentSwizzle::eG, vk::ComponentSwizzle::eB, vk::ComponentSwizzle::eA };
-		viewInfo.subresourceRange = vk::ImageSubresourceRange{ aspectMask, 0, info.mipLevels, 0, info.arrayLayers };
-		m_ImageView = device.device().createImageViewUnique(viewInfo);
-	}
-
 	m_MemoryRequirements = device.device().getImageMemoryRequirements(*m_Image);
-
 
 	m_MemoryTypeIndex = ngv::findMemoryTypeIndex(device.physicalDeviceMemoryProperties(), m_MemoryRequirements.memoryTypeBits, m_MemoryPropertyFlags);
 
 	m_Created = true;
 }
 
-ngv::VulkanImage::VulkanImage(VulkanDevice& device, const vk::ImageCreateInfo& info, vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask, bool hostImage)
+ngv::VulkanImage::VulkanImage(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage)
 {
-	create(device, info, viewType, aspectMask, hostImage);
+	create(device, info, hostImage);
 }
 
 
@@ -497,6 +515,11 @@ std::shared_ptr<ngv::Texture2D> ngv::Texture2D::make(VulkanDevice& device, uint3
 	return std::shared_ptr<Texture2D>(new Texture2D(device, width, height, mipLevels, format, sampleFlags, hostImage));
 }
 
+void ngv::Texture2D::createImageView()
+{
+	VulkanImage::createImageView(vk::ImageViewType::e2D, vk::ImageAspectFlagBits::eColor);
+}
+
 ngv::Texture2D::Texture2D(VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags, bool hostImage)
 {
 	vk::ImageCreateInfo ci{};
@@ -513,7 +536,7 @@ ngv::Texture2D::Texture2D(VulkanDevice& device, uint32 width, uint32 height, uin
 	ci.queueFamilyIndexCount = 0;
 	ci.pQueueFamilyIndices = nullptr;
 	ci.initialLayout = hostImage ? vk::ImageLayout::ePreinitialized : vk::ImageLayout::eUndefined;
-	create(device, ci, vk::ImageViewType::e2D, vk::ImageAspectFlagBits::eColor, hostImage);
+	create(device, ci, hostImage);
 	//LEFT HERE
 }
 
@@ -533,6 +556,11 @@ std::shared_ptr<ngv::TextureCube> ngv::TextureCube::make(VulkanDevice& device, u
 	return std::shared_ptr<TextureCube>(new TextureCube(device, width, height, format, mipLevels, sampleFlags, hostImage));
 }
 
+void ngv::TextureCube::createImageView()
+{
+	VulkanImage::createImageView(vk::ImageViewType::eCube, vk::ImageAspectFlagBits::eColor);
+}
+
 ngv::TextureCube::TextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, uint32 mipLevels, vk::SampleCountFlagBits sampleFlags, bool hostImage)
 {
 	vk::ImageCreateInfo ci{};
@@ -549,7 +577,7 @@ ngv::TextureCube::TextureCube(VulkanDevice& device, uint32 width, uint32 height,
 	ci.queueFamilyIndexCount = 0;
 	ci.pQueueFamilyIndices = nullptr;
 	ci.initialLayout = vk::ImageLayout::ePreinitialized;
-	create(device, ci, vk::ImageViewType::eCube, vk::ImageAspectFlagBits::eColor, hostImage);
+	create(device, ci, hostImage);
 }
 
 
@@ -570,6 +598,12 @@ std::shared_ptr<ngv::DepthStencilImage> ngv::DepthStencilImage::make(VulkanDevic
 	return std::shared_ptr<DepthStencilImage>(new DepthStencilImage(device, width, height, format, sampleFlags));
 }
 
+void ngv::DepthStencilImage::createImageView()
+{
+	typedef vk::ImageAspectFlagBits iafb;
+	VulkanImage::createImageView(vk::ImageViewType::e2D, iafb::eDepth);
+}
+
 ngv::DepthStencilImage::DepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
 {
 	vk::ImageCreateInfo ci{};
@@ -586,8 +620,7 @@ ngv::DepthStencilImage::DepthStencilImage(VulkanDevice& device, uint32 width, ui
 	ci.queueFamilyIndexCount = 0;
 	ci.pQueueFamilyIndices = nullptr;
 	ci.initialLayout = vk::ImageLayout::eUndefined;
-	typedef vk::ImageAspectFlagBits iafb;
-	create(device, ci, vk::ImageViewType::e2D, iafb::eDepth, false);
+	create(device, ci, false);
 }
 
 
@@ -603,6 +636,12 @@ ngv::DepthStencilImage::DepthStencilImage(VulkanDevice& device, uint32 width, ui
 std::shared_ptr<ngv::ColorAttachmentImage> ngv::ColorAttachmentImage::make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
 {
 	return std::shared_ptr<ColorAttachmentImage>(new ColorAttachmentImage(device, width, height, format, sampleFlags));
+}
+
+void ngv::ColorAttachmentImage::createImageView()
+{
+	typedef vk::ImageAspectFlagBits iafb;
+	VulkanImage::createImageView(vk::ImageViewType::e2D, iafb::eColor);
 }
 
 ngv::ColorAttachmentImage::ColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
@@ -621,8 +660,7 @@ ngv::ColorAttachmentImage::ColorAttachmentImage(VulkanDevice& device, uint32 wid
 	ci.queueFamilyIndexCount = 0;
 	ci.pQueueFamilyIndices = nullptr;
 	ci.initialLayout = vk::ImageLayout::eUndefined;
-	typedef vk::ImageAspectFlagBits iafb;
-	create(device, ci, vk::ImageViewType::e2D, iafb::eColor, false);
+	create(device, ci, false);
 }
 
 

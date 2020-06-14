@@ -1,6 +1,14 @@
 #pragma once
 
 #include <memory>
+#include <string>
+
+// Helver functions
+namespace ng {
+
+	std::string getShaderDirectoryPath(std::string projectName);
+
+}
 
 // Class helpers
 namespace ng {
