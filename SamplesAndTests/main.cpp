@@ -38,9 +38,10 @@ int main() {
 		}
 
 		//ngv::VulkanShaderModule vertShader{ device.device(), "" };
-			
-		std::cout << ng::getShaderDirectoryPath("NextGengine") << std::endl;
+		
+		namespace fs = std::filesystem;
 
+		std::cout << ng::listShaders("NextGengine") << std::endl;
 
 		std::string a;
 		std::cin >> a;

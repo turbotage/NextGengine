@@ -6,7 +6,10 @@
 // Helver functions
 namespace ng {
 
+	// Returns a string to the shader directory
 	std::string getShaderDirectoryPath(std::string projectName);
+	// Returns a list o fthe directories and the shaders in the directories
+	std::string listShaders(std::string projectName);
 
 }
 
