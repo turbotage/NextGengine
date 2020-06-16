@@ -4,14 +4,12 @@
 
 cmake_minimum_required (VERSION 3.17)
 
-string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
-add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
-
 # Add source to this project's executable.
 set(SOURCES "NextGengine.h")
 
 add_library(NextGengine ${SOURCES})
 add_subdirectory("src")
+add_subdirectory("shaders")
 
 # Vulkan
 find_package(Vulkan REQUIRED)

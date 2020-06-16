@@ -23,6 +23,8 @@ namespace ngv {
 
 		const vk::PhysicalDeviceProperties physicalDeviceProperties() const;
 
+		const vk::PhysicalDeviceLimits physicalDeviceLimits() const;
+
 		const vk::PhysicalDeviceFeatures physicalDeviceFeatures() const;
 
 		const vk::PhysicalDeviceFeatures enabledPhysicalDeviceFeatures() const;

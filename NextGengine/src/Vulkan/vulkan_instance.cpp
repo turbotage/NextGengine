@@ -2,18 +2,14 @@
 
 
 
+
 //<======================== INSTANCE MAKER ==============================>
 ngv::VulkanInstanceMaker& ngv::VulkanInstanceMaker::setDefaultLayers()
 {
-    m_Layers.push_back("VK_LAYER_LUNARG_standard_validation");
+    m_Layers.push_back("VK_LAYER_KHRONOS_validation");
+#ifndef NDEBUG
     m_Extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-#ifdef VKU_SURFACE
-    m_Extensions_.push_back(VKU_SURFACE);
 #endif
-    //m_Extensions.push_back("VK_KHR_surface"); // added by glfwRequiredExtensions
-#if defined( __APPLE__ ) && defined(VK_EXT_METAL_SURFACE_EXTENSION_NAME)
-    m_Extensions_.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
-#endif //__APPLE__
     return *this;
 }
 

@@ -3,7 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.17)
 
-set( CMAKE_VERBOSE_MAKEFILE on )
+#set( CMAKE_VERBOSE_MAKEFILE on )
 
 project ("NextGengine")
 

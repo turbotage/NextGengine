@@ -35,39 +35,39 @@ namespace ngv {
 		void unmap();
 
 
-		bool updateLocal(const void* value, vk::DeviceSize size) const;
+		void updateLocal(const void* value, vk::DeviceSize size) const;
 
-		template<class Type, class Allocator>
-		bool updateLocal(const std::vector<Type, Allocator>& value) const;
+		template<class T, class Allocator>
+		void updateLocal(const std::vector<T, Allocator>& values) const;
 
-		template<class Type>
-		bool updateLocal(const Type& value);
+		template<class T>
+		void updateLocal(const T& value) const;
 
 
 
-		bool upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size);
+		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size);
 		
 		template<typename T>
-		bool upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values);
+		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values);
 		
 		template<typename T>
-		bool upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value);
+		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value);
 
 
 		void barrier(vk::CommandBuffer cb, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask,
 			vk::DependencyFlags dependencyFlags, vk::AccessFlags srcAccessMask, vk::AccessFlags dstAccessMask, 
 			uint32 srcQueueFamilyIndex, uint32 dstQueueFamilyIndex) const;
 
-		bool flush(const VulkanDevice& device);
+		void flush();
 
-		bool invalidate(const VulkanDevice& device);
+		void invalidate();
 
 		bool hasAllocation();
 		bool hasSameAllocation(const VulkanBuffer& buffer);
 
 	protected:
 
-		void create(ngv::VulkanDevice& device, 
+		void create(VulkanDevice& device, 
 			const vk::BufferCreateInfo& info, bool hostBuffer = false);
 
 	protected:
@@ -92,28 +92,28 @@ namespace ngv {
 
 	};
 
-	template<class Type, class Allocator>
-	inline bool VulkanBuffer::updateLocal(const std::vector<Type, Allocator>& value) const
+	template<class T, class Allocator>
+	inline void VulkanBuffer::updateLocal(const std::vector<T, Allocator>& values) const
 	{
-		return updateLocal((void*)value.data(), vk::DeviceSize(sizeof(Type)));
+		updateLocal( (void*)values.data(), (vk::DeviceSize)values.size() * sizeof(T) );
 	}
 
-	template<class Type>
-	inline bool VulkanBuffer::updateLocal(const Type& value)
+	template<class T>
+	inline void VulkanBuffer::updateLocal(const T& value) const
 	{
-		return updateLocal((void*)&value, vk::DeviceSize(sizeof(Type)));
-	}
-
-	template<typename T>
-	inline bool VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values)
-	{
-		return upload(cb, stagingBuffer, (void*)values.data(), (uint64)values.size());
+		updateLocal((void*)&value, vk::DeviceSize(sizeof(T)));
 	}
 
 	template<typename T>
-	inline bool VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value)
+	inline void VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values)
 	{
-		return upload(cb, stagingBuffer, (void*)&value, sizeof(value));
+		upload(cb, stagingBuffer, (void*)values.data(), (uint64)values.size());
+	}
+
+	template<typename T>
+	inline void VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value)
+	{
+		upload(cb, stagingBuffer, (void*)&value, sizeof(value));
 	}
 
 

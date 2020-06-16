@@ -8,8 +8,8 @@
 vk::UniquePipelineLayout ngv::VulkanPipelineLayoutMaker::createUnique(const vk::Device& device) const
 {
     vk::PipelineLayoutCreateInfo pipelineLayoutInfo{
-        {}, (uint32_t)m_SetLayouts.size(),
-        m_SetLayouts.data(), (uint32_t)m_PushConstantRanges.size(),
+        {}, (uint32)m_SetLayouts.size(),
+        m_SetLayouts.data(), (uint32)m_PushConstantRanges.size(),
         m_PushConstantRanges.data() };
     return device.createPipelineLayoutUnique(pipelineLayoutInfo);
 }
@@ -35,7 +35,6 @@ ngv::VulkanPipelineMaker::VulkanPipelineMaker(uint32 width, uint32 height)
 {
     m_Viewport = vk::Viewport{ 0.0f, 0.0f, (float)width, (float)height, 0.0f, 1.0f };
     m_Scissor = vk::Rect2D{ {0, 0}, {width, height} };
-
     m_InputAssemblyState.topology = vk::PrimitiveTopology::eTriangleList;
     m_RasterizationState.lineWidth = 1.0f;
 
@@ -76,12 +75,12 @@ vk::UniquePipeline ngv::VulkanPipelineMaker::createUnique(const vk::Device& devi
         {}, 1, &m_Viewport, 1, &m_Scissor };
 
     vk::PipelineVertexInputStateCreateInfo vertexInputState;
-    vertexInputState.vertexAttributeDescriptionCount = (uint32_t)m_VertexAttributeDescriptions.size();
+    vertexInputState.vertexAttributeDescriptionCount = (uint32)m_VertexAttributeDescriptions.size();
     vertexInputState.pVertexAttributeDescriptions = m_VertexAttributeDescriptions.data();
-    vertexInputState.vertexBindingDescriptionCount = (uint32_t)m_VertexBindingDescriptions.size();
+    vertexInputState.vertexBindingDescriptionCount = (uint32)m_VertexBindingDescriptions.size();
     vertexInputState.pVertexBindingDescriptions = m_VertexBindingDescriptions.data();
 
-    vk::PipelineDynamicStateCreateInfo dynState{ {}, (uint32_t)m_DynamicState.size(), m_DynamicState.data() };
+    vk::PipelineDynamicStateCreateInfo dynState{ {}, (uint32)m_DynamicState.size(), m_DynamicState.data() };
 
     vk::GraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.pVertexInputState = &vertexInputState;
@@ -115,7 +114,7 @@ void ngv::VulkanPipelineMaker::addColorBlend(const vk::PipelineColorBlendAttachm
     m_ColorBlendAttachments.push_back(state);
 }
 
-void ngv::VulkanPipelineMaker::addSubPass(uint32 subpass)
+void ngv::VulkanPipelineMaker::setSubpass(uint32 subpass)
 {
     m_Subpass = subpass;
 }
@@ -175,22 +174,22 @@ void ngv::VulkanPipelineMaker::blendColorWriteMask(vk::ColorComponentFlags value
     m_ColorBlendAttachments.back().colorWriteMask = value;
 }
 
-void ngv::VulkanPipelineMaker::vertexAttribute(uint32_t location, uint32_t binding, vk::Format format, uint32_t offset)
+void ngv::VulkanPipelineMaker::addVertexAttribute(uint32_t location, uint32_t binding, vk::Format format, uint32_t offset)
 {
     m_VertexAttributeDescriptions.push_back({ location, binding, format, offset });
 }
 
-void ngv::VulkanPipelineMaker::vertexAttribute(const vk::VertexInputAttributeDescription& desc)
+void ngv::VulkanPipelineMaker::addVertexAttribute(const vk::VertexInputAttributeDescription& desc)
 {
     m_VertexAttributeDescriptions.push_back(desc);
 }
 
-void ngv::VulkanPipelineMaker::vertexBinding(uint32_t binding, uint32_t stride, vk::VertexInputRate inputRate)
+void ngv::VulkanPipelineMaker::addVertexBinding(uint32_t binding, uint32_t stride, vk::VertexInputRate inputRate)
 {
     m_VertexBindingDescriptions.push_back({ binding, stride, inputRate });
 }
 
-void ngv::VulkanPipelineMaker::vertexBinding(const vk::VertexInputBindingDescription& desc)
+void ngv::VulkanPipelineMaker::addVertexBinding(const vk::VertexInputBindingDescription& desc)
 {
     m_VertexBindingDescriptions.push_back(desc);
 }

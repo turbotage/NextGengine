@@ -55,7 +55,7 @@ namespace ngv {
 		/// If you don't do this, a default is used.
 		void addColorBlend(const vk::PipelineColorBlendAttachmentState& state);
 
-		void addSubPass(uint32 subpass);
+		void setSubpass(uint32 subpass);
 
 		/// Begin setting colour blend value
 		/// If you don't do this, a default is used.
@@ -81,17 +81,17 @@ namespace ngv {
 
 
 		/// Add a vertex attribute to the pipeline.
-		void vertexAttribute(uint32_t location, uint32_t binding, vk::Format format, uint32_t offset);
+		void addVertexAttribute(uint32_t location, uint32_t binding, vk::Format format, uint32_t offset);
 		/// Add a vertex attribute to the pipeline.
-		void vertexAttribute(const vk::VertexInputAttributeDescription& desc);
+		void addVertexAttribute(const vk::VertexInputAttributeDescription& desc);
 		/// Add a vertex binding to the pipeline.
 		/// Usually only one of these is needed to specify the stride.
 		/// Vertices can also be delivered one per instance.
-		void vertexBinding(uint32_t binding, uint32_t stride, vk::VertexInputRate inputRate = vk::VertexInputRate::eVertex);
+		void addVertexBinding(uint32_t binding, uint32_t stride, vk::VertexInputRate inputRate = vk::VertexInputRate::eVertex);
 		/// Add a vertex binding to the pipeline.
 		/// Usually only one of these is needed to specify the stride.
 		/// Vertices can also be delivered one per instance.
-		void vertexBinding(const vk::VertexInputBindingDescription& desc);
+		void addVertexBinding(const vk::VertexInputBindingDescription& desc);
 
 
 		/// Specify the topology of the pipeline.

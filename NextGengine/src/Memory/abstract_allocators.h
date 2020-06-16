@@ -35,11 +35,11 @@ namespace ng {
 		friend class AbstractFreeListAllocator;
 		ng::raw_ptr<AbstractFreeListAllocator> m_pAllocator;
 
-		uint64 m_PaddingOffset;
-		uint64 m_TotalSize;
+		uint64 m_PaddingOffset = 0;
+		uint64 m_TotalSize = 0;
 
-		uint64 m_AlignedOffset;
-		uint64 m_Size;
+		uint64 m_AlignedOffset = 0;
+		uint64 m_Size = 0;
 	};
 
 	// TODO: some form of defragmentation

@@ -156,6 +156,8 @@ ngv::VulkanContext::~VulkanContext()
 		}
 	}
 
+	m_pDevice.reset();
+
 	if (m_Instance) {
 		m_DebugCallback.reset();
 		m_Instance.reset();

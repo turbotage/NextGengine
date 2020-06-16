@@ -80,21 +80,22 @@ namespace ngv {
 
 		vk::UniqueSemaphore m_ImageAcquireSemaphore;
 		vk::UniqueSemaphore m_CommandCompleteSemaphore;
-		
+
 		std::vector<vk::ImageView> m_SwapChainViews;
 		std::vector<vk::Image> m_SwapChainImages;
 		std::vector<vk::UniqueFramebuffer> m_Framebuffers;
 		vk::Format m_SwapChainImageFormat = vk::Format::eB8G8R8A8Snorm;
 		vk::ColorSpaceKHR m_SwapChainColorSpace = vk::ColorSpaceKHR::eSrgbNonlinear;
 
+		vk::UniqueCommandPool m_CommandPool;
+		std::vector<vk::UniqueCommandBuffer> m_CommandBuffers;
+		std::vector<vk::Fence> m_CommandBufferFences;
+
+
 		uint32 m_GraphicsQueueFamilyIndex = 0;
 		uint32 m_PresentQueueFamilyIndex = 0;
 		
 		std::shared_ptr<DepthStencilImage> m_DepthStencil;
-
-		vk::UniqueCommandPool m_CommandPool;
-		std::vector<vk::UniqueCommandBuffer> m_CommandBuffers;
-		std::vector<vk::Fence> m_CommandBufferFences;
 
 		bool m_Ok = false;
 	};

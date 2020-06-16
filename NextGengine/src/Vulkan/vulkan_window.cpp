@@ -20,7 +20,7 @@ ngv::VulkanWindow::VulkanWindow(const vk::Instance& instance, VulkanDevice& devi
 	m_GraphicsQueueFamilyIndex = graphicsQueueFamilyIndex;
 
 	glfwCreateWindowSurface(instance, pWindow,
-		nullptr, reinterpret_cast<VkSurfaceKHR*>(&m_Surface));
+		nullptr, reinterpret_cast<VkSurfaceKHR*>(&(m_Surface)));
 
 	init();
 }
@@ -93,7 +93,7 @@ void ngv::VulkanWindow::draw(const vk::Queue& graphicsQueue, const std::function
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.waitSemaphoreCount = 1;
 	presentInfo.pWaitSemaphores = &ccSema;
-	
+	presentQueue().presentKHR(presentInfo);
 
 }
 
@@ -130,7 +130,9 @@ ngv::VulkanWindow::~VulkanWindow()
 	for (auto& f : m_CommandBufferFences) {
 		m_Device.device().destroyFence(f);
 	}
+	
 	m_Swapchain.reset(); //m_Swapchain = vk::UniqueSwapchainKHR{};
+	m_Instance.destroySurfaceKHR(m_Surface);
 }
 
 uint32 ngv::VulkanWindow::width() const
@@ -278,6 +280,7 @@ void ngv::VulkanWindow::init()
 		ci.image = img;
 		ci.viewType = vk::ImageViewType::e2D;
 		ci.format = m_SwapChainImageFormat;
+		ci.subresourceRange = { vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1 };
 		m_SwapChainViews.emplace_back(m_Device.device().createImageView(ci));
 	}
 

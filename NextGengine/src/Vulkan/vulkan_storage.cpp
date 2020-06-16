@@ -1,9 +1,9 @@
 #include "vulkan_storage.h"
 
+
+
 #include "vulkan_allocator.h"
-
 #include "vulkan_utility.h"
-
 #include "vulkan_device.h"
 
 
@@ -41,7 +41,12 @@ void* ngv::VulkanBuffer::map()
 	}
 #endif
 
-	return spt->vulkanDevice().device().mapMemory(spt->memory(), m_pAllocation->getOffset(), m_BufferCreateInfo.size);
+	vk::Device device = spt->vulkanDevice().device();
+	const VulkanDevice& vulkanDevice = spt->vulkanDevice();
+	vk::DeviceSize atomSize = vulkanDevice.physicalDeviceLimits().nonCoherentAtomSize;
+
+	return device.mapMemory(spt->memory(), m_pAllocation->getOffset(), 
+		(vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize);
 }
 
 void ngv::VulkanBuffer::unmap()
@@ -50,14 +55,17 @@ void ngv::VulkanBuffer::unmap()
 	return spt->vulkanDevice().device().unmapMemory(spt->memory());
 }
 
-bool ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) const
+void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) const
 {
 	auto spt = m_pMemoryPage.lock();
 
 #ifndef NDEBUG
-	if (size == 0) return false;
-	if (spt == nullptr)	return false;
-	if (m_pAllocation == nullptr) return false;
+	if (size == 0) {
+		std::runtime_error("Tried to update buffer with size 0");
+	}
+	if (spt == nullptr) {
+		std::runtime_error("Tried to updateLocal on buffer missing allocation");
+	}
 #endif
 
 	std::lock_guard<std::mutex> lock(spt->pageMutex);
@@ -67,13 +75,14 @@ bool ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 
 	void* ptr = ldevice.mapMemory(mem, offset, size);
 	memcpy(ptr, value, (size_t)size);
-	vk::MappedMemoryRange mr{ mem, offset, size };
+
+	vk::DeviceSize atomSize = spt->vulkanDevice().physicalDeviceLimits().nonCoherentAtomSize;
+	vk::MappedMemoryRange mr{ mem, offset, (vk::DeviceSize)std::ceil(size / atomSize) * atomSize };
 	ldevice.flushMappedMemoryRanges(mr);
 	ldevice.unmapMemory(mem);
-	return true;
 }
 
-bool ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
+void ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
 {
 #ifndef NDEBUG
 	if (size == 0) {
@@ -91,7 +100,6 @@ bool ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffe
 
 	vk::BufferCopy bc{ 0, 0, size};
 	cb.copyBuffer(stagingBuffer->buffer(), *m_Buffer, bc);
-	return true;
 }
 
 void ngv::VulkanBuffer::barrier(vk::CommandBuffer cb, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, vk::AccessFlags srcAccessMask, vk::AccessFlags dstAccessMask, uint32 srcQueueFamilyIndex, uint32 dstQueueFamilyIndex) const
@@ -100,28 +108,40 @@ void ngv::VulkanBuffer::barrier(vk::CommandBuffer cb, vk::PipelineStageFlags src
 	cb.pipelineBarrier(srcStageMask, dstStageMask, dependencyFlags, nullptr, bmb, nullptr);
 }
 
-bool ngv::VulkanBuffer::flush(const VulkanDevice& device)
+void ngv::VulkanBuffer::flush()
 {
 	auto spt = m_pMemoryPage.lock();
-	if (!spt) {
-		return false;
+
+#ifndef NDEBUG
+	if (spt == nullptr) {
+		std::runtime_error("Tried to flush buffer with no allocation");
 	}
+#endif
+
+	vk::DeviceSize atomSize = spt->vulkanDevice().physicalDeviceLimits().nonCoherentAtomSize;
+
 	vk::DeviceMemory memory = spt->memory();
-	vk::MappedMemoryRange mr{ memory, m_pAllocation->getOffset(), m_BufferCreateInfo.size };
-	device.device().flushMappedMemoryRanges(mr);
-	return true;
+	vk::MappedMemoryRange mr{ memory, m_pAllocation->getOffset(), 
+		(vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize };
+	spt->vulkanDevice().device().flushMappedMemoryRanges(mr);
 }
 
-bool ngv::VulkanBuffer::invalidate(const VulkanDevice& device)
+void ngv::VulkanBuffer::invalidate()
 {
 	auto spt = m_pMemoryPage.lock();
-	if (!spt) {
-		return false;
+
+#ifndef NDEBUG
+	if (spt == nullptr) {
+		std::runtime_error("Tried to flush buffer with no allocation");
 	}
+#endif
+
+	vk::DeviceSize atomSize = spt->vulkanDevice().physicalDeviceLimits().nonCoherentAtomSize;
+
 	vk::DeviceMemory memory = spt->memory();
-	vk::MappedMemoryRange mr{ memory, m_pAllocation->getOffset(), m_BufferCreateInfo.size };
-	device.device().invalidateMappedMemoryRanges(mr);
-	return true;
+	vk::MappedMemoryRange mr{ memory, m_pAllocation->getOffset(), 
+		(vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize };
+	spt->vulkanDevice().device().invalidateMappedMemoryRanges(mr);
 }
 
 bool ngv::VulkanBuffer::hasAllocation()
@@ -148,7 +168,7 @@ void ngv::VulkanBuffer::create(ngv::VulkanDevice& device, const vk::BufferCreate
 {
 	m_BufferCreateInfo = info;
 	m_MemoryPropertyFlags =
-		(hostBuffer) ? vk::MemoryPropertyFlagBits::eDeviceLocal : vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible;
+		(!hostBuffer) ? vk::MemoryPropertyFlagBits::eDeviceLocal : (vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible);
 	m_Buffer = device.device().createBufferUnique(info);
 
 	m_MemoryRequirements = device.device().getBufferMemoryRequirements(*m_Buffer);
@@ -407,7 +427,7 @@ void ngv::VulkanImage::create(ngv::VulkanDevice& device, const vk::ImageCreateIn
 {
 	m_ImageCreateInfo = info;
 	m_MemoryPropertyFlags =
-		(hostImage) ? vk::MemoryPropertyFlagBits::eHostCoherent | vk::MemoryPropertyFlagBits::eHostVisible : vk::MemoryPropertyFlagBits::eDeviceLocal;
+		(!hostImage) ? vk::MemoryPropertyFlagBits::eDeviceLocal : (vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 	m_CurrentLayout = info.initialLayout;
 
 	m_Image = device.device().createImageUnique(info);

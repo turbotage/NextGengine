@@ -34,6 +34,6 @@ void ngv::debug::VulkanDebugCallback::reset()
 
 VKAPI_ATTR vk::Bool32 VKAPI_CALL ngv::debug::VulkanDebugCallback::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64 object, size_t location, int32 messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
 {
-	printf("%08x debugCallback: %s\n", flags, pMessage);
+	printf("%08x debugCallback: %s\n\n", flags, pMessage);
 	return VK_FALSE;
 }

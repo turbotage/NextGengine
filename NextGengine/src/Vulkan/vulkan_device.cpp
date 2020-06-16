@@ -13,7 +13,8 @@ void ngv::VulkanDevice::setPhysicalDevice(vk::PhysicalDevice physicalDevice)
     m_PhysicalDevice = physicalDevice;
     m_QueueProperties = physicalDevice.getQueueFamilyProperties();
     m_Features = physicalDevice.getFeatures();
-    m_MemProps = m_PhysicalDevice.getMemoryProperties();
+    m_MemProps = physicalDevice.getMemoryProperties();
+    m_Properties = physicalDevice.getProperties();
 }
 
 const vk::Device ngv::VulkanDevice::device() const
@@ -36,6 +37,11 @@ const vk::PhysicalDeviceProperties ngv::VulkanDevice::physicalDeviceProperties()
     return m_Properties;
 }
 
+const vk::PhysicalDeviceLimits ngv::VulkanDevice::physicalDeviceLimits() const
+{
+    return m_Properties.limits;
+}
+
 const vk::PhysicalDeviceFeatures ngv::VulkanDevice::physicalDeviceFeatures() const
 {
     return m_Features;
@@ -55,7 +61,7 @@ const std::vector<vk::QueueFamilyProperties>& ngv::VulkanDevice::queueFamilyProp
 // <============================ DEVICE MAKER ==============================>
 ngv::VulkanDeviceMaker& ngv::VulkanDeviceMaker::setDefaultLayers()
 {
-    m_Layers.push_back("VK_LAYER_LUNARG_standard_validation");
+    m_Layers.push_back("VK_LAYER_KHRONOS_validation");
     m_DeviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
     return *this;
 }

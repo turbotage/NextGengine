@@ -37,6 +37,7 @@ std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocation::
 
 ng::AbstractFreeListAllocation::~AbstractFreeListAllocation()
 {
+	std::lock_guard<std::mutex> lock(m_pAllocator->m_Mutex);
 	m_pAllocator->free(this);
 }
 
@@ -110,9 +111,8 @@ std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::a
 
 void ng::AbstractFreeListAllocator::free(std::unique_ptr<ng::AbstractFreeListAllocation> pAlloc)
 {
-	// don't lock mutex here, it is done by the private free func below
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	free(pAlloc.get());
-	// pAlloc.reset()
 }
 
 uint64 ng::AbstractFreeListAllocator::getUsedSize()
@@ -154,7 +154,6 @@ ng::AbstractFreeListAllocator::AbstractFreeListAllocator(uint64 size)
 
 void ng::AbstractFreeListAllocator::free(ng::raw_ptr<AbstractFreeListAllocation> pAlloc)
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
 
 #ifndef NDEBUG
 	if (pAlloc->m_pAllocator != this) {

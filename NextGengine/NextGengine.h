@@ -10,6 +10,7 @@
 #include "src/Vulkan/vulkan_context.h"
 #include "src/Vulkan/vulkan_window.h"
 #include "src/Vulkan/vulkan_utility.h"
+#include "src/Vulkan/vulkan_pipeline.h"
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
