@@ -16,13 +16,17 @@ message("Shader-Working-Dir: ${SHADER_WORKING_DIR}")
 
 
 #triangle shaders
-BUILD_SPIRV_SHADER("triangle/helloTriangle.frag" "triangle/helloTriangle.frag.spv")
-BUILD_SPIRV_SHADER("triangle/helloTriangle.vert" "triangle/helloTriangle.vert.spv")
+BUILD_SPIRV_SHADER("HelloTriangle/helloTriangle.frag" "HelloTriangle/helloTriangle.frag.spv")
+BUILD_SPIRV_SHADER("HelloTriangle/helloTriangle.vert" "HelloTriangle/helloTriangle.vert.spv")
+#push constants shaders
+BUILD_SPIRV_SHADER("PushConstants/pushConstants.frag" "PushConstants/pushConstants.frag.spv")
+BUILD_SPIRV_SHADER("PushConstants/pushConstants.vert" "PushConstants/pushConstants.vert.spv")
 
 
 
-
-set(SHADER_SOURCES "triangle/helloTriangle.frag.spv"
-					"triangle/helloTriangle.vert.spv")
+set(SHADER_SOURCES "HelloTriangle/helloTriangle.frag.spv"
+					"HelloTriangle/helloTriangle.vert.spv"
+					"PushConstants/pushConstants.frag.spv"
+					"PushConstants/pushConstants.vert.spv")
 
 add_custom_target(shaders ALL DEPENDS ${SHADER_SOURCES})

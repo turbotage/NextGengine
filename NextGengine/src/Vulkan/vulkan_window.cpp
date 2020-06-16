@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+#define PRINT_FRAMETIME_EVERY_N 300
+
+
 ngv::VulkanWindow::VulkanWindow(const vk::Instance& instance, VulkanDevice& device, VulkanAllocator& allocator, uint32 graphicsQueueFamilyIndex, GLFWwindow* pWindow)
 	: m_Device(device), m_Allocator(allocator)
 {
@@ -42,13 +45,29 @@ void ngv::VulkanWindow::dumpCaps(std::ostream& os, vk::PhysicalDevice pd) const
 	}
 }
 
+bool onFrame = true;
+std::chrono::steady_clock::time_point t1;
+std::chrono::steady_clock::time_point t2;
+int frameCounter = 0;
+std::chrono::milliseconds int_ms;
+
 void ngv::VulkanWindow::draw(const vk::Queue& graphicsQueue, const std::function<void(vk::CommandBuffer cb, uint32 imageIndex, vk::RenderPassBeginInfo& rpbi)>& renderFunc)
 {
-	//?????
-	static auto start = std::chrono::high_resolution_clock::now();
-	auto time = std::chrono::high_resolution_clock::now();
-	auto delta = time - start;
-	start = time;
+	if (onFrame) {
+		t1 = std::chrono::high_resolution_clock::now();
+		onFrame = false;
+		int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t2);
+	}
+	else {
+		t2 = std::chrono::high_resolution_clock::now();
+		onFrame = true;
+		int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+	}
+	if (frameCounter == PRINT_FRAMETIME_EVERY_N) {
+		std::cout << "FrameTime: " << int_ms.count() << std::endl;
+		frameCounter = 0;
+	}
+	frameCounter++;
 	
 	auto umax = (uint64)std::numeric_limits<uint64>::max;
 	uint32 imageIndex;

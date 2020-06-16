@@ -13,8 +13,5 @@ include_directories("NextGengine")
 add_subdirectory ("NextGengine")
 add_subdirectory ("SamplesAndTests")
 
-
 target_compile_features(NextGengine PUBLIC cxx_std_17)
 set_target_properties(NextGengine PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_features(NextGengineSample PUBLIC cxx_std_17)
-set_target_properties(NextGengineSample PROPERTIES CXX_EXTENSIONS OFF)

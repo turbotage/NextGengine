@@ -13,7 +13,7 @@ ngv::VulkanContext::VulkanContext()
 {
 }
 
-ngv::VulkanContext::VulkanContext(const std::string& name)
+ngv::VulkanContext::VulkanContext(const std::string& name, uint32 version)
 {
 	m_pDevice = std::make_unique<VulkanDevice>();
 
@@ -25,6 +25,12 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 	for (int i = 0; i < nWindowExtensions; ++i) {
 		im.addExtension(windowExtension[i]);
 	}
+
+	im.setApiVersion(VK_API_VERSION_1_2);
+	im.setApplicationName(name.c_str());
+	im.setApplicationVersion(version);
+	im.setEngineName(NG_ENGINE_NAME);
+	im.setEngineVersion(NG_ENGINE_VERSION);
 
 	m_Instance = im.createUnique();
 
@@ -40,7 +46,7 @@ ngv::VulkanContext::VulkanContext(const std::string& name)
 	auto qprops = m_pDevice->queueFamilyProperties();
 	for (uint32 qi = 0; qi != qprops.size(); ++qi) {
 		auto& qprop = qprops[qi];
-		std::cout << vk::to_string(qprop.queueFlags) << "\n";
+		//std::cout << vk::to_string(qprop.queueFlags) << "\n";
 		if ((qprop.queueFlags & search) == search) {
 			m_GraphicsQueueFamilyIndex = qi;
 			m_ComputeQueueFamilyIndex = qi;

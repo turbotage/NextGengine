@@ -18,7 +18,7 @@ namespace ngv {
 
 		VulkanContext();
 
-		VulkanContext(const std::string& name);
+		VulkanContext(const std::string& name, uint32 version = NG_MAKE_VERSION(1,0,0));
 
 		void dumpCaps(std::ostream& os) const;
 		/// Get the Vulkan instance.

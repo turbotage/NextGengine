@@ -24,11 +24,6 @@ void ngv::VulkanPipelineLayoutMaker::addPushConstantRange(vk::ShaderStageFlags s
     m_PushConstantRanges.emplace_back(stageFlags, offset, size);
 }
 
-
-
-
-
-
 //<======================= PIPELINE MAKER ============================>
 //public
 ngv::VulkanPipelineMaker::VulkanPipelineMaker(uint32 width, uint32 height)
