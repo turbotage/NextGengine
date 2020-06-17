@@ -1,6 +1,7 @@
 #include "ng_utility.h"
 
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <queue>
@@ -73,5 +74,50 @@ std::string ng::listShaders(std::string projectName)
 	
 	return ret;
 }
+
+
+
+
+
+
+
+
+std::string ng::getFileExtension(std::string filename)
+{
+	size_t pos = filename.find_last_of(".") + 1;
+	if (pos == std::string::npos) {
+		return "";
+	}
+	return filename.substr(pos);
+}
+
+
+
+
+
+
+
+
+
+std::vector<uint8> ng::loadFile(const std::string& filename)
+{
+	std::ifstream is(filename, std::ios::binary | std::ios::ate);
+	std::vector<uint8_t> bytes;
+	if (!is.fail()) {
+		size_t size = is.tellg();
+		is.seekg(0);
+		bytes.resize(size);
+		is.read((char*)bytes.data(), size);
+	}
+	return bytes;
+}
+
+
+
+
+
+
+
+
 
 

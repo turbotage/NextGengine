@@ -10,9 +10,15 @@ namespace ng {
 
 	class Model2D : SceneNode {
 	public:
-		Model2D(std::string identifier);
+
+		
 
 	private:
+		Model2D(std::string identifier);
+		Model2D(const Model2D&) = delete;
+		Model2D& operator=(Model2D&) = delete;
+
+		
 
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		std::shared_ptr<IndexBuffer> m_IndexBuffer;

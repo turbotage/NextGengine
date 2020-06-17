@@ -1,12 +1,11 @@
 #include "vulkandef.h"
 
+
 namespace ngv {
 	
 	uint32 findMemoryTypeIndex(const vk::PhysicalDeviceMemoryProperties& memprops, uint32 memoryTypeBits, vk::MemoryPropertyFlags seachFlags);
 
 	uint32 mipScale(uint32 value, uint32 mipLevel);
-
-	std::vector<uint8> loadFile(const std::string& filename);
 
 	struct BlockParams {
 		uint8 blockWidth;

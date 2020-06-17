@@ -24,19 +24,6 @@ uint32 ngv::mipScale(uint32 value, uint32 mipLevel)
     return std::max(value >> mipLevel, (uint32)1);
 }
 
-std::vector<uint8> ngv::loadFile(const std::string& filename)
-{
-    std::ifstream is(filename, std::ios::binary | std::ios::ate);
-    std::vector<uint8_t> bytes;
-    if (!is.fail()) {
-        size_t size = is.tellg();
-        is.seekg(0);
-        bytes.resize(size);
-        is.read((char*)bytes.data(), size);
-    }
-    return bytes;
-}
-
 ngv::BlockParams ngv::getBlockParams(vk::Format format)
 {
     switch (format) {

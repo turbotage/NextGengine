@@ -1,5 +1,7 @@
 #pragma once
 
+#include "def.h"
+
 #include <memory>
 #include <string>
 
@@ -10,7 +12,10 @@ namespace ng {
 	std::string getShaderDirectoryPath(std::string projectName);
 	// Returns a list o fthe directories and the shaders in the directories
 	std::string listShaders(std::string projectName);
-
+	//Return the string of the extension, (the stuff after the dot)
+	std::string getFileExtension(std::string filename);
+	//Load a file
+	std::vector<uint8> loadFile(const std::string& filename);
 }
 
 // Class helpers
