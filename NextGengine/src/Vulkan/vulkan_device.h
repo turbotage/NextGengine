@@ -39,7 +39,6 @@ namespace ngv {
 		vk::PhysicalDeviceFeatures m_Features;
 		vk::PhysicalDeviceFeatures m_EnabledFeatures;
 		std::vector<vk::QueueFamilyProperties> m_QueueProperties;
-		vk::Format::eA1R5G5B5UnormPack16;
 	};
 
 	/// Factory for devices.

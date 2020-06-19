@@ -8,33 +8,67 @@
 
 namespace ngv {
 
+	class VulkanMemoryAllocation;
 	class VulkanMemoryPage;
 
-	class VulkanMemoryAllocation : public ng::AllocatorConstructed {
-	public:
 
-		~VulkanMemoryAllocation() = default;
 
-		vk::DeviceSize getSize();
-		vk::DeviceSize getOffset();
 
-	private:
-		VulkanMemoryAllocation() = default;
-		VulkanMemoryAllocation(std::shared_ptr<VulkanMemoryPage> pMemPage);
-		VulkanMemoryAllocation(const VulkanMemoryAllocation&) = delete;
-		VulkanMemoryAllocation& operator=(const VulkanMemoryAllocation&) = delete;
-
-	private:
-		friend class VulkanMemoryPage;
-
-		std::unique_ptr<ng::AbstractFreeListAllocation> m_pAllocation;
-		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
-
+	struct VulkanMemoryStrategy {
+		vk::DeviceSize recommendedPageSize = 256 * 1000 * 1000; // 256 mb
+		vk::DeviceSize maxMemoryUsage = 3LL * 4LL * 256LL * 1000LL * 1000LL;
 	};
 
+	class VulkanAllocator {
+	public:
+
+		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
+
+		// BUFFER
+		void giveBufferAllocation(std::shared_ptr<VulkanBuffer> pBuffer);
+
+		// IMAGE
+		void giveImageAllocation(std::shared_ptr<VulkanImage> pImage);
 
 
 
+
+
+		vk::DeviceSize getUsedMemory();
+
+	private:
+
+		vk::DeviceSize getUsedMemoryP();
+
+	private:
+
+		std::mutex m_Mutex;
+
+		VulkanDevice& m_Device;
+
+		VulkanMemoryStrategy m_MemoryStrategy;
+
+		struct BufferRequirements {
+			vk::BufferCreateInfo createInfo;
+			vk::MemoryPropertyFlags memoryPropertyFlags;
+			vk::MemoryRequirements memRequirements;
+		};
+		std::vector<BufferRequirements> m_BufferRequirements;
+
+		struct ImageRequirements {
+			vk::ImageCreateInfo createInfo;
+			vk::MemoryPropertyFlags memoryPropertyFlags;
+			vk::MemoryRequirements memRequirements;
+		};
+		std::vector<ImageRequirements> m_ImageRequirements;
+
+
+		std::vector<std::shared_ptr<VulkanMemoryPage>> m_MemoryPages;
+
+		
+
+
+	};
 
 
 
@@ -49,7 +83,7 @@ namespace ngv {
 
 		// Make Factory
 		static std::shared_ptr<VulkanMemoryPage> make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
-		
+
 		~VulkanMemoryPage() = default;
 
 		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
@@ -95,59 +129,28 @@ namespace ngv {
 
 
 
-
-
-
-	struct VulkanMemoryStrategy {
-		vk::DeviceSize recommendedPageSize = 256 * 1000 * 1000; // 256 mb
-		vk::DeviceSize maxMemoryUsage = 3LL * 4LL * 256LL * 1000LL * 1000LL;
-	};
-
-	class VulkanAllocator {
+	class VulkanMemoryAllocation : public ng::AllocatorConstructed {
 	public:
 
-		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
+		~VulkanMemoryAllocation() = default;
 
-		// BUFFER
-		void giveBufferAllocation(std::shared_ptr<VulkanBuffer> pBuffer);
-
-		// IMAGE
-		void giveImageAllocation(std::shared_ptr<VulkanImage> pImage);
-
-		vk::DeviceSize getUsedMemory();
+		vk::DeviceSize getSize();
+		vk::DeviceSize getOffset();
 
 	private:
-
-		vk::DeviceSize getUsedMemoryP();
+		VulkanMemoryAllocation() = default;
+		VulkanMemoryAllocation(std::shared_ptr<VulkanMemoryPage> pMemPage);
+		VulkanMemoryAllocation(const VulkanMemoryAllocation&) = delete;
+		VulkanMemoryAllocation& operator=(const VulkanMemoryAllocation&) = delete;
 
 	private:
+		friend class VulkanMemoryPage;
 
-		std::mutex m_Mutex;
-
-		VulkanDevice& m_Device;
-
-		VulkanMemoryStrategy m_MemoryStrategy;
-
-		struct BufferRequirements {
-			vk::BufferCreateInfo createInfo;
-			vk::MemoryPropertyFlags memoryPropertyFlags;
-			vk::MemoryRequirements memRequirements;
-		};
-		std::vector<BufferRequirements> m_BufferRequirements;
-
-		struct ImageRequirements {
-			vk::ImageCreateInfo createInfo;
-			vk::MemoryPropertyFlags memoryPropertyFlags;
-			vk::MemoryRequirements memRequirements;
-		};
-		std::vector<ImageRequirements> m_ImageRequirements;
-
-
-		std::list<std::shared_ptr<VulkanMemoryPage>> m_MemoryPages;
-
-		
-
+		std::unique_ptr<ng::AbstractFreeListAllocation> m_pAllocation;
+		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
 
 	};
+
+
 
 }

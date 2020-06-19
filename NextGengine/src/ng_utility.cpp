@@ -13,7 +13,18 @@ std::string ng::getShaderDirectoryPath(std::string projectName)
 	auto sExecPath = execPath.string();
 	auto pos = sExecPath.find(projectName);
 	auto subPath = sExecPath.substr(0, pos + projectName.length());
-	subPath += "\\NextGengine\\shaders\\";
+	subPath += "\\Assets\\shaders\\";
+	return subPath;
+}
+
+std::string ng::getAssetsDirectoryPath(std::string projectName)
+{
+	namespace fs = std::filesystem;
+	auto execPath = fs::current_path();
+	auto sExecPath = execPath.string();
+	auto pos = sExecPath.find(projectName);
+	auto subPath = sExecPath.substr(0, pos + projectName.length());
+	subPath += "\\Assets\\";
 	return subPath;
 }
 
@@ -109,6 +120,118 @@ std::vector<uint8> ng::loadFile(const std::string& filename)
 		bytes.resize(size);
 		is.read((char*)bytes.data(), size);
 	}
+	return bytes;
+}
+
+void ng::writeFile(std::vector<uint8> bytes, const std::string& filename)
+{
+	std::ofstream file;
+	file.open(filename);
+	file.write((char*)bytes.data(), bytes.size());
+	file.close();
+}
+
+
+
+
+
+
+
+
+
+std::vector<float> ng::getFloatsFromBytes(std::vector<uint8> bytes)
+{
+	std::vector<float> ret;
+#ifndef NDEBUG
+	if (!(bytes.size() % 4)) {
+		std::runtime_error("Bytes was not a multibule of 4, cannot convert to floats");
+	}
+#endif
+	ret.resize(bytes.size() / 4);
+	memcpy(ret.data(), bytes.data(), bytes.size());
+	return ret;
+}
+
+std::vector<ng::Vertex2D> ng::getVertex2DsFromBytes(std::vector<uint8> bytes)
+{
+	std::vector<ng::Vertex2D> ret;
+#ifndef NDEBUG
+	if (!(bytes.size() % 4)) {
+		std::runtime_error("Bytes was not a multibule of 4, cannot convert to floats");
+	}
+	if (!((bytes.size() / 4) % 2)) {
+		std::runtime_error("Bytes was not a multiple of 8, cannot convert to Vertex2D");
+	}
+#endif
+	ret.resize(bytes.size() / 8);
+	memcpy(ret.data(), bytes.data(), bytes.size());
+	return ret;
+}
+
+std::vector<ng::Vertex2D_3C> ng::getVertex2D_3CsFromBytes(std::vector<uint8> bytes)
+{
+	std::vector<ng::Vertex2D_3C> ret;
+#ifndef NDEBUG
+	if (!(bytes.size() % 4)) {
+		std::runtime_error("Bytes was not a multibule of 4, cannot convert to floats");
+	}
+	if (!((bytes.size() / 4) % 5)) {
+		std::runtime_error("Bytes was not a multiple of 20, cannot convert to Vertex2D");
+	}
+#endif
+	ret.resize(bytes.size() / 20);
+	memcpy(ret.data(), bytes.data(), bytes.size());
+	return ret;
+}
+
+std::vector<ng::Vertex3D> ng::getVertex3DsFromBytes(std::vector<uint8> bytes)
+{
+	std::vector<ng::Vertex3D> ret;
+#ifndef NDEBUG
+	if (!(bytes.size() % 4)) {
+		std::runtime_error("Bytes was not a multibule of 4, cannot convert to floats");
+	}
+	if (!((bytes.size() / 4) % 3)) {
+		std::runtime_error("Bytes was not a multiple of 12, cannot convert to Vertex3D");
+	}
+#endif
+	ret.resize(bytes.size() / 12);
+	memcpy(ret.data(), bytes.data(), bytes.size());
+	return ret;
+}
+
+
+
+
+
+
+
+
+std::vector<uint8> ng::getBytesFromFloats(std::vector<float> floats)
+{
+	std::vector<uint8> bytes(floats.size() * 4);
+	memcpy(bytes.data(), floats.data(), bytes.size());
+	return bytes;
+}
+
+std::vector<uint8> ng::getBytesFromVertex2Ds(std::vector<Vertex2D> vertices)
+{
+	std::vector<uint8> bytes(vertices.size() * 8);
+	memcpy(bytes.data(), vertices.data(), bytes.size());
+	return bytes;
+}
+
+std::vector<uint8> ng::getBytesFromVertex2D_3Cs(std::vector<Vertex2D_3C> vertices)
+{
+	std::vector<uint8> bytes(vertices.size() * 20);
+	memcpy(bytes.data(), vertices.data(), bytes.size());
+	return bytes;
+}
+
+std::vector<uint8> ng::getBytesFromVertex3Ds(std::vector<Vertex3D> vertices)
+{
+	std::vector<uint8> bytes(vertices.size() * 12);
+	memcpy(bytes.data(), vertices.data(), bytes.size());
 	return bytes;
 }
 

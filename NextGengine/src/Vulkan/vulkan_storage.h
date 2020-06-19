@@ -5,7 +5,6 @@
 
 #include <list>
 
-#include <gli/texture2d.hpp>
 #include <utility>
 #include <vector>
 
@@ -257,15 +256,15 @@ namespace ngv {
 
 
 
-	class VertexBuffer : public VulkanBuffer, public ng::MakeConstructed {
+	class VulkanVertexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VertexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VulkanVertexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
-		VertexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
-		VertexBuffer(const VertexBuffer&) = delete;
-		VertexBuffer& operator=(const VertexBuffer&) = delete;
+		VulkanVertexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		VulkanVertexBuffer(const VulkanVertexBuffer&) = delete;
+		VulkanVertexBuffer& operator=(const VulkanVertexBuffer&) = delete;
 	};
 
 
@@ -278,15 +277,15 @@ namespace ngv {
 
 
 
-	class IndexBuffer : public VulkanBuffer, public ng::MakeConstructed {
+	class VulkanIndexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<IndexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VulkanIndexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
-		IndexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
-		IndexBuffer(const IndexBuffer&) = delete;
-		IndexBuffer& operator=(const IndexBuffer&) = delete;
+		VulkanIndexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		VulkanIndexBuffer(const VulkanIndexBuffer&) = delete;
+		VulkanIndexBuffer& operator=(const VulkanIndexBuffer&) = delete;
 	}; 
 
 
@@ -297,15 +296,15 @@ namespace ngv {
 
 
 
-	class UniformBuffer : public VulkanBuffer, public ng::MakeConstructed {
+	class VulkanUniformBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<UniformBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VulkanUniformBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
-		UniformBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
-		UniformBuffer(const UniformBuffer&) = delete;
-		UniformBuffer& operator=(const UniformBuffer&) = delete;
+		VulkanUniformBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		VulkanUniformBuffer(const VulkanUniformBuffer&) = delete;
+		VulkanUniformBuffer& operator=(const VulkanUniformBuffer&) = delete;
 	};
 
 
@@ -316,19 +315,19 @@ namespace ngv {
 
 
 
-	class Texture2D : public VulkanImage, public ng::MakeConstructed {
+	class VulkanTexture2D : public VulkanImage, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<Texture2D> make(VulkanDevice& device, uint32 width, uint32 height,
+		static std::shared_ptr<VulkanTexture2D> make(VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 		void createImageView();
 
 	private:
-		Texture2D(VulkanDevice& device, uint32 width, uint32 height,
+		VulkanTexture2D(VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
-		Texture2D(const Texture2D&) = delete;
-		Texture2D& operator=(const Texture2D&) = delete;
+		VulkanTexture2D(const VulkanTexture2D&) = delete;
+		VulkanTexture2D& operator=(const VulkanTexture2D&) = delete;
 	};
 
 
@@ -340,19 +339,19 @@ namespace ngv {
 
 
 
-	class TextureCube : public VulkanImage, ng::MakeConstructed {
+	class VulkanTextureCube : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<TextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::shared_ptr<VulkanTextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 		void createImageView();
 
 	private:
-		TextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		VulkanTextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
-		TextureCube(const TextureCube&) = delete;
-		TextureCube& operator=(const TextureCube&) = delete;
+		VulkanTextureCube(const VulkanTextureCube&) = delete;
+		VulkanTextureCube& operator=(const VulkanTextureCube&) = delete;
 	};
 
 
@@ -364,19 +363,19 @@ namespace ngv {
 
 
 
-	class DepthStencilImage : public VulkanImage, ng::MakeConstructed {
+	class VulkanDepthStencilImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<DepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::shared_ptr<VulkanDepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 		void createImageView();
 
 	private:
-		DepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
+		VulkanDepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
-		DepthStencilImage(const DepthStencilImage&) = delete;
-		DepthStencilImage& operator=(const DepthStencilImage&) = delete;
+		VulkanDepthStencilImage(const VulkanDepthStencilImage&) = delete;
+		VulkanDepthStencilImage& operator=(const VulkanDepthStencilImage&) = delete;
 	};
 
 	// TODO: add depth stencil array
@@ -389,19 +388,19 @@ namespace ngv {
 
 
 
-	class ColorAttachmentImage : public VulkanImage, ng::MakeConstructed {
+	class VulkanColorAttachmentImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<ColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
+		static std::shared_ptr<VulkanColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 		void createImageView();
 
 	private:
-		ColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, 
+		VulkanColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, 
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
-		ColorAttachmentImage(const ColorAttachmentImage&) = delete;
-		ColorAttachmentImage& operator=(const ColorAttachmentImage&) = delete;
+		VulkanColorAttachmentImage(const VulkanColorAttachmentImage&) = delete;
+		VulkanColorAttachmentImage& operator=(const VulkanColorAttachmentImage&) = delete;
 	};
 
 	// TODO: add color attachment array
@@ -415,30 +414,30 @@ namespace ngv {
 
 
 
-	class SamplerMaker {
+	class VulkanSamplerMaker {
 	public:
 
-		SamplerMaker();
+		VulkanSamplerMaker();
 
-		SamplerMaker& flags(vk::SamplerCreateFlags value);
+		VulkanSamplerMaker& flags(vk::SamplerCreateFlags value);
 
-		SamplerMaker& magFilter(vk::Filter filter);
+		VulkanSamplerMaker& magFilter(vk::Filter filter);
 
-		SamplerMaker& minFilter(vk::Filter filter);
+		VulkanSamplerMaker& minFilter(vk::Filter filter);
 
-		SamplerMaker& mipmapMode(vk::SamplerMipmapMode value);
-		SamplerMaker& addressModeU(vk::SamplerAddressMode value);
-		SamplerMaker& addressModeV(vk::SamplerAddressMode value);
-		SamplerMaker& addressModeW(vk::SamplerAddressMode value);
-		SamplerMaker& mipLodBias(float value);
-		SamplerMaker& anisotropyEnable(vk::Bool32 value);
-		SamplerMaker& maxAnisotropy(float value);
-		SamplerMaker& compareEnable(vk::Bool32 value);
-		SamplerMaker& compareOp(vk::CompareOp value);
-		SamplerMaker& minLod(float value);
-		SamplerMaker& maxLod(float value);
-		SamplerMaker& borderColor(vk::BorderColor value);
-		SamplerMaker& unnormalizedCoordinates(vk::Bool32 value);
+		VulkanSamplerMaker& mipmapMode(vk::SamplerMipmapMode value);
+		VulkanSamplerMaker& addressModeU(vk::SamplerAddressMode value);
+		VulkanSamplerMaker& addressModeV(vk::SamplerAddressMode value);
+		VulkanSamplerMaker& addressModeW(vk::SamplerAddressMode value);
+		VulkanSamplerMaker& mipLodBias(float value);
+		VulkanSamplerMaker& anisotropyEnable(vk::Bool32 value);
+		VulkanSamplerMaker& maxAnisotropy(float value);
+		VulkanSamplerMaker& compareEnable(vk::Bool32 value);
+		VulkanSamplerMaker& compareOp(vk::CompareOp value);
+		VulkanSamplerMaker& minLod(float value);
+		VulkanSamplerMaker& maxLod(float value);
+		VulkanSamplerMaker& borderColor(vk::BorderColor value);
+		VulkanSamplerMaker& unnormalizedCoordinates(vk::Bool32 value);
 		
 		vk::Sampler create(vk::Device device) const;
 

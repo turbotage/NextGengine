@@ -3,112 +3,6 @@
 #include "vulkan_device.h"
 #include "vulkan_utility.h"
 
-// <=================== VULKAN MEMORY ALLOCATION =======================>
-//public
-
-vk::DeviceSize ngv::VulkanMemoryAllocation::getSize()
-{
-	return m_pAllocation->getSize();
-}
-
-vk::DeviceSize ngv::VulkanMemoryAllocation::getOffset()
-{
-	return m_pAllocation->getOffset();
-}
-
-ngv::VulkanMemoryAllocation::VulkanMemoryAllocation(std::shared_ptr<VulkanMemoryPage> pMemPage)
-{
-	m_pMemoryPage = pMemPage;
-}
-
-//private
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// <=================== VULKAN MEMORY PAGE ===========================>
-//public
-std::shared_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryPage::make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
-{
-	return std::shared_ptr<VulkanMemoryPage>(new VulkanMemoryPage(device, allocInfo));
-}
-
-bool ngv::VulkanMemoryPage::canAllocate(vk::DeviceSize size, vk::DeviceSize alignment) {
-	std::lock_guard<std::mutex> lock(pageMutex);
-	return m_pAllocator->canAllocate(size, alignment);
-}
-
-std::shared_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryPage::allocate(vk::DeviceSize size, vk::DeviceSize alignment)
-{
-	std::lock_guard<std::mutex> lock(pageMutex);
-	std::shared_ptr<VulkanMemoryAllocation> ret(new VulkanMemoryAllocation());
-	ret->m_pAllocation = m_pAllocator->allocate(size, alignment);
-	if (ret->m_pAllocation == nullptr) {
-		return nullptr;
-	}
-	ret->m_pMemoryPage = shared_from_this();
-	return ret;
-}
-
-void ngv::VulkanMemoryPage::free(std::shared_ptr<VulkanMemoryAllocation> pMemAlloc)
-{
-	std::lock_guard<std::mutex> lock(pageMutex);
-
-#ifndef NDEBUG
-	// an allocated memory-allocation should have a valid pointer to some memory page (check it)
-	if (auto spt = pMemAlloc->m_pMemoryPage.lock()) {
-		if (spt.get() != this) {
-			std::runtime_error("Tried to free non allocated VulkanMemoryAllocation");
-		}
-	}
-#endif
-
-	// reset the mem-page pointer and free from free-list allocator
-	pMemAlloc->m_pMemoryPage.reset();
-	m_pAllocator->free(std::move(pMemAlloc->m_pAllocation));
-}
-
-const ngv::VulkanDevice& ngv::VulkanMemoryPage::vulkanDevice() const
-{
-	return m_Device;
-}
-
-const vk::DeviceMemory ngv::VulkanMemoryPage::memory() const
-{
-	return *m_Memory;
-}
-
-vk::DeviceSize ngv::VulkanMemoryPage::getUsedSize()
-{
-	std::lock_guard<std::mutex> lock(pageMutex);
-	return m_pAllocator->getUsedSize();
-}
-
-//private
-ngv::VulkanMemoryPage::VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
-	: m_Device(device)
-{
-	m_Memory = device.device().allocateMemoryUnique(allocInfo);
-	m_Size = allocInfo.allocationSize;
-	m_MemoryTypeIndex = allocInfo.memoryTypeIndex;
-	m_pAllocator = ng::AbstractFreeListAllocator::make(allocInfo.allocationSize);
-}
-
-
-
-
-
-
 
 
 
@@ -235,4 +129,122 @@ vk::DeviceSize ngv::VulkanAllocator::getUsedMemoryP()
 	}
 	return usedSize;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// <=================== VULKAN MEMORY PAGE ===========================>
+//public
+std::shared_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryPage::make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
+{
+	return std::shared_ptr<VulkanMemoryPage>(new VulkanMemoryPage(device, allocInfo));
+}
+
+bool ngv::VulkanMemoryPage::canAllocate(vk::DeviceSize size, vk::DeviceSize alignment) {
+	std::lock_guard<std::mutex> lock(pageMutex);
+	return m_pAllocator->canAllocate(size, alignment);
+}
+
+std::shared_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryPage::allocate(vk::DeviceSize size, vk::DeviceSize alignment)
+{
+	std::lock_guard<std::mutex> lock(pageMutex);
+	std::shared_ptr<VulkanMemoryAllocation> ret(new VulkanMemoryAllocation());
+	ret->m_pAllocation = m_pAllocator->allocate(size, alignment);
+	if (ret->m_pAllocation == nullptr) {
+		return nullptr;
+	}
+	ret->m_pMemoryPage = shared_from_this();
+	return ret;
+}
+
+void ngv::VulkanMemoryPage::free(std::shared_ptr<VulkanMemoryAllocation> pMemAlloc)
+{
+	std::lock_guard<std::mutex> lock(pageMutex);
+
+#ifndef NDEBUG
+	// an allocated memory-allocation should have a valid pointer to some memory page (check it)
+	if (auto spt = pMemAlloc->m_pMemoryPage.lock()) {
+		if (spt.get() != this) {
+			std::runtime_error("Tried to free non allocated VulkanMemoryAllocation");
+		}
+	}
+#endif
+
+	// reset the mem-page pointer and free from free-list allocator
+	pMemAlloc->m_pMemoryPage.reset();
+	m_pAllocator->free(std::move(pMemAlloc->m_pAllocation));
+}
+
+const ngv::VulkanDevice& ngv::VulkanMemoryPage::vulkanDevice() const
+{
+	return m_Device;
+}
+
+const vk::DeviceMemory ngv::VulkanMemoryPage::memory() const
+{
+	return *m_Memory;
+}
+
+vk::DeviceSize ngv::VulkanMemoryPage::getUsedSize()
+{
+	std::lock_guard<std::mutex> lock(pageMutex);
+	return m_pAllocator->getUsedSize();
+}
+
+//private
+ngv::VulkanMemoryPage::VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
+	: m_Device(device)
+{
+	m_Memory = device.device().allocateMemoryUnique(allocInfo);
+	m_Size = allocInfo.allocationSize;
+	m_MemoryTypeIndex = allocInfo.memoryTypeIndex;
+	m_pAllocator = ng::AbstractFreeListAllocator::make(allocInfo.allocationSize);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// <=================== VULKAN MEMORY ALLOCATION =======================>
+//public
+
+vk::DeviceSize ngv::VulkanMemoryAllocation::getSize()
+{
+	return m_pAllocation->getSize();
+}
+
+vk::DeviceSize ngv::VulkanMemoryAllocation::getOffset()
+{
+	return m_pAllocation->getOffset();
+}
+
+ngv::VulkanMemoryAllocation::VulkanMemoryAllocation(std::shared_ptr<VulkanMemoryPage> pMemPage)
+{
+	m_pMemoryPage = pMemPage;
+}
+
+//private
+
 

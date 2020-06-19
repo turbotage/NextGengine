@@ -7,48 +7,6 @@
 #include "abstract_allocators.h"
 #include "abstract_allocators.h"
 
-// <====================== ABSTRACT FREE LIST ALLOCATION ============================>
-// public
-uint64 ng::AbstractFreeListAllocation::getSize() {
-	return m_Size;
-}
-
-uint64 ng::AbstractFreeListAllocation::getOffset()
-{
-	return m_AlignedOffset;
-}
-
-uint64 ng::AbstractFreeListAllocation::getTotalSize()
-{
-	return m_TotalSize;
-}
-
-uint64 ng::AbstractFreeListAllocation::getPaddedOffset()
-{
-	return m_PaddingOffset;
-}
-
-/*
-std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocation::make(const std::raw_ptr<AbstractFreeListAllocator> pAllocator)
-{
-	return std::unique_ptr<AbstractFreeListAllocation>(new AbstractFreeListAllocation(pAllocator));
-}
-*/
-
-ng::AbstractFreeListAllocation::~AbstractFreeListAllocation()
-{
-	std::lock_guard<std::mutex> lock(m_pAllocator->m_Mutex);
-	m_pAllocator->free(this);
-}
-
-//private
-ng::AbstractFreeListAllocation::AbstractFreeListAllocation(const ng::raw_ptr<AbstractFreeListAllocator> pAllocator)
-{
-	m_pAllocator = pAllocator;
-}
-
-
-
 // <======================= ABSTRACT FREE LIST ALLOCATOR =================================>
 // public
 std::unique_ptr<ng::AbstractFreeListAllocator> ng::AbstractFreeListAllocator::make(uint64 size)
@@ -277,3 +235,50 @@ void ng::AbstractFreeListAllocator::free(ng::raw_ptr<AbstractFreeListAllocation>
 	pAlloc->m_Size = 0;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// <====================== ABSTRACT FREE LIST ALLOCATION ============================>
+// public
+uint64 ng::AbstractFreeListAllocation::getSize() {
+	return m_Size;
+}
+
+uint64 ng::AbstractFreeListAllocation::getOffset()
+{
+	return m_AlignedOffset;
+}
+
+uint64 ng::AbstractFreeListAllocation::getTotalSize()
+{
+	return m_TotalSize;
+}
+
+uint64 ng::AbstractFreeListAllocation::getPaddedOffset()
+{
+	return m_PaddingOffset;
+}
+
+
+ng::AbstractFreeListAllocation::~AbstractFreeListAllocation()
+{
+	std::lock_guard<std::mutex> lock(m_pAllocator->m_Mutex);
+	m_pAllocator->free(this);
+}
+
+//private
+ng::AbstractFreeListAllocation::AbstractFreeListAllocation(const ng::raw_ptr<AbstractFreeListAllocator> pAllocator)
+{
+	m_pAllocator = pAllocator;
+}
+
+

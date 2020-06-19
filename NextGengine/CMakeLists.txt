@@ -9,7 +9,6 @@ set(SOURCES "NextGengine.h")
 
 add_library(NextGengine ${SOURCES})
 add_subdirectory("src")
-add_subdirectory("shaders")
 
 # Vulkan
 find_package(Vulkan REQUIRED)

@@ -23,8 +23,13 @@ set(THREADING_SOURCES "Threading/thread_pool.cpp"
 set(SCENE_SOURCES "Scene/scene.cpp"
 					"Scene/model_2D.cpp")
 
+set(RESOURCE_SOURCES "Resources/resource_manager.cpp"
+						"Resources/resources.cpp")
+
 set(LOCAL_SOURCES "ng_utility.cpp")
 
 
 
-target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} ${THREADING_SOURCES} ${LOCAL_SOURCES})
+target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} 
+									${THREADING_SOURCES} ${RESOURCE_SOURCES}
+									${LOCAL_SOURCES})
