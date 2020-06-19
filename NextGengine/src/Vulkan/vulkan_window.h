@@ -8,7 +8,7 @@ class GLFWwindow;
 namespace ngv {
 
 	class VulkanDevice;
-	class DepthStencilImage;
+	class VulkanDepthStencilImage;
 	class VulkanAllocator;
 
 	class VulkanWindow {
@@ -95,7 +95,7 @@ namespace ngv {
 		uint32 m_GraphicsQueueFamilyIndex = 0;
 		uint32 m_PresentQueueFamilyIndex = 0;
 		
-		std::shared_ptr<DepthStencilImage> m_DepthStencil;
+		std::shared_ptr<VulkanDepthStencilImage> m_DepthStencil;
 
 		bool m_Ok = false;
 	};

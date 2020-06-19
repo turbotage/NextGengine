@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <array>
 
 #include "../def.h"
 #include "resources.h"
@@ -18,8 +19,12 @@ namespace ng {
 	class IndexBufferPage;
 	class UniformBufferPage;
 
-
-
+	enum class ResourceResidencyFlag {
+		eNoResidency,
+		eDeviceResidency,
+		eStagingResidency,
+		eAllResidency = eDeviceResidency | eStagingResidency,
+	};
 
 	struct ResourceStrategy {
 		uint64 hostVertexBufferPageSize;
@@ -55,11 +60,19 @@ namespace ng {
 
 
 
-
 	private:
 
+		bool shouldUseNewDeviceVertexMemory();
+		bool shouldUseNewHostVertexMemory();
 
+		bool shouldUseNewDeviceIndexMemory();
+		bool shouldUseNewHostIndexMemory();
 
+		bool shouldUseNewDeviceUniformMemory();
+		bool shouldUseNewHostUniformMemory();
+
+		bool shouldUseNewDeviceTexture2DMemory();
+		bool shouldUseNewHostTexture2DMemory();
 
 	private:
 
@@ -67,23 +80,25 @@ namespace ng {
 		ngv::VulkanDevice& m_Device;
 		ResourceStrategy m_Strategy;
 
+		vk::DeviceSize m_UsedDeviceMemory = 0;
+		vk::DeviceSize m_UsedHostMemory = 0;
+
 		//Buffers
-		struct Buffers {
+		struct {
 			std::map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
 			std::map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
 			std::map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
 		} m_Buffers;
 		
 		
-		struct Textures {
-			std::map<std::string, std::shared_ptr<Texture2D>> texture2DsByID;
-			std::map<int, std::shared_ptr<Texture2D>> texture2DsByAlloc;
-
+		struct {
+			std::map<std::string, std::shared_ptr<Texture2D>> texturesByID;
+			std::map<std::string, ng::raw_ptr<Texture2D>> textureResidencyLists[3][3]; // [resourceResidency][requiredResourceResidency]
 			//...
-		} m_Textures;
+		} m_Texture2Ds;
 
 
-		struct BufferPages {
+		struct {
 			std::list<VertexBufferPage> hostVertexBufferPages;
 			std::list<VertexBufferPage> deviceVertexBufferPages;
 

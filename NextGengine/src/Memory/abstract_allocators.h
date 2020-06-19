@@ -39,8 +39,6 @@ namespace ng {
 	private:
 		friend class AbstractFreeListAllocation;
 
-		std::mutex m_Mutex;
-
 		uint64 m_Size;
 		uint64 m_UsedSize = 0;
 

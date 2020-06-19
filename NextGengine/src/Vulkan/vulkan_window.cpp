@@ -305,7 +305,7 @@ void ngv::VulkanWindow::init()
 
 	auto memprops = m_Device.physicalDevice().getMemoryProperties();
 	//fix depth stencil // CRASHES HERE, broken allocator? probs
-	m_DepthStencil = DepthStencilImage::make(m_Device, m_Width, m_Height, vk::Format::eD24UnormS8Uint);
+	m_DepthStencil = VulkanDepthStencilImage::make(m_Device, m_Width, m_Height, vk::Format::eD24UnormS8Uint);
 	m_Allocator.giveImageAllocation(m_DepthStencil);
 	m_DepthStencil->createImageView();
 

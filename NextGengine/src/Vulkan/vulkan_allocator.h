@@ -25,10 +25,10 @@ namespace ngv {
 		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
 
 		// BUFFER
-		void giveBufferAllocation(std::shared_ptr<VulkanBuffer> pBuffer);
+		void giveBufferAllocation(const std::shared_ptr<VulkanBuffer>& pBuffer);
 
 		// IMAGE
-		void giveImageAllocation(std::shared_ptr<VulkanImage> pImage);
+		void giveImageAllocation(const std::shared_ptr<VulkanImage>& pImage);
 
 
 
@@ -132,7 +132,7 @@ namespace ngv {
 	class VulkanMemoryAllocation : public ng::AllocatorConstructed {
 	public:
 
-		~VulkanMemoryAllocation() = default;
+		~VulkanMemoryAllocation();
 
 		vk::DeviceSize getSize();
 		vk::DeviceSize getOffset();

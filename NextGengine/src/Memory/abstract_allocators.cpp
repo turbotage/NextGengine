@@ -16,7 +16,6 @@ std::unique_ptr<ng::AbstractFreeListAllocator> ng::AbstractFreeListAllocator::ma
 
 bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
 	auto it = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (it != m_FreeBlocksBySize.end()) {
 		return true;
@@ -26,8 +25,6 @@ bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
 
 std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::allocate(uint64 size, uint64 alignment)
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
-
 	auto freeBlock = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (freeBlock != m_FreeBlocksBySize.end()) {
 		std::unique_ptr<AbstractFreeListAllocation> pAlloc(new AbstractFreeListAllocation());
@@ -69,20 +66,16 @@ std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::a
 
 void ng::AbstractFreeListAllocator::free(std::unique_ptr<ng::AbstractFreeListAllocation> pAlloc)
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
 	free(pAlloc.get());
 }
 
 uint64 ng::AbstractFreeListAllocator::getUsedSize()
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
 	return m_UsedSize;
 }
 
 std::string ng::AbstractFreeListAllocator::getUsedBlocksString()
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
-
 	std::string ret = "USED BLOCKS: ";
 	for (auto& block : m_UsedBlocksByOffset) {
 		ret += std::string(" (") + std::to_string(block.first) + std::string(",") + std::to_string(block.second) + std::string(") ");
@@ -92,8 +85,6 @@ std::string ng::AbstractFreeListAllocator::getUsedBlocksString()
 
 std::string ng::AbstractFreeListAllocator::getFreeBlocksString()
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
-
 	std::string ret = "FREE BLOCKS: ";
 	for (auto& block : m_FreeBlocksByOffset) {
 		ret += std::string(" (") + std::to_string(block.first) + std::string(",") + std::to_string(block.second) + std::string(") ");
@@ -271,7 +262,6 @@ uint64 ng::AbstractFreeListAllocation::getPaddedOffset()
 
 ng::AbstractFreeListAllocation::~AbstractFreeListAllocation()
 {
-	std::lock_guard<std::mutex> lock(m_pAllocator->m_Mutex);
 	m_pAllocator->free(this);
 }
 

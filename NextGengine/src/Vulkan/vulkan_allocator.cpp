@@ -20,7 +20,7 @@ ngv::VulkanAllocator::VulkanAllocator(VulkanDevice& device, const VulkanMemorySt
 	m_MemoryStrategy = memStrategy;
 }
 
-void ngv::VulkanAllocator::giveBufferAllocation(std::shared_ptr<VulkanBuffer> pBuffer)
+void ngv::VulkanAllocator::giveBufferAllocation(const std::shared_ptr<VulkanBuffer>& pBuffer)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
@@ -67,7 +67,7 @@ void ngv::VulkanAllocator::giveBufferAllocation(std::shared_ptr<VulkanBuffer> pB
 
 }
 
-void ngv::VulkanAllocator::giveImageAllocation(std::shared_ptr<VulkanImage> pImage)
+void ngv::VulkanAllocator::giveImageAllocation(const std::shared_ptr<VulkanImage>& pImage)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
@@ -229,6 +229,15 @@ ngv::VulkanMemoryPage::VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocate
 
 // <=================== VULKAN MEMORY ALLOCATION =======================>
 //public
+
+ngv::VulkanMemoryAllocation::~VulkanMemoryAllocation()
+{
+	if (auto spt = m_pMemoryPage.lock()) {
+		std::lock_guard<std::mutex> lock(spt->pageMutex);
+		m_pAllocation.reset();
+	}
+	m_pMemoryPage.reset();
+}
 
 vk::DeviceSize ngv::VulkanMemoryAllocation::getSize()
 {
