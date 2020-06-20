@@ -29,6 +29,8 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_Id;
+		vk::DeviceSize m_Size;
+
 
 		std::shared_ptr<ngv::VulkanBuffer> m_pVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
@@ -49,12 +51,10 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_Id;
+		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanVertexBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
-
-		std::shared_ptr<ngv::VulkanVertexBuffer> m_pHostVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pHostAllocation;
 	};
 
 	class IndexBuffer {
@@ -72,12 +72,10 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_Id;
+		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanIndexBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
-
-		std::shared_ptr<ngv::VulkanIndexBuffer> m_pHostVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pHostAllocation;
 
 	};
 
@@ -96,12 +94,10 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_Id;
+		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanUniformBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
-
-		std::shared_ptr<ngv::VulkanUniformBuffer> m_pHostVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pHostAllocation;
 
 	};
 
@@ -127,9 +123,6 @@ namespace ng {
 
 
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
-
-		std::shared_ptr<ngv::VulkanBuffer> m_pHostVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pHostAllocation;
 
 	};
 

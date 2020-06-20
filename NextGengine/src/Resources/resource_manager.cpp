@@ -61,6 +61,53 @@ ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::Vulka
 
 
 
+std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::getStagingBuffer(std::string filename)
+{
+	auto it = m_Buffers.stagingBuffersByID.find(filename);
+	if (it != m_Buffers.stagingBuffersByID.end()) {
+		return it->second;
+	}
+	std::shared_ptr<StagingBuffer> ret = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, filename));
+
+	for (auto& page : m_BufferPages.stagingBufferPages) {
+		bool ok = page.allocate(ret);
+		if (ok) {
+			return;
+		}
+	}
+#ifndef NDEBUG
+	if (!shouldUseNewStagingMemory()) {
+		std::runtime_error("Couldn't find any available memory for stagingBuffer and was not allowed to allocate more");
+	}
+#endif
+	m_BufferPages.stagingBufferPages.emplace_back();
+	auto page = &m_BufferPages.stagingBufferPages.back();
+
+	uint64 pageSize = m_Strategy.stagingBufferPageSize;
+	if (ret->m_Size > pageSize) {
+		pageSize = ret->m_Size;
+	}
+
+	vk::BufferCreateInfo ci{};
+	ci.size = pageSize;
+	ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	page->m_pVulkanBuffer = ngv::VulkanBuffer::make(m_Device, ci, true);
+	page->m_Allocator = AbstractFreeListAllocator::make(pageSize);
+
+#ifndef NDEBUG
+	bool ok = page->allocate(ret);
+	if (!ok) {
+		std::runtime_error("Created new page that could not allocate");
+	}
+#else
+	page->allocate(ret);
+#endif
+	m_UsedHostMemory += pageSize;
+
+	m_Buffers.stagingBuffersByID.emplace(filename, ret);
+	return ret;
+}
 
 std::shared_ptr<ng::VertexBuffer> ng::ResourceManager::getVertexBuffer(std::string filename)
 {
@@ -127,8 +174,8 @@ void ng::ResourceManager::giveDeviceAllocation(std::shared_ptr<VertexBuffer>& ve
 	auto page = &m_BufferPages.deviceVertexBufferPages.back();
 
 	uint64 pageSize = m_Strategy.deviceVertexBufferPageSize;
-	if (vertexBuffer->m_pDeviceAllocation->getSize() > pageSize) {
-		pageSize = vertexBuffer->m_pDeviceAllocation->getSize();
+	if (vertexBuffer->m_Size > pageSize) {
+		pageSize = vertexBuffer->m_Size;
 	}
 
 	page->m_VertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
@@ -163,8 +210,8 @@ void ng::ResourceManager::giveDeviceAllocation(std::shared_ptr<IndexBuffer>& ind
 	auto page = &m_BufferPages.deviceIndexBufferPages.back();
 
 	uint64 pageSize = m_Strategy.deviceIndexBufferPageSize;
-	if (indexBuffer->m_pDeviceAllocation->getSize() > pageSize) {
-		pageSize = indexBuffer->m_pDeviceAllocation->getSize();
+	if (indexBuffer->m_Size > pageSize) {
+		pageSize = indexBuffer->m_Size;
 	}
 
 	page->m_IndexBuffer = ngv::VulkanIndexBuffer::make(m_Device, pageSize, false);
@@ -199,8 +246,8 @@ void ng::ResourceManager::giveDeviceAllocation(std::shared_ptr<UniformBuffer>& u
 	auto page = &m_BufferPages.deviceUniformBufferPages.back();
 
 	uint64 pageSize = m_Strategy.deviceUniformBufferPageSize;
-	if (uniformBuffer->m_pDeviceAllocation->getSize() > pageSize) {
-		pageSize = uniformBuffer->m_pDeviceAllocation->getSize();
+	if (uniformBuffer->m_Size > pageSize) {
+		pageSize = uniformBuffer->m_Size;
 	}
 
 	page->m_UniformBuffer = ngv::VulkanUniformBuffer::make(m_Device, pageSize, false);
@@ -246,144 +293,18 @@ void ng::ResourceManager::giveDeviceAllocation(std::shared_ptr<Texture2D>& textu
 
 
 
-void ng::ResourceManager::giveStagingAllocation(std::shared_ptr<VertexBuffer>& vertexBuffer)
+const ngv::VulkanDevice& ng::ResourceManager::vulkanDevice() const
 {
-	for (auto& page : m_BufferPages.hostVertexBufferPages) {
-		bool ok = page.allocate(vertexBuffer);
-		if (ok) {
-			return;
-		}
-	}
-#ifndef NDEBUG
-	if (!shouldUseNewHostVertexMemory()) {
-		std::runtime_error("Couldn't find available memory for vertexBuffer and was not allowed to allocate more");
-	}
-#endif
-	// We didn't find any page that could allocate, create a new one
-	m_BufferPages.hostVertexBufferPages.emplace_back();
-	auto page = &m_BufferPages.hostVertexBufferPages.back();
-
-	uint64 pageSize = m_Strategy.hostVertexBufferPageSize;
-	if (vertexBuffer->m_pHostAllocation->getSize() > pageSize) {
-		pageSize = vertexBuffer->m_pHostAllocation->getSize();
-	}
-
-	page->m_VertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
-	page->m_Allocator = AbstractFreeListAllocator::make(pageSize);
-
-#ifndef NDEBUG
-	bool ok = page->allocate(vertexBuffer);
-	if (!ok) {
-		std::runtime_error("Created new page that could not allocate");
-	}
-#else
-	page->allocate(vertexBuffer);
-#endif // !NDEBUG
-	m_UsedHostMemory += pageSize;
-}
-
-void ng::ResourceManager::giveStagingAllocation(std::shared_ptr<IndexBuffer>& indexBuffer)
-{
-	for (auto& page : m_BufferPages.hostIndexBufferPages) {
-		bool ok = page.allocate(indexBuffer);
-		if (ok) {
-			return;
-		}
-	}
-#ifndef NDEBUG
-	if (!shouldUseNewHostIndexMemory()) {
-		std::runtime_error("Couldn't find available memory for vertexBuffer and was not allowed to allocate more");
-	}
-#endif
-	// We didn't find any page that could allocate, create a new one
-	m_BufferPages.hostIndexBufferPages.emplace_back();
-	auto page = &m_BufferPages.hostIndexBufferPages.back();
-
-	uint64 pageSize = m_Strategy.hostIndexBufferPageSize;
-	if (indexBuffer->m_pHostAllocation->getSize() > pageSize) {
-		pageSize = indexBuffer->m_pHostAllocation->getSize();
-	}
-
-	page->m_IndexBuffer = ngv::VulkanIndexBuffer::make(m_Device, pageSize, false);
-	page->m_Allocator = AbstractFreeListAllocator::make(pageSize);
-
-#ifndef NDEBUG
-	bool ok = page->allocate(indexBuffer);
-	if (!ok) {
-		std::runtime_error("Created new page that could not allocate");
-	}
-#else
-	page->allocate(indexBuffer);
-#endif // !NDEBUG
-	m_UsedHostMemory += pageSize;
-}
-
-void ng::ResourceManager::giveStagingAllocation(std::shared_ptr<UniformBuffer>& uniformBuffer)
-{
-	for (auto& page : m_BufferPages.hostUniformBufferPages) {
-		bool ok = page.allocate(uniformBuffer);
-		if (ok) {
-			return;
-		}
-	}
-#ifndef NDEBUG
-	if (!shouldUseNewHostUniformMemory()) {
-		std::runtime_error("Couldn't find available memory for vertexBuffer and was not allowed to allocate more");
-	}
-#endif
-	// We didn't find any page that could allocate, create a new one
-	m_BufferPages.hostUniformBufferPages.emplace_back();
-	auto page = &m_BufferPages.hostUniformBufferPages.back();
-
-	uint64 pageSize = m_Strategy.hostUniformBufferPageSize;
-	if (uniformBuffer->m_pHostAllocation->getSize() > pageSize) {
-		pageSize = uniformBuffer->m_pHostAllocation->getSize();
-	}
-
-	page->m_UniformBuffer = ngv::VulkanUniformBuffer::make(m_Device, pageSize, false);
-	page->m_Allocator = AbstractFreeListAllocator::make(pageSize);
-
-#ifndef NDEBUG
-	bool ok = page->allocate(uniformBuffer);
-	if (!ok) {
-		std::runtime_error("Created new page that could not allocate");
-	}
-#else
-	page->allocate(uniformBuffer);
-#endif // !NDEBUG
-	m_UsedHostMemory += pageSize;
-}
-
-void ng::ResourceManager::giveStagingAllocation(std::shared_ptr<Texture2D>& texture2D)
-{
-	using RD = ResourceResidencyFlag;
-	/*
-	
-	*/
-	if (!shouldUseNewDeviceTexture2DMemory()) {
-		// We must find some similar texture2D than is available
-		// check first if there are some textures that require no residency
-		auto map = m_Texture2Ds.textureResidencyLists[(int)RD::eStagingResidency][(int)RD::eNoResidency];
-		for (auto& it : map) {
-			if ((it.second->m_Format == texture2D->m_Format) && (it.second->m_Height == texture2D->m_Height)
-				&& (it.second->m_Width == texture2D->m_Width) && (it.second->m_MipLevels == texture2D->m_MipLevels))
-			{
-				//This one can be swapped
-				texture2D->m_pHostVulkanBuffer = std::move(it.second->m_pHostVulkanBuffer);
-				texture2D->m_pHostAllocation = std::move(it.second->m_pHostAllocation);
-				map.erase(it.first);
-				m_Texture2Ds.textureResidencyLists[(int)RD::eStagingResidency][(int)RD::eDeviceResidency].emplace(texture2D->m_Id, texture2D.get());
-				return;
-			}
-		}
-	}
-
-	
-	m_Texture2Ds.textureResidencyLists[(int)RD::eStagingResidency][(int)RD::eDeviceResidency].emplace(texture2D->m_Id, texture2D.get());
+	return m_Device;
 }
 
 
 
+
+bool ng::ResourceManager::shouldUseNewStagingMemory()
+{
+	return true;
+}
 
 bool ng::ResourceManager::shouldUseNewDeviceVertexMemory()
 {
@@ -427,6 +348,10 @@ bool ng::ResourceManager::shouldUseNewHostTexture2DMemory()
 
 
 
+bool ng::StagingBufferPage::allocate(std::shared_ptr<StagingBuffer>& stagingBuffer)
+{
+	return false;
+}
 
 bool ng::VertexBufferPage::allocate(std::shared_ptr<VertexBuffer>& vertexBuffer)
 {
@@ -442,3 +367,4 @@ bool ng::UniformBufferPage::allocate(std::shared_ptr<UniformBuffer>& uniformBuff
 {
 	return false;
 }
+

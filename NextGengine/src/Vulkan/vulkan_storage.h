@@ -22,7 +22,7 @@ namespace ngv {
 	class VulkanBuffer : public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanBuffer> make(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
+		static std::shared_ptr<VulkanBuffer> make(const VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
 
 		~VulkanBuffer() = default; // allocations should be RAII deallocated
 		
@@ -66,12 +66,12 @@ namespace ngv {
 
 	protected:
 
-		void create(VulkanDevice& device, 
+		void create(const VulkanDevice& device, 
 			const vk::BufferCreateInfo& info, bool hostBuffer = false);
 
 	protected:
 		VulkanBuffer() = default;
-		VulkanBuffer(VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
+		VulkanBuffer(const VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
 		VulkanBuffer(const VulkanBuffer&) = delete;
 		VulkanBuffer& operator=(const VulkanBuffer&) = delete;
 
@@ -168,7 +168,7 @@ namespace ngv {
 	class VulkanImage : public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanImage> make(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
+		static std::shared_ptr<VulkanImage> make(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 
 		~VulkanImage() = default;
 
@@ -210,11 +210,11 @@ namespace ngv {
 
 	protected:
 
-		void create(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
+		void create(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 
 	protected:
 		VulkanImage() = default;
-		VulkanImage(VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
+		VulkanImage(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 		VulkanImage(const VulkanImage&) = delete;
 		VulkanImage& operator=(const VulkanImage&) = delete;
 
@@ -259,10 +259,10 @@ namespace ngv {
 	class VulkanVertexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanVertexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VulkanVertexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
-		VulkanVertexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		VulkanVertexBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 		VulkanVertexBuffer(const VulkanVertexBuffer&) = delete;
 		VulkanVertexBuffer& operator=(const VulkanVertexBuffer&) = delete;
 	};
@@ -280,10 +280,10 @@ namespace ngv {
 	class VulkanIndexBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanIndexBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VulkanIndexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
-		VulkanIndexBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		VulkanIndexBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 		VulkanIndexBuffer(const VulkanIndexBuffer&) = delete;
 		VulkanIndexBuffer& operator=(const VulkanIndexBuffer&) = delete;
 	}; 
@@ -299,10 +299,10 @@ namespace ngv {
 	class VulkanUniformBuffer : public VulkanBuffer, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanUniformBuffer> make(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::shared_ptr<VulkanUniformBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
-		VulkanUniformBuffer(VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		VulkanUniformBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 		VulkanUniformBuffer(const VulkanUniformBuffer&) = delete;
 		VulkanUniformBuffer& operator=(const VulkanUniformBuffer&) = delete;
 	};
@@ -318,13 +318,13 @@ namespace ngv {
 	class VulkanTexture2D : public VulkanImage, public ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanTexture2D> make(VulkanDevice& device, uint32 width, uint32 height,
+		static std::shared_ptr<VulkanTexture2D> make(const VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 		void createImageView();
 
 	private:
-		VulkanTexture2D(VulkanDevice& device, uint32 width, uint32 height,
+		VulkanTexture2D(const VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 		VulkanTexture2D(const VulkanTexture2D&) = delete;
 		VulkanTexture2D& operator=(const VulkanTexture2D&) = delete;
@@ -342,13 +342,13 @@ namespace ngv {
 	class VulkanTextureCube : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanTextureCube> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::shared_ptr<VulkanTextureCube> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 		void createImageView();
 
 	private:
-		VulkanTextureCube(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		VulkanTextureCube(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 		VulkanTextureCube(const VulkanTextureCube&) = delete;
 		VulkanTextureCube& operator=(const VulkanTextureCube&) = delete;
@@ -366,13 +366,13 @@ namespace ngv {
 	class VulkanDepthStencilImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanDepthStencilImage> make(VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::shared_ptr<VulkanDepthStencilImage> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 		void createImageView();
 
 	private:
-		VulkanDepthStencilImage(VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
+		VulkanDepthStencilImage(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format, 
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 		VulkanDepthStencilImage(const VulkanDepthStencilImage&) = delete;
 		VulkanDepthStencilImage& operator=(const VulkanDepthStencilImage&) = delete;
@@ -391,13 +391,13 @@ namespace ngv {
 	class VulkanColorAttachmentImage : public VulkanImage, ng::MakeConstructed {
 	public:
 
-		static std::shared_ptr<VulkanColorAttachmentImage> make(VulkanDevice& device, uint32 width, uint32 height,
+		static std::shared_ptr<VulkanColorAttachmentImage> make(const VulkanDevice& device, uint32 width, uint32 height,
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 		void createImageView();
 
 	private:
-		VulkanColorAttachmentImage(VulkanDevice& device, uint32 width, uint32 height, 
+		VulkanColorAttachmentImage(const VulkanDevice& device, uint32 width, uint32 height, 
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 		VulkanColorAttachmentImage(const VulkanColorAttachmentImage&) = delete;
 		VulkanColorAttachmentImage& operator=(const VulkanColorAttachmentImage&) = delete;

@@ -27,6 +27,8 @@ namespace ng {
 	};
 
 	struct ResourceStrategy {
+		uint64 stagingBufferPageSize;
+
 		uint64 hostVertexBufferPageSize;
 		uint64 deviceVertexBufferPageSize;
 
@@ -42,6 +44,7 @@ namespace ng {
 
 		ResourceManager(ngv::VulkanAllocator& allocator, ngv::VulkanDevice& device, ResourceStrategy strategy);
 
+		std::shared_ptr<StagingBuffer> getStagingBuffer(std::string filename);
 		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string filename);
 		std::shared_ptr<IndexBuffer> getIndexBuffer(std::string filename);
 		std::shared_ptr<UniformBuffer> getUniformBuffer(std::string filename);
@@ -53,14 +56,13 @@ namespace ng {
 		void giveDeviceAllocation(std::shared_ptr<UniformBuffer>& uniformBuffer);
 		void giveDeviceAllocation(std::shared_ptr<Texture2D>& texture2D);
 
-		void giveStagingAllocation(std::shared_ptr<VertexBuffer>& vertexBuffer);
-		void giveStagingAllocation(std::shared_ptr<IndexBuffer>& indexBuffer);
-		void giveStagingAllocation(std::shared_ptr<UniformBuffer>& uniformBuffer);
-		void giveStagingAllocation(std::shared_ptr<Texture2D>& texture2D);
 
+		const ngv::VulkanDevice& vulkanDevice() const;
 
 
 	private:
+
+		bool shouldUseNewStagingMemory();
 
 		bool shouldUseNewDeviceVertexMemory();
 		bool shouldUseNewHostVertexMemory();
@@ -85,6 +87,7 @@ namespace ng {
 
 		//Buffers
 		struct {
+			std::map<std::string, std::shared_ptr<StagingBuffer>> stagingBuffersByID;
 			std::map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
 			std::map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
 			std::map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
@@ -93,12 +96,14 @@ namespace ng {
 		
 		struct {
 			std::map<std::string, std::shared_ptr<Texture2D>> texturesByID;
-			std::map<std::string, ng::raw_ptr<Texture2D>> textureResidencyLists[3][3]; // [resourceResidency][requiredResourceResidency]
+			std::map<std::string, ng::raw_ptr<Texture2D>> textureResidencyLists[2][2]; // [resourceResidency][requiredResourceResidency]
 			//...
 		} m_Texture2Ds;
 
 
 		struct {
+			std::list<StagingBufferPage> stagingBufferPages;
+
 			std::list<VertexBufferPage> hostVertexBufferPages;
 			std::list<VertexBufferPage> deviceVertexBufferPages;
 
@@ -115,7 +120,18 @@ namespace ng {
 
 
 
-
+	class StagingBufferPage {
+	public:
+		bool allocate(std::shared_ptr<StagingBuffer>& stagingBuffer);
+	private:
+		StagingBufferPage();
+		StagingBufferPage(const VertexBufferPage&) = delete;
+		StagingBufferPage& operator=(const StagingBufferPage&) = default;
+	private:
+		friend class ResourceManager;
+		std::shared_ptr<ngv::VulkanBuffer> m_StagingBuffer;
+		std::unique_ptr<AbstractFreeListAllocator> m_Allocator;
+	};
 
 	class VertexBufferPage {
 	public:
