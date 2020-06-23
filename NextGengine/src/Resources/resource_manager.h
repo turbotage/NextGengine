@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <array>
+#include <mutex>
 
 #include "../def.h"
 #include "resources.h"
@@ -44,21 +45,25 @@ namespace ng {
 
 		ResourceManager(ngv::VulkanAllocator& allocator, ngv::VulkanDevice& device, ResourceStrategy strategy);
 
+		const ngv::VulkanDevice& vulkanDevice() const;
+
 		std::shared_ptr<StagingBuffer> getStagingBuffer(std::string filename);
 		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string filename);
 		std::shared_ptr<IndexBuffer> getIndexBuffer(std::string filename);
 		std::shared_ptr<UniformBuffer> getUniformBuffer(std::string filename);
 		std::shared_ptr<Texture2D> getTexture2D(std::string filename);
 
+	private:
 
-		void giveDeviceAllocation(std::shared_ptr<VertexBuffer>& vertexBuffer);
-		void giveDeviceAllocation(std::shared_ptr<IndexBuffer>& indexBuffer);
-		void giveDeviceAllocation(std::shared_ptr<UniformBuffer>& uniformBuffer);
-		void giveDeviceAllocation(std::shared_ptr<Texture2D>& texture2D);
+		void giveStagingBuffer(VertexBuffer& vertexBuffer);
+		void giveStagingBuffer(IndexBuffer& indexBuffer);
+		void giveStagingBuffer(UniformBuffer& uniformBuffer);
+		void giveStagingBuffer(Texture2D& texture2D);
 
-
-		const ngv::VulkanDevice& vulkanDevice() const;
-
+		void giveDeviceAllocation(VertexBuffer& vertexBuffer);
+		void giveDeviceAllocation(IndexBuffer& indexBuffer);
+		void giveDeviceAllocation(UniformBuffer& uniformBuffer);
+		void giveDeviceAllocation(Texture2D& texture2D);
 
 	private:
 
@@ -77,6 +82,14 @@ namespace ng {
 		bool shouldUseNewHostTexture2DMemory();
 
 	private:
+		friend class StagingBuffer;
+		friend class VertexBuffer;
+		friend class IndexBuffer;
+		friend class UniformBuffer;
+		friend class Texture2D;
+
+
+		std::mutex m_Mutex;
 
 		ngv::VulkanAllocator& m_Allocator;
 		ngv::VulkanDevice& m_Device;
@@ -87,7 +100,7 @@ namespace ng {
 
 		//Buffers
 		struct {
-			std::map<std::string, std::shared_ptr<StagingBuffer>> stagingBuffersByID;
+			std::map<std::string, std::shared_ptr<StagingBuffer>> stagingResidencyMaps[2]; // Required, Not Required
 			std::map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
 			std::map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
 			std::map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
@@ -96,7 +109,7 @@ namespace ng {
 		
 		struct {
 			std::map<std::string, std::shared_ptr<Texture2D>> texturesByID;
-			std::map<std::string, ng::raw_ptr<Texture2D>> textureResidencyLists[2][2]; // [resourceResidency][requiredResourceResidency]
+			std::map<std::string, ng::raw_ptr<Texture2D>> textureResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
 			//...
 		} m_Texture2Ds;
 
@@ -122,54 +135,70 @@ namespace ng {
 
 	class StagingBufferPage {
 	public:
-		bool allocate(std::shared_ptr<StagingBuffer>& stagingBuffer);
+		bool allocate(StagingBuffer& stagingBuffer);
+
+		const ResourceManager& getManager() const;
 	private:
-		StagingBufferPage();
+		StagingBufferPage(const ResourceManager& manager);
 		StagingBufferPage(const VertexBufferPage&) = delete;
 		StagingBufferPage& operator=(const StagingBufferPage&) = default;
 	private:
 		friend class ResourceManager;
-		std::shared_ptr<ngv::VulkanBuffer> m_StagingBuffer;
-		std::unique_ptr<AbstractFreeListAllocator> m_Allocator;
+		const ng::ResourceManager& m_Manager;
+
+		std::shared_ptr<ngv::VulkanBuffer> m_pStagingBuffer;
+		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
 	class VertexBufferPage {
 	public:
-		bool allocate(std::shared_ptr<VertexBuffer>& vertexBuffer);
+		bool allocate(VertexBuffer& vertexBuffer);
+
+		const ResourceManager& getManager() const;
 	private:
-		VertexBufferPage();
+		VertexBufferPage(const ResourceManager& manager);
 		VertexBufferPage(const VertexBufferPage&) = delete;
 		VertexBufferPage& operator=(const VertexBufferPage&) = default;
 	private:
 		friend class ResourceManager;
-		std::shared_ptr<ngv::VulkanVertexBuffer> m_VertexBuffer;
-		std::unique_ptr<AbstractFreeListAllocator> m_Allocator;
+		const ng::ResourceManager& m_Manager;
+
+		std::shared_ptr<ngv::VulkanVertexBuffer> m_pVertexBuffer;
+		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
 	class IndexBufferPage {
 	public:
-		bool allocate(std::shared_ptr<IndexBuffer>& indexBuffer);
+		bool allocate(IndexBuffer& indexBuffer);
+
+		const ResourceManager& getManager() const;
 	private:
-		IndexBufferPage();
+		IndexBufferPage(const ResourceManager& manager);
 		IndexBufferPage(const IndexBufferPage&) = delete;
 		IndexBufferPage& operator=(const IndexBufferPage&) = default;
 	private:
 		friend class ResourceManager;
-		std::shared_ptr<ngv::VulkanIndexBuffer> m_IndexBuffer;
-		std::unique_ptr<AbstractFreeListAllocator> m_Allocator;
+		const ng::ResourceManager& m_Manager;
+
+		std::shared_ptr<ngv::VulkanIndexBuffer> m_pIndexBuffer;
+		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
 	class UniformBufferPage {
 	public:
-		bool allocate(std::shared_ptr<UniformBuffer>& uniformBuffer);
+		bool allocate(UniformBuffer& uniformBuffer);
+
+		const ResourceManager& getManager() const;
 	private:
-		UniformBufferPage();
+		UniformBufferPage(const ResourceManager& manager);
 		UniformBufferPage(const UniformBufferPage&) = delete;
 		UniformBufferPage& operator=(const UniformBufferPage&) = default;
 	private:
 		friend class ResourceManager;
-		std::shared_ptr<ngv::VulkanUniformBuffer> m_UniformBuffer;
-		std::unique_ptr<AbstractFreeListAllocator> m_Allocator;
+		const ng::ResourceManager& m_Manager;
+
+		std::shared_ptr<ngv::VulkanUniformBuffer> m_pUniformBuffer;
+		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
 

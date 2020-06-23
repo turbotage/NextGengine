@@ -31,7 +31,6 @@ namespace ng {
 		std::string m_Id;
 		vk::DeviceSize m_Size;
 
-
 		std::shared_ptr<ngv::VulkanBuffer> m_pVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 	};
@@ -40,7 +39,13 @@ namespace ng {
 	public:
 
 		bool hasDeviceAllocation();
-		bool hasStaging();
+		bool hasStagingBuffer();
+
+		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
+		void setStagingBufferNotRequired(bool alreadyLocked = false);
+
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 	private:
 		friend class ResourceManager;
@@ -55,13 +60,22 @@ namespace ng {
 
 		std::shared_ptr<ngv::VulkanVertexBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
+
+		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+
 	};
 
 	class IndexBuffer {
 	public:
 
 		bool hasDeviceAllocation();
-		bool hasStaging();
+		bool hasStagingBuffer();
+
+		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
+		void setStagingBufferNotRequired(bool alreadyLocked = false);
+
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 	private:
 		friend class ResourceManager;
@@ -77,13 +91,21 @@ namespace ng {
 		std::shared_ptr<ngv::VulkanIndexBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
 
+		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+
 	};
 
 	class UniformBuffer {
 	public:
 
 		bool hasDeviceAllocation();
-		bool hasStaging();
+		bool hasStagingBuffer();
+
+		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
+		void setStagingBufferNotRequired(bool alreadyLocked = false);
+
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 	private:
 		friend class ResourceManager;
@@ -99,13 +121,21 @@ namespace ng {
 		std::shared_ptr<ngv::VulkanUniformBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
 
+		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+
 	};
 
 	class Texture2D {
 	public:
 		
 		bool hasDeviceAllocation();
-		bool hasStaging();
+		bool hasStagingBuffer();
+
+		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
+		void setStagingBufferNotRequired(bool alreadyLocked = false);
+
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 	private:
 		friend class ResourceManager;
@@ -121,8 +151,9 @@ namespace ng {
 		uint32 m_MipLevels;
 		vk::Format m_Format;
 
-
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
+
+		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 
