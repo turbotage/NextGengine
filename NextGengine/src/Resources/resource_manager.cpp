@@ -219,8 +219,8 @@ void ng::ResourceManager::giveDeviceAllocation(VertexBuffer& vertexBuffer)
 	auto page = &m_BufferPages.deviceVertexBufferPages.back();
 
 	uint64 pageSize = m_Strategy.deviceVertexBufferPageSize;
-	if (vertexBuffer->m_Size > pageSize) {
-		pageSize = vertexBuffer->m_Size;
+	if (vertexBuffer.m_Size > pageSize) {
+		pageSize = vertexBuffer.m_Size;
 	}
 
 	page->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
@@ -255,8 +255,8 @@ void ng::ResourceManager::giveDeviceAllocation(IndexBuffer& indexBuffer)
 	auto page = &m_BufferPages.deviceIndexBufferPages.back();
 
 	uint64 pageSize = m_Strategy.deviceIndexBufferPageSize;
-	if (indexBuffer->m_Size > pageSize) {
-		pageSize = indexBuffer->m_Size;
+	if (indexBuffer.m_Size > pageSize) {
+		pageSize = indexBuffer.m_Size;
 	}
 
 	page->m_pIndexBuffer = ngv::VulkanIndexBuffer::make(m_Device, pageSize, false);
@@ -291,8 +291,8 @@ void ng::ResourceManager::giveDeviceAllocation(UniformBuffer& uniformBuffer)
 	auto page = &m_BufferPages.deviceUniformBufferPages.back();
 
 	uint64 pageSize = m_Strategy.deviceUniformBufferPageSize;
-	if (uniformBuffer->m_Size > pageSize) {
-		pageSize = uniformBuffer->m_Size;
+	if (uniformBuffer.m_Size > pageSize) {
+		pageSize = uniformBuffer.m_Size;
 	}
 
 	page->m_pUniformBuffer = ngv::VulkanUniformBuffer::make(m_Device, pageSize, false);
@@ -311,7 +311,7 @@ void ng::ResourceManager::giveDeviceAllocation(UniformBuffer& uniformBuffer)
 
 void ng::ResourceManager::giveDeviceAllocation(Texture2D& texture2D)
 {
-	using RD = ResourceResidencyFlag;
+	using RD = ResourceResidencyFlagBits;
 	if (!shouldUseNewDeviceTexture2DMemory()) {
 		// We must find some similar texture2D than is available
 		// check first if there are some textures that require no residency

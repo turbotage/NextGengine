@@ -20,12 +20,14 @@ namespace ng {
 	class IndexBufferPage;
 	class UniformBufferPage;
 
-	enum class ResourceResidencyFlag {
+	enum class ResourceResidencyFlagBits {
 		eNoResidency,
 		eDeviceResidency,
 		eStagingResidency,
 		eAllResidency = eDeviceResidency | eStagingResidency,
 	};
+
+	typedef uint32 ResourceResidencyFlags;
 
 	struct ResourceStrategy {
 		uint64 stagingBufferPageSize;
