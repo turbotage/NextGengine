@@ -28,7 +28,7 @@ namespace ng {
 		StagingBuffer& operator=(StagingBuffer&) = delete;
 	private:
 		ResourceManager& m_Manager;
-		std::string m_Id;
+		std::string m_ID;
 		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanBuffer> m_pVulkanBuffer;
@@ -55,13 +55,13 @@ namespace ng {
 		VertexBuffer& operator=(VertexBuffer&) = delete;
 	private:
 		ResourceManager& m_Manager;
-		std::string m_Id;
+		std::string m_ID;
 		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanVertexBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
 
-		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 
@@ -85,13 +85,13 @@ namespace ng {
 		IndexBuffer& operator=(IndexBuffer&) = delete;
 	private:
 		ResourceManager& m_Manager;
-		std::string m_Id;
+		std::string m_ID;
 		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanIndexBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
 
-		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 
@@ -115,13 +115,13 @@ namespace ng {
 		UniformBuffer& operator=(UniformBuffer&) = delete;
 	private:
 		ResourceManager& m_Manager;
-		std::string m_Id;
+		std::string m_ID;
 		vk::DeviceSize m_Size;
 
 		std::shared_ptr<ngv::VulkanUniformBuffer> m_pDeviceVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
 
-		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 
@@ -145,7 +145,7 @@ namespace ng {
 		Texture2D& operator=(Texture2D&) = delete;
 	private:
 		ResourceManager& m_Manager;
-		std::string m_Id;
+		std::string m_ID;
 
 		uint32 m_Width, m_Height;
 		uint32 m_MipLevels;
@@ -153,7 +153,7 @@ namespace ng {
 
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
 
-		std::weak_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 

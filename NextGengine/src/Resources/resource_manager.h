@@ -100,9 +100,12 @@ namespace ng {
 		vk::DeviceSize m_UsedDeviceMemory = 0;
 		vk::DeviceSize m_UsedHostMemory = 0;
 
-		//Buffers
 		struct {
 			std::map<std::string, std::shared_ptr<StagingBuffer>> stagingResidencyMaps[2]; // Required, Not Required
+		} m_Staging;
+
+		//Buffers
+		struct {
 			std::map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
 			std::map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
 			std::map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
@@ -119,14 +122,11 @@ namespace ng {
 		struct {
 			std::list<StagingBufferPage> stagingBufferPages;
 
-			std::list<VertexBufferPage> hostVertexBufferPages;
-			std::list<VertexBufferPage> deviceVertexBufferPages;
+			std::list<VertexBufferPage> vertexBufferPages;
 
-			std::list<IndexBufferPage> hostIndexBufferPages;
-			std::list<IndexBufferPage> deviceIndexBufferPages;
+			std::list<IndexBufferPage> indexBufferPages;
 
-			std::list<UniformBufferPage> hostUniformBufferPages;
-			std::list<UniformBufferPage> deviceUniformBufferPages;
+			std::list<UniformBufferPage> uniformBufferPages;
 		} m_BufferPages;
 
 
