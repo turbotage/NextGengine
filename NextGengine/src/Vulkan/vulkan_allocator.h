@@ -25,16 +25,17 @@ namespace ngv {
 		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
 
 		// BUFFER
-		void giveBufferAllocation(const std::shared_ptr<VulkanBuffer>& pBuffer);
+		void giveBufferAllocation(const std::shared_ptr<VulkanBuffer>& pBuffer, bool lock = true);
 
 		// IMAGE
-		void giveImageAllocation(const std::shared_ptr<VulkanImage>& pImage);
+		void giveImageAllocation(const std::shared_ptr<VulkanImage>& pImage, bool lock = true);
 
 
+		vk::DeviceSize getUsedMemory(bool lock = true);
+		
 
-
-
-		vk::DeviceSize getUsedMemory();
+		void lockAllocatorMutex();
+		void unlockAllocatorMutex();
 
 	private:
 
@@ -81,25 +82,27 @@ namespace ngv {
 	class VulkanMemoryPage : public ng::MakeConstructed, public ng::EnableSharedThis<VulkanMemoryPage> {
 	public:
 
+
 		// Make Factory
 		static std::shared_ptr<VulkanMemoryPage> make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
 
 		~VulkanMemoryPage() = default;
 
-		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
+		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment, bool lock = true);
 
-		std::shared_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment);
+		std::unique_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment, bool lock = true);
 
-		void free(std::shared_ptr<VulkanMemoryAllocation> pMemAlloc);
+		void free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc, bool lock = true);
 
 		const VulkanDevice& vulkanDevice() const;
 		const vk::DeviceMemory memory() const;
 
-		vk::DeviceSize getUsedSize();
-
-	public:
-
-		std::mutex pageMutex;
+		vk::DeviceSize getUsedSize(bool lock = true);
+		
+		
+		void lockPageMutex();
+		void unlockPageMutex();
+		
 
 	private:
 		VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
@@ -108,6 +111,8 @@ namespace ngv {
 
 	private:
 		friend class VulkanAllocator;
+
+		std::mutex m_Mutex;
 
 		std::unique_ptr<ng::AbstractFreeListAllocator> m_pAllocator;
 
@@ -136,6 +141,8 @@ namespace ngv {
 
 		vk::DeviceSize getSize();
 		vk::DeviceSize getOffset();
+
+		ng::raw_ptr<VulkanMemoryPage> getMemoryPage();
 
 	private:
 		VulkanMemoryAllocation() = default;

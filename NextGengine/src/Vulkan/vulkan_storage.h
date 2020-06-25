@@ -86,8 +86,7 @@ namespace ngv {
 
 		bool m_Created = false;
 
-		std::shared_ptr<VulkanMemoryAllocation> m_pAllocation;
-		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
+		std::unique_ptr<VulkanMemoryAllocation> m_pAllocation;
 
 	};
 
@@ -232,8 +231,7 @@ namespace ngv {
 
 		bool m_Created = false;
 
-		std::shared_ptr<VulkanMemoryAllocation> m_pAllocation;
-		std::weak_ptr<VulkanMemoryPage> m_pMemoryPage;
+		std::unique_ptr<VulkanMemoryAllocation> m_pAllocation;
 	};
 
 	template<typename T>

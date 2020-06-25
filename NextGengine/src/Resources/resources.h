@@ -20,8 +20,13 @@ namespace ng {
 	class StagingBuffer {
 	public:
 
+		bool hasAllocation();
+
+		~StagingBuffer();
+
 	private:
 		friend class ResourceManager;
+		friend class StagingBufferPage;
 
 		StagingBuffer(ResourceManager& manager, std::string id);
 		StagingBuffer(const StagingBuffer&) = delete;
@@ -31,9 +36,23 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size;
 
-		std::shared_ptr<ngv::VulkanBuffer> m_pVulkanBuffer;
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
+		ng::raw_ptr<StagingBufferPage> m_pStagingPage;
+
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class VertexBuffer {
 	public:
@@ -41,14 +60,17 @@ namespace ng {
 		bool hasDeviceAllocation();
 		bool hasStagingBuffer();
 
-		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
-		void setStagingBufferNotRequired(bool alreadyLocked = false);
+		void looseDeviceAllocation(bool alreadyLocked = false);
+		void looseStagingBuffer(bool alreadyLocked = false);
 
 		void giveDeviceAllocation(bool alreadyLocked = false);
 		void giveStagingBuffer(bool alreadyLocked = false);
 
+		~VertexBuffer();
+
 	private:
 		friend class ResourceManager;
+		friend class VertexBufferPage;
 
 		VertexBuffer(ResourceManager& manager, std::string id);
 		VertexBuffer(const VertexBuffer&) = delete;
@@ -58,12 +80,28 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size;
 
-		std::shared_ptr<ngv::VulkanVertexBuffer> m_pDeviceVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
+		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
+		ng::raw_ptr<VertexBufferPage> m_pVertexPage;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class IndexBuffer {
 	public:
@@ -77,8 +115,11 @@ namespace ng {
 		void giveDeviceAllocation(bool alreadyLocked = false);
 		void giveStagingBuffer(bool alreadyLocked = false);
 
+		~IndexBuffer();
+
 	private:
 		friend class ResourceManager;
+		friend class IndexBufferPage;
 
 		IndexBuffer(ResourceManager& manager, std::string id);
 		IndexBuffer(const IndexBuffer&) = delete;
@@ -88,12 +129,25 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size;
 
-		std::shared_ptr<ngv::VulkanIndexBuffer> m_pDeviceVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
+		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
+		ng::raw_ptr<IndexBufferPage> m_pIndexPage;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class UniformBuffer {
 	public:
@@ -106,9 +160,12 @@ namespace ng {
 
 		void giveDeviceAllocation(bool alreadyLocked = false);
 		void giveStagingBuffer(bool alreadyLocked = false);
+		
+		~UniformBuffer();
 
 	private:
 		friend class ResourceManager;
+		friend class UniformBufferPage;
 
 		UniformBuffer(ResourceManager& manager, std::string id);
 		UniformBuffer(const UniformBuffer&) = delete;
@@ -118,12 +175,28 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size;
 
-		std::shared_ptr<ngv::VulkanUniformBuffer> m_pDeviceVulkanBuffer;
-		std::unique_ptr<AbstractFreeListAllocation> m_pDeviceAllocation;
+		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
+		ng::raw_ptr<UniformBufferPage> m_pUniformPage;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	class Texture2D {
 	public:

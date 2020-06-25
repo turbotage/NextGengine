@@ -137,6 +137,8 @@ namespace ng {
 		raw_ptr(const raw_ptr& other) { ptr = other.ptr; }
 		raw_ptr(T* other) { ptr = other; }
 
+		T* get() { return ptr; }
+
 		T& operator*() { return *ptr; }
 		T* operator->() const { return ptr; }
 

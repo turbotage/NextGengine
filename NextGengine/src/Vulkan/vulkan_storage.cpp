@@ -34,7 +34,7 @@ const vk::MemoryPropertyFlags ngv::VulkanBuffer::getMemoryPropertyFlags() const
 
 void* ngv::VulkanBuffer::map()
 {
-	auto spt = m_pMemoryPage.lock();
+	auto spt = m_pAllocation->getMemoryPage();
 #ifndef NDEBUG
 	if (spt == nullptr) {
 		std::runtime_error("Tried to map buffer without allocation");
@@ -51,14 +51,13 @@ void* ngv::VulkanBuffer::map()
 
 void ngv::VulkanBuffer::unmap()
 {
-	auto spt = m_pMemoryPage.lock();
+	auto spt = m_pAllocation->getMemoryPage();
 	return spt->vulkanDevice().device().unmapMemory(spt->memory());
 }
 
 void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) const
 {
-	auto spt = m_pMemoryPage.lock();
-
+	auto spt = m_pAllocation->getMemoryPage();
 #ifndef NDEBUG
 	if (size == 0) {
 		std::runtime_error("Tried to update buffer with size 0");
@@ -68,7 +67,7 @@ void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 	}
 #endif
 
-	std::lock_guard<std::mutex> lock(spt->pageMutex);
+
 	vk::Device ldevice = spt->vulkanDevice().device();
 	vk::DeviceMemory mem = spt->memory();
 	vk::DeviceSize offset = m_pAllocation->getOffset();
@@ -80,6 +79,8 @@ void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 	vk::MappedMemoryRange mr{ mem, offset, (vk::DeviceSize)std::ceil(size / atomSize) * atomSize };
 	ldevice.flushMappedMemoryRanges(mr);
 	ldevice.unmapMemory(mem);
+
+	spt->unlockPageMutex();
 }
 
 void ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
@@ -88,7 +89,7 @@ void ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffe
 	if (size == 0) {
 		std::runtime_error("Tried to upload data with size 0 to buffer");
 	}
-	auto spt = m_pMemoryPage.lock();
+	auto spt = m_pAllocation->getMemoryPage();
 	if (spt == nullptr) {
 		std::runtime_error("Tried to upload to buffer without allocation");
 	}
@@ -110,7 +111,7 @@ void ngv::VulkanBuffer::barrier(vk::CommandBuffer cb, vk::PipelineStageFlags src
 
 void ngv::VulkanBuffer::flush()
 {
-	auto spt = m_pMemoryPage.lock();
+	auto spt = m_pAllocation->getMemoryPage();
 
 #ifndef NDEBUG
 	if (spt == nullptr) {
@@ -128,7 +129,7 @@ void ngv::VulkanBuffer::flush()
 
 void ngv::VulkanBuffer::invalidate()
 {
-	auto spt = m_pMemoryPage.lock();
+	auto spt = m_pAllocation->getMemoryPage();
 
 #ifndef NDEBUG
 	if (spt == nullptr) {
@@ -146,7 +147,7 @@ void ngv::VulkanBuffer::invalidate()
 
 bool ngv::VulkanBuffer::hasAllocation()
 {
-	if (auto spt = m_pMemoryPage.lock()) {
+	if (m_pAllocation->getMemoryPage() != nullptr) {
 		return true;
 	}
 	return false;
@@ -154,8 +155,8 @@ bool ngv::VulkanBuffer::hasAllocation()
 
 bool ngv::VulkanBuffer::hasSameAllocation(const ngv::VulkanBuffer& buffer)
 {
-	if (auto spt1 = m_pMemoryPage.lock()) {
-		if (auto spt2 = buffer.m_pMemoryPage.lock()) {
+	if (m_pAllocation->getMemoryPage().get()) {
+		if (buffer.m_pAllocation->getMemoryPage().get()) {
 			if (m_pAllocation == buffer.m_pAllocation) { // equiv to m_pAllocation.get() == buffer->m_pAllocation.get()
 				return true;
 			}
@@ -232,9 +233,9 @@ std::shared_ptr<ngv::VulkanImage> ngv::VulkanImage::make(const VulkanDevice& dev
 
 void ngv::VulkanImage::createImageView(vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask)
 {
-	auto spt = m_pMemoryPage.lock();
+	auto spt = m_pAllocation->getMemoryPage();
 #ifndef NDEBUG
-	if (!spt) {
+	if (spt == nullptr) {
 		std::runtime_error("Tried to create image view for image without allocation");
 	}
 #endif
@@ -405,7 +406,7 @@ void ngv::VulkanImage::setCurrentLayout(vk::ImageLayout oldLayout)
 
 bool ngv::VulkanImage::hasAllocation()
 {
-	if (auto spt = m_pMemoryPage.lock()) {
+	if (m_pAllocation->getMemoryPage() != nullptr) {
 		return true;
 	}
 	return false;
@@ -413,8 +414,8 @@ bool ngv::VulkanImage::hasAllocation()
 
 bool ngv::VulkanImage::hasSameAllocation(const VulkanImage& image)
 {
-	if (auto spt1 = m_pMemoryPage.lock()) {
-		if (auto spt2 = image.m_pMemoryPage.lock()) {
+	if (m_pAllocation->getMemoryPage().get()) {
+		if (image.m_pAllocation->getMemoryPage().get()) {
 			if (m_pAllocation == image.m_pAllocation) {
 				return true;
 			}

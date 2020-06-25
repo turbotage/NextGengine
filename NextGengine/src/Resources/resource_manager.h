@@ -3,6 +3,7 @@
 #include <memory>
 #include <array>
 #include <mutex>
+#include <unordered_map>
 
 #include "../def.h"
 #include "resources.h"
@@ -101,20 +102,20 @@ namespace ng {
 		vk::DeviceSize m_UsedHostMemory = 0;
 
 		struct {
-			std::map<std::string, std::shared_ptr<StagingBuffer>> stagingResidencyMaps[2]; // Required, Not Required
+			std::unordered_map<std::string, std::shared_ptr<StagingBuffer>> stagingResidencyMaps[2]; // Required, Not Required
 		} m_Staging;
 
 		//Buffers
 		struct {
-			std::map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
-			std::map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
-			std::map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
+			std::unordered_map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
+			std::unordered_map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
+			std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
 		} m_Buffers;
 		
 		
 		struct {
-			std::map<std::string, std::shared_ptr<Texture2D>> texturesByID;
-			std::map<std::string, ng::raw_ptr<Texture2D>> textureResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
+			std::unordered_map<std::string, std::shared_ptr<Texture2D>> texturesByID;
+			std::unordered_map<std::string, ng::raw_ptr<Texture2D>> textureResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
 			//...
 		} m_Texture2Ds;
 
@@ -139,64 +140,135 @@ namespace ng {
 	public:
 		bool allocate(StagingBuffer& stagingBuffer);
 
+		void free(StagingBuffer& stagingBuffer);
+
 		const ResourceManager& getManager() const;
+
+		ng::raw_ptr<ngv::VulkanBuffer> getBuffer();
+
 	private:
 		StagingBufferPage(const ResourceManager& manager);
 		StagingBufferPage(const VertexBufferPage&) = delete;
 		StagingBufferPage& operator=(const StagingBufferPage&) = default;
 	private:
 		friend class ResourceManager;
+
+		//std::mutex m_Mutex;
+
 		const ng::ResourceManager& m_Manager;
 
 		std::shared_ptr<ngv::VulkanBuffer> m_pStagingBuffer;
 		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	class VertexBufferPage {
 	public:
 		bool allocate(VertexBuffer& vertexBuffer);
 
+		void free(VertexBuffer& vertexBuffer);
+
 		const ResourceManager& getManager() const;
+
+		ng::raw_ptr<ngv::VulkanVertexBuffer> getBuffer();
+
 	private:
 		VertexBufferPage(const ResourceManager& manager);
 		VertexBufferPage(const VertexBufferPage&) = delete;
 		VertexBufferPage& operator=(const VertexBufferPage&) = default;
 	private:
 		friend class ResourceManager;
+
+		//std::mutex m_Mutex;
+
 		const ng::ResourceManager& m_Manager;
 
 		std::shared_ptr<ngv::VulkanVertexBuffer> m_pVertexBuffer;
 		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
+
+
+
+
+
+
+
+
+
+
+
+
 	class IndexBufferPage {
 	public:
 		bool allocate(IndexBuffer& indexBuffer);
 
+		void free(IndexBuffer& indexBuffer);
+
 		const ResourceManager& getManager() const;
+
+		ng::raw_ptr<ngv::VulkanIndexBuffer> getBuffer();
+
 	private:
 		IndexBufferPage(const ResourceManager& manager);
 		IndexBufferPage(const IndexBufferPage&) = delete;
 		IndexBufferPage& operator=(const IndexBufferPage&) = default;
 	private:
 		friend class ResourceManager;
+
+		//std::mutex m_Mutex;
+
 		const ng::ResourceManager& m_Manager;
 
 		std::shared_ptr<ngv::VulkanIndexBuffer> m_pIndexBuffer;
 		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	class UniformBufferPage {
 	public:
 		bool allocate(UniformBuffer& uniformBuffer);
 
+		void free(UniformBuffer& uniformBuffer);
+
 		const ResourceManager& getManager() const;
+
+		ng::raw_ptr<ngv::VulkanUniformBuffer> getBuffer();
+
 	private:
 		UniformBufferPage(const ResourceManager& manager);
 		UniformBufferPage(const UniformBufferPage&) = delete;
 		UniformBufferPage& operator=(const UniformBufferPage&) = default;
 	private:
 		friend class ResourceManager;
+
+		//std::mutex m_Mutex;
+
 		const ng::ResourceManager& m_Manager;
 
 		std::shared_ptr<ngv::VulkanUniformBuffer> m_pUniformBuffer;
