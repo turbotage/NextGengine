@@ -8,6 +8,8 @@
 #include "../Vulkan/vulkan_allocator.h"
 #include "../Vulkan/vulkan_storage.h"
 
+#include <ktx.h>
+#include <ktxvulkan.h>
 
 
 // <==================================== RESOURCE MANAGER ==========================================>
@@ -50,63 +52,13 @@ const ngv::VulkanDevice& ng::ResourceManager::vulkanDevice() const
 	return m_Device;
 }
 
-
+/*
 std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::getStagingBuffer(std::string filename)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
-
-	auto it = m_Staging.stagingResidencyMaps[0].find(filename);
-	if (it != m_Staging.stagingResidencyMaps[0].end()) {
-		return it->second;
-	}
-	it = m_Staging.stagingResidencyMaps[1].find(filename);
-	if (it != m_Staging.stagingResidencyMaps[1].end()) {
-		return it->second;
-	}
-
-
-	std::shared_ptr<StagingBuffer> ret = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, filename));
-
-	for (auto& page : m_BufferPages.stagingBufferPages) {
-		bool ok = page.allocate(*ret);
-		if (ok) {
-			m_Staging.stagingResidencyMaps[0].emplace(filename, ret);
-			return ret;
-		}
-	}
-#ifndef NDEBUG
-	if (!shouldUseNewStagingMemory()) {
-		std::runtime_error("Couldn't find any available memory for stagingBuffer and was not allowed to allocate more");
-	}
-#endif
-	m_BufferPages.stagingBufferPages.emplace_back();
-	auto page = &m_BufferPages.stagingBufferPages.back();
-
-	uint64 pageSize = m_Strategy.stagingBufferPageSize;
-	if (ret->m_Size > pageSize) {
-		pageSize = ret->m_Size;
-	}
-
-	vk::BufferCreateInfo ci{};
-	ci.size = pageSize;
-	ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
-	ci.sharingMode = vk::SharingMode::eExclusive;
-	page->m_pStagingBuffer = ngv::VulkanBuffer::make(m_Device, ci, true);
-	page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
-	
-#ifndef NDEBUG
-	bool ok = page->allocate(*ret);
-	if (!ok) {
-		std::runtime_error("Created new page that could not allocate");
-	}
-#else
-	page->allocate(*ret);
-#endif
-	m_UsedHostMemory += pageSize;
-
-	m_Staging.stagingResidencyMaps[0].emplace(filename, ret);
-	return ret;
+	return mGetStagingBuffer(filename);
 }
+*/
 
 std::shared_ptr<ng::VertexBuffer> ng::ResourceManager::getVertexBuffer(std::string filename)
 {
@@ -156,9 +108,79 @@ std::shared_ptr<ng::Texture2D> ng::ResourceManager::getTexture2D(std::string fil
 		return it->second;
 	}
 	std::shared_ptr<Texture2D> ret = std::shared_ptr<Texture2D>(new Texture2D(*this, filename));
+
+	ktxTexture* ktxTexture;
+	ktxResult ktxResult;
+	ktxResult = ktxTexture_CreateFromNamedFile(filename.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktxTexture);
+	ret->m_Width = ktxTexture->baseWidth;
+	ret->m_Height = ktxTexture->baseHeight;
+	ret->m_MipLevels = ktxTexture->numLevels;
+
+	mGiveStagingBuffer(*ret, ktxTexture);
 	m_Texture2Ds.texturesByID.emplace(filename, ret);
 	return ret;
 }
+
+
+
+void ng::ResourceManager::giveStagingBuffer(VertexBuffer& vertexBuffer)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveStagingBuffer(vertexBuffer);
+}
+
+void ng::ResourceManager::giveStagingBuffer(IndexBuffer& indexBuffer)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveStagingBuffer(indexBuffer);
+}
+
+void ng::ResourceManager::giveStagingBuffer(UniformBuffer& uniformBuffer)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveStagingBuffer(uniformBuffer);
+}
+
+void ng::ResourceManager::giveStagingBuffer(Texture2D& texture2D) {
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveStagingBuffer(texture2D);
+}
+
+
+
+void ng::ResourceManager::giveDeviceAllocation(VertexBuffer& vertexBuffer)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveDeviceAllocation(vertexBuffer);
+}
+
+void ng::ResourceManager::giveDeviceAllocation(IndexBuffer& indexBuffer)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveDeviceAllocation(indexBuffer);
+}
+
+void ng::ResourceManager::giveDeviceAllocation(UniformBuffer& uniformBuffer)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveDeviceAllocation(uniformBuffer);
+}
+
+void ng::ResourceManager::giveDeviceAllocation(Texture2D& texture2D)
+{
+	std::lock_guard<std::mutex> lock(m_Mutex);
+	mGiveDeviceAllocation(texture2D);
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -167,61 +189,160 @@ std::shared_ptr<ng::Texture2D> ng::ResourceManager::getTexture2D(std::string fil
 
 
 // PRIVATE
-void ng::ResourceManager::giveStagingBuffer(VertexBuffer& vertexBuffer)
+std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::string filename)
 {
+	std::shared_ptr<StagingBuffer> ret = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, filename));
 
-}
+	std::vector<uint8> bytes;
 
-void ng::ResourceManager::giveStagingBuffer(IndexBuffer& indexBuffer)
-{
-}
-
-void ng::ResourceManager::giveStagingBuffer(UniformBuffer& uniformBuffer)
-{
-}
-
-void ng::ResourceManager::giveStagingBuffer(Texture2D& texture2D) {
-	using RD = ResourceResidencyFlagBits;
+	for (auto& page : m_BufferPages.stagingBufferPages) {
+		bool ok = page.allocate(*ret);
+		if (ok) {
+			m_Staging.stagingResidencyMaps[0].emplace(filename, ret);
+			return ret;
+		}
+	}
+#ifndef NDEBUG
 	if (!shouldUseNewStagingMemory()) {
-		auto map = m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eNoResidency];
-		for (auto& it : map) {
-			if ((it.second->m_Format == texture2D.m_Format) && (it.second->m_Height == texture2D.m_Height) &&
-				(it.second->m_Height == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels))
-			{
-				//This one can be swapped
-				texture2D.m_pStagingBuffer = std::move(it.second->m_pStagingBuffer);
-				
-				m_Staging.stagingResidencyMaps[1].erase(texture2D.m_pStagingBuffer->m_ID);
-				texture2D.m_pStagingBuffer->m_ID = texture2D.m_ID;
+		std::runtime_error("Couldn't find any available memory for stagingBuffer and was not allowed to allocate more");
+	}
+#endif
+	m_BufferPages.stagingBufferPages.emplace_back();
+	auto page = &m_BufferPages.stagingBufferPages.back();
+
+	uint64 pageSize = m_Strategy.stagingBufferPageSize;
+	if (ret->m_Size > pageSize) {
+		pageSize = ret->m_Size;
+	}
+
+	vk::BufferCreateInfo ci{};
+	ci.size = pageSize;
+	ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
+	ci.sharingMode = vk::SharingMode::eExclusive;
+	page->m_pStagingBuffer = ngv::VulkanBuffer::make(m_Device, ci, true);
+	page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
+
+#ifndef NDEBUG
+	bool ok = page->allocate(*ret);
+	if (!ok) {
+		std::runtime_error("Created new page that could not allocate");
+	}
+#else
+	page->allocate(*ret);
+#endif
+	m_UsedHostMemory += pageSize;
+
+	m_Staging.stagingResidencyMaps[0].emplace(filename, ret);
+
+
+	return ret;
+}
+
+
+
+
+void ng::ResourceManager::mGiveStagingBuffer(VertexBuffer& vertexBuffer)
+{
+	if (vertexBuffer.hasStagingBuffer()) {
+		m_Staging.stagingResidencyMaps[0].emplace(vertexBuffer.m_ID, vertexBuffer.m_pStagingBuffer);
+		m_Staging.stagingResidencyMaps[1].erase(vertexBuffer.m_ID);
+		return;
+	}
+	else {
+		vertexBuffer.m_pStagingBuffer = mGetStagingBuffer(vertexBuffer.m_ID);
+	}
+}
+
+void ng::ResourceManager::mGiveStagingBuffer(IndexBuffer& indexBuffer)
+{
+	if (indexBuffer.hasStagingBuffer()) {
+		m_Staging.stagingResidencyMaps[0].emplace(indexBuffer.m_ID, indexBuffer.m_pStagingBuffer);
+		m_Staging.stagingResidencyMaps[1].erase(indexBuffer.m_ID);
+		return;
+	}
+	else {
+		indexBuffer.m_pStagingBuffer = mGetStagingBuffer(indexBuffer.m_ID);
+	}
+}
+
+void ng::ResourceManager::mGiveStagingBuffer(UniformBuffer& uniformBuffer)
+{
+	if (uniformBuffer.hasStagingBuffer()) {
+		m_Staging.stagingResidencyMaps[0].emplace(uniformBuffer.m_ID, uniformBuffer.m_pStagingBuffer);
+		m_Staging.stagingResidencyMaps[1].erase(uniformBuffer.m_ID);
+		return;
+	}
+	else {
+		uniformBuffer.m_pStagingBuffer = mGetStagingBuffer(uniformBuffer.m_ID);
+	}
+}
+
+void ng::ResourceManager::mGiveStagingBuffer(Texture2D& texture2D, ktxTexture* ktxTexture)
+{
+	if (texture2D.hasStagingBuffer()) {
+		m_Staging.stagingResidencyMaps[0].emplace(texture2D.m_ID, texture2D.m_pStagingBuffer);
+		m_Staging.stagingResidencyMaps[1].erase(texture2D.m_ID);
+		return;
+	}
+	else {
+		using RD = ResourceResidencyFlagBits;
+		texture2D.m_pStagingBuffer = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, texture2D.m_ID));
+
+		for (auto& page : m_BufferPages.stagingBufferPages) {
+			bool ok = page.allocate(*texture2D.m_pStagingBuffer);
+			if (ok) {
 				m_Staging.stagingResidencyMaps[0].emplace(texture2D.m_ID, texture2D.m_pStagingBuffer);
+				m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].emplace(texture2D.m_ID, &texture2D);
 
 				// Upload data: TODO
+				{
+					ktxResult result;
+					if (ktxTexture == nullptr) {
+						result = ktxTexture_CreateFromNamedFile(texture2D.m_ID.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktxTexture);
+					}
+					ktx_uint8_t* ktxTextureData = ktxTexture_GetData(ktxTexture);
+					ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(ktxTexture);
 
+					//map, copy unmap
+					void* data = texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->map(
+						texture2D.m_pStagingBuffer->m_pAllocation->getOffset(), texture2D.m_pStagingBuffer->m_Size);
+					memcpy(data, ktxTextureData, ktxTextureSize);
+					texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->unmap();
+				}
 
-				//
-				map.erase(it.first);
-				m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].emplace(texture2D.m_ID, &texture2D);
 				return;
 			}
 		}
-		map = m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eDeviceResidency];
-		for (auto& it : map) {
-			if ((it.second->m_Format == texture2D.m_Format) && (it.second->m_Height == texture2D.m_Height) &&
-				(it.second->m_Width == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels))
-			{
-				auto it2 = m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].find(it.first);
-				if (it2 != m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].end()) {
-					continue;
-				}
-				else {
-					texture2D.m_pStagingBuffer = it.second->m_pStagingBuffer;
-					
+
+		if (!shouldUseNewStagingMemory()) {
+			auto map = m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eNoResidency];
+			for (auto& it : map) {
+				if ((it.second->m_Format == texture2D.m_Format) && (it.second->m_Height == texture2D.m_Height) &&
+					(it.second->m_Height == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels))
+				{
+					//This one can be swapped
+					texture2D.m_pStagingBuffer = std::move(it.second->m_pStagingBuffer);
+
 					m_Staging.stagingResidencyMaps[1].erase(texture2D.m_pStagingBuffer->m_ID);
 					texture2D.m_pStagingBuffer->m_ID = texture2D.m_ID;
 					m_Staging.stagingResidencyMaps[0].emplace(texture2D.m_ID, texture2D.m_pStagingBuffer);
 
 					// Upload data: TODO
+					{
+						ktxResult result;
+						if (ktxTexture == nullptr) {
+							result = ktxTexture_CreateFromNamedFile(texture2D.m_ID.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktxTexture);
+						}
+						ktx_uint8_t* ktxTextureData = ktxTexture_GetData(ktxTexture);
+						ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(ktxTexture);
 
+
+						//map, copy unmap
+						void* data = texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->map(
+							texture2D.m_pStagingBuffer->m_pAllocation->getOffset(), texture2D.m_pStagingBuffer->m_Size);
+						memcpy(data, ktxTextureData, ktxTextureSize);
+						texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->unmap();
+					}
 
 					//
 					map.erase(it.first);
@@ -229,17 +350,83 @@ void ng::ResourceManager::giveStagingBuffer(Texture2D& texture2D) {
 					return;
 				}
 			}
+			map = m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eDeviceResidency];
+			for (auto& it : map) {
+				if ((it.second->m_Format == texture2D.m_Format) && (it.second->m_Height == texture2D.m_Height) &&
+					(it.second->m_Width == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels))
+				{
+					auto it2 = m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].find(it.first);
+					if (it2 != m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].end()) {
+						continue;
+					}
+					else {
+						texture2D.m_pStagingBuffer = it.second->m_pStagingBuffer;
+
+						m_Staging.stagingResidencyMaps[1].erase(texture2D.m_pStagingBuffer->m_ID);
+						texture2D.m_pStagingBuffer->m_ID = texture2D.m_ID;
+						m_Staging.stagingResidencyMaps[0].emplace(texture2D.m_ID, texture2D.m_pStagingBuffer);
+
+						// Upload data: TODO
+						{
+							ktxResult result;
+							if (ktxTexture == nullptr) {
+								result = ktxTexture_CreateFromNamedFile(texture2D.m_ID.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktxTexture);
+							}
+							ktx_uint8_t* ktxTextureData = ktxTexture_GetData(ktxTexture);
+							ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(ktxTexture);
+
+
+							//map, copy unmap
+							void* data = texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->map(
+								texture2D.m_pStagingBuffer->m_pAllocation->getOffset(), texture2D.m_pStagingBuffer->m_Size);
+							memcpy(data, ktxTextureData, ktxTextureSize);
+							texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->unmap();
+						}
+
+						//
+						map.erase(it.first);
+						m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].emplace(texture2D.m_ID, &texture2D);
+						return;
+					}
+				}
+			}
 		}
+
+		m_BufferPages.stagingBufferPages.emplace_back();
+		auto page = &m_BufferPages.stagingBufferPages.back();
+
+		uint64 pageSize = m_Strategy.stagingBufferPageSize;
+		if (texture2D.m_pStagingBuffer->m_Size > pageSize) {
+			pageSize = texture2D.m_pStagingBuffer->m_Size;
+		}
+		
+		vk::BufferCreateInfo ci{};
+		ci.size = pageSize;
+		ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
+		ci.sharingMode = vk::SharingMode::eExclusive;
+		page->m_pStagingBuffer = ngv::VulkanBuffer::make(m_Device, ci, true);
+		page->m_pAllocator = ng::AbstractFreeListAllocator::make(pageSize);
+
+#ifndef NDEBUG
+		bool ok = page->allocate(*texture2D.m_pStagingBuffer);
+		if (!ok) {
+			std::runtime_error("Created new page that could not allocate");
+		}
+#else
+		page->allocate(*texture2D.m_pStagingBuffer);
+#endif // !NDEBUG
+		m_UsedHostMemory += pageSize;
+
+		m_Staging.stagingResidencyMaps[0].emplace(texture2D.m_ID, texture2D.m_pStagingBuffer);
+		m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].emplace(texture2D.m_ID, &texture2D);
 	}
 
-
-	texture2D.m_pStagingBuffer = getStagingBuffer(texture2D.m_ID);
-	m_Texture2Ds.textureResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].emplace(texture2D.m_ID, &texture2D);
 }
 
 
 
-void ng::ResourceManager::giveDeviceAllocation(VertexBuffer& vertexBuffer)
+
+void ng::ResourceManager::mGiveDeviceAllocation(VertexBuffer& vertexBuffer)
 {
 	for (auto& page : m_BufferPages.vertexBufferPages) {
 		bool ok = page.allocate(vertexBuffer);
@@ -263,7 +450,7 @@ void ng::ResourceManager::giveDeviceAllocation(VertexBuffer& vertexBuffer)
 
 	page->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
 	page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
-	
+
 #ifndef NDEBUG
 	bool ok = page->allocate(vertexBuffer);
 	if (!ok) {
@@ -275,7 +462,7 @@ void ng::ResourceManager::giveDeviceAllocation(VertexBuffer& vertexBuffer)
 	m_UsedDeviceMemory += pageSize;
 }
 
-void ng::ResourceManager::giveDeviceAllocation(IndexBuffer& indexBuffer)
+void ng::ResourceManager::mGiveDeviceAllocation(IndexBuffer& indexBuffer)
 {
 	for (auto& page : m_BufferPages.indexBufferPages) {
 		bool ok = page.allocate(indexBuffer);
@@ -311,7 +498,7 @@ void ng::ResourceManager::giveDeviceAllocation(IndexBuffer& indexBuffer)
 	m_UsedDeviceMemory += pageSize;
 }
 
-void ng::ResourceManager::giveDeviceAllocation(UniformBuffer& uniformBuffer)
+void ng::ResourceManager::mGiveDeviceAllocation(UniformBuffer& uniformBuffer)
 {
 	for (auto& page : m_BufferPages.uniformBufferPages) {
 		bool ok = page.allocate(uniformBuffer);
@@ -347,7 +534,7 @@ void ng::ResourceManager::giveDeviceAllocation(UniformBuffer& uniformBuffer)
 	m_UsedDeviceMemory += pageSize;
 }
 
-void ng::ResourceManager::giveDeviceAllocation(Texture2D& texture2D)
+void ng::ResourceManager::mGiveDeviceAllocation(Texture2D& texture2D)
 {
 	using RD = ResourceResidencyFlagBits;
 	if (!shouldUseNewDeviceTexture2DMemory()) {
@@ -356,7 +543,7 @@ void ng::ResourceManager::giveDeviceAllocation(Texture2D& texture2D)
 		auto map = m_Texture2Ds.textureResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eNoResidency];
 		for (auto& it : map) {
 			if ((it.second->m_Format == texture2D.m_Format) && (it.second->m_Height == texture2D.m_Height)
-				&& (it.second->m_Width == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels)) 
+				&& (it.second->m_Width == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels))
 			{
 				//This one can be swapped
 				texture2D.m_pVulkanTexture = std::move(it.second->m_pVulkanTexture);
@@ -370,8 +557,8 @@ void ng::ResourceManager::giveDeviceAllocation(Texture2D& texture2D)
 		map = m_Texture2Ds.textureResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eStagingResidency];
 		for (auto& it : map) {
 			if ((it.second->m_Format == texture2D.m_Format) && (it.second->m_Height == texture2D.m_Height) &&
-				(it.second->m_Width == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels)) 
-			{ 
+				(it.second->m_Width == texture2D.m_Width) && (it.second->m_MipLevels == texture2D.m_MipLevels))
+			{
 				auto it2 = m_Texture2Ds.textureResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].find(it.first);
 				if (it2 != m_Texture2Ds.textureResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].end()) {
 					continue;

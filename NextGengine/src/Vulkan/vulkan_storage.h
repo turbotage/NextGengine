@@ -31,6 +31,7 @@ namespace ngv {
 		const vk::MemoryPropertyFlags getMemoryPropertyFlags() const;
 
 		void* map();
+		void* map(uint64 offset, uint64 size);
 		void unmap();
 
 

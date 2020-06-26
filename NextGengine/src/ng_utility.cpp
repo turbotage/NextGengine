@@ -95,11 +95,11 @@ std::string ng::listShaders(std::string projectName)
 
 std::string ng::getFileExtension(std::string filename)
 {
-	size_t pos = filename.find_last_of(".") + 1;
+	size_t pos = filename.find_last_of(".");
 	if (pos == std::string::npos) {
 		return "";
 	}
-	return filename.substr(pos);
+	return filename.substr(pos + 1);
 }
 
 
@@ -129,6 +129,11 @@ void ng::writeFile(std::vector<uint8> bytes, const std::string& filename)
 	file.open(filename);
 	file.write((char*)bytes.data(), bytes.size());
 	file.close();
+}
+
+std::vector<uint8> ng::loadNGFile(const std::string& filename)
+{
+	return loadFile(filename);
 }
 
 

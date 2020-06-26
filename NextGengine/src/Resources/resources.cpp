@@ -29,6 +29,12 @@ ng::StagingBuffer::StagingBuffer(ResourceManager& manager, std::string id)
 
 
 // <================================= VERTEX BUFFER ==================================>
+
+ng::VertexBuffer::~VertexBuffer()
+{
+	m_pVertexPage->free(*this);
+}
+
 bool ng::VertexBuffer::hasDeviceAllocation()
 {
 	return m_pVertexPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
@@ -41,12 +47,6 @@ bool ng::VertexBuffer::hasStagingBuffer()
 	}
 	return false;
 }
-
-ng::VertexBuffer::~VertexBuffer()
-{
-	m_pVertexPage->free(*this);
-}
-
 
 ng::VertexBuffer::VertexBuffer(ResourceManager& manager, std::string id)
 	: m_Manager(manager), m_ID(id)

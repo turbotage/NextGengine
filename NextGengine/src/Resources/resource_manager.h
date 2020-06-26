@@ -8,6 +8,8 @@
 #include "../def.h"
 #include "resources.h"
 
+class ktxTexture;
+
 namespace ngv {
 	class VulkanDevice;
 	class VulkanAllocator;
@@ -50,13 +52,12 @@ namespace ng {
 
 		const ngv::VulkanDevice& vulkanDevice() const;
 
-		std::shared_ptr<StagingBuffer> getStagingBuffer(std::string filename);
+		//std::shared_ptr<StagingBuffer> getStagingBuffer(std::string filename);
+
 		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string filename);
 		std::shared_ptr<IndexBuffer> getIndexBuffer(std::string filename);
 		std::shared_ptr<UniformBuffer> getUniformBuffer(std::string filename);
 		std::shared_ptr<Texture2D> getTexture2D(std::string filename);
-
-	private:
 
 		void giveStagingBuffer(VertexBuffer& vertexBuffer);
 		void giveStagingBuffer(IndexBuffer& indexBuffer);
@@ -68,6 +69,20 @@ namespace ng {
 		void giveDeviceAllocation(UniformBuffer& uniformBuffer);
 		void giveDeviceAllocation(Texture2D& texture2D);
 
+	private:
+
+		std::shared_ptr<StagingBuffer> mGetStagingBuffer(std::string filename, bool loadAndUpdate = true);
+
+		void mGiveStagingBuffer(VertexBuffer& vertexBuffer);
+		void mGiveStagingBuffer(IndexBuffer& indexBuffer);
+		void mGiveStagingBuffer(UniformBuffer& uniformBuffer);
+		void mGiveStagingBuffer(Texture2D& texture2D, ktxTexture* ktxTexture = nullptr);
+
+		void mGiveDeviceAllocation(VertexBuffer& vertexBuffer);
+		void mGiveDeviceAllocation(IndexBuffer& indexBuffer);
+		void mGiveDeviceAllocation(UniformBuffer& uniformBuffer);
+		void mGiveDeviceAllocation(Texture2D& texture2D);
+		
 	private:
 
 		bool shouldUseNewStagingMemory();
@@ -85,11 +100,6 @@ namespace ng {
 		bool shouldUseNewHostTexture2DMemory();
 
 	private:
-		friend class StagingBuffer;
-		friend class VertexBuffer;
-		friend class IndexBuffer;
-		friend class UniformBuffer;
-		friend class Texture2D;
 
 
 		std::mutex m_Mutex;

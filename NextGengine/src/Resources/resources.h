@@ -25,6 +25,7 @@ namespace ng {
 		~StagingBuffer();
 
 	private:
+	private:
 		friend class ResourceManager;
 		friend class StagingBufferPage;
 
@@ -57,16 +58,18 @@ namespace ng {
 	class VertexBuffer {
 	public:
 
-		bool hasDeviceAllocation();
-		bool hasStagingBuffer();
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 		void looseDeviceAllocation(bool alreadyLocked = false);
 		void looseStagingBuffer(bool alreadyLocked = false);
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
 
 		~VertexBuffer();
+
+	private:
+		bool hasDeviceAllocation();
+		bool hasStagingBuffer();
 
 	private:
 		friend class ResourceManager;
@@ -84,7 +87,6 @@ namespace ng {
 		ng::raw_ptr<VertexBufferPage> m_pVertexPage;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
-
 	};
 	
 
@@ -106,17 +108,18 @@ namespace ng {
 	class IndexBuffer {
 	public:
 
-		bool hasDeviceAllocation();
-		bool hasStagingBuffer();
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
 		void setStagingBufferNotRequired(bool alreadyLocked = false);
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
 
 		~IndexBuffer();
 
+	private:
+		bool hasDeviceAllocation();
+		bool hasStagingBuffer();
 	private:
 		friend class ResourceManager;
 		friend class IndexBufferPage;
@@ -152,17 +155,18 @@ namespace ng {
 	class UniformBuffer {
 	public:
 
-		bool hasDeviceAllocation();
-		bool hasStagingBuffer();
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
 		void setStagingBufferNotRequired(bool alreadyLocked = false);
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
 		
 		~UniformBuffer();
 
+	private:
+		bool hasDeviceAllocation();
+		bool hasStagingBuffer();
 	private:
 		friend class ResourceManager;
 		friend class UniformBufferPage;
@@ -201,15 +205,16 @@ namespace ng {
 	class Texture2D {
 	public:
 		
-		bool hasDeviceAllocation();
-		bool hasStagingBuffer();
+		void giveDeviceAllocation(bool alreadyLocked = false);
+		void giveStagingBuffer(bool alreadyLocked = false);
 
 		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
 		void setStagingBufferNotRequired(bool alreadyLocked = false);
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
 
+	private:
+		bool hasDeviceAllocation();
+		bool hasStagingBuffer();
 	private:
 		friend class ResourceManager;
 

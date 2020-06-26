@@ -41,12 +41,38 @@ void* ngv::VulkanBuffer::map()
 	}
 #endif
 
-	vk::Device device = spt->vulkanDevice().device();
 	const VulkanDevice& vulkanDevice = spt->vulkanDevice();
+	vk::Device device = vulkanDevice.device();
+	/*
 	vk::DeviceSize atomSize = vulkanDevice.physicalDeviceLimits().nonCoherentAtomSize;
+	vk::DeviceSize mapSize = (vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize;
+	if (mapSize > m_BufferCreateInfo.size) {
+		mapSize = VK_WHOLE_SIZE;
+	}
+	*/
 
-	return device.mapMemory(spt->memory(), m_pAllocation->getOffset(), 
-		(vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize);
+	return device.mapMemory(spt->memory(), m_pAllocation->getOffset(), m_BufferCreateInfo.size);
+}
+
+void* ngv::VulkanBuffer::map(uint64 offset, uint64 size) {
+	auto spt = m_pAllocation->getMemoryPage();
+#ifndef NDEBUG
+	if (spt == nullptr) {
+		std::runtime_error("Tried to map buffer without allocation");
+	}
+#endif
+
+	const VulkanDevice& vulkanDevice = spt->vulkanDevice();
+	vk::Device device = vulkanDevice.device();
+	/*
+	vk::DeviceSize atomSize = vulkanDevice.physicalDeviceLimits().nonCoherentAtomSize;
+	vk::DeviceSize mapSize = (vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize;
+	if (mapSize > m_BufferCreateInfo.size) {
+		mapSize = VK_WHOLE_SIZE;
+	}
+	*/
+
+	return device.mapMemory(spt->memory(), m_pAllocation->getOffset() + offset, size);
 }
 
 void ngv::VulkanBuffer::unmap()
@@ -66,19 +92,27 @@ void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 		std::runtime_error("Tried to updateLocal on buffer missing allocation");
 	}
 #endif
+	const VulkanDevice& vulkanDevice = spt->vulkanDevice();
+	vk::Device device = vulkanDevice.device();
 
-
-	vk::Device ldevice = spt->vulkanDevice().device();
 	vk::DeviceMemory mem = spt->memory();
 	vk::DeviceSize offset = m_pAllocation->getOffset();
 
-	void* ptr = ldevice.mapMemory(mem, offset, size);
+
+	void* ptr = device.mapMemory(mem, offset, size);
 	memcpy(ptr, value, (size_t)size);
 
-	vk::DeviceSize atomSize = spt->vulkanDevice().physicalDeviceLimits().nonCoherentAtomSize;
-	vk::MappedMemoryRange mr{ mem, offset, (vk::DeviceSize)std::ceil(size / atomSize) * atomSize };
-	ldevice.flushMappedMemoryRanges(mr);
-	ldevice.unmapMemory(mem);
+	/* WE ALWAYS USE COHERENT MEMORY
+	vk::DeviceSize atomSize = vulkanDevice.physicalDeviceLimits().nonCoherentAtomSize;
+	vk::DeviceSize mapSize = (vk::DeviceSize)std::ceil(m_BufferCreateInfo.size / atomSize) * atomSize;
+	if (mapSize > m_BufferCreateInfo.size) {
+		mapSize = VK_WHOLE_SIZE;
+	}
+	vk::MappedMemoryRange mr{ mem, offset, mapSize };
+	device.flushMappedMemoryRanges(mr);
+	*/
+
+	device.unmapMemory(mem);
 
 	spt->unlockPageMutex();
 }

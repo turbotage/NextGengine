@@ -27,6 +27,8 @@ namespace ng {
 	std::vector<uint8> loadFile(const std::string& filename);
 	// Write to file
 	void writeFile(std::vector<uint8> bytes, const std::string& filename);
+	// Load NG file, (virtual filing) // Not yet implemented
+	std::vector<uint8> loadNGFile(const std::string& filename);
 
 	// Get floats from bytes
 	std::vector<float> getFloatsFromBytes(std::vector<uint8> bytes);

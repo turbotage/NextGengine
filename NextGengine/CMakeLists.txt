@@ -39,6 +39,12 @@ target_link_libraries(NextGengine glm)
 add_subdirectory("lib/gli")
 target_link_libraries(NextGengine gli)
 
+#ktx
+add_subdirectory("lib/KTX-Software")
+target_link_libraries(NextGengine ktx)
+
+
+
 # SET C++ STANDARD
 target_compile_features(NextGengine PUBLIC cxx_std_17)
 set_target_properties(NextGengine PROPERTIES CXX_EXTENSIONS OFF)
