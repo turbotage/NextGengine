@@ -80,10 +80,17 @@ namespace ng {
 		void mGiveStagingBuffer(UniformBuffer& uniformBuffer);
 		void mGiveStagingBuffer(Texture2D& texture2D, ktxTexture* ktxTexture = nullptr);
 
-		void mGiveDeviceAllocation(VertexBuffer& vertexBuffer);
-		void mGiveDeviceAllocation(IndexBuffer& indexBuffer);
-		void mGiveDeviceAllocation(UniformBuffer& uniformBuffer);
-		void mGiveDeviceAllocation(Texture2D& texture2D);
+
+
+		void uploadToDevice(VertexBuffer& buffer, vk::CommandBuffer cb);
+		void uploadToDevice(IndexBuffer& buffer, vk::CommandBuffer cb);
+		void uploadToDevice(UniformBuffer& buffer, vk::CommandBuffer cb);
+		void uploadToDevice(Texture2D& texture, ktxTexture* ktxTexture, vk::CommandBuffer cb);
+
+		void mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::CommandBuffer cb);
+		void mGiveDeviceAllocation(IndexBuffer& indexBuffer, vk::CommandBuffer cb);
+		void mGiveDeviceAllocation(UniformBuffer& uniformBuffer, vk::CommandBuffer cb);
+		void mGiveDeviceAllocation(Texture2D& texture2D, vk::CommandBuffer cb);
 		
 	private:
 
@@ -144,6 +151,11 @@ namespace ng {
 
 
 	};
+
+
+
+
+
 
 
 

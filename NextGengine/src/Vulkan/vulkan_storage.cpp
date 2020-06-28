@@ -72,13 +72,15 @@ void* ngv::VulkanBuffer::map(uint64 offset, uint64 size) {
 	}
 	*/
 
+	spt->lockPageMutex();
 	return device.mapMemory(spt->memory(), m_pAllocation->getOffset() + offset, size);
 }
 
 void ngv::VulkanBuffer::unmap()
 {
 	auto spt = m_pAllocation->getMemoryPage();
-	return spt->vulkanDevice().device().unmapMemory(spt->memory());
+	spt->vulkanDevice().device().unmapMemory(spt->memory());
+	spt->unlockPageMutex();
 }
 
 void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) const
@@ -98,7 +100,7 @@ void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 	vk::DeviceMemory mem = spt->memory();
 	vk::DeviceSize offset = m_pAllocation->getOffset();
 
-
+	spt->lockPageMutex();
 	void* ptr = device.mapMemory(mem, offset, size);
 	memcpy(ptr, value, (size_t)size);
 

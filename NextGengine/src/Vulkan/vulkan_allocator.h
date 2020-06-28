@@ -25,21 +25,21 @@ namespace ngv {
 		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
 
 		// BUFFER
-		void giveBufferAllocation(const std::shared_ptr<VulkanBuffer>& pBuffer, bool lock = true);
+		void giveBufferAllocation(VulkanBuffer& buffer);
 
 		// IMAGE
-		void giveImageAllocation(const std::shared_ptr<VulkanImage>& pImage, bool lock = true);
+		void giveImageAllocation(VulkanImage& pImage);
 
 
-		vk::DeviceSize getUsedMemory(bool lock = true);
-		
-
-		void lockAllocatorMutex();
-		void unlockAllocatorMutex();
+		vk::DeviceSize getUsedMemory();
 
 	private:
 
-		vk::DeviceSize getUsedMemoryP();
+		void mGiveBufferAllocation(VulkanBuffer& buffer);
+
+		void mGiveImageAllocation(VulkanImage& image);
+
+		vk::DeviceSize mGetUsedMemory();
 
 	private:
 
@@ -88,21 +88,29 @@ namespace ngv {
 
 		~VulkanMemoryPage() = default;
 
-		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment, bool lock = true);
+		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
 
-		std::unique_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment, bool lock = true);
+		std::unique_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment);
 
-		void free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc, bool lock = true);
+		void free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc);
 
 		const VulkanDevice& vulkanDevice() const;
 		const vk::DeviceMemory memory() const;
 
-		vk::DeviceSize getUsedSize(bool lock = true);
-		
+		vk::DeviceSize getUsedSize();
 		
 		void lockPageMutex();
 		void unlockPageMutex();
-		
+
+	private:
+
+		bool mCanAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
+
+		std::unique_ptr<VulkanMemoryAllocation> mAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
+
+		void mFree(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc);
+
+		vk::DeviceSize mGetUsedSize();
 
 	private:
 		VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);

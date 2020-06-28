@@ -228,7 +228,7 @@ namespace ng {
 		uint32 m_Width = 0;
 		uint32 m_Height = 0;
 		uint32 m_MipLevels = 0;
-		vk::Format m_Format;
+		vk::Format m_Format = ;
 
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
 
