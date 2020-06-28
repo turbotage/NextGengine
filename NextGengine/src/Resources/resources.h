@@ -29,13 +29,13 @@ namespace ng {
 		friend class ResourceManager;
 		friend class StagingBufferPage;
 
-		StagingBuffer(ResourceManager& manager, std::string id);
+		StagingBuffer(ResourceManager& manager, std::string id, uint64 size);
 		StagingBuffer(const StagingBuffer&) = delete;
 		StagingBuffer& operator=(StagingBuffer&) = delete;
 	private:
 		ResourceManager& m_Manager;
 		std::string m_ID;
-		vk::DeviceSize m_Size;
+		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<StagingBufferPage> m_pStagingPage;
@@ -81,7 +81,7 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_ID;
-		vk::DeviceSize m_Size;
+		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<VertexBufferPage> m_pVertexPage;
@@ -130,7 +130,7 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_ID;
-		vk::DeviceSize m_Size;
+		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<IndexBufferPage> m_pIndexPage;
@@ -177,7 +177,7 @@ namespace ng {
 	private:
 		ResourceManager& m_Manager;
 		std::string m_ID;
-		vk::DeviceSize m_Size;
+		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<UniformBufferPage> m_pUniformPage;
@@ -225,8 +225,9 @@ namespace ng {
 		ResourceManager& m_Manager;
 		std::string m_ID;
 
-		uint32 m_Width, m_Height;
-		uint32 m_MipLevels;
+		uint32 m_Width = 0;
+		uint32 m_Height = 0;
+		uint32 m_MipLevels = 0;
 		vk::Format m_Format;
 
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;

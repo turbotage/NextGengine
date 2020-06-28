@@ -15,8 +15,8 @@ ng::StagingBuffer::~StagingBuffer()
 	m_pStagingPage->free(*this);
 }
 
-ng::StagingBuffer::StagingBuffer(ResourceManager& manager, std::string id)
-	: m_Manager(manager), m_ID(id)
+ng::StagingBuffer::StagingBuffer(ResourceManager& manager, std::string id, uint64 size)
+	: m_Manager(manager), m_ID(id), m_Size(size)
 {
 
 }

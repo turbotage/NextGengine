@@ -71,7 +71,9 @@ namespace ng {
 
 	private:
 
-		std::shared_ptr<StagingBuffer> mGetStagingBuffer(std::string filename, bool loadAndUpdate = true);
+		std::shared_ptr<StagingBuffer> mGetStagingBuffer(std::string id, uint64 size);
+		void uploadToStagingBuffer(StagingBuffer& buffer, void* data);
+
 
 		void mGiveStagingBuffer(VertexBuffer& vertexBuffer);
 		void mGiveStagingBuffer(IndexBuffer& indexBuffer);
@@ -85,19 +87,19 @@ namespace ng {
 		
 	private:
 
-		bool shouldUseNewStagingMemory();
+		bool mShouldUseNewStagingMemory();
 
-		bool shouldUseNewDeviceVertexMemory();
-		bool shouldUseNewHostVertexMemory();
+		bool mShouldUseNewDeviceVertexMemory();
+		bool mShouldUseNewHostVertexMemory();
 
-		bool shouldUseNewDeviceIndexMemory();
-		bool shouldUseNewHostIndexMemory();
+		bool mShouldUseNewDeviceIndexMemory();
+		bool mShouldUseNewHostIndexMemory();
 
-		bool shouldUseNewDeviceUniformMemory();
-		bool shouldUseNewHostUniformMemory();
+		bool mShouldUseNewDeviceUniformMemory();
+		bool mShouldUseNewHostUniformMemory();
 
-		bool shouldUseNewDeviceTexture2DMemory();
-		bool shouldUseNewHostTexture2DMemory();
+		bool mShouldUseNewDeviceTexture2DMemory();
+		bool mShouldUseNewHostTexture2DMemory();
 
 	private:
 
