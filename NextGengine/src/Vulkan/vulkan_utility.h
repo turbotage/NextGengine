@@ -88,3 +88,13 @@ namespace ngv {
 
 }
 
+namespace ngv {
+
+	void setImageLayout(vk::CommandBuffer cb, vk::Image image, vk::ImageLayout oldImageLayout, vk::ImageLayout newImageLayout, vk::ImageSubresourceRange subresourceRange, 
+		vk::PipelineStageFlags srcStageMask = vk::PipelineStageFlagBits::eAllCommands, vk::PipelineStageFlags dstStageMask = vk::PipelineStageFlagBits::eAllCommands);
+ 
+
+	void setImageLayout(vk::CommandBuffer cb, vk::Image image, vk::ImageAspectFlags aspectMask, vk::ImageLayout oldImageLayout,
+		vk::ImageLayout newImageLayout, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask);
+
+}

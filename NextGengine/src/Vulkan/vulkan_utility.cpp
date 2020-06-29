@@ -338,3 +338,101 @@ std::ostream& ngv::VulkanShaderModule::write(std::ostream& os)
 
 
 
+
+
+
+void ngv::setImageLayout(vk::CommandBuffer cb, vk::Image image, vk::ImageLayout oldImageLayout, vk::ImageLayout newImageLayout, vk::ImageSubresourceRange subresourceRange, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask)
+{
+    vk::ImageMemoryBarrier imageMemoryBarrier{};
+    imageMemoryBarrier.oldLayout = oldImageLayout;
+    imageMemoryBarrier.newLayout = newImageLayout;
+    imageMemoryBarrier.image = image;
+    imageMemoryBarrier.subresourceRange = subresourceRange;
+
+    switch (oldImageLayout) {
+    case vk::ImageLayout::eUndefined:
+        imageMemoryBarrier.srcAccessMask = (vk::AccessFlags)0;
+        break;
+    case vk::ImageLayout::ePreinitialized:
+        imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eHostWrite;
+        break;
+    case vk::ImageLayout::eColorAttachmentOptimal:
+        imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+        break;
+    case vk::ImageLayout::eDepthStencilAttachmentOptimal:
+        imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eDepthStencilAttachmentWrite;
+        break;
+    case vk::ImageLayout::eTransferSrcOptimal:
+        imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eTransferRead;
+        break;
+    case vk::ImageLayout::eTransferDstOptimal:
+        imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eTransferWrite;
+        break;
+    case vk::ImageLayout::eShaderReadOnlyOptimal:
+        imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eShaderRead;
+        break;
+    default:
+        // Others not handled yet
+        break;
+    }
+    
+
+    // Target layouts (new)
+            // Destination access mask controls the dependency for the new image layout
+    switch (newImageLayout)
+    {
+    case vk::ImageLayout::eTransferDstOptimal:
+        // Image will be used as a transfer destination
+        // Make sure any writes to the image have been finished
+        imageMemoryBarrier.dstAccessMask = vk::AccessFlagBits::eTransferWrite;
+        break;
+
+    case vk::ImageLayout::eTransferSrcOptimal:
+        // Image will be used as a transfer source
+        // Make sure any reads from the image have been finished
+        imageMemoryBarrier.dstAccessMask = vk::AccessFlagBits::eTransferRead;
+        break;
+
+    case vk::ImageLayout::eColorAttachmentOptimal:
+        // Image will be used as a color attachment
+        // Make sure any writes to the color buffer have been finished
+        imageMemoryBarrier.dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+        break;
+
+    case vk::ImageLayout::eDepthStencilAttachmentOptimal:
+        // Image layout will be used as a depth/stencil attachment
+        // Make sure any writes to depth/stencil buffer have been finished
+        imageMemoryBarrier.dstAccessMask = imageMemoryBarrier.dstAccessMask | vk::AccessFlagBits::eDepthStencilAttachmentWrite;
+        break;
+
+    case vk::ImageLayout::eShaderReadOnlyOptimal:
+        // Image will be read in a shader (sampler, input attachment)
+        // Make sure any writes to the image have been finished
+        if (imageMemoryBarrier.srcAccessMask == (vk::AccessFlags)0)
+        {
+            imageMemoryBarrier.srcAccessMask = vk::AccessFlagBits::eHostWrite | vk::AccessFlagBits::eTransferWrite;
+        }
+        imageMemoryBarrier.dstAccessMask = vk::AccessFlagBits::eShaderRead;
+        break;
+    default:
+        // Others not handled yet
+        break;
+    }
+
+    // Put barrier inside setup to command buffer
+    cb.pipelineBarrier(srcStageMask, dstStageMask, (vk::DependencyFlags)0,
+        0, nullptr,
+        0, nullptr,
+        1, &imageMemoryBarrier);
+
+}
+
+void ngv::setImageLayout(vk::CommandBuffer cb, vk::Image image, vk::ImageAspectFlags aspectMask, vk::ImageLayout oldImageLayout, vk::ImageLayout newImageLayout, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask)
+{
+    vk::ImageSubresourceRange subresourceRange{};
+    subresourceRange.aspectMask = aspectMask;
+    subresourceRange.baseMipLevel = 0;
+    subresourceRange.levelCount = 1;
+    subresourceRange.layerCount = 1;
+    setImageLayout(cb, image, oldImageLayout, newImageLayout, subresourceRange, srcStageMask, dstStageMask);
+}

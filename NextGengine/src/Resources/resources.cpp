@@ -5,10 +5,12 @@
 #include "resource_manager.h"
 
 // <============================= STAGING BUFFER ===============================>
+/*
 bool ng::StagingBuffer::hasAllocation()
 {
 	return m_pStagingPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
 }
+*/
 
 ng::StagingBuffer::~StagingBuffer()
 {
@@ -30,6 +32,24 @@ ng::StagingBuffer::StagingBuffer(ResourceManager& manager, std::string id, uint6
 
 // <================================= VERTEX BUFFER ==================================>
 
+void ng::VertexBuffer::giveDeviceAllocation(vk::CommandBuffer cb)
+{
+	m_Manager.giveDeviceAllocation(*this, cb);
+}
+
+void ng::VertexBuffer::giveStagingBuffer()
+{
+	m_Manager.giveStagingBuffer(*this);
+}
+
+void ng::VertexBuffer::setDeviceAllocationNotRequired()
+{
+}
+
+void ng::VertexBuffer::setStagingBufferNotRequired()
+{
+}
+
 ng::VertexBuffer::~VertexBuffer()
 {
 	m_pVertexPage->free(*this);
@@ -43,7 +63,7 @@ bool ng::VertexBuffer::hasDeviceAllocation()
 bool ng::VertexBuffer::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return m_pStagingBuffer->hasAllocation();
+		return true;
 	}
 	return false;
 }
@@ -65,6 +85,31 @@ ng::VertexBuffer::VertexBuffer(ResourceManager& manager, std::string id)
 
 
 // <=================================== INDEX BUFFER ======================================>
+//public
+void ng::IndexBuffer::giveDeviceAllocation(vk::CommandBuffer cb)
+{
+	m_Manager.giveDeviceAllocation(*this, cb);
+}
+
+void ng::IndexBuffer::giveStagingBuffer()
+{
+	m_Manager.giveStagingBuffer(*this);
+}
+
+void ng::IndexBuffer::setDeviceAllocationNotRequired()
+{
+}
+
+void ng::IndexBuffer::setStagingBufferNotRequired()
+{
+}
+
+ng::IndexBuffer::~IndexBuffer()
+{
+	m_pIndexPage->free(*this);
+}
+
+//private
 bool ng::IndexBuffer::hasDeviceAllocation()
 {
 	return m_pIndexPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
@@ -73,14 +118,9 @@ bool ng::IndexBuffer::hasDeviceAllocation()
 bool ng::IndexBuffer::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return m_pStagingBuffer->hasAllocation();
+		return true;
 	}
 	return false;
-}
-
-ng::IndexBuffer::~IndexBuffer()
-{
-	m_pIndexPage->free(*this);
 }
 
 ng::IndexBuffer::IndexBuffer(ResourceManager& manager, std::string id)
@@ -99,7 +139,34 @@ ng::IndexBuffer::IndexBuffer(ResourceManager& manager, std::string id)
 
 
 
+
+
 // <=================================== UNIFORM BUFFER ======================================>
+//public
+void ng::UniformBuffer::giveDeviceAllocation(vk::CommandBuffer cb)
+{
+	m_Manager.giveDeviceAllocation(*this, cb);
+}
+
+void ng::UniformBuffer::giveStagingBuffer()
+{
+	m_Manager.giveStagingBuffer(*this);
+}
+
+void ng::UniformBuffer::setDeviceAllocationNotRequired()
+{
+}
+
+void ng::UniformBuffer::setStagingBufferNotRequired()
+{
+}
+
+ng::UniformBuffer::~UniformBuffer()
+{
+	m_pUniformPage->free(*this);
+}
+
+//private
 bool ng::UniformBuffer::hasDeviceAllocation()
 {
 	return m_pUniformPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
@@ -108,14 +175,9 @@ bool ng::UniformBuffer::hasDeviceAllocation()
 bool ng::UniformBuffer::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return m_pStagingBuffer->hasAllocation();
+		return true;
 	}
 	return false;
-}
-
-ng::UniformBuffer::~UniformBuffer()
-{
-	m_pUniformPage->free(*this);
 }
 
 ng::UniformBuffer::UniformBuffer(ResourceManager& manager, std::string id)
@@ -135,6 +197,31 @@ ng::UniformBuffer::UniformBuffer(ResourceManager& manager, std::string id)
 
 
 // <================================== TEXTURE 2D =============================>
+//public
+void ng::Texture2D::giveDeviceAllocation(vk::CommandBuffer cb)
+{
+	m_Manager.giveDeviceAllocation(*this, cb);
+}
+
+void ng::Texture2D::giveStagingBuffer()
+{
+	m_Manager.giveStagingBuffer(*this);
+}
+
+void ng::Texture2D::setDeviceAllocationNotRequired()
+{
+}
+
+void ng::Texture2D::setStagingBufferNotRequired()
+{
+}
+
+ng::Texture2D::~Texture2D()
+{
+	//resets m_pVulkanTexture and m_pStagingBuffer by default i they arn't referenced anywhere
+}
+
+//private
 bool ng::Texture2D::hasDeviceAllocation()
 {
 	if (m_pVulkanTexture != nullptr) {
@@ -146,7 +233,7 @@ bool ng::Texture2D::hasDeviceAllocation()
 bool ng::Texture2D::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return m_pStagingBuffer->hasAllocation();
+		return true;
 	}
 	return false;
 }

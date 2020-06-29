@@ -440,6 +440,16 @@ void ngv::VulkanImage::setCurrentLayout(vk::ImageLayout oldLayout)
 	m_CurrentLayout = oldLayout;
 }
 
+vk::ImageLayout ngv::VulkanImage::getImageLayout()
+{
+	return m_ImageLayout;
+}
+
+void ngv::VulkanImage::setImageLayout(vk::ImageLayout imageLayout)
+{
+	m_ImageLayout = imageLayout;
+}
+
 bool ngv::VulkanImage::hasAllocation()
 {
 	if (m_pAllocation->getMemoryPage() != nullptr) {

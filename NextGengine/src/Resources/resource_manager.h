@@ -32,6 +32,10 @@ namespace ng {
 
 	typedef uint32 ResourceResidencyFlags;
 
+	/*
+	This should ideally be setup such that multiples of the sizes fits
+	as compactly as possible in vulkan allocator's memory pages
+	*/
 	struct ResourceStrategy {
 		uint64 stagingBufferPageSize;
 
@@ -64,28 +68,28 @@ namespace ng {
 		void giveStagingBuffer(UniformBuffer& uniformBuffer);
 		void giveStagingBuffer(Texture2D& texture2D);
 
-		void giveDeviceAllocation(VertexBuffer& vertexBuffer);
-		void giveDeviceAllocation(IndexBuffer& indexBuffer);
-		void giveDeviceAllocation(UniformBuffer& uniformBuffer);
-		void giveDeviceAllocation(Texture2D& texture2D);
+		void giveDeviceAllocation(VertexBuffer& vertexBuffer, vk::CommandBuffer cb);
+		void giveDeviceAllocation(IndexBuffer& indexBuffer, vk::CommandBuffer cb);
+		void giveDeviceAllocation(UniformBuffer& uniformBuffer, vk::CommandBuffer cb);
+		void giveDeviceAllocation(Texture2D& texture2D, vk::CommandBuffer cb);
 
 	private:
 
 		std::shared_ptr<StagingBuffer> mGetStagingBuffer(std::string id, uint64 size);
-		void uploadToStagingBuffer(StagingBuffer& buffer, void* data);
+		void mUploadToStagingBuffer(StagingBuffer& buffer, void* data);
 
 
 		void mGiveStagingBuffer(VertexBuffer& vertexBuffer);
 		void mGiveStagingBuffer(IndexBuffer& indexBuffer);
 		void mGiveStagingBuffer(UniformBuffer& uniformBuffer);
-		void mGiveStagingBuffer(Texture2D& texture2D, ktxTexture* ktxTexture = nullptr);
+		void mGiveStagingBuffer(Texture2D& texture2D);
 
 
 
-		void uploadToDevice(VertexBuffer& buffer, vk::CommandBuffer cb);
-		void uploadToDevice(IndexBuffer& buffer, vk::CommandBuffer cb);
-		void uploadToDevice(UniformBuffer& buffer, vk::CommandBuffer cb);
-		void uploadToDevice(Texture2D& texture, ktxTexture* ktxTexture, vk::CommandBuffer cb);
+		void mUploadToDevice(VertexBuffer& buffer, vk::CommandBuffer cb);
+		void mUploadToDevice(IndexBuffer& buffer, vk::CommandBuffer cb);
+		void mUploadToDevice(UniformBuffer& buffer, vk::CommandBuffer cb);
+		void mUploadToDevice(Texture2D& texture, vk::CommandBuffer cb);
 
 		void mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::CommandBuffer cb);
 		void mGiveDeviceAllocation(IndexBuffer& indexBuffer, vk::CommandBuffer cb);
@@ -120,23 +124,23 @@ namespace ng {
 		vk::DeviceSize m_UsedDeviceMemory = 0;
 		vk::DeviceSize m_UsedHostMemory = 0;
 
-		struct {
-			std::unordered_map<std::string, std::shared_ptr<StagingBuffer>> stagingResidencyMaps[2]; // Required, Not Required
-		} m_Staging;
-
 		//Buffers
 		struct {
 			std::unordered_map<std::string, std::shared_ptr<VertexBuffer>> vertexBuffersByID;
+			std::unordered_map<std::string, ng::raw_ptr<VertexBuffer>> vertexResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
+
 			std::unordered_map<std::string, std::shared_ptr<IndexBuffer>> indexBuffersByID;
+			std::unordered_map<std::string, ng::raw_ptr<IndexBuffer>> indexResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
+
 			std::unordered_map<std::string, std::shared_ptr<UniformBuffer>> uniformBuffersByID;
+			std::unordered_map<std::string, ng::raw_ptr<UniformBuffer>> uniformResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
 		} m_Buffers;
 		
-		
 		struct {
-			std::unordered_map<std::string, std::shared_ptr<Texture2D>> texturesByID;
-			std::unordered_map<std::string, ng::raw_ptr<Texture2D>> textureResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
+			std::unordered_map<std::string, std::shared_ptr<Texture2D>> texture2DsByID;
+			std::unordered_map<std::string, ng::raw_ptr<Texture2D>> texture2DResidencyMaps[3][3]; // [resourceResidency][requiredResourceResidency]
 			//...
-		} m_Texture2Ds;
+		} m_Textures;
 
 
 		struct {
@@ -162,6 +166,8 @@ namespace ng {
 
 	class StagingBufferPage {
 	public:
+		StagingBufferPage(const ResourceManager& manager);
+		
 		bool allocate(StagingBuffer& stagingBuffer);
 
 		void free(StagingBuffer& stagingBuffer);
@@ -171,7 +177,6 @@ namespace ng {
 		ng::raw_ptr<ngv::VulkanBuffer> getBuffer();
 
 	private:
-		StagingBufferPage(const ResourceManager& manager);
 		StagingBufferPage(const VertexBufferPage&) = delete;
 		StagingBufferPage& operator=(const StagingBufferPage&) = default;
 	private:
@@ -200,6 +205,8 @@ namespace ng {
 
 	class VertexBufferPage {
 	public:
+		VertexBufferPage(const ResourceManager& manager);
+		
 		bool allocate(VertexBuffer& vertexBuffer);
 
 		void free(VertexBuffer& vertexBuffer);
@@ -209,7 +216,6 @@ namespace ng {
 		ng::raw_ptr<ngv::VulkanVertexBuffer> getBuffer();
 
 	private:
-		VertexBufferPage(const ResourceManager& manager);
 		VertexBufferPage(const VertexBufferPage&) = delete;
 		VertexBufferPage& operator=(const VertexBufferPage&) = default;
 	private:
@@ -237,6 +243,8 @@ namespace ng {
 
 	class IndexBufferPage {
 	public:
+		IndexBufferPage(const ResourceManager& manager);
+		
 		bool allocate(IndexBuffer& indexBuffer);
 
 		void free(IndexBuffer& indexBuffer);
@@ -246,7 +254,6 @@ namespace ng {
 		ng::raw_ptr<ngv::VulkanIndexBuffer> getBuffer();
 
 	private:
-		IndexBufferPage(const ResourceManager& manager);
 		IndexBufferPage(const IndexBufferPage&) = delete;
 		IndexBufferPage& operator=(const IndexBufferPage&) = default;
 	private:
@@ -276,6 +283,8 @@ namespace ng {
 
 	class UniformBufferPage {
 	public:
+		UniformBufferPage(const ResourceManager& manager);
+		
 		bool allocate(UniformBuffer& uniformBuffer);
 
 		void free(UniformBuffer& uniformBuffer);
@@ -285,7 +294,6 @@ namespace ng {
 		ng::raw_ptr<ngv::VulkanUniformBuffer> getBuffer();
 
 	private:
-		UniformBufferPage(const ResourceManager& manager);
 		UniformBufferPage(const UniformBufferPage&) = delete;
 		UniformBufferPage& operator=(const UniformBufferPage&) = default;
 	private:

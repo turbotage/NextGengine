@@ -11,16 +11,44 @@ namespace ngv {
 	class VulkanTexture2D;
 }
 
+class ktxTexture;
+
 namespace ng {
 	
 	class ResourceManager;
 	class AbstractFreeListAllocation;
 
 
-	class StagingBuffer {
+
+
+
+
+	class Resource {
 	public:
 
-		bool hasAllocation();
+
+
+	private:
+
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+	class StagingBuffer : public Resource {
+	public:
+
+		//bool hasAllocation();
 
 		~StagingBuffer();
 
@@ -55,14 +83,14 @@ namespace ng {
 
 
 
-	class VertexBuffer {
+	class VertexBuffer : public Resource {
 	public:
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
+		void giveDeviceAllocation(vk::CommandBuffer cb);
+		void giveStagingBuffer();
 
-		void looseDeviceAllocation(bool alreadyLocked = false);
-		void looseStagingBuffer(bool alreadyLocked = false);
+		void setDeviceAllocationNotRequired();
+		void setStagingBufferNotRequired();
 
 
 		~VertexBuffer();
@@ -105,14 +133,14 @@ namespace ng {
 
 
 
-	class IndexBuffer {
+	class IndexBuffer : public Resource {
 	public:
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
+		void giveDeviceAllocation(vk::CommandBuffer cb);
+		void giveStagingBuffer();
 
-		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
-		void setStagingBufferNotRequired(bool alreadyLocked = false);
+		void setDeviceAllocationNotRequired();
+		void setStagingBufferNotRequired();
 
 
 		~IndexBuffer();
@@ -152,14 +180,14 @@ namespace ng {
 
 
 
-	class UniformBuffer {
+	class UniformBuffer : public Resource {
 	public:
 
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
+		void giveDeviceAllocation(vk::CommandBuffer cb);
+		void giveStagingBuffer();
 
-		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
-		void setStagingBufferNotRequired(bool alreadyLocked = false);
+		void setDeviceAllocationNotRequired();
+		void setStagingBufferNotRequired();
 
 		
 		~UniformBuffer();
@@ -202,15 +230,16 @@ namespace ng {
 
 
 
-	class Texture2D {
+	class Texture2D : public Resource {
 	public:
 		
-		void giveDeviceAllocation(bool alreadyLocked = false);
-		void giveStagingBuffer(bool alreadyLocked = false);
+		void giveDeviceAllocation(vk::CommandBuffer cb);
+		void giveStagingBuffer();
 
-		void setDeviceAllocationNotRequired(bool alreadyLocked = false);
-		void setStagingBufferNotRequired(bool alreadyLocked = false);
+		void setDeviceAllocationNotRequired();
+		void setStagingBufferNotRequired();
 
+		~Texture2D();
 
 	private:
 		bool hasDeviceAllocation();
@@ -228,11 +257,12 @@ namespace ng {
 		uint32 m_Width = 0;
 		uint32 m_Height = 0;
 		uint32 m_MipLevels = 0;
-		vk::Format m_Format = ;
+		vk::Format m_Format;
 
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		ktxTexture* m_KTXTexture;
 
 	};
 

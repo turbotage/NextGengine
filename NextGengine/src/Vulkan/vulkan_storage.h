@@ -205,6 +205,9 @@ namespace ngv {
 		/// Set what the image thinks is its current layout (ie. the old layout in an image barrier).
 		void setCurrentLayout(vk::ImageLayout oldLayout);
 
+		vk::ImageLayout getImageLayout();
+		void setImageLayout(vk::ImageLayout imageLayout);
+
 		bool hasAllocation();
 		bool hasSameAllocation(const VulkanImage& image);
 
@@ -227,6 +230,7 @@ namespace ngv {
 
 		vk::UniqueImage m_Image;
 		vk::UniqueImageView m_ImageView;
+		vk::ImageLayout m_ImageLayout;
 		vk::MemoryRequirements m_MemoryRequirements;
 		uint32 m_MemoryTypeIndex = 0;
 
@@ -255,7 +259,7 @@ namespace ngv {
 
 
 
-	class VulkanVertexBuffer : public VulkanBuffer, public ng::MakeConstructed {
+	class VulkanVertexBuffer : public VulkanBuffer {
 	public:
 
 		static std::shared_ptr<VulkanVertexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -276,7 +280,7 @@ namespace ngv {
 
 
 
-	class VulkanIndexBuffer : public VulkanBuffer, public ng::MakeConstructed {
+	class VulkanIndexBuffer : public VulkanBuffer {
 	public:
 
 		static std::shared_ptr<VulkanIndexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -295,7 +299,7 @@ namespace ngv {
 
 
 
-	class VulkanUniformBuffer : public VulkanBuffer, public ng::MakeConstructed {
+	class VulkanUniformBuffer : public VulkanBuffer {
 	public:
 
 		static std::shared_ptr<VulkanUniformBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -314,7 +318,7 @@ namespace ngv {
 
 
 
-	class VulkanTexture2D : public VulkanImage, public ng::MakeConstructed {
+	class VulkanTexture2D : public VulkanImage {
 	public:
 
 		static std::shared_ptr<VulkanTexture2D> make(const VulkanDevice& device, uint32 width, uint32 height,
@@ -338,7 +342,7 @@ namespace ngv {
 
 
 
-	class VulkanTextureCube : public VulkanImage, ng::MakeConstructed {
+	class VulkanTextureCube : public VulkanImage {
 	public:
 
 		static std::shared_ptr<VulkanTextureCube> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
@@ -362,7 +366,7 @@ namespace ngv {
 
 
 
-	class VulkanDepthStencilImage : public VulkanImage, ng::MakeConstructed {
+	class VulkanDepthStencilImage : public VulkanImage {
 	public:
 
 		static std::shared_ptr<VulkanDepthStencilImage> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
@@ -387,7 +391,7 @@ namespace ngv {
 
 
 
-	class VulkanColorAttachmentImage : public VulkanImage, ng::MakeConstructed {
+	class VulkanColorAttachmentImage : public VulkanImage {
 	public:
 
 		static std::shared_ptr<VulkanColorAttachmentImage> make(const VulkanDevice& device, uint32 width, uint32 height,
