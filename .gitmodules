@@ -1,3 +1,6 @@
 [submodule "NgMath"]
 	path = NgMath
 	url = https://github.com/turbotage/NgMath.git
+[submodule "NextGengine/lib/glfw"]
+	path = NextGengine/lib/glfw
+	url = https://github.com/glfw/glfw
