@@ -73,44 +73,71 @@ namespace ng {
 		void giveDeviceAllocation(UniformBuffer& uniformBuffer, vk::CommandBuffer cb);
 		void giveDeviceAllocation(Texture2D& texture2D, vk::CommandBuffer cb);
 
-	private:
+		void setDeviceAllocationNotRequired(VertexBuffer& vertexBuffer);
+		void setDeviceAllocationNotRequired(IndexBuffer& indexBuffer);
+		void setDeviceAllocationNotRequired(UniformBuffer& uniformBuffer);
+		void setDeviceAllocationNotRequired(Texture2D& texture2D);
+
+		void setStagingBufferNotRequired(VertexBuffer& vertexBuffer);
+		void setStagingBufferNotRequired(IndexBuffer& indexBuffer);
+		void setStagingBufferNotRequired(UniformBuffer& uniformBuffer);
+		void setStagingBufferNotRequired(Texture2D& texture2D);
+
+	private: // interface implementations
 
 		std::shared_ptr<StagingBuffer> mGetStagingBuffer(std::string id, uint64 size);
-		void mUploadToStagingBuffer(StagingBuffer& buffer, void* data);
-
 
 		void mGiveStagingBuffer(VertexBuffer& vertexBuffer);
 		void mGiveStagingBuffer(IndexBuffer& indexBuffer);
 		void mGiveStagingBuffer(UniformBuffer& uniformBuffer);
 		void mGiveStagingBuffer(Texture2D& texture2D);
 
-
-
-		void mUploadToDevice(VertexBuffer& buffer, vk::CommandBuffer cb);
-		void mUploadToDevice(IndexBuffer& buffer, vk::CommandBuffer cb);
-		void mUploadToDevice(UniformBuffer& buffer, vk::CommandBuffer cb);
-		void mUploadToDevice(Texture2D& texture, vk::CommandBuffer cb);
-
 		void mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::CommandBuffer cb);
 		void mGiveDeviceAllocation(IndexBuffer& indexBuffer, vk::CommandBuffer cb);
 		void mGiveDeviceAllocation(UniformBuffer& uniformBuffer, vk::CommandBuffer cb);
 		void mGiveDeviceAllocation(Texture2D& texture2D, vk::CommandBuffer cb);
 		
-	private:
+		void mSetDeviceAllocationNotRequired(VertexBuffer& vertexBuffer);
+		void mSetDeviceAllocationNotRequired(IndexBuffer& indexBuffer);
+		void mSetDeviceAllocationNotRequired(UniformBuffer& uniformBuffer);
+		void mSetDeviceAllocationNotRequired(Texture2D& texture2D);
 
-		bool mShouldUseNewStagingMemory();
+		void mSetStagingBufferNotRequired(VertexBuffer& vertexBuffer);
+		void mSetStagingBufferNotRequired(IndexBuffer& indexBuffer);
+		void mSetStagingBufferNotRequired(UniformBuffer& uniformBuffer);
+		void mSetStagingBufferNotRequired(Texture2D& texture2D);
 
-		bool mShouldUseNewDeviceVertexMemory();
-		bool mShouldUseNewHostVertexMemory();
 
-		bool mShouldUseNewDeviceIndexMemory();
-		bool mShouldUseNewHostIndexMemory();
+	private: // helpers
 
-		bool mShouldUseNewDeviceUniformMemory();
-		bool mShouldUseNewHostUniformMemory();
+		void mhUploadToStagingBuffer(StagingBuffer& buffer, uint8* data);
 
-		bool mShouldUseNewDeviceTexture2DMemory();
-		bool mShouldUseNewHostTexture2DMemory();
+		void mhUploadToDevice(VertexBuffer& buffer, vk::CommandBuffer cb);
+		void mhUploadToDevice(IndexBuffer& buffer, vk::CommandBuffer cb);
+		void mhUploadToDevice(UniformBuffer& buffer, vk::CommandBuffer cb);
+		void mhUploadToDevice(Texture2D& texture, vk::CommandBuffer cb);
+
+		bool mhGiveStaging(Texture2D& texture2D);
+		bool mhGiveStagingBySwapping(Texture2D& texture2D);
+		bool mhGiveDeviceBySwapping(Texture2D& texture2D, vk::CommandBuffer cb);
+
+
+
+
+
+
+
+
+
+		bool mhShouldUseNewStagingMemory();
+		bool mhShouldUseNewDeviceVertexMemory();
+		bool mhShouldUseNewHostVertexMemory();
+		bool mhShouldUseNewDeviceIndexMemory();
+		bool mhShouldUseNewHostIndexMemory();
+		bool mhShouldUseNewDeviceUniformMemory();
+		bool mhShouldUseNewHostUniformMemory();
+		bool mhShouldUseNewDeviceTexture2DMemory();
+		bool mhShouldUseNewHostTexture2DMemory();
 
 	private:
 

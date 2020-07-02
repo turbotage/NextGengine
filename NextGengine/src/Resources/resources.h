@@ -26,7 +26,9 @@ namespace ng {
 	class Resource {
 	public:
 
-
+	protected:
+		uint8 m_RequiredResidency;
+		uint8 m_Residency;
 
 	private:
 
@@ -48,14 +50,17 @@ namespace ng {
 	class StagingBuffer : public Resource {
 	public:
 
-		//bool hasAllocation();
-
 		~StagingBuffer();
 
 	private:
+		bool hasAllocation();
 	private:
 		friend class ResourceManager;
 		friend class StagingBufferPage;
+		friend class VertexBuffer;
+		friend class IndexBuffer;
+		friend class UniformBuffer;
+		friend class Texture2D;
 
 		StagingBuffer(ResourceManager& manager, std::string id, uint64 size);
 		StagingBuffer(const StagingBuffer&) = delete;

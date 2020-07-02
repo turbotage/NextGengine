@@ -17,6 +17,11 @@ ng::StagingBuffer::~StagingBuffer()
 	m_pStagingPage->free(*this);
 }
 
+bool ng::StagingBuffer::hasAllocation()
+{
+	return (m_pStagingPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr));
+}
+
 ng::StagingBuffer::StagingBuffer(ResourceManager& manager, std::string id, uint64 size)
 	: m_Manager(manager), m_ID(id), m_Size(size)
 {
@@ -44,10 +49,12 @@ void ng::VertexBuffer::giveStagingBuffer()
 
 void ng::VertexBuffer::setDeviceAllocationNotRequired()
 {
+	m_Manager.setDeviceAllocationNotRequired(*this);
 }
 
 void ng::VertexBuffer::setStagingBufferNotRequired()
 {
+	m_Manager.setStagingBufferNotRequired(*this);
 }
 
 ng::VertexBuffer::~VertexBuffer()
@@ -57,13 +64,16 @@ ng::VertexBuffer::~VertexBuffer()
 
 bool ng::VertexBuffer::hasDeviceAllocation()
 {
-	return m_pVertexPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
+	if (m_pVertexPage != nullptr) {
+		return m_pVertexPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
+	}
+	return false;
 }
 
 bool ng::VertexBuffer::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return true;
+		return m_pStagingBuffer->hasAllocation();
 	}
 	return false;
 }
@@ -98,10 +108,12 @@ void ng::IndexBuffer::giveStagingBuffer()
 
 void ng::IndexBuffer::setDeviceAllocationNotRequired()
 {
+	m_Manager.setDeviceAllocationNotRequired(*this);
 }
 
 void ng::IndexBuffer::setStagingBufferNotRequired()
 {
+	m_Manager.setStagingBufferNotRequired(*this);
 }
 
 ng::IndexBuffer::~IndexBuffer()
@@ -112,13 +124,16 @@ ng::IndexBuffer::~IndexBuffer()
 //private
 bool ng::IndexBuffer::hasDeviceAllocation()
 {
-	return m_pIndexPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
+	if (m_pIndexPage != nullptr) {
+		return m_pIndexPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
+	}
+	return false;
 }
 
 bool ng::IndexBuffer::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return true;
+		return m_pStagingBuffer->hasAllocation();
 	}
 	return false;
 }
@@ -155,10 +170,12 @@ void ng::UniformBuffer::giveStagingBuffer()
 
 void ng::UniformBuffer::setDeviceAllocationNotRequired()
 {
+	m_Manager.setDeviceAllocationNotRequired(*this);
 }
 
 void ng::UniformBuffer::setStagingBufferNotRequired()
 {
+	m_Manager.setStagingBufferNotRequired(*this);
 }
 
 ng::UniformBuffer::~UniformBuffer()
@@ -169,13 +186,16 @@ ng::UniformBuffer::~UniformBuffer()
 //private
 bool ng::UniformBuffer::hasDeviceAllocation()
 {
-	return m_pUniformPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
+	if (m_pUniformPage != nullptr) {
+		return m_pUniformPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr);
+	}
+	return false;
 }
 
 bool ng::UniformBuffer::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return true;
+		return m_pStagingBuffer->hasAllocation();
 	}
 	return false;
 }
@@ -210,10 +230,12 @@ void ng::Texture2D::giveStagingBuffer()
 
 void ng::Texture2D::setDeviceAllocationNotRequired()
 {
+	m_Manager.setDeviceAllocationNotRequired(*this);
 }
 
 void ng::Texture2D::setStagingBufferNotRequired()
 {
+	m_Manager.setStagingBufferNotRequired(*this);
 }
 
 ng::Texture2D::~Texture2D()
@@ -233,7 +255,7 @@ bool ng::Texture2D::hasDeviceAllocation()
 bool ng::Texture2D::hasStagingBuffer()
 {
 	if (m_pStagingBuffer != nullptr) {
-		return true;
+		return m_pStagingBuffer->hasAllocation();
 	}
 	return false;
 }
