@@ -4,3 +4,6 @@
 [submodule "NextGengine/lib/glfw"]
 	path = NextGengine/lib/glfw
 	url = https://github.com/glfw/glfw
+[submodule "NextGengine/lib/gli"]
+	path = NextGengine/lib/gli
+	url = https://github.com/g-truc/gli
