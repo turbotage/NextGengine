@@ -7,3 +7,6 @@
 [submodule "NextGengine/lib/gli"]
 	path = NextGengine/lib/gli
 	url = https://github.com/g-truc/gli
+[submodule "NextGengine/lib/glm"]
+	path = NextGengine/lib/glm
+	url = https://github.com/g-truc/glm
