@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-set(SHADER_WORKING_DIR "${CMAKE_SOURCE_DIR}/NextGengine/shaders/")
+set(SHADER_WORKING_DIR "${CMAKE_SOURCE_DIR}/Assets/shaders/")
 
 function(BUILD_SPIRV_SHADER INPUT_FILE OUTPUT_FILE)
 	add_custom_command(
@@ -21,12 +21,16 @@ BUILD_SPIRV_SHADER("HelloTriangle/helloTriangle.vert" "HelloTriangle/helloTriang
 #push constants shaders
 BUILD_SPIRV_SHADER("PushConstants/pushConstants.frag" "PushConstants/pushConstants.frag.spv")
 BUILD_SPIRV_SHADER("PushConstants/pushConstants.vert" "PushConstants/pushConstants.vert.spv")
-
+#test resources shaders
+BUILD_SPIRV_SHADER("TestResources/testResources.frag" "TestResources/testResources.frag.spv")
+BUILD_SPIRV_SHADER("TestResources/testResources.vert" "TestResources/testResources.vert.spv")
 
 
 set(SHADER_SOURCES "HelloTriangle/helloTriangle.frag.spv"
 					"HelloTriangle/helloTriangle.vert.spv"
 					"PushConstants/pushConstants.frag.spv"
-					"PushConstants/pushConstants.vert.spv")
+					"PushConstants/pushConstants.vert.spv"
+					"TestResource/testResource.frag.spv"
+					"TestResource/testResource.vert.spv")
 
 add_custom_target(shaders ALL DEPENDS ${SHADER_SOURCES})

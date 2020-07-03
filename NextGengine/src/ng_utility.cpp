@@ -8,13 +8,7 @@
 
 std::string ng::getShaderDirectoryPath(std::string projectName)
 {
-	namespace fs = std::filesystem;
-	auto execPath = fs::current_path();
-	auto sExecPath = execPath.string();
-	auto pos = sExecPath.find(projectName);
-	auto subPath = sExecPath.substr(0, pos + projectName.length());
-	subPath += "\\Assets\\shaders\\";
-	return subPath;
+	return ng::getAssetsDirectoryPath(projectName) + "\\shaders\\";
 }
 
 std::string ng::getAssetsDirectoryPath(std::string projectName)

@@ -217,25 +217,6 @@ void ng::ResourceManager::setStagingBufferNotRequired(Texture2D& texture2D)
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	mSetStagingBufferNotRequired(texture2D);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // PRIVATE
 //should always be used in conjunction with uploadToStagingBuffer, no resource should be able to have a staging buffer that doesn't hold it's stagingData
 std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::string id, uint64 size)

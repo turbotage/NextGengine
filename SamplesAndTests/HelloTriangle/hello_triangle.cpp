@@ -62,8 +62,8 @@ void run() {
 
 
 	vk::DeviceSize bufferSize = vertices.size() * sizeof(Vertex);
-	std::shared_ptr<ngv::VertexBuffer> pBuffer = ngv::VertexBuffer::make(device, bufferSize, true);
-	allocator.giveBufferAllocation(pBuffer);
+	std::shared_ptr<ngv::VulkanVertexBuffer> pBuffer = ngv::VulkanVertexBuffer::make(device, bufferSize, true);
+	allocator.giveBufferAllocation(*pBuffer);
 	pBuffer->updateLocal(vertices);
 
 	ngv::VulkanPipelineMaker pm{ (uint32)width, (uint32)height };

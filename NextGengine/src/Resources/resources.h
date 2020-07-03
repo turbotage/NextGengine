@@ -26,9 +26,11 @@ namespace ng {
 	class Resource {
 	public:
 
+		Resource() = default;
+
 	protected:
-		uint8 m_RequiredResidency;
-		uint8 m_Residency;
+		uint8 m_RequiredResidency = (uint8)ResourceResidencyFlagBits::eNoResidency;
+		uint8 m_Residency = (uint8)ResourceResidencyFlagBits::eNoResidency;
 
 	private:
 

@@ -15,8 +15,8 @@ namespace ngv {
 
 
 	struct VulkanMemoryStrategy {
-		vk::DeviceSize recommendedPageSize = 256 * 1000 * 1000; // 256 mb
-		vk::DeviceSize maxMemoryUsage = 3LL * 4LL * 256LL * 1000LL * 1000LL;
+		vk::DeviceSize recommendedPageSize = 256 * 1024 * 1024LL; // 256 mb
+		vk::DeviceSize maxMemoryUsage = 3LL * 4LL * 256LL * 1024LL * 1024LL;
 	};
 
 	class VulkanAllocator {

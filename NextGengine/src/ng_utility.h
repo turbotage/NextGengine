@@ -16,11 +16,11 @@ namespace ng {
 
 
 	// Returns a string to the shader directory
-	std::string getShaderDirectoryPath(std::string projectName);
+	std::string getShaderDirectoryPath(std::string projectName = "NextGengine");
 	// Returns a string to the assets directory
-	std::string getAssetsDirectoryPath(std::string projectName);
+	std::string getAssetsDirectoryPath(std::string projectName = "NextGengine");
 	// Returns a list o fthe directories and the shaders in the directories
-	std::string listShaders(std::string projectName);
+	std::string listShaders(std::string projectName = "NextGengine");
 	// Return the string of the extension, (the stuff after the dot)
 	std::string getFileExtension(std::string filename);
 	// Load a file

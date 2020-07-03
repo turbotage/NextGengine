@@ -37,16 +37,16 @@ namespace ng {
 	as compactly as possible in vulkan allocator's memory pages
 	*/
 	struct ResourceStrategy {
-		uint64 stagingBufferPageSize;
+		uint64 stagingBufferPageSize = 64 * 1024 * 1024LL;
 
-		uint64 hostVertexBufferPageSize;
-		uint64 deviceVertexBufferPageSize;
+		uint64 hostVertexBufferPageSize = 64 * 1024 * 1024LL;
+		uint64 deviceVertexBufferPageSize = 64 * 1024 * 1024LL;
 
-		uint64 hostIndexBufferPageSize;
-		uint64 deviceIndexBufferPageSize;
+		uint64 hostIndexBufferPageSize = 64 * 1024 * 1024LL;
+		uint64 deviceIndexBufferPageSize = 64 * 1024 * 1024LL;
 
-		uint64 hostUniformBufferPageSize;
-		uint64 deviceUniformBufferPageSize;
+		uint64 hostUniformBufferPageSize = 64 * 1024 * 1024LL;
+		uint64 deviceUniformBufferPageSize = 64 * 1024 * 1024LL;
 	};
 
 	class ResourceManager {
