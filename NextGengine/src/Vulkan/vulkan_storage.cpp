@@ -191,8 +191,8 @@ bool ngv::VulkanBuffer::hasAllocation()
 
 bool ngv::VulkanBuffer::hasSameAllocation(const ngv::VulkanBuffer& buffer)
 {
-	if (m_pAllocation->getMemoryPage().get()) {
-		if (buffer.m_pAllocation->getMemoryPage().get()) {
+	if (m_pAllocation->getMemoryPage() != nullptr) {
+		if (buffer.m_pAllocation->getMemoryPage() != nullptr) {
 			if (m_pAllocation == buffer.m_pAllocation) { // equiv to m_pAllocation.get() == buffer->m_pAllocation.get()
 				return true;
 			}
@@ -460,8 +460,8 @@ bool ngv::VulkanImage::hasAllocation()
 
 bool ngv::VulkanImage::hasSameAllocation(const VulkanImage& image)
 {
-	if (m_pAllocation->getMemoryPage().get()) {
-		if (image.m_pAllocation->getMemoryPage().get()) {
+	if (m_pAllocation->getMemoryPage()) {
+		if (image.m_pAllocation->getMemoryPage()) {
 			if (m_pAllocation == image.m_pAllocation) {
 				return true;
 			}

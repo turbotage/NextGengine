@@ -2,7 +2,27 @@
 
 #include "../ng_utility.h"
 #include "../Vulkan/vulkan_storage.h"
+#include "../Memory/abstract_allocators.h"
 #include "resource_manager.h"
+
+
+
+using RD = ng::ResourceResidencyFlagBits;
+
+// <======================================= RESOURCE ========================================>
+ng::Resource::Resource()
+	: m_RequiredResidency((uint8)RD::eNoResidency), m_Residency((uint8)RD::eNoResidency)
+{
+
+}
+
+
+
+
+
+
+
+
 
 // <============================= STAGING BUFFER ===============================>
 /*

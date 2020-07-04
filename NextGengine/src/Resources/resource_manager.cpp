@@ -19,8 +19,8 @@ ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::Vulka
 {
 	// Setup Staging Buffer Pages
 	{
-		m_BufferPages.stagingBufferPages.emplace_back(*this);
-		auto page = &m_BufferPages.stagingBufferPages.back();
+		m_BufferPages.stagingBufferPages.emplace_back(std::move(std::unique_ptr<StagingBufferPage>(new StagingBufferPage(*this))));
+		auto& page = m_BufferPages.stagingBufferPages.back();
 		vk::BufferCreateInfo ci{};
 		ci.size = m_Strategy.stagingBufferPageSize;
 		ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
@@ -31,8 +31,8 @@ ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::Vulka
 	}
 	// Setup Vertex Buffer Pages
 	{
-		m_BufferPages.vertexBufferPages.emplace_back(*this);
-		auto page = &m_BufferPages.vertexBufferPages.back();
+		m_BufferPages.vertexBufferPages.emplace_back(std::move(std::unique_ptr<VertexBufferPage>(new VertexBufferPage(*this))));
+		auto& page = m_BufferPages.vertexBufferPages.back();
 		page->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(device, strategy.hostVertexBufferPageSize, false);
 		allocator.giveBufferAllocation(*page->m_pVertexBuffer);
 		page->m_pAllocator = AbstractFreeListAllocator::make(strategy.hostVertexBufferPageSize);
@@ -40,8 +40,8 @@ ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::Vulka
 
 	// Setup Index Buffer Pages
 	{
-		m_BufferPages.indexBufferPages.emplace_back(*this);
-		auto page = &m_BufferPages.indexBufferPages.back();
+		m_BufferPages.indexBufferPages.emplace_back(std::move(std::unique_ptr<IndexBufferPage>(new IndexBufferPage(*this))));
+		auto& page = m_BufferPages.indexBufferPages.back();
 		page->m_pIndexBuffer = ngv::VulkanIndexBuffer::make(device, strategy.hostIndexBufferPageSize, false);
 		allocator.giveBufferAllocation(*page->m_pIndexBuffer);
 		page->m_pAllocator = AbstractFreeListAllocator::make(strategy.hostIndexBufferPageSize);
@@ -49,8 +49,8 @@ ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::Vulka
 
 	// Setup Uniform Buffer Pages
 	{
-		m_BufferPages.uniformBufferPages.emplace_back(*this);
-		auto page = &m_BufferPages.uniformBufferPages.back();
+		m_BufferPages.uniformBufferPages.emplace_back(std::move(std::unique_ptr<UniformBufferPage>(new UniformBufferPage(*this))));
+		auto& page = m_BufferPages.uniformBufferPages.back();
 		page->m_pUniformBuffer = ngv::VulkanUniformBuffer::make(device, strategy.hostUniformBufferPageSize, false);
 		allocator.giveBufferAllocation(*page->m_pUniformBuffer);
 		page->m_pAllocator = AbstractFreeListAllocator::make(strategy.hostIndexBufferPageSize);
@@ -63,52 +63,52 @@ const ngv::VulkanDevice& ng::ResourceManager::vulkanDevice() const
 	return m_Device;
 }
 
-std::shared_ptr<ng::VertexBuffer> ng::ResourceManager::getVertexBuffer(std::string filename)
+std::shared_ptr<ng::VertexBuffer> ng::ResourceManager::getVertexBuffer(std::string& filename)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	auto it = m_Buffers.vertexBuffersByID.find(filename);
 	if (it != m_Buffers.vertexBuffersByID.end()) {
-		return it->second;
+		return it->second.lock();
 	}
 	std::shared_ptr<VertexBuffer> ret = std::shared_ptr<VertexBuffer>(new VertexBuffer(*this, filename));
 	m_Buffers.vertexBuffersByID.emplace(filename, ret);
 	return ret;
 }
 
-std::shared_ptr<ng::IndexBuffer> ng::ResourceManager::getIndexBuffer(std::string filename)
+std::shared_ptr<ng::IndexBuffer> ng::ResourceManager::getIndexBuffer(std::string& filename)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	auto it = m_Buffers.indexBuffersByID.find(filename);
 	if (it != m_Buffers.indexBuffersByID.end()) {
-		return it->second;
+		return it->second.lock();
 	}
 	std::shared_ptr<IndexBuffer> ret = std::shared_ptr<IndexBuffer>(new IndexBuffer(*this, filename));
 	m_Buffers.indexBuffersByID.emplace(filename, ret);
 	return ret;
 }
 
-std::shared_ptr<ng::UniformBuffer> ng::ResourceManager::getUniformBuffer(std::string filename)
+std::shared_ptr<ng::UniformBuffer> ng::ResourceManager::getUniformBuffer(std::string& filename)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	auto it = m_Buffers.uniformBuffersByID.find(filename);
 	if (it != m_Buffers.uniformBuffersByID.end()) {
-		return it->second;
+		return it->second.lock();
 	}
 	std::shared_ptr<UniformBuffer> ret = std::shared_ptr<UniformBuffer>(new UniformBuffer(*this, filename));
 	m_Buffers.uniformBuffersByID.emplace(filename, ret);
 	return ret;
 }
 
-std::shared_ptr<ng::Texture2D> ng::ResourceManager::getTexture2D(std::string filename)
+std::shared_ptr<ng::Texture2D> ng::ResourceManager::getTexture2D(std::string& filename)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	auto it = m_Textures.texture2DsByID.find(filename);
 	if (it != m_Textures.texture2DsByID.end()) {
-		return it->second;
+		return it->second.lock();
 	}
 	std::shared_ptr<Texture2D> ret = std::shared_ptr<Texture2D>(new Texture2D(*this, filename));
 
@@ -217,6 +217,8 @@ void ng::ResourceManager::setStagingBufferNotRequired(Texture2D& texture2D)
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	mSetStagingBufferNotRequired(texture2D);
 }
+
+
 // PRIVATE
 //should always be used in conjunction with uploadToStagingBuffer, no resource should be able to have a staging buffer that doesn't hold it's stagingData
 std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::string id, uint64 size)
@@ -224,7 +226,7 @@ std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::s
 	std::shared_ptr<StagingBuffer> ret = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, id, size));
 
 	for (auto& page : m_BufferPages.stagingBufferPages) {
-		bool ok = page.allocate(*ret);
+		bool ok = page->allocate(*ret);
 		if (ok) {
 			return ret;
 		}
@@ -235,8 +237,9 @@ std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::s
 		std::runtime_error("Couldn't find any available memory for stagingBuffer and was not allowed to allocate more");
 	}
 #endif
-	m_BufferPages.stagingBufferPages.emplace_back(*this);
-	auto page = &m_BufferPages.stagingBufferPages.back();
+
+	m_BufferPages.stagingBufferPages.emplace_back(std::move(std::unique_ptr<StagingBufferPage>(new StagingBufferPage(*this))));
+	auto& page = m_BufferPages.stagingBufferPages.back();
 
 	uint64 pageSize = m_Strategy.stagingBufferPageSize;
 	if (ret->m_Size > pageSize) {
@@ -421,8 +424,8 @@ void ng::ResourceManager::mGiveStagingBuffer(Texture2D& texture2D)
 			// continue to final:
 		}
 		else { // We can use new staging memory so make a new page and allocate from it
-			m_BufferPages.stagingBufferPages.emplace_back();
-			auto page = &m_BufferPages.stagingBufferPages.back();
+			m_BufferPages.stagingBufferPages.emplace_back(std::move(std::unique_ptr<StagingBufferPage>(new StagingBufferPage(*this))));
+			auto& page = m_BufferPages.stagingBufferPages.back();
 
 			uint64 pageSize = m_Strategy.stagingBufferPageSize;
 			if (texture2D.m_pStagingBuffer->m_Size > pageSize) {
@@ -499,7 +502,7 @@ void ng::ResourceManager::mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::
 		}
 
 		for (auto& page : m_BufferPages.vertexBufferPages) {
-			bool ok = page.allocate(vertexBuffer);
+			bool ok = page->allocate(vertexBuffer);
 			if (ok) {
 				goto final;
 			}
@@ -511,7 +514,7 @@ void ng::ResourceManager::mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::
 		}
 		else {
 			// We didn't find any page that could allocate, create a new one
-			m_BufferPages.vertexBufferPages.emplace_back(*this);
+			m_BufferPages.vertexBufferPages.emplace_back(std::move(std::unique_ptr<VertexBufferPage>(new VertexBufferPage(*this))));
 			auto page = &m_BufferPages.vertexBufferPages.back();
 
 			uint64 pageSize = m_Strategy.deviceVertexBufferPageSize;
@@ -519,11 +522,11 @@ void ng::ResourceManager::mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::
 				pageSize = vertexBuffer.m_Size;
 			}
 
-			page->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
-			page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
+			page->get()->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
+			page->get()->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
 
 #ifndef NDEBUG
-			bool ok = page->allocate(vertexBuffer);
+			bool ok = page->get()->allocate(vertexBuffer);
 			if (!ok) {
 				std::runtime_error("Created new page that could not allocate");
 			}
@@ -569,7 +572,7 @@ void ng::ResourceManager::mGiveDeviceAllocation(IndexBuffer& indexBuffer, vk::Co
 		}
 
 		for (auto& page : m_BufferPages.indexBufferPages) {
-			bool ok = page.allocate(indexBuffer);
+			bool ok = page->allocate(indexBuffer);
 			if (ok) {
 				goto final;
 			}
@@ -581,8 +584,8 @@ void ng::ResourceManager::mGiveDeviceAllocation(IndexBuffer& indexBuffer, vk::Co
 		}
 		else {
 			// We didn't find any page that could allocate, create a new one
-			m_BufferPages.indexBufferPages.emplace_back(*this);
-			auto page = &m_BufferPages.indexBufferPages.back();
+			m_BufferPages.indexBufferPages.emplace_back(std::move(std::unique_ptr<IndexBufferPage>(new IndexBufferPage(*this))));
+			auto& page = m_BufferPages.indexBufferPages.back();
 
 			uint64 pageSize = m_Strategy.deviceIndexBufferPageSize;
 			if (indexBuffer.m_Size > pageSize) {
@@ -638,7 +641,7 @@ void ng::ResourceManager::mGiveDeviceAllocation(UniformBuffer& uniformBuffer, vk
 		}
 
 		for (auto& page : m_BufferPages.uniformBufferPages) {
-			bool ok = page.allocate(uniformBuffer);
+			bool ok = page->allocate(uniformBuffer);
 			if (ok) {
 				goto final;
 			}
@@ -650,8 +653,8 @@ void ng::ResourceManager::mGiveDeviceAllocation(UniformBuffer& uniformBuffer, vk
 		}
 		else {
 			// We didn't find any page that could allocate, create a new one
-			m_BufferPages.uniformBufferPages.emplace_back(*this);
-			auto page = &m_BufferPages.uniformBufferPages.back();
+			m_BufferPages.uniformBufferPages.emplace_back(std::move(std::unique_ptr<UniformBufferPage>(new UniformBufferPage(*this))));
+			auto& page = m_BufferPages.uniformBufferPages.back();
 
 			uint64 pageSize = m_Strategy.deviceUniformBufferPageSize;
 			if (uniformBuffer.m_Size > pageSize) {
@@ -738,68 +741,68 @@ final:
 void ng::ResourceManager::mSetDeviceAllocationNotRequired(VertexBuffer& vertexBuffer)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((vertexBuffer.m_RequiredResidency == (int)RD::eNoResidency) || (vertexBuffer.m_RequiredResidency == (int)RD::eStagingResidency)) {
+	if ((vertexBuffer.m_RequiredResidency == (uint8)RD::eNoResidency) || (vertexBuffer.m_RequiredResidency == (uint8)RD::eStagingResidency)) {
 		return;
 	}
-	else if (vertexBuffer.m_RequiredResidency == (int)RD::eAllResidency) {
+	else if (vertexBuffer.m_RequiredResidency == (uint8)RD::eAllResidency) {
 		m_Buffers.vertexResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(vertexBuffer.m_ID);
-		vertexBuffer.m_RequiredResidency == (int)RD::eStagingResidency;
+		vertexBuffer.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (vertexBuffer.m_RequiredResidency == (int)RD::eDeviceResidency) {
+	else if (vertexBuffer.m_RequiredResidency == (uint8)RD::eDeviceResidency) {
 		m_Buffers.vertexResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(vertexBuffer.m_ID);
 		m_Buffers.vertexResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eNoResidency].emplace(vertexBuffer.m_ID, &vertexBuffer);
-		vertexBuffer.m_RequiredResidency = (int)RD::eNoResidency;
+		vertexBuffer.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
 void ng::ResourceManager::mSetDeviceAllocationNotRequired(IndexBuffer& indexBuffer)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((indexBuffer.m_RequiredResidency == (int)RD::eNoResidency) || (indexBuffer.m_RequiredResidency == (int)RD::eStagingResidency)) {
+	if ((indexBuffer.m_RequiredResidency == (uint8)RD::eNoResidency) || (indexBuffer.m_RequiredResidency == (uint8)RD::eStagingResidency)) {
 		return;
 	}
-	else if (indexBuffer.m_RequiredResidency == (int)RD::eAllResidency) {
+	else if (indexBuffer.m_RequiredResidency == (uint8)RD::eAllResidency) {
 		m_Buffers.indexResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(indexBuffer.m_ID);
-		indexBuffer.m_RequiredResidency == (int)RD::eStagingResidency;
+		indexBuffer.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (indexBuffer.m_RequiredResidency == (int)RD::eDeviceResidency) {
+	else if (indexBuffer.m_RequiredResidency == (uint8)RD::eDeviceResidency) {
 		m_Buffers.indexResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(indexBuffer.m_ID);
 		m_Buffers.indexResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eNoResidency].emplace(indexBuffer.m_ID, &indexBuffer);
-		indexBuffer.m_RequiredResidency = (int)RD::eNoResidency;
+		indexBuffer.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
 void ng::ResourceManager::mSetDeviceAllocationNotRequired(UniformBuffer& uniformBuffer)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((uniformBuffer.m_RequiredResidency == (int)RD::eNoResidency) || (uniformBuffer.m_RequiredResidency == (int)RD::eStagingResidency)) {
+	if ((uniformBuffer.m_RequiredResidency == (uint8)RD::eNoResidency) || (uniformBuffer.m_RequiredResidency == (uint8)RD::eStagingResidency)) {
 		return;
 	}
-	else if (uniformBuffer.m_RequiredResidency == (int)RD::eAllResidency) {
+	else if (uniformBuffer.m_RequiredResidency == (uint8)RD::eAllResidency) {
 		m_Buffers.uniformResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(uniformBuffer.m_ID);
-		uniformBuffer.m_RequiredResidency == (int)RD::eStagingResidency;
+		uniformBuffer.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (uniformBuffer.m_RequiredResidency == (int)RD::eDeviceResidency) {
+	else if (uniformBuffer.m_RequiredResidency == (uint8)RD::eDeviceResidency) {
 		m_Buffers.uniformResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(uniformBuffer.m_ID);
 		m_Buffers.uniformResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eNoResidency].emplace(uniformBuffer.m_ID, &uniformBuffer);
-		uniformBuffer.m_RequiredResidency = (int)RD::eNoResidency;
+		uniformBuffer.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
 void ng::ResourceManager::mSetDeviceAllocationNotRequired(Texture2D& texture2D)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((texture2D.m_RequiredResidency == (int)RD::eNoResidency) || (texture2D.m_RequiredResidency == (int)RD::eStagingResidency)) {
+	if ((texture2D.m_RequiredResidency == (uint8)RD::eNoResidency) || (texture2D.m_RequiredResidency == (uint8)RD::eStagingResidency)) {
 		return;
 	}
 	else if (texture2D.m_RequiredResidency == (int)RD::eAllResidency) {
 		m_Textures.texture2DResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(texture2D.m_ID);
-		texture2D.m_RequiredResidency == (int)RD::eStagingResidency;
+		texture2D.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
 	else if (texture2D.m_RequiredResidency == (int)RD::eDeviceResidency) {
 		m_Textures.texture2DResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eDeviceResidency].erase(texture2D.m_ID);
 		m_Textures.texture2DResidencyMaps[(int)RD::eDeviceResidency][(int)RD::eNoResidency].emplace(texture2D.m_ID, &texture2D);
-		texture2D.m_RequiredResidency = (int)RD::eNoResidency;
+		texture2D.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
@@ -808,68 +811,68 @@ void ng::ResourceManager::mSetDeviceAllocationNotRequired(Texture2D& texture2D)
 void ng::ResourceManager::mSetStagingBufferNotRequired(VertexBuffer& vertexBuffer)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((vertexBuffer.m_RequiredResidency == (int)RD::eNoResidency) || (vertexBuffer.m_RequiredResidency == (int)RD::eDeviceResidency)) {
+	if ((vertexBuffer.m_RequiredResidency == (uint8)RD::eNoResidency) || (vertexBuffer.m_RequiredResidency == (uint8)RD::eDeviceResidency)) {
 		return;
 	}
 	else if (vertexBuffer.m_RequiredResidency == (int)RD::eAllResidency) {
 		m_Buffers.vertexResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(vertexBuffer.m_ID);
-		vertexBuffer.m_RequiredResidency == (int)RD::eStagingResidency;
+		vertexBuffer.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (vertexBuffer.m_RequiredResidency == (int)RD::eStagingResidency) {
+	else if (vertexBuffer.m_RequiredResidency == (uint8)RD::eStagingResidency) {
 		m_Buffers.vertexResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(vertexBuffer.m_ID);
 		m_Buffers.vertexResidencyMaps[(int)RD::eStagingResidency][(int)RD::eNoResidency].emplace(vertexBuffer.m_ID, &vertexBuffer);
-		vertexBuffer.m_RequiredResidency = (int)RD::eNoResidency;
+		vertexBuffer.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
 void ng::ResourceManager::mSetStagingBufferNotRequired(IndexBuffer& indexBuffer)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((indexBuffer.m_RequiredResidency == (int)RD::eNoResidency) || (indexBuffer.m_RequiredResidency == (int)RD::eDeviceResidency)) {
+	if ((indexBuffer.m_RequiredResidency == (uint8)RD::eNoResidency) || (indexBuffer.m_RequiredResidency == (uint8)RD::eDeviceResidency)) {
 		return;
 	}
-	else if (indexBuffer.m_RequiredResidency == (int)RD::eAllResidency) {
+	else if (indexBuffer.m_RequiredResidency == (uint8)RD::eAllResidency) {
 		m_Buffers.indexResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(indexBuffer.m_ID);
-		indexBuffer.m_RequiredResidency == (int)RD::eStagingResidency;
+		indexBuffer.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (indexBuffer.m_RequiredResidency == (int)RD::eStagingResidency) {
+	else if (indexBuffer.m_RequiredResidency == (uint8)RD::eStagingResidency) {
 		m_Buffers.indexResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(indexBuffer.m_ID);
 		m_Buffers.indexResidencyMaps[(int)RD::eStagingResidency][(int)RD::eNoResidency].emplace(indexBuffer.m_ID, &indexBuffer);
-		indexBuffer.m_RequiredResidency = (int)RD::eNoResidency;
+		indexBuffer.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
 void ng::ResourceManager::mSetStagingBufferNotRequired(UniformBuffer& uniformBuffer)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((uniformBuffer.m_RequiredResidency == (int)RD::eNoResidency) || (uniformBuffer.m_RequiredResidency == (int)RD::eDeviceResidency)) {
+	if ((uniformBuffer.m_RequiredResidency == (uint8)RD::eNoResidency) || (uniformBuffer.m_RequiredResidency == (uint8)RD::eDeviceResidency)) {
 		return;
 	}
-	else if (uniformBuffer.m_RequiredResidency == (int)RD::eAllResidency) {
+	else if (uniformBuffer.m_RequiredResidency == (uint8)RD::eAllResidency) {
 		m_Buffers.uniformResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(uniformBuffer.m_ID);
-		uniformBuffer.m_RequiredResidency == (int)RD::eStagingResidency;
+		uniformBuffer.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (uniformBuffer.m_RequiredResidency == (int)RD::eStagingResidency) {
+	else if (uniformBuffer.m_RequiredResidency == (uint8)RD::eStagingResidency) {
 		m_Buffers.uniformResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(uniformBuffer.m_ID);
 		m_Buffers.uniformResidencyMaps[(int)RD::eStagingResidency][(int)RD::eNoResidency].emplace(uniformBuffer.m_ID, &uniformBuffer);
-		uniformBuffer.m_RequiredResidency = (int)RD::eNoResidency;
+		uniformBuffer.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
 void ng::ResourceManager::mSetStagingBufferNotRequired(Texture2D& texture2D)
 {
 	using RD = ResourceResidencyFlagBits;
-	if ((texture2D.m_RequiredResidency == (int)RD::eNoResidency) || (texture2D.m_RequiredResidency == (int)RD::eDeviceResidency)) {
+	if ((texture2D.m_RequiredResidency == (uint8)RD::eNoResidency) || (texture2D.m_RequiredResidency == (uint8)RD::eDeviceResidency)) {
 		return;
 	}
-	else if (texture2D.m_RequiredResidency == (int)RD::eAllResidency) {
+	else if (texture2D.m_RequiredResidency == (uint8)RD::eAllResidency) {
 		m_Textures.texture2DResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(texture2D.m_ID);
-		texture2D.m_RequiredResidency == (int)RD::eStagingResidency;
+		texture2D.m_RequiredResidency = (uint8)RD::eStagingResidency;
 	}
-	else if (texture2D.m_RequiredResidency == (int)RD::eStagingResidency) {
+	else if (texture2D.m_RequiredResidency == (uint8)RD::eStagingResidency) {
 		m_Textures.texture2DResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].erase(texture2D.m_ID);
 		m_Textures.texture2DResidencyMaps[(int)RD::eStagingResidency][(int)RD::eNoResidency].emplace(texture2D.m_ID, &texture2D);
-		texture2D.m_RequiredResidency = (int)RD::eNoResidency;
+		texture2D.m_RequiredResidency = (uint8)RD::eNoResidency;
 	}
 }
 
@@ -972,7 +975,7 @@ bool ng::ResourceManager::mhGiveStaging(Texture2D& texture2D)
 
 	// Basically reinvents mGetStagingBuffer
 	for (auto& page : m_BufferPages.stagingBufferPages) {
-		bool ok = page.allocate(*texture2D.m_pStagingBuffer);
+		bool ok = page->allocate(*texture2D.m_pStagingBuffer);
 		if (ok) {
 			return true;
 		}
@@ -1224,7 +1227,7 @@ bool ng::StagingBufferPage::allocate(StagingBuffer& stagingBuffer)
 	if (stagingBuffer.m_pAllocation == nullptr) {
 		return false;
 	}
-	stagingBuffer.m_pStagingPage = this;
+	stagingBuffer.m_pStagingPage = ng::raw_ptr<StagingBufferPage>(this);
 	return true;
 }
 

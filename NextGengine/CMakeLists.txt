@@ -7,7 +7,7 @@ cmake_minimum_required (VERSION 3.17)
 # Add source to this project's executable.
 set(SOURCES "NextGengine.h")
 
-add_library(NextGengine ${SOURCES})
+add_library(NextGengine SHARED ${SOURCES})
 add_subdirectory("src")
 
 # Vulkan

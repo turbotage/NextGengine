@@ -3,6 +3,7 @@
 #include "../def.h"
 #include "../Vulkan/vulkandef.h"
 
+
 namespace ngv {
 	class VulkanBuffer;
 	class VulkanVertexBuffer;
@@ -26,11 +27,11 @@ namespace ng {
 	class Resource {
 	public:
 
-		Resource() = default;
+		Resource();
 
 	protected:
-		uint8 m_RequiredResidency = (uint8)ResourceResidencyFlagBits::eNoResidency;
-		uint8 m_Residency = (uint8)ResourceResidencyFlagBits::eNoResidency;
+		uint8 m_RequiredResidency;
+		uint8 m_Residency;
 
 	private:
 

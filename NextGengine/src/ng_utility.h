@@ -130,6 +130,9 @@ namespace ng {
 // Pointers
 namespace ng {
 
+	template<typename T> using raw_ptr = T*;
+
+	/*
 	template<typename T>
 	class raw_ptr {
 	public:
@@ -154,13 +157,15 @@ namespace ng {
 	private:
 		T* ptr;
 	};
+	*/
 
 	
 
-
+	/*
 	template<class T>
 	class count_ptr {
 
 	};
+	*/
 
 }

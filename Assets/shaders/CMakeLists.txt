@@ -30,7 +30,7 @@ set(SHADER_SOURCES "HelloTriangle/helloTriangle.frag.spv"
 					"HelloTriangle/helloTriangle.vert.spv"
 					"PushConstants/pushConstants.frag.spv"
 					"PushConstants/pushConstants.vert.spv"
-					"TestResource/testResource.frag.spv"
-					"TestResource/testResource.vert.spv")
+					"TestResources/testResources.frag.spv"
+					"TestResources/testResources.vert.spv")
 
 add_custom_target(shaders ALL DEPENDS ${SHADER_SOURCES})
