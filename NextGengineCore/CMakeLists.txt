@@ -1,4 +1,4 @@
-﻿# CMakeList.txt : CMake project for NextGengine, include source and define
+# CMakeList.txt : CMake project for NextGengine, include source and define
 # project specific logic here.
 
 
@@ -40,8 +40,8 @@ target_link_libraries(NextGengineCore PUBLIC glm)
 
 # GLI
 #dissable compiling unecessary glm stuff
-add_subdirectory("lib/gli")
-target_link_libraries(NextGengineCore PUBLIC gli)
+#add_subdirectory("lib/gli")
+#target_link_libraries(NextGengineCore PUBLIC gli)
 
 # KTX-Software
 set(KTX_FEATURE_TOOLS OFF CACHE BOOL "" FORCE)
