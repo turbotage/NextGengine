@@ -1,16 +1,17 @@
 #include "resource_manager.h"
+#include "resources.h"
+
 
 #include "../Memory/abstract_allocators.h"
-#include "resources.h"
 
 #include "../Vulkan/vulkan_utility.h"
 #include "../Vulkan/vulkan_device.h"
 #include "../Vulkan/vulkan_allocator.h"
 #include "../Vulkan/vulkan_storage.h"
 
+// KTX
 #include <ktx.h>
 #include <ktxvulkan.h>
-
 
 // <==================================== RESOURCE MANAGER ==========================================>
 //PUBLIC

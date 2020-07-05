@@ -1,12 +1,9 @@
 #pragma once
 
-#include "../def.h"
-#include "vulkandef.h"
 
-#include <list>
+#include "../ng_utility.h"
+#include "pch.h"
 
-#include <utility>
-#include <vector>
 
 namespace ngv {
 

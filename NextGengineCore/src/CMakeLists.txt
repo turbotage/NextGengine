@@ -30,6 +30,6 @@ set(LOCAL_SOURCES "ng_utility.cpp")
 
 
 
-target_sources(NextGengine PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} 
+target_sources(NextGengineCore PRIVATE ${VULKAN_SOURCES} ${MEMORY_SOURCES} 
 									${THREADING_SOURCES} ${RESOURCE_SOURCES}
 									${LOCAL_SOURCES})

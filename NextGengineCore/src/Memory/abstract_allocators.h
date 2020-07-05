@@ -1,10 +1,7 @@
 #pragma once
 
-#include "../def.h"
-#include <map>
-#include <memory>
-#include <string>
-#include <mutex>
+#include "../ng_utility.h"
+#include "pch.h"
 
 namespace ng {
 

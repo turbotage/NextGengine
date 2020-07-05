@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "src/def.h"
-#include "src/Vulkan/vulkandef.h"
+#include "pch.h"
+
 #include "src/Vulkan/vulkan_device.h"
 #include "src/Vulkan/vulkan_allocator.h"
 #include "src/Vulkan/vulkan_storage.h"
@@ -18,7 +18,5 @@
 #include "src/Resources/resources.h"
 
 
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 
 

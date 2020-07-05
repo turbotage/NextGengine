@@ -7,12 +7,13 @@ cmake_minimum_required (VERSION 3.17)
 
 project ("NextGengine")
 
-include_directories("NextGengine")
+#For windows we wan't to export all symbols
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+include_directories("NextGengineCore")
 
 # Include sub-projects.
-add_subdirectory ("NextGengine")
+add_subdirectory ("NextGengineCore")
 add_subdirectory ("SamplesAndTests")
 add_subdirectory ("Assets")
 
-target_compile_features(NextGengine PUBLIC cxx_std_17)
-set_target_properties(NextGengine PROPERTIES CXX_EXTENSIONS OFF)

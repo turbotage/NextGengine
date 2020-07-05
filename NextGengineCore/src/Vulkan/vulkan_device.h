@@ -1,8 +1,6 @@
 #pragma once
 
-#include "vulkandef.h"
-
-#include <vector>
+#include "pch.h"
 
 namespace ngv {
 

@@ -1,4 +1,7 @@
-#include "vulkandef.h"
+#pragma once
+
+#include "pch.h"
+
 
 
 namespace ngv {

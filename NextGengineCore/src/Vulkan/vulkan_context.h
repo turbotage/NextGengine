@@ -1,12 +1,8 @@
 #pragma once
 
-#include "vulkandef.h"
-#include "vulkan_debug.h"
+#include "pch.h"
 
-#include <set>
-#include <functional>
-#include <list>
-#include <queue>
+#include "vulkan_debug.h"
 
 
 namespace ngv {

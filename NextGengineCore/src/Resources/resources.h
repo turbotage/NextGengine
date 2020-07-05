@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../def.h"
-#include "../Vulkan/vulkandef.h"
+#include "pch.h"
+#include "../ng_utility.h"
 
+
+class ktxTexture;
 
 namespace ngv {
 	class VulkanBuffer;
@@ -11,8 +13,6 @@ namespace ngv {
 	class VulkanUniformBuffer;
 	class VulkanTexture2D;
 }
-
-class ktxTexture;
 
 namespace ng {
 	
@@ -221,7 +221,6 @@ namespace ng {
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
-
 
 
 

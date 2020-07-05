@@ -1,17 +1,11 @@
 #include "vulkan_window.h"
 
-#include <GLFW/glfw3.h>
-#include <glm/vec2.hpp>
+#include "pch.h"
 
-#include "vulkandef.h"
 #include "vulkan_device.h"
 #include "vulkan_storage.h"
 #include "vulkan_allocator.h"
 #include "vulkan_renderpass.h"
-
-#include <vector>
-#include <string>
-#include <iostream>
 
 #define PRINT_FRAMETIME_EVERY_N 300
 

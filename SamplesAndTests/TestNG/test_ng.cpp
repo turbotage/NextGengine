@@ -1,5 +1,5 @@
 
-#include "../NextGengine/NextGengine.h"
+#include <NextGengine.h>
 
 #include <iostream>
 

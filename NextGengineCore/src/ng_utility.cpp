@@ -1,10 +1,5 @@
 #include "ng_utility.h"
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <queue>
 
 std::string ng::getShaderDirectoryPath(std::string projectName)
 {

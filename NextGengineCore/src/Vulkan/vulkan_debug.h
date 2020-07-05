@@ -1,16 +1,6 @@
 #pragma once
 
-#include "vulkandef.h"
-
-#include <algorithm>
-#include <functional>
-#include <list>
-#include <string>
-#include <mutex>
-#include <sstream>
-#include <iostream>
-
-#include <glm/vec4.hpp>
+#include "pch.h"
 
 namespace ngv {
 	namespace debug {

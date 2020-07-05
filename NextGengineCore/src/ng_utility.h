@@ -1,14 +1,11 @@
 #pragma once
 
-#include "def.h"
-
-#include <memory>
-#include <string>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+#include "pch.h"
 
 // Helver functions
 namespace ng {
+
+	typedef uint8_t uint8;
 
 	struct Vertex2D { glm::vec2 vertex; };
 	struct Vertex2D_3C { glm::vec2 vertex; glm::vec3 color; };

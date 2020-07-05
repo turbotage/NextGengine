@@ -1,11 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <array>
-#include <mutex>
-#include <unordered_map>
-
-#include "../def.h"
 #include "resources.h"
 
 class ktxTexture;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vulkandef.h"
-#include <functional>
+#include "pch.h"
+
 
 class GLFWwindow;
 
