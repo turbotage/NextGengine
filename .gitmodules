@@ -1,0 +1,3 @@
+[submodule "NextGengineCore/lib/glfw"]
+	path = NextGengineCore/lib/glfw
+	url = https://github.com/glfw/glfw
