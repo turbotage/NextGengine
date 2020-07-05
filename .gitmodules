@@ -4,3 +4,6 @@
 [submodule "NextGengineCore/lib/glm"]
 	path = NextGengineCore/lib/glm
 	url = https://github.com/g-truc/glm
+[submodule "NextGengineCore/lib/KTX-Software"]
+	path = NextGengineCore/lib/KTX-Software
+	url = https://github.com/KhronosGroup/KTX-Software
