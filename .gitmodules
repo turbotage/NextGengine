@@ -1,3 +1,6 @@
 [submodule "NextGengineCore/lib/glfw"]
 	path = NextGengineCore/lib/glfw
 	url = https://github.com/glfw/glfw
+[submodule "NextGengineCore/lib/glm"]
+	path = NextGengineCore/lib/glm
+	url = https://github.com/g-truc/glm
