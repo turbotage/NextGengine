@@ -1,13 +1,14 @@
 # CMakeList.txt : CMake project for NextGengine, include source and define
 # project specific logic here.
 
-
 cmake_minimum_required (VERSION 3.17)
 
+project("NextGengineCore")
 
+set(BUILD_SHARED_LIBS ON)
 
 # Add source to this project's executable.
-set(SOURCES "NextGengine.h" "pch.h")
+set(SOURCES "NextGengineCore.h" "pch.h")
 
 add_library(NextGengineCore SHARED ${SOURCES})
 add_subdirectory("src")
@@ -39,7 +40,7 @@ add_subdirectory("lib/glm")
 target_link_libraries(NextGengineCore PUBLIC glm)
 
 # GLI
-#dissable compiling unecessary glm stuff
+#dissable compiling unecessary gli stuff
 #add_subdirectory("lib/gli")
 #target_link_libraries(NextGengineCore PUBLIC gli)
 

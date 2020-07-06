@@ -1,6 +1,10 @@
 cmake_minimum_required (VERSION 3.17)
 
-find_library(Tests NAMES NextGengineCore)
+project("NextGengineTesting")
+
+find_library(LibraryCache NAMES NextGengineCore REQUIRED)
+
+
 
 #TestNG
 add_executable(TestNG "TestNg/test_ng.cpp")
@@ -28,4 +32,3 @@ add_executable(PushConstants "PushConstants/push_constants.cpp")
 target_link_libraries(PushConstants NextGengineCore)
 target_compile_features(PushConstants PUBLIC cxx_std_17)
 set_target_properties(PushConstants PROPERTIES CXX_EXTENSIONS OFF)
-
