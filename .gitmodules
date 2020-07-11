@@ -7,3 +7,6 @@
 [submodule "NextGengineCore/lib/KTX-Software"]
 	path = NextGengineCore/lib/KTX-Software
 	url = https://github.com/KhronosGroup/KTX-Software
+[submodule "NextGengineCore/lib/tinygltf"]
+	path = NextGengineCore/lib/tinygltf
+	url = https://github.com/syoyo/tinygltf.git
