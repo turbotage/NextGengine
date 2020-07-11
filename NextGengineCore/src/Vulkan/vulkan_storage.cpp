@@ -442,12 +442,12 @@ void ngv::VulkanImage::setCurrentLayout(vk::ImageLayout oldLayout)
 
 vk::ImageLayout ngv::VulkanImage::getImageLayout()
 {
-	return m_ImageLayout;
+	return m_CurrentLayout;
 }
 
 void ngv::VulkanImage::setImageLayout(vk::ImageLayout imageLayout)
 {
-	m_ImageLayout = imageLayout;
+	m_CurrentLayout = imageLayout;
 }
 
 bool ngv::VulkanImage::hasAllocation()

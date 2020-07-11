@@ -117,7 +117,7 @@ void ngv::VulkanAllocator::mGiveImageAllocation(VulkanImage& image)
 
 		allocPage = newPage;
 
-		m_MemoryPages.push_back(newPage);
+		m_MemoryPages.push_back(std::move(newPage));
 	}
 
 	m_Device.device().bindImageMemory(*image.m_Image, *allocPage->m_Memory, image.m_pAllocation->getOffset());
@@ -205,7 +205,6 @@ bool ngv::VulkanMemoryPage::mCanAllocate(vk::DeviceSize size, vk::DeviceSize ali
 
 std::unique_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryPage::mAllocate(vk::DeviceSize size, vk::DeviceSize alignment)
 {
-	std::lock_guard<std::mutex> lock(m_Mutex);
 	std::unique_ptr<VulkanMemoryAllocation> ret(new VulkanMemoryAllocation());
 	ret->m_pAllocation = m_pAllocator->allocate(size, alignment);
 	if (ret->m_pAllocation == nullptr) {

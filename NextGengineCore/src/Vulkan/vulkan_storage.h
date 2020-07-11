@@ -227,7 +227,7 @@ namespace ngv {
 
 		vk::UniqueImage m_Image;
 		vk::UniqueImageView m_ImageView;
-		vk::ImageLayout m_ImageLayout;
+		//vk::ImageLayout m_ImageLayout;
 		vk::MemoryRequirements m_MemoryRequirements;
 		uint32 m_MemoryTypeIndex = 0;
 

@@ -120,7 +120,7 @@ namespace ng {
 		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
-		ng::raw_ptr<VertexBufferPage> m_pVertexPage;
+		ng::raw_ptr<VertexBufferPage> m_pVertexPage = nullptr;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 	};
@@ -169,7 +169,7 @@ namespace ng {
 		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
-		ng::raw_ptr<IndexBufferPage> m_pIndexPage;
+		ng::raw_ptr<IndexBufferPage> m_pIndexPage = nullptr;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
@@ -216,7 +216,7 @@ namespace ng {
 		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
-		ng::raw_ptr<UniformBufferPage> m_pUniformPage;
+		ng::raw_ptr<UniformBufferPage> m_pUniformPage = nullptr;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
@@ -269,7 +269,7 @@ namespace ng {
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
 
 		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
-		ktxTexture* m_KTXTexture;
+		ktxTexture* m_KTXTexture = nullptr;
 
 	};
 

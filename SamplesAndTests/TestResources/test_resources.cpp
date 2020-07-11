@@ -7,6 +7,8 @@ public:
 
 	std::shared_ptr<ng::VertexBuffer> vertexBuffer;
 
+	std::shared_ptr<ng::UniformBuffer> uniformBuffer;
+
 };
 
 
@@ -141,10 +143,19 @@ void BaseApp::loadResources()
 	pResourceManager = std::unique_ptr<ng::ResourceManager>(
 		new ng::ResourceManager(*pAllocator, pContext->vulkanDevice(), resourceStrategy));
 
-	auto assetPath = ng::getAssetsDirectoryPath() + "\\test_assets\\";
+	std::string assetPath = ng::getAssetsDirectoryPath() + "test_assets\\";
+	std::string vertexFolder = "vertex\\";
+	std::string uniformFolder = "uniform\\";
 
-	Model temp;
-	temp.vertexBuffer = pResourceManager->getVertexBuffer(assetPath + "test_vert2D_3C.v2d3c");
+	Model temp1;
+	temp1.vertexBuffer = pResourceManager->getVertexBuffer(assetPath + vertexFolder + "test1.v2d3c");
+	temp1.uniformBuffer = pResourceManager->getUniformBuffer(assetPath + uniformFolder + "test1.u2d");
+
+	Model temp2;
+	temp2.vertexBuffer = pResourceManager->getVertexBuffer(assetPath + vertexFolder + "test2.v2d3c");
+	temp2.uniformBuffer = pResourceManager->getUniformBuffer(assetPath + uniformFolder + "test2.u2d");
+
+	
 
 
 }

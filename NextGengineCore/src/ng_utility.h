@@ -11,6 +11,8 @@ namespace ng {
 	struct Vertex2D_3C { glm::vec2 vertex; glm::vec3 color; };
 	struct Vertex3D { glm::vec3 vertex; };
 
+	struct Uniform2D { glm::mat4 model; };
+
 
 	// Returns a string to the shader directory
 	std::string getShaderDirectoryPath(std::string projectName = "NextGengine");
@@ -27,6 +29,20 @@ namespace ng {
 	// Load NG file, (virtual filing) // Not yet implemented
 	std::vector<uint8> loadNGFile(const std::string& filename);
 
+
+	template<class T>
+	void getFromBytes(std::vector<uint8>& src, std::vector<T>& dst) {
+		dst.resize(src.size() / sizeof(T));
+		memcpy(dst.data(), src.data(), src.size());
+	}
+
+	template<class T>
+	void setFromType(std::vector<T>& src, std::vector<uint8>& dst) {
+		dst.resize(src.size() * sizeof(T));
+		memcpy(dst.data(), src.data(), src.size() * sizeof(T));
+	}
+
+	// STUPID
 	// Get floats from bytes
 	std::vector<float> getFloatsFromBytes(std::vector<uint8> bytes);
 	// Get Vertex2D from bytes
@@ -43,6 +59,7 @@ namespace ng {
 	std::vector<uint8> getBytesFromVertex2D_3Cs(std::vector<Vertex2D_3C> vertices);
 	// Get bytes from Vertex3D
 	std::vector<uint8> getBytesFromVertex3Ds(std::vector<Vertex3D> vertices);
+
 }
 
 // Class helpers
