@@ -51,7 +51,8 @@ set(KTX_FEATURE_LOADTEST_APPS OFF CACHE BOOL "" FORCE)
 add_subdirectory("lib/KTX-Software")
 target_link_libraries(NextGengineCore PUBLIC ktx)
 
-
+# TinyGLTF
+target_include_directories(NextGengineCore PUBLIC "lib/tinygltf")
 
 # SET C++ STANDARD
 target_compile_features(NextGengineCore PUBLIC cxx_std_17)

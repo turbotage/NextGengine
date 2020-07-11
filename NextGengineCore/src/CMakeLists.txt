@@ -21,7 +21,7 @@ set(THREADING_SOURCES "Threading/thread_pool.cpp"
 						"Threading/thread_safe_queue.cpp")
 
 set(SCENE_SOURCES "Scene/scene.cpp"
-					"Scene/model_2D.cpp")
+					"Scene/model.cpp")
 
 set(RESOURCE_SOURCES "Resources/resource_manager.cpp"
 						"Resources/resources.cpp")

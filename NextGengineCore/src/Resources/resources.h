@@ -46,10 +46,6 @@ namespace ng {
 
 
 
-
-
-
-
 	class StagingBuffer : public Resource {
 	public:
 
@@ -74,7 +70,7 @@ namespace ng {
 		vk::DeviceSize m_Size = 0;
 
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
-		ng::raw_ptr<StagingBufferPage> m_pStagingPage;
+		ng::raw_ptr<StagingBufferPage> m_pStagingPage = nullptr;
 
 	};
 
