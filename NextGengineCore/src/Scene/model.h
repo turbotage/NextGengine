@@ -26,19 +26,9 @@ namespace ng {
 		Model& operator=(Model&) = delete;
 
 	private:
-		// Transformation
-		glm::mat4 m_Matrix; 
-		// The mesh consists of some primitives
-		std::vector<ModelPrimitive> m_Mesh;
-		std::vector<ModelMaterial> m_Materials;
+
+	private:
 		
-
-		std::shared_ptr<VertexBuffer> m_pVertexBuffer;
-		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
-		std::vector<std::shared_ptr<Texture2D>> m_Textures;
-
-
-		bool m_Visible = true;
 	};
 
 

@@ -50,6 +50,7 @@
 #include <thread>
 
 
+// NEXT-GENGINE DEFINITION
 #define NG_MAKE_VERSION(major, minor, patch) \
     ((((uint32_t)(major)) << 22) | (((uint32_t)(minor)) << 12) | ((uint32_t)(patch)))
 
@@ -74,3 +75,70 @@ typedef uint64_t uint64;
 typedef uint8 byte;
 typedef uint32_t uint;
 
+
+
+namespace ng {
+    template<typename T> using raw_ptr = T*;
+
+    /* To measure structure size without compilation of running
+        Example:
+        int x;
+        Sizer<sizeof(x)> foo; (hover over foo and intelisense will show the size)
+    */
+    template <size_t S> class Sizer {};
+
+    template<class T>
+    class EnableSharedThis : public std::enable_shared_from_this<T> {};
+}
+
+
+
+#define MAKE_CONSTRUCTED
+/*
+Shall denote that the class can only be instanced via a smart_ptr
+Example:
+
+MAKE_CONSTRUCTED
+class A : public MakeConstructed {
+public:
+	//this function is used to instanciate an object
+	static std::unique_ptr<A> make() {
+		return std::make_unique<A>();
+	}
+
+	~A() = default;
+private: (or protected)
+	A() = default;
+	A(const A&) = delete;
+	A& operator=(const A&) = delete;
+};
+*/
+
+
+
+#define ALLOCATOR_CONSTRUCTED
+/*
+Shall denote that the class can only be created via a allocator, and the allocator should
+only return a smart pointer to the created instance
+Example:
+
+ALLOCATOR_CONSTRUCTED
+class A : public AllocatorConstructed {
+public:
+
+	~A() = default;
+private: (or protected)
+	A() = default;
+	A(const A&) = delete;
+	A& operator=(const A&) = delete;
+
+	friend class AAllocator;
+};
+
+class AAllocator {
+public:
+	std::unique_ptr<A> allocateA() {
+		return std::unique_ptr<A>(new A());
+	}
+}
+*/

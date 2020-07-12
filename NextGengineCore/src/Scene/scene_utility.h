@@ -2,6 +2,7 @@
 #include <pch.h>
 
 namespace ng {
+
 	struct ModelPrimitive {
 		uint32 firstIndex;
 		uint32 indexCount;
@@ -20,4 +21,5 @@ namespace ng {
 		vk::DescriptorSet descriptorSet;
 		vk::Pipeline pipeline;
 	};
+
 }
