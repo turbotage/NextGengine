@@ -6,19 +6,12 @@
 
 namespace ng {
 
-	class Model;
+	class Model3D;
 	class ResourceManager;
 	class VertexBuffer;
 	class IndexBuffer;
 	class Texture2D;
-	/*
-	enum class SceneNodeType {
-		eCamera,
-		ePlayerController,
-		eModel2D,
-		eModel,
-	};
-	*/
+	
 
 	class SceneNode3D {
 	public:
@@ -69,6 +62,9 @@ namespace ng {
 
 	private:
 
+		tinygltf::Model m_GLTFModel;
+		tinygltf::TinyGLTF m_GLTFContext;
+
 		ResourceManager& m_Manager;
 		
 		std::map<std::string, std::shared_ptr<ModelMaterial>> m_Materials;
@@ -89,6 +85,25 @@ namespace ng {
 		Scene& m_Scene;
 
 		std::unique_ptr<SceneNode> m_RootNode;
+
+	};
+
+	struct Model3DPrimitive {
+		uint32 firstIndex;
+		uint32 indexCount;
+		int32 materialIndex;
+	};
+
+	struct Model3DMaterial {
+		glm::vec4 baseColorFactor = glm::vec4(1.0f);
+
+		std::string baseColorTexturePath;
+		uint32 normalTexturePath;
+
+		uint8 alphaMode = AlphaModeFlagBits::eOpaque;
+		float alphaCutOff;
+		bool doubleSided = false;
+
 
 	};
 

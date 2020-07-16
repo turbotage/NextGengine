@@ -28,6 +28,33 @@ ng::Scene3D::Scene3D(ResourceManager& manager, std::string& gltfFilename)
 }
 
 void ng::Scene3D::loadMaterials() {
+	
+	for (size_t i = 0; i < m_GLTFModel.materials.size(); ++i) {
+		tinygltf::Material material = m_GLTFModel.materials[i];
+
+		std::shared_ptr<ModelMaterial> pModelMaterial;
+
+		if (material.values.find("baseColorFactor") != material.values.end()) {
+			pModelMaterial->baseColorFactor = glm::make_vec4(material.values["baseColorFactor"].ColorFactor().data());
+		}
+		if (material.values.find("baseColorTexture") != material.values.end()) {
+			int index = material.values["baseColorTexture"].TextureIndex();
+			index = m_Model.textures[index].source;
+			pModelMaterial->baseColorTexturePath = m_Model.images[index].uri;
+		}
+		if (material.additionalValues.find("normalTexture") != material.additionalValues.end()) {
+			int index = material.additionalValues["normalTexture"].TextureIndex();
+			index = m_Model.textures[index].source;
+			pModelMaterial->normalTexturePath = m_Model.images[index].uri;
+		}
+		 
+		pModelMaterial->alphaMode = material.alphaMode;
+		pModelMaterial->alphaCutOff = (float)material.alphaCutoff;
+		pModelMaterial->doubleSided = material.doubleSided;
+
+		m_Materials.insert(material.name, std::move(pModelMaterial));
+
+	}
 
 }
 
