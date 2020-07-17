@@ -17,7 +17,7 @@ namespace ng {
 		eTranslucent
 	};
 
-	class Model : SceneNode {
+	class Model3D : SceneNode3D {
 	public:
 		Model(std::string identifier);
 

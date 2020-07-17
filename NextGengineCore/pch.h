@@ -1,5 +1,6 @@
 #pragma once
 
+
 // VULKAN
 #define VK_ENABLE_BETA_EXTENSIONS
 #include <vulkan/vulkan.hpp>
@@ -10,8 +11,12 @@
 #include <spirv-headers/spirv.hpp11>
 #endif
 
+
+
+
 // GLFW
 #include <GLFW/glfw3.h>
+
 
 
 // GLM
@@ -20,12 +25,13 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+
+
 // TINYGLTF
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NO_EXTERNAL_IMAGE
 #define TINYGLTF_NOEXCEPTION
 #include <tiny_gltf.h>
-
 
 // STL
 #include <filesystem>

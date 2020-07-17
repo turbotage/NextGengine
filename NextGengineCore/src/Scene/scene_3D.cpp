@@ -54,6 +54,8 @@ void ng::Scene3D::loadMaterials() {
 
 		m_Materials.insert(material.name, std::move(pModelMaterial));
 
+		
+
 	}
 
 }

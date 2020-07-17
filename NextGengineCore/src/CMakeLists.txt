@@ -20,7 +20,7 @@ set(MEMORY_SOURCES "Memory/abstract_allocators.cpp"
 set(THREADING_SOURCES "Threading/thread_pool.cpp"
 						"Threading/thread_safe_queue.cpp")
 
-set(SCENE_SOURCES "Scene/scene.cpp"
+set(SCENE_SOURCES "Scene/scene_3D.cpp"
 					"Scene/model.cpp")
 
 set(RESOURCE_SOURCES "Resources/resource_manager.cpp"
