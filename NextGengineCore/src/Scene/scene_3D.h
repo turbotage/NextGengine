@@ -52,9 +52,9 @@ namespace ng {
 		SceneGraph3D& operator=(SceneGraph3D&) = delete;
 	private:
 		ResourceManager& m_Manager;
-		Scene& m_Scene;
+		Scene3D& m_Scene;
 
-		std::unique_ptr<SceneNode> m_RootNode;
+		std::unique_ptr<SceneNode3D> m_RootNode;
 
 	};
 
@@ -70,8 +70,8 @@ namespace ng {
 		SceneNode3D(const SceneNode3D&) = delete;
 		SceneNode3D& operator=(SceneNode3D&) = delete;
 
-		friend class Scene;
-		friend class SceneNode;
+		friend class Scene3D;
+		friend class SceneNode3D;
 	private:
 		SceneNode3D& m_Parent;
 		std::vector<std::unique_ptr<SceneNode3D>> m_Children;
@@ -82,7 +82,7 @@ namespace ng {
 		glm::mat4 m_Matrix;
 
 		// The mesh consists of some primitives
-		std::vector<ModelPrimitive> m_Primitives; // Mesh
+		std::vector<Model3DPrimitive> m_Primitives; // Mesh
 		std::vector<std::shared_ptr<ModelMaterial>> m_Materials;
 
 

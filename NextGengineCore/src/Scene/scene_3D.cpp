@@ -66,11 +66,45 @@ void ng::Scene3D::loadNodes()
 
 void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 {
+	node.m_ID = gltfNode.name;
+
+	// Get the local node matrix
+	// It's either made up from translation, rotation, scale or a 4x4 matrix
+	node.m_Matrix = glm::mat4(1.0f);
+	if (gltfNode.translation.size() == 3) {
+		node.m_Matrix = glm::translate(node.matrix, glm::vec3(glm::make_vec3(gltfNode.translation.data())));
+	}
+	if (gltfNode.rotation.size() == 4) {
+		glm::quat q = glm::make_quat(gltfNode.rotation.data());
+		node.m_Matrix *= glm::mat4(q);
+	}
+	if (gltfNode.scale.size() == 3) {
+		node.m_Matrix = glm::scale(node.matrix, glm::vec3(glm::make_vec3(gltfNode.scale.data())));
+	}
+	if (gltfNode.matrix.size() == 16) {
+		node.m_Matrix = glm::make_mat4x4(gltfNode.matrix.data());
+	};
+
+	// if the node has children we should load them
+	for (size_t i = 0; i < gltfNode.children.size(); ++i) {
+		tinygltf::Node childGLTFNode = m_GLTFModel.nodes[gltfNode.children[i]];
+		std::unique_ptr<SceneNode3D> childNode = std::make_unique(node, childGLTFNode.name);
+		node.m_Children.emplace_back(std::move(child));
+		loadNode(*child, childGLTFNode);
+	}
+
+	if (gltfNode.mesh > -1) {
+		const tinygltf::Mesh mesh = m_GLTFModel.meshes[gltfNode.mesh];
+
+		for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+			const tinygltf::Primitive& primitive = mesh.primitives[i];
+			
+		}
+
+	}
 
 }
 
-ng::Scene::Scene(std::string& gltfFilename)
-{
 
 
-}
+

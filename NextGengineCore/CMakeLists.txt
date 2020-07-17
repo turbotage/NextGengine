@@ -55,6 +55,6 @@ target_link_libraries(NextGengineCore PUBLIC ktx)
 target_include_directories(NextGengineCore PUBLIC "lib/tinygltf")
 
 # SET C++ STANDARD
-target_compile_features(NextGengineCore PUBLIC cxx_std_17)
+target_compile_features(NextGengineCore PUBLIC cxx_std_20)
 set_target_properties(NextGengineCore PROPERTIES CXX_EXTENSIONS OFF)
 

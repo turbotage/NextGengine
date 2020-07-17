@@ -1,15 +1,33 @@
 #pragma once
 
-#include "pch.h"
+#include <pch.h>
+
+#include <concepts>
 
 // Helver functions
 namespace ng {
 
-	struct Vertex2D { glm::vec2 vertex; };
-	struct Vertex2D_3C { glm::vec2 vertex; glm::vec3 color; };
-	struct Vertex3D { glm::vec3 vertex; };
+	template<typename T>
+	concept VertexType = requires(T) {
 
-	struct Uniform2D { glm::mat4 model; };
+	};
+
+	struct Vertex2D_1 { glm::vec2 vertex; };
+	struct Vertex2D_2 { glm::vec2 vertex; glm::vec3 color; };
+
+	struct Vertex3D_1 { glm::vec3 vertex; };
+	struct Vertex3D_2 { glm::vec3 vertex; glm::vec2 uv; };
+	struct Vertex3D_3 { glm::vec3 vertex; glm::vec3 normal; };
+	struct Vertex3D_4 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; };
+	struct Vertex3D_4 { glm::vec3 vertex; glm::vec3 normal; glm::vec3 tangent; };
+	struct Vertex3D_5 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; glm::vec3 tangent; };
+	struct Vertex3D_6 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; glm::vec3 color; glm::vec3 tangent; };
+
+
+	struct Uniform2D_1 { glm::mat4 model; };
+	//struct Uniform2D_2 { glm::mat4; glm::vec3 color; };
+
+	struct Uniform3D_1 { glm::mat4 model; };
 
 
 	// Returns a string to the shader directory
@@ -42,9 +60,10 @@ namespace ng {
 
 	// STUPID
 	// Get floats from bytes
+	/*
 	std::vector<float> getFloatsFromBytes(std::vector<uint8> bytes);
 	// Get Vertex2D from bytes
-	std::vector<Vertex2D> getVertex2DsFromBytes(std::vector<uint8> bytes);
+	std::vector<Vertex2D> getVertexFromBytes(std::vector<uint8> bytes);
 	// Get Vertex2D_3C from bytes
 	std::vector<Vertex2D_3C> getVertex2D_3CsFromBytes(std::vector<uint8> bytes);
 	// Get Vertex3D from bytes
@@ -57,6 +76,7 @@ namespace ng {
 	std::vector<uint8> getBytesFromVertex2D_3Cs(std::vector<Vertex2D_3C> vertices);
 	// Get bytes from Vertex3D
 	std::vector<uint8> getBytesFromVertex3Ds(std::vector<Vertex3D> vertices);
+	*/
 
 }
 

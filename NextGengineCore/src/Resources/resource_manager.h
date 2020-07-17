@@ -62,14 +62,18 @@ namespace ng {
 		//std::shared_ptr<StagingBuffer> getStagingBuffer(std::string filename);
 
 		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string& filename);
+		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string& m_ID);
+
 		std::shared_ptr<IndexBuffer> getIndexBuffer(std::string& filename);
 		std::shared_ptr<UniformBuffer> getUniformBuffer(std::string& filename);
 		std::shared_ptr<Texture2D> getTexture2D(std::string& filename);
 		
+		/*
 		void eraseVertexBuffer(std::string& filename);
 		void eraseIndexBuffer(std::string& filename);
 		void eraseUniformBuffer(std::string& filename);
 		void eraseTexture2D(std::string& filename);
+		*/
 
 		void giveStagingBuffer(VertexBuffer& vertexBuffer);
 		void giveStagingBuffer(IndexBuffer& indexBuffer);

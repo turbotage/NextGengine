@@ -132,7 +132,7 @@ std::vector<uint8> ng::loadNGFile(const std::string& filename)
 
 
 
-
+/*
 std::vector<float> ng::getFloatsFromBytes(std::vector<uint8> bytes)
 {
 	std::vector<float> ret;
@@ -229,12 +229,7 @@ std::vector<uint8> ng::getBytesFromVertex3Ds(std::vector<Vertex3D> vertices)
 	return bytes;
 }
 
-
-
-
-
-
-
+*/
 
 
 
