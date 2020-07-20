@@ -54,6 +54,8 @@
 
 #include <mutex>
 #include <thread>
+#include <concepts>
+#include <type_traits>
 
 
 // NEXT-GENGINE DEFINITION

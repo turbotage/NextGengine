@@ -2,15 +2,23 @@
 
 #include <pch.h>
 
-#include <concepts>
 
-// Helver functions
+// Helper functions
 namespace ng {
 
-	template<typename T>
-	concept VertexType = requires(T) {
+	namespace cpp20 {
 
-	};
+		template<class T, class U>
+		concept SameHelper = std::is_same_v<T, U>;
+
+		template<class T, class U>
+		concept same_as = SameHelper<T, U> && SameHelper<U, T>;
+
+	}
+
+
+
+
 
 	struct Vertex2D_1 { glm::vec2 vertex; };
 	struct Vertex2D_2 { glm::vec2 vertex; glm::vec3 color; };
@@ -19,15 +27,30 @@ namespace ng {
 	struct Vertex3D_2 { glm::vec3 vertex; glm::vec2 uv; };
 	struct Vertex3D_3 { glm::vec3 vertex; glm::vec3 normal; };
 	struct Vertex3D_4 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; };
-	struct Vertex3D_4 { glm::vec3 vertex; glm::vec3 normal; glm::vec3 tangent; };
-	struct Vertex3D_5 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; glm::vec3 tangent; };
-	struct Vertex3D_6 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; glm::vec3 color; glm::vec3 tangent; };
+	struct Vertex3D_5 { glm::vec3 vertex; glm::vec3 normal; glm::vec3 tangent; };
+	struct Vertex3D_6 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; glm::vec3 tangent; };
+	struct Vertex3D_7 { glm::vec3 vertex; glm::vec3 normal; glm::vec2 uv; glm::vec3 color; glm::vec3 tangent; };
+
+	
+	template<typename T>
+	concept VertexType = cpp20::same_as<T, Vertex2D_1> || cpp20::same_as<T, Vertex2D_2> ||
+		cpp20::same_as<T, Vertex3D_1> || cpp20::same_as<T, Vertex3D_2> || cpp20::same_as<T, Vertex3D_3> ||
+		cpp20::same_as<T, Vertex3D_4> || cpp20::same_as<T, Vertex3D_5> || cpp20::same_as<T, Vertex3D_6> ||
+		cpp20::same_as<T, Vertex3D_7>;
+	
+	template<typename T>
+	concept IndexType = cpp20::same_as<T, int8> || cpp20::same_as<T, uint8> ||
+		cpp20::same_as<T, int16> || cpp20::same_as<T, uint16> ||
+		cpp20::same_as<T, uint32> || cpp20::same_as<T, float>;
 
 
 	struct Uniform2D_1 { glm::mat4 model; };
-	//struct Uniform2D_2 { glm::mat4; glm::vec3 color; };
+	struct Uniform2D_2 { glm::mat4 model; glm::vec3 color; };
 
 	struct Uniform3D_1 { glm::mat4 model; };
+
+	template<typename T>
+	concept UniformType = cpp20::same_as<T, Uniform2D_1> || cpp20::same_as<T, Uniform2D_2> || cpp20::same_as<T, Uniform3D_1>;
 
 
 	// Returns a string to the shader directory

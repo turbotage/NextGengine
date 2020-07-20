@@ -12,9 +12,9 @@
 
 // <==================== VULKAN BUFFER ==========================>
 
-std::shared_ptr<ngv::VulkanBuffer> ngv::VulkanBuffer::make(const VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer)
+std::unique_ptr<ngv::VulkanBuffer> ngv::VulkanBuffer::make(const VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer)
 {
-	return std::shared_ptr<VulkanBuffer>(new VulkanBuffer(device, info, hostBuffer));
+	return std::unique_ptr<VulkanBuffer>(new VulkanBuffer(device, info, hostBuffer));
 }
 
 vk::Buffer ngv::VulkanBuffer::buffer() const
@@ -119,7 +119,7 @@ void ngv::VulkanBuffer::updateLocal(const void* value, vk::DeviceSize size) cons
 	spt->unlockPageMutex();
 }
 
-void ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
+void ngv::VulkanBuffer::upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const void* value, vk::DeviceSize size)
 {
 #ifndef NDEBUG
 	if (size == 0) {
@@ -133,10 +133,10 @@ void ngv::VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffe
 
 	using buf = vk::BufferUsageFlagBits;
 	using pfb = vk::MemoryPropertyFlagBits;
-	stagingBuffer->updateLocal(value, size);
+	stagingBuffer.updateLocal(value, size);
 
 	vk::BufferCopy bc{ 0, 0, size};
-	cb.copyBuffer(stagingBuffer->buffer(), *m_Buffer, bc);
+	cb.copyBuffer(stagingBuffer.buffer(), *m_Buffer, bc);
 }
 
 void ngv::VulkanBuffer::barrier(vk::CommandBuffer cb, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask, vk::DependencyFlags dependencyFlags, vk::AccessFlags srcAccessMask, vk::AccessFlags dstAccessMask, uint32 srcQueueFamilyIndex, uint32 dstQueueFamilyIndex) const
@@ -262,9 +262,9 @@ ngv::VulkanSparseBuffer::VulkanSparseBuffer(VulkanDevice& device, const vk::Buff
 
 // <=============== VULKAN IMAGE ========================>
 
-std::shared_ptr<ngv::VulkanImage> ngv::VulkanImage::make(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage)
+std::unique_ptr<ngv::VulkanImage> ngv::VulkanImage::make(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage)
 {
-	return std::shared_ptr<VulkanImage>(new VulkanImage(device, info, hostImage));
+	return std::unique_ptr<VulkanImage>(new VulkanImage(device, info, hostImage));
 }
 
 void ngv::VulkanImage::createImageView(vk::ImageViewType viewType, vk::ImageAspectFlags aspectMask)
@@ -347,12 +347,12 @@ void ngv::VulkanImage::copy(vk::CommandBuffer cb, vk::Buffer buffer, uint32 mipL
 	cb.copyBufferToImage(buffer, *m_Image, vk::ImageLayout::eTransferDstOptimal, region);
 }
 
-void ngv::VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size)
+void ngv::VulkanImage::upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const void* value, vk::DeviceSize size)
 {
-	stagingBuffer->updateLocal(value, size);
+	stagingBuffer.updateLocal(value, size);
 
 	auto bp = ngv::getBlockParams(m_ImageCreateInfo.format);
-	vk::Buffer buf = stagingBuffer->buffer();
+	vk::Buffer buf = stagingBuffer.buffer();
 	uint32 offset = 0;
 	for (uint32 mipLevel = 0; mipLevel != m_ImageCreateInfo.mipLevels; ++mipLevel) {
 		auto width = mipScale(m_ImageCreateInfo.extent.width, mipLevel);
@@ -500,9 +500,9 @@ ngv::VulkanImage::VulkanImage(const VulkanDevice& device, const vk::ImageCreateI
 
 
 // <=============================== VERTEX BUFFER ====================================>
-std::shared_ptr<ngv::VulkanVertexBuffer> ngv::VulkanVertexBuffer::make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+std::unique_ptr<ngv::VulkanVertexBuffer> ngv::VulkanVertexBuffer::make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
 {
-	return std::shared_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(device, size, hostBuffer));
+	return std::unique_ptr<VulkanVertexBuffer>(new VulkanVertexBuffer(device, size, hostBuffer));
 }
 
 ngv::VulkanVertexBuffer::VulkanVertexBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
@@ -526,9 +526,9 @@ ngv::VulkanVertexBuffer::VulkanVertexBuffer(const VulkanDevice& device, vk::Devi
 
 
 // <====================================== INDEX BUFFER ======================================>
-std::shared_ptr<ngv::VulkanIndexBuffer> ngv::VulkanIndexBuffer::make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+std::unique_ptr<ngv::VulkanIndexBuffer> ngv::VulkanIndexBuffer::make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
 {
-	return std::shared_ptr<VulkanIndexBuffer>(new VulkanIndexBuffer(device, size, hostBuffer));
+	return std::unique_ptr<VulkanIndexBuffer>(new VulkanIndexBuffer(device, size, hostBuffer));
 }
 
 ngv::VulkanIndexBuffer::VulkanIndexBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
@@ -551,9 +551,9 @@ ngv::VulkanIndexBuffer::VulkanIndexBuffer(const VulkanDevice& device, vk::Device
 
 
 // <===================================== UNIFORM BUFFER ===========================================>
-std::shared_ptr<ngv::VulkanUniformBuffer> ngv::VulkanUniformBuffer::make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
+std::unique_ptr<ngv::VulkanUniformBuffer> ngv::VulkanUniformBuffer::make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
 {
-	return std::shared_ptr<VulkanUniformBuffer>(new VulkanUniformBuffer(device, size, hostBuffer));
+	return std::unique_ptr<VulkanUniformBuffer>(new VulkanUniformBuffer(device, size, hostBuffer));
 }
 
 ngv::VulkanUniformBuffer::VulkanUniformBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer)
@@ -577,9 +577,9 @@ ngv::VulkanUniformBuffer::VulkanUniformBuffer(const VulkanDevice& device, vk::De
 
 
 // <===================================== TEXTURE 2D =================================================>
-std::shared_ptr<ngv::VulkanTexture2D> ngv::VulkanTexture2D::make(const VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags, bool hostImage)
+std::unique_ptr<ngv::VulkanTexture2D> ngv::VulkanTexture2D::make(const VulkanDevice& device, uint32 width, uint32 height, uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags, bool hostImage)
 {
-	return std::shared_ptr<VulkanTexture2D>(new VulkanTexture2D(device, width, height, mipLevels, format, sampleFlags, hostImage));
+	return std::unique_ptr<VulkanTexture2D>(new VulkanTexture2D(device, width, height, mipLevels, format, sampleFlags, hostImage));
 }
 
 void ngv::VulkanTexture2D::createImageView()
@@ -618,9 +618,9 @@ ngv::VulkanTexture2D::VulkanTexture2D(const VulkanDevice& device, uint32 width, 
 
 
 // <================================= TEXTURE CUBE =======================================================>
-std::shared_ptr<ngv::VulkanTextureCube> ngv::VulkanTextureCube::make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format, uint32 mipLevels, vk::SampleCountFlagBits sampleFlags, bool hostImage)
+std::unique_ptr<ngv::VulkanTextureCube> ngv::VulkanTextureCube::make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format, uint32 mipLevels, vk::SampleCountFlagBits sampleFlags, bool hostImage)
 {
-	return std::shared_ptr<VulkanTextureCube>(new VulkanTextureCube(device, width, height, format, mipLevels, sampleFlags, hostImage));
+	return std::unique_ptr<VulkanTextureCube>(new VulkanTextureCube(device, width, height, format, mipLevels, sampleFlags, hostImage));
 }
 
 void ngv::VulkanTextureCube::createImageView()
@@ -659,10 +659,10 @@ ngv::VulkanTextureCube::VulkanTextureCube(const VulkanDevice& device, uint32 wid
 
 
 // <===================================== DEPTH STENCIL ================================================>
-std::shared_ptr<ngv::VulkanDepthStencilImage> ngv::VulkanDepthStencilImage::make(const VulkanDevice& device, uint32 width,
+std::unique_ptr<ngv::VulkanDepthStencilImage> ngv::VulkanDepthStencilImage::make(const VulkanDevice& device, uint32 width,
 	uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
 {
-	return std::shared_ptr<VulkanDepthStencilImage>(new VulkanDepthStencilImage(device, width, height, format, sampleFlags));
+	return std::unique_ptr<VulkanDepthStencilImage>(new VulkanDepthStencilImage(device, width, height, format, sampleFlags));
 }
 
 void ngv::VulkanDepthStencilImage::createImageView()
@@ -700,9 +700,9 @@ ngv::VulkanDepthStencilImage::VulkanDepthStencilImage(const VulkanDevice& device
 
 
 // <========================================= COLOR ATTACHMENT ========================================>
-std::shared_ptr<ngv::VulkanColorAttachmentImage> ngv::VulkanColorAttachmentImage::make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
+std::unique_ptr<ngv::VulkanColorAttachmentImage> ngv::VulkanColorAttachmentImage::make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format, vk::SampleCountFlagBits sampleFlags)
 {
-	return std::shared_ptr<VulkanColorAttachmentImage>(new VulkanColorAttachmentImage(device, width, height, format, sampleFlags));
+	return std::unique_ptr<VulkanColorAttachmentImage>(new VulkanColorAttachmentImage(device, width, height, format, sampleFlags));
 }
 
 void ngv::VulkanColorAttachmentImage::createImageView()

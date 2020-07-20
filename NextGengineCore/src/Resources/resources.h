@@ -86,7 +86,6 @@ namespace ng {
 
 
 
-
 	class VertexBuffer : public Resource {
 	public:
 
@@ -115,10 +114,12 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size = 0;
 
+		std::function<std::vector<uint8>()> m_LoadVertexBytes;
+
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<VertexBufferPage> m_pVertexPage = nullptr;
 
-		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::unique_ptr<ng::StagingBuffer> m_pStagingBuffer;
 	};
 	
 
@@ -164,10 +165,12 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size = 0;
 
+		std::function<std::vector<uint8>()> m_LoadIndexBytes;
+
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<IndexBufferPage> m_pIndexPage = nullptr;
 
-		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::unique_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 
@@ -211,10 +214,12 @@ namespace ng {
 		std::string m_ID;
 		vk::DeviceSize m_Size = 0;
 
+		std::function<std::vector<uint8>()> m_LoadUniformBytes;
+
 		std::unique_ptr<AbstractFreeListAllocation> m_pAllocation;
 		ng::raw_ptr<UniformBufferPage> m_pUniformPage = nullptr;
 
-		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
+		std::unique_ptr<ng::StagingBuffer> m_pStagingBuffer;
 
 	};
 
@@ -264,8 +269,9 @@ namespace ng {
 
 		std::shared_ptr<ngv::VulkanTexture2D> m_pVulkanTexture;
 
-		std::shared_ptr<ng::StagingBuffer> m_pStagingBuffer;
-		ktxTexture* m_KTXTexture = nullptr;
+		std::unique_ptr<ng::StagingBuffer> m_pStagingBuffer;
+
+		ng::raw_ptr<ktxTexture> m_pKTXTexture = nullptr;
 
 	};
 

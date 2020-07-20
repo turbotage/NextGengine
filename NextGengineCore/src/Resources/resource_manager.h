@@ -55,25 +55,24 @@ namespace ng {
 	class ResourceManager {
 	public:
 
-		ResourceManager(ngv::VulkanAllocator& allocator, ngv::VulkanDevice& device, ResourceStrategy strategy);
+		ResourceManager(ngv::VulkanAllocator& allocator, ngv::VulkanDevice& device, ResourceStrategy& strategy);
 
 		const ngv::VulkanDevice& vulkanDevice() const;
 
 		//std::shared_ptr<StagingBuffer> getStagingBuffer(std::string filename);
 
-		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string& filename);
-		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string& m_ID);
-
-		std::shared_ptr<IndexBuffer> getIndexBuffer(std::string& filename);
-		std::shared_ptr<UniformBuffer> getUniformBuffer(std::string& filename);
-		std::shared_ptr<Texture2D> getTexture2D(std::string& filename);
+		std::shared_ptr<VertexBuffer> getVertexBuffer(std::string& m_ID, std::function<std::vector<uint8>()> loadVertexBytes);
+		std::shared_ptr<IndexBuffer> getIndexBuffer(std::string& m_ID, std::function<std::vector<uint8>()> loadIndexBytes);
+		std::shared_ptr<UniformBuffer> getUniformBuffer(std::string& m_ID, std::function<std::vector<uint8>()> loadUniformBytes);
+		// m_ID must be the filename relative to the resource path
+		std::shared_ptr<Texture2D> getTexture2D(std::string& m_ID);
 		
-		/*
-		void eraseVertexBuffer(std::string& filename);
-		void eraseIndexBuffer(std::string& filename);
-		void eraseUniformBuffer(std::string& filename);
-		void eraseTexture2D(std::string& filename);
-		*/
+
+		void removeVertexBuffer(VertexBuffer& vertexBuffer);
+		void removeIndexBuffer(IndexBuffer& indexBuffer);
+		void removeUniformBuffer(UniformBuffer& uniformBuffer);
+		void removeTexture2D(Texture2D& texture2D);
+
 
 		void giveStagingBuffer(VertexBuffer& vertexBuffer);
 		void giveStagingBuffer(IndexBuffer& indexBuffer);
@@ -97,7 +96,7 @@ namespace ng {
 
 	private: // interface implementations
 
-		std::shared_ptr<StagingBuffer> mGetStagingBuffer(std::string id, uint64 size);
+		std::unique_ptr<StagingBuffer> mGetStagingBuffer(std::string id, uint64 size);
 
 		void mGiveStagingBuffer(VertexBuffer& vertexBuffer);
 		void mGiveStagingBuffer(IndexBuffer& indexBuffer);
@@ -132,7 +131,6 @@ namespace ng {
 		bool mhGiveStaging(Texture2D& texture2D);
 		bool mhGiveStagingBySwapping(Texture2D& texture2D);
 		bool mhGiveDeviceBySwapping(Texture2D& texture2D, vk::CommandBuffer cb);
-
 
 
 
@@ -191,8 +189,6 @@ namespace ng {
 
 
 	};
-
-
 
 
 
@@ -344,8 +340,6 @@ namespace ng {
 		std::shared_ptr<ngv::VulkanUniformBuffer> m_pUniformBuffer;
 		std::unique_ptr<AbstractFreeListAllocator> m_pAllocator;
 	};
-
-
 
 
 }

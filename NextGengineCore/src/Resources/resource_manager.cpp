@@ -14,8 +14,10 @@
 #include <ktxvulkan.h>
 
 // <==================================== RESOURCE MANAGER ==========================================>
+
 //PUBLIC
-ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::VulkanDevice& device, ResourceStrategy strategy)
+
+ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::VulkanDevice& device, ResourceStrategy& strategy)
 	: m_Allocator(allocator), m_Device(device), m_Strategy(strategy)
 {
 	// Setup Staging Buffer Pages
@@ -64,59 +66,116 @@ const ngv::VulkanDevice& ng::ResourceManager::vulkanDevice() const
 	return m_Device;
 }
 
-std::shared_ptr<ng::VertexBuffer> ng::ResourceManager::getVertexBuffer(std::string& filename)
+std::shared_ptr<ng::VertexBuffer> ng::ResourceManager::getVertexBuffer(std::string& m_ID, std::function<std::vector<uint8>()> loadVertexBytes)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	auto it = m_Buffers.vertexBuffersByID.find(filename);
+	auto it = m_Buffers.vertexBuffersByID.find(m_ID);
 	if (it != m_Buffers.vertexBuffersByID.end()) {
 		return it->second.lock();
 	}
-	std::shared_ptr<VertexBuffer> ret = std::shared_ptr<VertexBuffer>(new VertexBuffer(*this, filename));
-	m_Buffers.vertexBuffersByID.emplace(filename, ret);
+	std::shared_ptr<VertexBuffer> ret = std::shared_ptr<VertexBuffer>(new VertexBuffer(*this, m_ID));
+	m_Buffers.vertexBuffersByID.emplace(m_ID, ret);
+	ret->m_LoadVertexBytes = loadVertexBytes;
 	return ret;
 }
 
-std::shared_ptr<ng::IndexBuffer> ng::ResourceManager::getIndexBuffer(std::string& filename)
+std::shared_ptr<ng::IndexBuffer> ng::ResourceManager::getIndexBuffer(std::string& m_ID, std::function<std::vector<uint8>()> loadIndexBytes)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	auto it = m_Buffers.indexBuffersByID.find(filename);
+	auto it = m_Buffers.indexBuffersByID.find(m_ID);
 	if (it != m_Buffers.indexBuffersByID.end()) {
 		return it->second.lock();
 	}
-	std::shared_ptr<IndexBuffer> ret = std::shared_ptr<IndexBuffer>(new IndexBuffer(*this, filename));
-	m_Buffers.indexBuffersByID.emplace(filename, ret);
+	std::shared_ptr<IndexBuffer> ret = std::shared_ptr<IndexBuffer>(new IndexBuffer(*this, m_ID));
+	m_Buffers.indexBuffersByID.emplace(m_ID, ret);
+	ret->m_LoadIndexBytes = loadIndexBytes;
 	return ret;
 }
 
-std::shared_ptr<ng::UniformBuffer> ng::ResourceManager::getUniformBuffer(std::string& filename)
+std::shared_ptr<ng::UniformBuffer> ng::ResourceManager::getUniformBuffer(std::string& m_ID, std::function<std::vector<uint8>()> loadUniformBytes)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	auto it = m_Buffers.uniformBuffersByID.find(filename);
+	auto it = m_Buffers.uniformBuffersByID.find(m_ID);
 	if (it != m_Buffers.uniformBuffersByID.end()) {
 		return it->second.lock();
 	}
-	std::shared_ptr<UniformBuffer> ret = std::shared_ptr<UniformBuffer>(new UniformBuffer(*this, filename));
-	m_Buffers.uniformBuffersByID.emplace(filename, ret);
+	std::shared_ptr<UniformBuffer> ret = std::shared_ptr<UniformBuffer>(new UniformBuffer(*this, m_ID));
+	m_Buffers.uniformBuffersByID.emplace(m_ID, ret);
+	ret->m_LoadUniformBytes = loadUniformBytes;
 	return ret;
 }
 
-std::shared_ptr<ng::Texture2D> ng::ResourceManager::getTexture2D(std::string& filename)
+std::shared_ptr<ng::Texture2D> ng::ResourceManager::getTexture2D(std::string& m_ID)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	auto it = m_Textures.texture2DsByID.find(filename);
+	auto it = m_Textures.texture2DsByID.find(m_ID);
 	if (it != m_Textures.texture2DsByID.end()) {
 		return it->second.lock();
 	}
-	std::shared_ptr<Texture2D> ret = std::shared_ptr<Texture2D>(new Texture2D(*this, filename));
+	std::shared_ptr<Texture2D> ret = std::shared_ptr<Texture2D>(new Texture2D(*this, m_ID));
 
 	mGiveStagingBuffer(*ret);
-	m_Textures.texture2DsByID.emplace(filename, ret);
+	m_Textures.texture2DsByID.emplace(m_ID, ret);
 	return ret;
 }
+
+
+
+
+
+void ng::ResourceManager::removeVertexBuffer(VertexBuffer& vertexBuffer)
+{
+	auto it = m_Buffers.vertexBuffersByID.find(vertexBuffer.m_ID);
+	if (auto vb = it->second.lock()) {
+		return;
+	}
+	else {
+		m_Buffers.vertexBuffersByID.erase(vertexBuffer.m_ID);
+		m_Buffers.vertexResidencyMaps[vertexBuffer.m_Residency][vertexBuffer.m_RequiredResidency].erase(vertexBuffer.m_ID);
+	}
+}
+
+void ng::ResourceManager::removeIndexBuffer(IndexBuffer& indexBuffer)
+{
+	auto it = m_Buffers.indexBuffersByID.find(indexBuffer.m_ID);
+	if (auto ib = it->second.lock()) {
+		return;
+	}
+	else {
+		m_Buffers.indexBuffersByID.erase(indexBuffer.m_ID);
+		m_Buffers.indexResidencyMaps[indexBuffer.m_Residency][indexBuffer.m_RequiredResidency].erase(indexBuffer.m_ID);
+	}
+}
+
+void ng::ResourceManager::removeUniformBuffer(UniformBuffer& uniformBuffer)
+{
+	auto it = m_Buffers.uniformBuffersByID.find(uniformBuffer.m_ID);
+	if (auto ub = it->second.lock()) {
+		return;
+	}
+	else {
+		m_Buffers.uniformBuffersByID.erase(uniformBuffer.m_ID);
+		m_Buffers.uniformResidencyMaps[uniformBuffer.m_Residency][uniformBuffer.m_RequiredResidency].erase(uniformBuffer.m_ID);
+	}
+}
+
+void ng::ResourceManager::removeTexture2D(Texture2D& texture2D)
+{
+	auto it = m_Textures.texture2DsByID.find(texture2D.m_ID);
+	if (auto tx = it->second.lock()) {
+		return;
+	}
+	else {
+		m_Textures.texture2DsByID.erase(texture2D.m_ID);
+		m_Textures.texture2DResidencyMaps[texture2D.m_Residency][texture2D.m_RequiredResidency].erase(texture2D.m_ID);
+	}
+}
+
+
 
 
 
@@ -221,10 +280,11 @@ void ng::ResourceManager::setStagingBufferNotRequired(Texture2D& texture2D)
 
 
 // PRIVATE
+
 //should always be used in conjunction with uploadToStagingBuffer, no resource should be able to have a staging buffer that doesn't hold it's stagingData
-std::shared_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::string id, uint64 size)
+std::unique_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::string id, uint64 size)
 {
-	std::shared_ptr<StagingBuffer> ret = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, id, size));
+	std::unique_ptr<StagingBuffer> ret = std::unique_ptr<StagingBuffer>(new StagingBuffer(*this, id, size));
 
 	for (auto& page : m_BufferPages.stagingBufferPages) {
 		bool ok = page->allocate(*ret);
@@ -285,7 +345,7 @@ void ng::ResourceManager::mGiveStagingBuffer(VertexBuffer& vertexBuffer)
 		}
 	}
 	else {
-		auto bytes = ng::loadNGFile(vertexBuffer.m_ID);
+		auto bytes = vertexBuffer.m_LoadVertexBytes();
 		vertexBuffer.m_Size = bytes.size();
 		vertexBuffer.m_pStagingBuffer = mGetStagingBuffer(vertexBuffer.m_ID, vertexBuffer.m_Size);
 		mhUploadToStagingBuffer(*vertexBuffer.m_pStagingBuffer, bytes.data());
@@ -329,7 +389,7 @@ void ng::ResourceManager::mGiveStagingBuffer(IndexBuffer& indexBuffer)
 		}
 	}
 	else {
-		auto bytes = ng::loadNGFile(indexBuffer.m_ID);
+		auto bytes = indexBuffer.m_LoadIndexBytes();
 		indexBuffer.m_Size = bytes.size();
 		indexBuffer.m_pStagingBuffer = mGetStagingBuffer(indexBuffer.m_ID, indexBuffer.m_Size);
 		mhUploadToStagingBuffer(*indexBuffer.m_pStagingBuffer, bytes.data());
@@ -373,7 +433,7 @@ void ng::ResourceManager::mGiveStagingBuffer(UniformBuffer& uniformBuffer)
 		}
 	}
 	else {
-		auto bytes = ng::loadNGFile(uniformBuffer.m_ID);
+		auto bytes = uniformBuffer.m_LoadUniformBytes();
 		uniformBuffer.m_Size = bytes.size();
 		uniformBuffer.m_pStagingBuffer = mGetStagingBuffer(uniformBuffer.m_ID, uniformBuffer.m_Size);
 		mhUploadToStagingBuffer(*uniformBuffer.m_pStagingBuffer, bytes.data());
@@ -456,7 +516,7 @@ void ng::ResourceManager::mGiveStagingBuffer(Texture2D& texture2D)
 
 	// We will only arrive here if there wern't already a staging buffer
 final:
-	mhUploadToStagingBuffer(*texture2D.m_pStagingBuffer, (uint8*)ktxTexture_GetData(texture2D.m_KTXTexture));
+	mhUploadToStagingBuffer(*texture2D.m_pStagingBuffer, (uint8*)ktxTexture_GetData(texture2D.m_pKTXTexture));
 
 	m_Textures.texture2DResidencyMaps[(int)RD::eStagingResidency][(int)RD::eStagingResidency].emplace(texture2D.m_ID, &texture2D);
 	if (texture2D.m_RequiredResidency == (uint8)RD::eNoResidency) {
@@ -923,15 +983,15 @@ void ng::ResourceManager::mhUploadToDevice(Texture2D& texture2D, vk::CommandBuff
 	uint64 baseOffset = texture2D.m_pStagingBuffer->m_pAllocation->getOffset();
 	for (int i = 0; i < texture2D.m_MipLevels; ++i) {
 		ktx_size_t offset;
-		KTX_error_code result = ktxTexture_GetImageOffset(texture2D.m_KTXTexture, i, 0, 0, &offset);
+		KTX_error_code result = ktxTexture_GetImageOffset(texture2D.m_pKTXTexture, i, 0, 0, &offset);
 		assert(result == KTX_SUCCESS);
 
 		vk::BufferImageCopy bcR{};
 		bcR.imageSubresource.aspectMask = vk::ImageAspectFlagBits::eColor;
 		bcR.imageSubresource.mipLevel = i;
 		bcR.imageSubresource.layerCount = 1;
-		bcR.imageExtent.width = std::max(1u, texture2D.m_KTXTexture->baseWidth >> i);
-		bcR.imageExtent.height = std::max(1u, texture2D.m_KTXTexture->baseHeight >> i);
+		bcR.imageExtent.width = std::max(1u, texture2D.m_pKTXTexture->baseWidth >> i);
+		bcR.imageExtent.height = std::max(1u, texture2D.m_pKTXTexture->baseHeight >> i);
 		bcR.imageExtent.depth = 1;
 		bcR.bufferOffset = baseOffset + offset;
 
@@ -960,19 +1020,19 @@ bool ng::ResourceManager::mhGiveStaging(Texture2D& texture2D)
 {
 	using RD = ResourceResidencyFlagBits;
 	ktxResult result;
-	result = ktxTexture_CreateFromNamedFile(texture2D.m_ID.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &texture2D.m_KTXTexture);
-	ktx_uint8_t* ktxTextureData = ktxTexture_GetData(texture2D.m_KTXTexture);
-	ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(texture2D.m_KTXTexture);
-	texture2D.m_Width = texture2D.m_KTXTexture->baseWidth;
-	texture2D.m_Height = texture2D.m_KTXTexture->baseHeight;
-	texture2D.m_MipLevels = texture2D.m_KTXTexture->numLevels;
-	texture2D.m_Format = (vk::Format)ktxTexture_GetVkFormat(texture2D.m_KTXTexture);
+	result = ktxTexture_CreateFromNamedFile(texture2D.m_ID.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &texture2D.m_pKTXTexture);
+	ktx_uint8_t* ktxTextureData = ktxTexture_GetData(texture2D.m_pKTXTexture);
+	ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(texture2D.m_pKTXTexture);
+	texture2D.m_Width = texture2D.m_pKTXTexture->baseWidth;
+	texture2D.m_Height = texture2D.m_pKTXTexture->baseHeight;
+	texture2D.m_MipLevels = texture2D.m_pKTXTexture->numLevels;
+	texture2D.m_Format = (vk::Format)ktxTexture_GetVkFormat(texture2D.m_pKTXTexture);
 #ifndef NDEBUG
 	if (texture2D.m_Format == vk::Format::eUndefined) {
 		std::runtime_error("Texture had undefined format");
 	}
 #endif
-	texture2D.m_pStagingBuffer = std::shared_ptr<StagingBuffer>(new StagingBuffer(*this, texture2D.m_ID, ktxTextureSize));
+	texture2D.m_pStagingBuffer = std::unique_ptr<StagingBuffer>(new StagingBuffer(*this, texture2D.m_ID, ktxTextureSize));
 
 	// Basically reinvents mGetStagingBuffer
 	for (auto& page : m_BufferPages.stagingBufferPages) {

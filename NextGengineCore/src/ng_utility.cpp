@@ -1,6 +1,7 @@
 #include "ng_utility.h"
 
 
+
 std::string ng::getShaderDirectoryPath(std::string projectName)
 {
 	return ng::getAssetsDirectoryPath(projectName) + "\\shaders\\";
@@ -16,10 +17,6 @@ std::string ng::getAssetsDirectoryPath(std::string projectName)
 	subPath += "\\Assets\\";
 	return subPath;
 }
-
-
-
-
 
 
 typedef std::multimap<std::string, std::pair<std::string, int>> ShaderMultimap;
@@ -124,6 +121,32 @@ std::vector<uint8> ng::loadNGFile(const std::string& filename)
 {
 	return loadFile(filename);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

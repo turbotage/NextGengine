@@ -16,10 +16,11 @@ namespace ngv {
 
 
 	// Base Buffer Class
-	class VulkanBuffer : public ng::MakeConstructed {
+	MAKE_CONSTRUCTED
+	class VulkanBuffer {
 	public:
 
-		static std::shared_ptr<VulkanBuffer> make(const VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
+		static std::unique_ptr<VulkanBuffer> make(const VulkanDevice& device, const vk::BufferCreateInfo& info, bool hostBuffer = false);
 
 		~VulkanBuffer() = default; // allocations should be RAII deallocated
 		
@@ -42,13 +43,13 @@ namespace ngv {
 
 
 
-		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size);
+		void upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const void* value, vk::DeviceSize size);
 		
 		template<typename T>
-		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values);
+		void upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, std::vector<T>& values);
 		
 		template<typename T>
-		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value);
+		void upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const T& value);
 
 
 		void barrier(vk::CommandBuffer cb, vk::PipelineStageFlags srcStageMask, vk::PipelineStageFlags dstStageMask,
@@ -101,13 +102,13 @@ namespace ngv {
 	}
 
 	template<typename T>
-	inline void VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values)
+	inline void VulkanBuffer::upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, std::vector<T>& values)
 	{
 		upload(cb, stagingBuffer, (void*)values.data(), (uint64)values.size());
 	}
 
 	template<typename T>
-	inline void VulkanBuffer::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value)
+	inline void VulkanBuffer::upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const T& value)
 	{
 		upload(cb, stagingBuffer, (void*)&value, sizeof(value));
 	}
@@ -162,10 +163,11 @@ namespace ngv {
 
 
 	// Base Image Class
-	class VulkanImage : public ng::MakeConstructed {
+	MAKE_CONSTRUCTED
+	class VulkanImage {
 	public:
 
-		static std::shared_ptr<VulkanImage> make(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
+		static std::unique_ptr<VulkanImage> make(const VulkanDevice& device, const vk::ImageCreateInfo& info, bool hostImage = false);
 
 		~VulkanImage() = default;
 
@@ -189,13 +191,13 @@ namespace ngv {
 			uint32 arrayLayer, uint32 width, uint32 height, uint32 depth, uint32 offset);
 
 
-		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const void* value, vk::DeviceSize size);
+		void upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const void* value, vk::DeviceSize size);
 
 		template<typename T>
-		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values);
+		void upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, std::vector<T>& values);
 
 		template<typename T>
-		void upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value);
+		void upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const T& value);
 
 		void setLayout(vk::CommandBuffer cb, vk::ImageLayout newLayout, vk::ImageAspectFlags aspectMask = vk::ImageAspectFlagBits::eColor);
 
@@ -237,13 +239,13 @@ namespace ngv {
 	};
 
 	template<typename T>
-	inline void VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, std::vector<T>& values)
+	inline void VulkanImage::upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, std::vector<T>& values)
 	{
 		upload(cb, stagingBuffer, (void*)values.data(), (uint32)values.size());
 	}
 
 	template<typename T>
-	inline void VulkanImage::upload(vk::CommandBuffer cb, std::shared_ptr<VulkanBuffer> stagingBuffer, const T& value)
+	inline void VulkanImage::upload(vk::CommandBuffer cb, VulkanBuffer& stagingBuffer, const T& value)
 	{
 		upload(cb, stagingBuffer, (void*)&value, sizeof(T));
 	}
@@ -259,7 +261,7 @@ namespace ngv {
 	class VulkanVertexBuffer : public VulkanBuffer {
 	public:
 
-		static std::shared_ptr<VulkanVertexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::unique_ptr<VulkanVertexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
 		VulkanVertexBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -280,7 +282,7 @@ namespace ngv {
 	class VulkanIndexBuffer : public VulkanBuffer {
 	public:
 
-		static std::shared_ptr<VulkanIndexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::unique_ptr<VulkanIndexBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
 		VulkanIndexBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -299,7 +301,7 @@ namespace ngv {
 	class VulkanUniformBuffer : public VulkanBuffer {
 	public:
 
-		static std::shared_ptr<VulkanUniformBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
+		static std::unique_ptr<VulkanUniformBuffer> make(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
 
 	private:
 		VulkanUniformBuffer(const VulkanDevice& device, vk::DeviceSize size, bool hostBuffer = false);
@@ -318,7 +320,7 @@ namespace ngv {
 	class VulkanTexture2D : public VulkanImage {
 	public:
 
-		static std::shared_ptr<VulkanTexture2D> make(const VulkanDevice& device, uint32 width, uint32 height,
+		static std::unique_ptr<VulkanTexture2D> make(const VulkanDevice& device, uint32 width, uint32 height,
 			uint32 mipLevels, vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 		void createImageView();
@@ -342,7 +344,7 @@ namespace ngv {
 	class VulkanTextureCube : public VulkanImage {
 	public:
 
-		static std::shared_ptr<VulkanTextureCube> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::unique_ptr<VulkanTextureCube> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			uint32 mipLevels = 1, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1, bool hostImage = false);
 
 		void createImageView();
@@ -366,7 +368,7 @@ namespace ngv {
 	class VulkanDepthStencilImage : public VulkanImage {
 	public:
 
-		static std::shared_ptr<VulkanDepthStencilImage> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
+		static std::unique_ptr<VulkanDepthStencilImage> make(const VulkanDevice& device, uint32 width, uint32 height, vk::Format format,
 			vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 		void createImageView();
@@ -391,7 +393,7 @@ namespace ngv {
 	class VulkanColorAttachmentImage : public VulkanImage {
 	public:
 
-		static std::shared_ptr<VulkanColorAttachmentImage> make(const VulkanDevice& device, uint32 width, uint32 height,
+		static std::unique_ptr<VulkanColorAttachmentImage> make(const VulkanDevice& device, uint32 width, uint32 height,
 			vk::Format format, vk::SampleCountFlagBits sampleFlags = vk::SampleCountFlagBits::e1);
 
 		void createImageView();

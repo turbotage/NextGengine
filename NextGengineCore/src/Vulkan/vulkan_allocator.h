@@ -79,8 +79,8 @@ namespace ngv {
 
 
 
-
-	class VulkanMemoryPage : public ng::MakeConstructed, public ng::EnableSharedThis<VulkanMemoryPage> {
+	MAKE_CONSTRUCTED
+	class VulkanMemoryPage : public ng::EnableSharedThis<VulkanMemoryPage> {
 	public:
 
 
@@ -142,8 +142,8 @@ namespace ngv {
 
 
 
-
-	class VulkanMemoryAllocation : public ng::AllocatorConstructed {
+	ALLOCATOR_CONSTRUCTED
+	class VulkanMemoryAllocation {
 	public:
 
 		~VulkanMemoryAllocation();
