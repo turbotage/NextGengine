@@ -6,6 +6,8 @@
 #include "../Resources/resource_manager.h"
 #include "../Resources/resources.h"
 
+typedef ng::Vertex3D_6 Vertex;
+
 ng::SceneNode3D::SceneNode3D(SceneNode3D& parentNode, std::string nodeID)
 	: m_Parent(parentNode), m_ID(nodeID)
 {
@@ -94,12 +96,74 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 	}
 
 	if (gltfNode.mesh > -1) {
-		const tinygltf::Mesh mesh = m_GLTFModel.meshes[gltfNode.mesh];
 
-		for (size_t i = 0; i < mesh.primitives.size(); ++i) {
-			const tinygltf::Primitive& primitive = mesh.primitives[i];
-			
+		std::function<std::vector<uint8>()> loadVertices = [this, &gltfNode](){
+			const tinygltf::Mesh mesh = m_GLTFModel.meshes[gltfNode.mesh];
+			std::vector<uint8> vertexBytes;
+
+			const float* positionBuffer = nullptr;
+			const float* normalsBuffer = nullptr;
+			const float* texCoordsBuffer = nullptr;
+			const float* tangentsBuffer = nullptr;
+			size_t totalVertexCount = 0;
+
+			for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+				tinygltf::Primitive& primitive = mesh.primitives[i];
+				auto attribute = primitive.attributes.find("POSITION");
+				if (attribute != primitive.attributes.end()) {
+					const tinygltf::Accessor& accessor = this->m_GLTFModel.accessors[attribute->second];
+					totalVertexCount += accessor.count;
+				}
+			}
+
+			vertexBytes.resize(totalVertexCount * sizeof(Vertex));
+
+			size_t v = 0;
+			for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+				tinygltf::Primitive& primitive = mesh.primitives[i];
+				auto attribute = primitive.attributes.find("POSITION");
+				size_t vertexCount;
+
+				if (attribute != primitive.attributes.end()) {
+					const tinygltf::Accessor& accessor = this->m_GLTFModel.accessors[attribute->second];
+					const tinygltf::BufferView& view = this->m_GLTFModel.bufferViews[accessor.bufferView];
+					positionBuffer = reinterpret_cast<const float*>(&(this->m_GLTFModel.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+					vertexCount = accessor.count;
+				}
+				attribute = primitive.attributes.find("NORMAL");
+				if (attribute != primitive.attributes.end()) {
+					const tinygltf::Accessor& accessor = this->m_GLTFModel.accessors[attribute->second];
+					const tinygltf::BufferView& view = this->m_GLTFModel.bufferViews[accessor.bufferView];
+					normalsBuffer = reinterpret_cast<const float*>(&(this->m_GLTFModel.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+				}
+				attribute = primitive.attributes.find("TEXCOORD_0");
+				if (attribute != primitive.attributes.end()) {
+					const tinygltf::Accessor& accessor = this->m_GLTFModel.accessors[attribute->second];
+					const tinygltf::BufferView& view = this->m_GLTFModel.bufferViews[accessor.bufferView];
+					texCoordsBuffer = reinterpret_cast<const float*>(&(this->m_GLTFModel.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+				}
+				attribute = primitive.attributes.find("TANGENT");
+				if (attribute != primitive.attributes.end()) {
+					const tinygltf::Accessor& accessor = this->m_GLTFModel.accessors[attribute->second];
+					const tinygltf::BufferView& view = this->m_GLTFModel.bufferViews[accessor.bufferView];
+					tangentsBuffer = reinterpret_cast<const float*>(&(this->m_GLTFModel.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+				}
+
+				for (; v < vertexCount; ++v) {
+					Vertex vert{};
+					vert.pos = glm::vec4(glm::make_vec3(&positionBuffer[v * 3]), 1.0f);
+					vert.normal = glm::normalize(glm::vec3(normalsBuffer ? glm::make_vec3(&normalsBuffer[v * 3]) : glm::vec3(0.0f)));
+					vert.uv = texCoordsBuffer ? glm::make_vec2(&texCoordsBuffer[v * 2]) : glm::vec2(0.0f);
+					vert.tangent = tangentsBuffer ? glm::make_vec4(&tangentsBuffer[v * 4] : glm::vec4(0.0f));
+					memcpy(&vertexBytes[v * sizeof(Vertex)], &vert, sizeof(T));
+				}
+
+			}
+
+
 		}
+
+		std::function<std::vector<uint8>
 
 	}
 
