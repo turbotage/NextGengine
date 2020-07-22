@@ -86,6 +86,7 @@ typedef uint32_t uint;
 
 
 namespace ng {
+
     template<typename T> using raw_ptr = T*;
 
     /* To measure structure size without compilation of running
