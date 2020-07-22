@@ -108,8 +108,8 @@ namespace ng {
 	struct Model3DMaterial {
 		glm::vec4 baseColorFactor = glm::vec4(1.0f);
 
-		std::string baseColorTexturePath;
-		uint32 normalTexturePath;
+		uint32 baseColorTextureIndex;
+		uint32 normalTextureIndex;
 
 		uint8 alphaMode = AlphaModeFlagBits::eOpaque;
 		float alphaCutOff;

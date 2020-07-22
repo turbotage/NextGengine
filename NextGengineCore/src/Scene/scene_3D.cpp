@@ -97,7 +97,7 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 
 	if (gltfNode.mesh > -1) {
 
-		std::function<std::vector<uint8>()> loadVertices = [this, &gltfNode](){
+		std::function<std::vector<uint8>()> loadVertices = [this, &gltfNode]() {
 			const tinygltf::Mesh mesh = m_GLTFModel.meshes[gltfNode.mesh];
 			std::vector<uint8> vertexBytes;
 
@@ -121,9 +121,9 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 			size_t v = 0;
 			for (size_t i = 0; i < mesh.primitives.size(); ++i) {
 				tinygltf::Primitive& primitive = mesh.primitives[i];
-				auto attribute = primitive.attributes.find("POSITION");
 				size_t vertexCount;
 
+				auto attribute = primitive.attributes.find("POSITION");
 				if (attribute != primitive.attributes.end()) {
 					const tinygltf::Accessor& accessor = this->m_GLTFModel.accessors[attribute->second];
 					const tinygltf::BufferView& view = this->m_GLTFModel.bufferViews[accessor.bufferView];
@@ -161,10 +161,78 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 			}
 
 
+		};
+
+		std::function<std::vector<uint8>()> loadIndices = [this, &gltfNode]() {
+			const tinygltf::Mesh mesh = m_GLTFModel.meshes[gltfNode.mesh];
+			std::vector<uint8> indexBytes;
+
+			size_t indexCount = 0;
+
+
+			for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+				tinygltf::Primitive& primitive = mesh.primitives[i];
+
+				const tinygltf::Accessor& accessor = m_GLTFModel.meshes[primitive.indices];
+				const tinygltf::BufferView& bufferView = m_GLTFModel.bufferViews[accessor.bufferView];
+				const tinygltf::Buffer& buffer = m_GLTFModel.buffers[bufferView.buffer];
+
+				uint32 oldIndexCount = indexCount;
+				indexCount += static_cast<uint32>(accessor.count);
+
+				switch (accessor.componentType) {
+				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+				{
+					indexBytes.resize(indexCount * sizeof(uint32));
+					memcpy(&indexBytes[oldIndexCount * sizeof(uint32)], &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint32));
+					break;
+				}
+				case TINYGLTF_COMPONENT_TYPE_SHORT:
+				{
+					indexBytes.resize(indexCount * sizeof(uint16));
+					memcpy(&indexBytes[oldIndexCount * sizeof(uint16)], &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint16));
+					break;
+				}
+				case TINYGLTF_PARAMETER_TYPE_UNSIGNED_BYTE:
+				{
+					indexBytes.resize(indexCount * sizeof(uint8));
+					memcpy(&indexBytes[oldIndexCount * sizeof(uint8)], &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint8));
+					break;
+				}
+				default:
+				{
+#ifndef NDEBUG
+					std::runtime_error("GLTF index componentType not allowed");
+#endif
+				}
+				}
+			}
+			return indexBytes;
+		};
+
+		const tinygltf::Mesh mesh = m_GLTFModel.meshes[gltfNode.mesh];
+		if (!mesh.name.empty()) {
+			node.m_pVertexBuffer = m_Manager.getVertexBuffer(mesh.name, loadVertices);
+			node.m_pIndexBuffer = m_Manager.getIndexBuffer(mesh.name, loadIndices);
+
+			uint32 indexOffset = 0;
+			uint32 indexCount;
+
+			for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+				const tinygltf::Primitive& gltfPrimitive = mesh.primitives[i];
+				const tinygltf::Accessor& gltfAccessor = m_GLTFModel.accessors[gltfPrimitive.indices];
+				const tinygltf::Material& gltfMaterial = m_GLTFModel.accessors[gltfPrimitive.material];
+
+				Model3DMaterial material;
+				
+
+				Model3DPrimitive primitive{};
+				primitive.firstIndex = indexOffset;
+				primitive.indexCount = static_cast<uint32>(accessor.count);
+				primitive.materialIndex = 
+			}
+
 		}
-
-		std::function<std::vector<uint8>
-
 	}
 
 }
