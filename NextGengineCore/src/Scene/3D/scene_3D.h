@@ -1,17 +1,18 @@
 #pragma once
 
 #include <pch.h>
+#include <glm/glm/gtx/hash.hpp>
 
-#include "scene_utility.h"
+#include "../scene_utility.h"
 
 namespace ng {
 
-	class Model3D;
 	class ResourceManager;
-	class VertexBuffer;
-	class IndexBuffer;
-	class Texture2D;
-	class ModelMaterial;
+	class SceneNode3D;
+	class Material3D;
+	class Primitive3D;
+
+
 
 
 	class Scene3D {
@@ -25,12 +26,13 @@ namespace ng {
 		void loadMaterials();
 
 		void loadNodes();
-		void loadNode(SceneNode3D& node, tinygltf::Node& gltfNode);
+		void loadNode(SceneNode3D& node, tinygltf::Node& gltfNode, std::unordered_set<std::string>& nodeTracking);
 
 	private:
 
-		tinygltf::Model m_GLTFModel;
 		tinygltf::TinyGLTF m_GLTFContext;
+		
+		tinygltf::Model m_GLTFModel;
 
 		ResourceManager& m_Manager;
 		
@@ -38,8 +40,32 @@ namespace ng {
 
 		// The root node in the scenegraph
 		std::unique_ptr<SceneNode3D> m_pRootNode;
+		
 
 	};
+
+
+
+
+
+
+	class SceneChunk3D {
+	public:
+
+		SceneChunk3D(glm::vec3 center, AABB3D aabb);
+
+		void load(std::string filename, tinygltf::TinyGLTF& context);
+		void unload();
+
+	private:
+		glm::vec3 m_Center;
+		AABB3D m_AABB;
+
+		std::unique_ptr<tinygltf::Model> m_pModel;
+		bool m_Loaded = false;
+	};
+
+
 
 
 
@@ -60,7 +86,7 @@ namespace ng {
 		friend class Scene3D;
 		friend class SceneNode3D;
 	private:
-		ng::raw_ptr<SceneNode3D> m_Parent;
+		ng::raw_ptr<SceneNode3D> m_pParent;
 		std::vector<std::unique_ptr<SceneNode3D>> m_Children;
 
 		std::string m_ID;

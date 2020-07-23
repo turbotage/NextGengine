@@ -46,19 +46,27 @@ void ng::Scene3D::loadMaterials() {
 
 }
 
-ng::Sizer<sizeof(tinygltf::Node)> foo;
-ng::Sizer<sizeof(tinygltf::Model)> mod;
-
 void ng::Scene3D::loadNodes()
 {
+	std::unordered_set<std::string> nodeTracking;
 	//Setup the root node
 	m_pRootNode = std::make_unique<SceneNode3D>("RootNode");
+	nodeTracking.insert("RootNode");
 
-
+	for (auto& gltfNode : m_GLTFModel.nodes) {
+		loadNode(*m_pRootNode, gltfNode, nodeTracking);
+	}
 }
 
-void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
+void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode, std::unordered_set<std::string>& nodeTracking)
 {
+	//Set node name
+	node.m_ID = gltfNode.name;
+	if (nodeTracking.find(node.m_ID) != nodeTracking.end()) { // if this node has been loaded we don't wan't to load it again
+		return;
+	}
+	nodeTracking.insert(node.m_ID);
+
 	// if the node has children we should load them
 	for (size_t i = 0; i < gltfNode.children.size(); ++i) {
 		tinygltf::Node childGLTFNode = m_GLTFModel.nodes[gltfNode.children[i]];
@@ -182,8 +190,6 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 		return indexBytes;
 	};
 
-	//Set node name
-	node.m_ID = gltfNode.name;
 
 	// Set node translation
 	{
@@ -227,8 +233,6 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 				indexOffset += gltfAccessor.count;
 			}
 
-
-
 		}
 	}
 
@@ -237,22 +241,23 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode)
 
 
 
-
-
-
-
-
-ng::SceneGraph3D::SceneGraph3D(Scene3D& scene, ResourceManager& manager)
-	: m_Scene(scene), m_Manager(manager)
+ng::SceneChunk3D::SceneChunk3D(glm::vec3 center, AABB3D aabb) 
 {
 
 }
 
+void ng::SceneChunk3D::load(std::string filename, tinygltf::TinyGLTF& context)
+{
+	m_pModel = std::make_unique<tinygltf::Model>();
 
+	std::string error, warning;
+	context.LoadASCIIFromFile(m_pModel.get(), &error, &warning, filename);
+}
 
-
-
-
+void ng::SceneChunk3D::unload()
+{
+	m_pModel.reset();
+}
 
 
 
@@ -261,12 +266,18 @@ ng::SceneGraph3D::SceneGraph3D(Scene3D& scene, ResourceManager& manager)
 
 
 ng::SceneNode3D::SceneNode3D(SceneNode3D& parentNode, std::string nodeID)
-	: m_Parent(parentNode), m_ID(nodeID)
+	: m_pParent(&parentNode), m_ID(nodeID)
 {
 
+}
+
+ng::SceneNode3D::SceneNode3D(std::string nodeID)
+	: m_pParent(nullptr), m_ID(nodeID)
+{
 }
 
 ng::SceneNode3D::~SceneNode3D()
 {
 	m_Children.clear();
 }
+
