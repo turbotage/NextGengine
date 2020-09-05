@@ -37,9 +37,9 @@ ng::StagingBuffer::~StagingBuffer()
 	m_pStagingPage->free(*this);
 }
 
-bool ng::StagingBuffer::hasAllocation()
+bool ng::StagingBuffer::HasAllocation()
 {
-	return (m_pStagingPage->getBuffer()->hasAllocation() && (m_pAllocation != nullptr));
+	return (m_pStagingPage->GetBuffer()->HasAllocation() && (m_pAllocation != nullptr));
 }
 
 ng::StagingBuffer::StagingBuffer(ResourceManager& manager, std::string id, uint64 size)

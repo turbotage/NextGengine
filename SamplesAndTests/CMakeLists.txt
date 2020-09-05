@@ -13,11 +13,18 @@ target_compile_features(TestNG PUBLIC cxx_std_17)
 set_target_properties(TestNG PROPERTIES CXX_EXTENSIONS OFF)
 
 
-#TestResource
+#TestResources
 add_executable(TestResources "TestResources/test_resources.cpp")
 target_link_libraries(TestResources NextGengineCore)
 target_compile_features(TestResources PUBLIC cxx_std_17)
 set_target_properties(TestResources PROPERTIES CXX_EXTENSIONS OFF)
+
+
+#TestResources2
+add_executable(TestResources2 "TestResources2/test_resources2.cpp")
+target_link_libraries(TestResources2 NextGengineCore)
+target_compile_features(TestResources2 PUBLIC cxx_std_17)
+set_target_properties(TestResources2 PROPERTIES CXX_EXTENSIONS OFF)
 
 
 #Hello Triangle

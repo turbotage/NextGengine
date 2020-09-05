@@ -10,10 +10,39 @@ typedef ng::Vertex3D_6 Vertex;
 
 
 
-ng::Scene3D::Scene3D(ResourceManager& manager, std::string& gltfFilename)
+ng::Scene3D::Scene3D(ResourceManager& manager)
 	: m_Manager(manager)
 {
 }
+
+void ng::Scene3D::loadScene(std::string filename)
+{
+	std::string err;
+	std::string warn;
+
+	bool ret = m_GLTFContext.LoadASCIIFromFile(&m_GLTFModel, &err, &warn, filename);
+#ifndef NDEBUG
+	if (!warn.empty()) {
+		std::runtime_error(warn);
+	}
+	if (!err.empty()) {
+		std::runtime_error(err);
+	}
+	if (!ret) {
+		std::runtime_error("what, error or warning not empty but we are here?");
+	}
+#endif // !NDEBUG
+
+	// Load materials
+	loadMaterials();
+
+	// Load nodes
+	loadNodes();
+
+}
+
+
+
 
 void ng::Scene3D::loadMaterials() {
 	
@@ -240,24 +269,6 @@ void ng::Scene3D::loadNode(SceneNode3D& node, tinygltf::Node& gltfNode, std::uno
 
 
 
-
-ng::SceneChunk3D::SceneChunk3D(glm::vec3 center, AABB3D aabb) 
-{
-
-}
-
-void ng::SceneChunk3D::load(std::string filename, tinygltf::TinyGLTF& context)
-{
-	m_pModel = std::make_unique<tinygltf::Model>();
-
-	std::string error, warning;
-	context.LoadASCIIFromFile(m_pModel.get(), &error, &warning, filename);
-}
-
-void ng::SceneChunk3D::unload()
-{
-	m_pModel.reset();
-}
 
 
 

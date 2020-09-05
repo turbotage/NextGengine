@@ -8,22 +8,21 @@ namespace ng {
 	class AbstractFreeListAllocation;
 
 	// TODO: some form of defragmentation
-	class AbstractFreeListAllocator : public MakeConstructed {
+	MAKE_CONSTRUCTED
+	class AbstractFreeListAllocator {
 	public:
 
-		static std::unique_ptr<AbstractFreeListAllocator> make(uint64 size);
+		static std::unique_ptr<AbstractFreeListAllocator> Make(uint64 size);
 
-		bool canAllocate(uint64 size, uint64 alignment);
+		bool CanAllocate(uint64 size, uint64 alignment);
 
-		std::unique_ptr<AbstractFreeListAllocation> allocate(uint64 size, uint64 alignment);
+		std::unique_ptr<AbstractFreeListAllocation> Allocate(uint64 size, uint64 alignment);
 
-		void free(std::unique_ptr<AbstractFreeListAllocation> pAlloc);
+		void Free(std::unique_ptr<AbstractFreeListAllocation> pAlloc);
 
-		uint64 getUsedSize();
+		uint64 GetUsedSize();
 
-		std::string getUsedBlocksString();
-
-		std::string getFreeBlocksString();
+		std::string GetUsedBlocksString();
 
 	private:
 		AbstractFreeListAllocator() = default;
@@ -56,14 +55,14 @@ namespace ng {
 
 
 
-
-	class AbstractFreeListAllocation : ng::AllocatorConstructed {
+	ALLOCATOR_CONSTRUCTED
+	class AbstractFreeListAllocation {
 	public:
-		uint64 getSize();
-		uint64 getOffset();
+		uint64 GetSize();
+		uint64 GetOffset();
 
-		uint64 getTotalSize();
-		uint64 getPaddedOffset();
+		uint64 GetTotalSize();
+		uint64 GetPaddedOffset();
 
 		// Make Factory
 		//static std::unique_ptr<AbstractFreeListAllocation> make(const std::raw_ptr<AbstractFreeListAllocator> pAllocator);

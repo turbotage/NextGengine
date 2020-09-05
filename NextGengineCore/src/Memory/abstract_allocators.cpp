@@ -9,12 +9,12 @@
 
 // <======================= ABSTRACT FREE LIST ALLOCATOR =================================>
 // public
-std::unique_ptr<ng::AbstractFreeListAllocator> ng::AbstractFreeListAllocator::make(uint64 size)
+std::unique_ptr<ng::AbstractFreeListAllocator> ng::AbstractFreeListAllocator::Make(uint64 size)
 {
 	return std::unique_ptr<AbstractFreeListAllocator>(new AbstractFreeListAllocator(size));
 }
 
-bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
+bool ng::AbstractFreeListAllocator::CanAllocate(uint64 size, uint64 alignment)
 {
 	auto it = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (it != m_FreeBlocksBySize.end()) {
@@ -23,7 +23,7 @@ bool ng::AbstractFreeListAllocator::canAllocate(uint64 size, uint64 alignment)
 	return false;
 }
 
-std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::allocate(uint64 size, uint64 alignment)
+std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::Allocate(uint64 size, uint64 alignment)
 {
 	auto freeBlock = m_FreeBlocksBySize.lower_bound(size + alignment);
 	if (freeBlock != m_FreeBlocksBySize.end()) {
@@ -64,17 +64,17 @@ std::unique_ptr<ng::AbstractFreeListAllocation> ng::AbstractFreeListAllocator::a
 	return nullptr;
 }
 
-void ng::AbstractFreeListAllocator::free(std::unique_ptr<ng::AbstractFreeListAllocation> pAlloc)
+void ng::AbstractFreeListAllocator::Free(std::unique_ptr<ng::AbstractFreeListAllocation> pAlloc)
 {
 	free(pAlloc.get());
 }
 
-uint64 ng::AbstractFreeListAllocator::getUsedSize()
+uint64 ng::AbstractFreeListAllocator::GetUsedSize()
 {
 	return m_UsedSize;
 }
 
-std::string ng::AbstractFreeListAllocator::getUsedBlocksString()
+std::string ng::AbstractFreeListAllocator::GetUsedBlocksString()
 {
 	std::string ret = "USED BLOCKS: ";
 	for (auto& block : m_UsedBlocksByOffset) {
@@ -83,14 +83,6 @@ std::string ng::AbstractFreeListAllocator::getUsedBlocksString()
 	return ret;
 }
 
-std::string ng::AbstractFreeListAllocator::getFreeBlocksString()
-{
-	std::string ret = "FREE BLOCKS: ";
-	for (auto& block : m_FreeBlocksByOffset) {
-		ret += std::string(" (") + std::to_string(block.first) + std::string(",") + std::to_string(block.second) + std::string(") ");
-	}
-	return ret;
-}
 
 
 //private
@@ -240,21 +232,21 @@ void ng::AbstractFreeListAllocator::free(ng::raw_ptr<AbstractFreeListAllocation>
 
 // <====================== ABSTRACT FREE LIST ALLOCATION ============================>
 // public
-uint64 ng::AbstractFreeListAllocation::getSize() {
+uint64 ng::AbstractFreeListAllocation::GetSize() {
 	return m_Size;
 }
 
-uint64 ng::AbstractFreeListAllocation::getOffset()
+uint64 ng::AbstractFreeListAllocation::GetOffset()
 {
 	return m_AlignedOffset;
 }
 
-uint64 ng::AbstractFreeListAllocation::getTotalSize()
+uint64 ng::AbstractFreeListAllocation::GetTotalSize()
 {
 	return m_TotalSize;
 }
 
-uint64 ng::AbstractFreeListAllocation::getPaddedOffset()
+uint64 ng::AbstractFreeListAllocation::GetPaddedOffset()
 {
 	return m_PaddingOffset;
 }

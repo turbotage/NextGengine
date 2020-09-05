@@ -1,7 +1,8 @@
 #pragma once
 
 #include <pch.h>
-#include <glm/glm/gtx/hash.hpp>
+
+#include <glm/gtx/hash.hpp>
 
 #include "../scene_utility.h"
 
@@ -14,13 +15,15 @@ namespace ng {
 
 
 
-
 	class Scene3D {
 	public:
 
-		Scene3D(ResourceManager& manager, std::string& gltfFilename);
+		Scene3D(ResourceManager& manager);
 
+		void loadScene(std::string filename);
+	
 	private:
+
 
 		// Load the materials that are in the scene
 		void loadMaterials();
@@ -44,26 +47,6 @@ namespace ng {
 
 	};
 
-
-
-
-
-
-	class SceneChunk3D {
-	public:
-
-		SceneChunk3D(glm::vec3 center, AABB3D aabb);
-
-		void load(std::string filename, tinygltf::TinyGLTF& context);
-		void unload();
-
-	private:
-		glm::vec3 m_Center;
-		AABB3D m_AABB;
-
-		std::unique_ptr<tinygltf::Model> m_pModel;
-		bool m_Loaded = false;
-	};
 
 
 

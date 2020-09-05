@@ -20,19 +20,19 @@ ngv::VulkanAllocator::VulkanAllocator(VulkanDevice& device, const VulkanMemorySt
 	m_MemoryStrategy = memStrategy;
 }
 
-void ngv::VulkanAllocator::giveBufferAllocation(VulkanBuffer& buffer)
+void ngv::VulkanAllocator::GiveBufferAllocation(VulkanBuffer& buffer)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	mGiveBufferAllocation(buffer);
 }
 
-void ngv::VulkanAllocator::giveImageAllocation(VulkanImage& image)
+void ngv::VulkanAllocator::GiveImageAllocation(VulkanImage& image)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	mGiveImageAllocation(image);
 }
 
-vk::DeviceSize ngv::VulkanAllocator::getUsedMemory()
+vk::DeviceSize ngv::VulkanAllocator::GetUsedMemory()
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	return mGetUsedMemory();
@@ -48,7 +48,7 @@ void ngv::VulkanAllocator::mGiveBufferAllocation(VulkanBuffer& buffer)
 	bool foundPage = false;
 	for (auto pPage : m_MemoryPages) {
 		if (pPage->m_MemoryTypeIndex == buffer.m_MemoryTypeIndex) {
-			buffer.m_pAllocation = pPage->allocate(buffer.m_MemoryRequirements.size, buffer.m_MemoryRequirements.alignment);
+			buffer.m_pAllocation = pPage->Allocate(buffer.m_MemoryRequirements.size, buffer.m_MemoryRequirements.alignment);
 			if (buffer.m_pAllocation != nullptr) {
 				foundPage = true;
 				allocPage = pPage;
@@ -69,9 +69,9 @@ void ngv::VulkanAllocator::mGiveBufferAllocation(VulkanBuffer& buffer)
 		}
 		allocInfo.memoryTypeIndex = buffer.m_MemoryTypeIndex;
 
-		auto newPage = VulkanMemoryPage::make(m_Device, allocInfo);
+		auto newPage = VulkanMemoryPage::Make(m_Device, allocInfo);
 
-		buffer.m_pAllocation = newPage->allocate(buffer.m_MemoryRequirements.size, buffer.m_MemoryRequirements.alignment);
+		buffer.m_pAllocation = newPage->Allocate(buffer.m_MemoryRequirements.size, buffer.m_MemoryRequirements.alignment);
 
 		allocPage = newPage;
 
@@ -79,7 +79,7 @@ void ngv::VulkanAllocator::mGiveBufferAllocation(VulkanBuffer& buffer)
 	}
 
 	//bind the buffer
-	m_Device.device().bindBufferMemory(*buffer.m_Buffer, *allocPage->m_Memory, buffer.m_pAllocation->getOffset());
+	m_Device.device().bindBufferMemory(*buffer.m_Buffer, *allocPage->m_Memory, buffer.m_pAllocation->GetOffset());
 
 }
 
@@ -90,7 +90,7 @@ void ngv::VulkanAllocator::mGiveImageAllocation(VulkanImage& image)
 	//try to find a suitable memory page
 	for (auto pPage : m_MemoryPages) {
 		if (pPage->m_MemoryTypeIndex == image.m_MemoryTypeIndex) {
-			image.m_pAllocation = pPage->allocate(image.m_MemoryRequirements.size, image.m_MemoryRequirements.alignment);
+			image.m_pAllocation = pPage->Allocate(image.m_MemoryRequirements.size, image.m_MemoryRequirements.alignment);
 			if (image.m_pAllocation != nullptr) {
 				foundPage = true;
 				allocPage = pPage;
@@ -111,16 +111,16 @@ void ngv::VulkanAllocator::mGiveImageAllocation(VulkanImage& image)
 		}
 		allocInfo.memoryTypeIndex = image.m_MemoryTypeIndex;
 
-		auto newPage = VulkanMemoryPage::make(m_Device, allocInfo);
+		auto newPage = VulkanMemoryPage::Make(m_Device, allocInfo);
 
-		image.m_pAllocation = newPage->allocate(image.m_MemoryRequirements.size, image.m_MemoryRequirements.alignment);
+		image.m_pAllocation = newPage->Allocate(image.m_MemoryRequirements.size, image.m_MemoryRequirements.alignment);
 
 		allocPage = newPage;
 
 		m_MemoryPages.push_back(std::move(newPage));
 	}
 
-	m_Device.device().bindImageMemory(*image.m_Image, *allocPage->m_Memory, image.m_pAllocation->getOffset());
+	m_Device.device().bindImageMemory(*image.m_Image, *allocPage->m_Memory, image.m_pAllocation->GetOffset());
 }
 
 vk::DeviceSize ngv::VulkanAllocator::mGetUsedMemory()
@@ -128,7 +128,7 @@ vk::DeviceSize ngv::VulkanAllocator::mGetUsedMemory()
 	//should never be called by a thread not already locking the allocator mutex
 	vk::DeviceSize usedSize = 0;
 	for (auto& page : m_MemoryPages) {
-		usedSize += page->getUsedSize();
+		usedSize += page->GetUsedSize();
 	}
 	return usedSize;
 }
@@ -149,50 +149,50 @@ vk::DeviceSize ngv::VulkanAllocator::mGetUsedMemory()
 
 // <=================== VULKAN MEMORY PAGE ===========================>
 // PUBLIC
-std::shared_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryPage::make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
+std::shared_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryPage::Make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
 {
 	return std::shared_ptr<VulkanMemoryPage>(new VulkanMemoryPage(device, allocInfo));
 }
 
-bool ngv::VulkanMemoryPage::canAllocate(vk::DeviceSize size, vk::DeviceSize alignment) {
+bool ngv::VulkanMemoryPage::CanAllocate(vk::DeviceSize size, vk::DeviceSize alignment) {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	return mCanAllocate(size, alignment);
 }
 
-std::unique_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryPage::allocate(vk::DeviceSize size, vk::DeviceSize alignment)
+std::unique_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryPage::Allocate(vk::DeviceSize size, vk::DeviceSize alignment)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	return mAllocate(size, alignment);
 }
 
-void ngv::VulkanMemoryPage::free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc)
+void ngv::VulkanMemoryPage::Free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	mFree(std::move(pMemAlloc));
 }
 
-const ngv::VulkanDevice& ngv::VulkanMemoryPage::vulkanDevice() const
+const ngv::VulkanDevice& ngv::VulkanMemoryPage::GetVulkanDevice() const
 {
 	return m_Device;
 }
 
-const vk::DeviceMemory ngv::VulkanMemoryPage::memory() const
+const vk::DeviceMemory ngv::VulkanMemoryPage::GetMemory() const
 {
 	return *m_Memory;
 }
 
-vk::DeviceSize ngv::VulkanMemoryPage::getUsedSize()
+vk::DeviceSize ngv::VulkanMemoryPage::GetUsedSize()
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	return mGetUsedSize();
 }
 
-void ngv::VulkanMemoryPage::lockPageMutex()
+void ngv::VulkanMemoryPage::LockPageMutex()
 {
 	m_Mutex.lock();
 }
 
-void ngv::VulkanMemoryPage::unlockPageMutex()
+void ngv::VulkanMemoryPage::UnlockPageMutex()
 {
 	m_Mutex.unlock();
 }
@@ -200,13 +200,13 @@ void ngv::VulkanMemoryPage::unlockPageMutex()
 // PRIVATE
 bool ngv::VulkanMemoryPage::mCanAllocate(vk::DeviceSize size, vk::DeviceSize alignment)
 {
-	return m_pAllocator->canAllocate(size, alignment);
+	return m_pAllocator->CanAllocate(size, alignment);
 }
 
 std::unique_ptr<ngv::VulkanMemoryAllocation> ngv::VulkanMemoryPage::mAllocate(vk::DeviceSize size, vk::DeviceSize alignment)
 {
 	std::unique_ptr<VulkanMemoryAllocation> ret(new VulkanMemoryAllocation());
-	ret->m_pAllocation = m_pAllocator->allocate(size, alignment);
+	ret->m_pAllocation = m_pAllocator->Allocate(size, alignment);
 	if (ret->m_pAllocation == nullptr) {
 		return nullptr;
 	}
@@ -230,12 +230,12 @@ void ngv::VulkanMemoryPage::mFree(std::unique_ptr<VulkanMemoryAllocation> pMemAl
 
 	// reset the mem-page pointer and free from free-list allocator
 	pMemAlloc->m_pMemoryPage.reset();
-	m_pAllocator->free(std::move(pMemAlloc->m_pAllocation));
+	m_pAllocator->Free(std::move(pMemAlloc->m_pAllocation));
 }
 
 vk::DeviceSize ngv::VulkanMemoryPage::mGetUsedSize()
 {
-	return m_pAllocator->getUsedSize();
+	return m_pAllocator->GetUsedSize();
 }
 
 ngv::VulkanMemoryPage::VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo)
@@ -244,7 +244,7 @@ ngv::VulkanMemoryPage::VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocate
 	m_Memory = device.device().allocateMemoryUnique(allocInfo);
 	m_Size = allocInfo.allocationSize;
 	m_MemoryTypeIndex = allocInfo.memoryTypeIndex;
-	m_pAllocator = ng::AbstractFreeListAllocator::make(allocInfo.allocationSize);
+	m_pAllocator = ng::AbstractFreeListAllocator::Make(allocInfo.allocationSize);
 }
 
 
@@ -268,24 +268,24 @@ ngv::VulkanMemoryPage::VulkanMemoryPage(VulkanDevice& device, vk::MemoryAllocate
 ngv::VulkanMemoryAllocation::~VulkanMemoryAllocation()
 {
 	if (auto spt = m_pMemoryPage.lock()) {
-		spt->lockPageMutex();
+		spt->LockPageMutex();
 		m_pAllocation.reset(); // ~AbstractFreeListAllocation()
-		spt->unlockPageMutex();
+		spt->UnlockPageMutex();
 	}
 	m_pMemoryPage.reset();
 }
 
-vk::DeviceSize ngv::VulkanMemoryAllocation::getSize()
+vk::DeviceSize ngv::VulkanMemoryAllocation::GetSize()
 {
-	return m_pAllocation->getSize();
+	return m_pAllocation->GetSize();
 }
 
-vk::DeviceSize ngv::VulkanMemoryAllocation::getOffset()
+vk::DeviceSize ngv::VulkanMemoryAllocation::GetOffset()
 {
-	return m_pAllocation->getOffset();
+	return m_pAllocation->GetOffset();
 }
 
-ng::raw_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryAllocation::getMemoryPage()
+ng::raw_ptr<ngv::VulkanMemoryPage> ngv::VulkanMemoryAllocation::GetMemoryPage()
 {
 	return m_pMemoryPage.lock().get();
 }

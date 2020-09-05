@@ -17,6 +17,6 @@
 #include "src/Resources/resource_manager.h"
 #include "src/Resources/resources.h"
 
-
+#include "src/Scene/3D/scene_3D.h"
 
 

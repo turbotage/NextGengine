@@ -28,35 +28,35 @@ ng::ResourceManager::ResourceManager(ngv::VulkanAllocator& allocator, ngv::Vulka
 		ci.size = m_Strategy.stagingBufferPageSize;
 		ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
 		ci.sharingMode = vk::SharingMode::eExclusive;
-		page->m_pStagingBuffer = ngv::VulkanBuffer::make(device, ci, true);
-		allocator.giveBufferAllocation(*page->m_pStagingBuffer);
-		page->m_pAllocator = AbstractFreeListAllocator::make(ci.size);
+		page->m_pStagingBuffer = ngv::VulkanBuffer::Make(device, ci, true);
+		allocator.GiveBufferAllocation(*page->m_pStagingBuffer);
+		page->m_pAllocator = AbstractFreeListAllocator::Make(ci.size);
 	}
 	// Setup Vertex Buffer Pages
 	{
 		m_BufferPages.vertexBufferPages.emplace_back(std::move(std::unique_ptr<VertexBufferPage>(new VertexBufferPage(*this))));
 		auto& page = m_BufferPages.vertexBufferPages.back();
-		page->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(device, strategy.hostVertexBufferPageSize, false);
-		allocator.giveBufferAllocation(*page->m_pVertexBuffer);
-		page->m_pAllocator = AbstractFreeListAllocator::make(strategy.hostVertexBufferPageSize);
+		page->m_pVertexBuffer = ngv::VulkanVertexBuffer::Make(device, strategy.hostVertexBufferPageSize, false);
+		allocator.GiveBufferAllocation(*page->m_pVertexBuffer);
+		page->m_pAllocator = AbstractFreeListAllocator::Make(strategy.hostVertexBufferPageSize);
 	}
 
 	// Setup Index Buffer Pages
 	{
 		m_BufferPages.indexBufferPages.emplace_back(std::move(std::unique_ptr<IndexBufferPage>(new IndexBufferPage(*this))));
 		auto& page = m_BufferPages.indexBufferPages.back();
-		page->m_pIndexBuffer = ngv::VulkanIndexBuffer::make(device, strategy.hostIndexBufferPageSize, false);
-		allocator.giveBufferAllocation(*page->m_pIndexBuffer);
-		page->m_pAllocator = AbstractFreeListAllocator::make(strategy.hostIndexBufferPageSize);
+		page->m_pIndexBuffer = ngv::VulkanIndexBuffer::Make(device, strategy.hostIndexBufferPageSize, false);
+		allocator.GiveBufferAllocation(*page->m_pIndexBuffer);
+		page->m_pAllocator = AbstractFreeListAllocator::Make(strategy.hostIndexBufferPageSize);
 	}
 
 	// Setup Uniform Buffer Pages
 	{
 		m_BufferPages.uniformBufferPages.emplace_back(std::move(std::unique_ptr<UniformBufferPage>(new UniformBufferPage(*this))));
 		auto& page = m_BufferPages.uniformBufferPages.back();
-		page->m_pUniformBuffer = ngv::VulkanUniformBuffer::make(device, strategy.hostUniformBufferPageSize, false);
-		allocator.giveBufferAllocation(*page->m_pUniformBuffer);
-		page->m_pAllocator = AbstractFreeListAllocator::make(strategy.hostIndexBufferPageSize);
+		page->m_pUniformBuffer = ngv::VulkanUniformBuffer::Make(device, strategy.hostUniformBufferPageSize, false);
+		allocator.GiveBufferAllocation(*page->m_pUniformBuffer);
+		page->m_pAllocator = AbstractFreeListAllocator::Make(strategy.hostIndexBufferPageSize);
 	}
 
 }
@@ -311,8 +311,8 @@ std::unique_ptr<ng::StagingBuffer> ng::ResourceManager::mGetStagingBuffer(std::s
 	ci.size = pageSize;
 	ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
 	ci.sharingMode = vk::SharingMode::eExclusive;
-	page->m_pStagingBuffer = ngv::VulkanBuffer::make(m_Device, ci, true);
-	page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
+	page->m_pStagingBuffer = ngv::VulkanBuffer::Make(m_Device, ci, true);
+	page->m_pAllocator = AbstractFreeListAllocator::Make(pageSize);
 
 #ifndef NDEBUG
 	bool ok = page->allocate(*ret);
@@ -497,8 +497,8 @@ void ng::ResourceManager::mGiveStagingBuffer(Texture2D& texture2D)
 			ci.size = pageSize;
 			ci.usage = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc;
 			ci.sharingMode = vk::SharingMode::eExclusive;
-			page->m_pStagingBuffer = ngv::VulkanBuffer::make(m_Device, ci, true);
-			page->m_pAllocator = ng::AbstractFreeListAllocator::make(pageSize);
+			page->m_pStagingBuffer = ngv::VulkanBuffer::Make(m_Device, ci, true);
+			page->m_pAllocator = ng::AbstractFreeListAllocator::Make(pageSize);
 
 #ifndef NDEBUG
 			bool ok = page->allocate(*texture2D.m_pStagingBuffer);
@@ -583,8 +583,8 @@ void ng::ResourceManager::mGiveDeviceAllocation(VertexBuffer& vertexBuffer, vk::
 				pageSize = vertexBuffer.m_Size;
 			}
 
-			page->get()->m_pVertexBuffer = ngv::VulkanVertexBuffer::make(m_Device, pageSize, false);
-			page->get()->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
+			page->get()->m_pVertexBuffer = ngv::VulkanVertexBuffer::Make(m_Device, pageSize, false);
+			page->get()->m_pAllocator = AbstractFreeListAllocator::Make(pageSize);
 
 #ifndef NDEBUG
 			bool ok = page->get()->allocate(vertexBuffer);
@@ -653,8 +653,8 @@ void ng::ResourceManager::mGiveDeviceAllocation(IndexBuffer& indexBuffer, vk::Co
 				pageSize = indexBuffer.m_Size;
 			}
 
-			page->m_pIndexBuffer = ngv::VulkanIndexBuffer::make(m_Device, pageSize, false);
-			page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
+			page->m_pIndexBuffer = ngv::VulkanIndexBuffer::Make(m_Device, pageSize, false);
+			page->m_pAllocator = AbstractFreeListAllocator::Make(pageSize);
 
 #ifndef NDEBUG
 			bool ok = page->allocate(indexBuffer);
@@ -722,8 +722,8 @@ void ng::ResourceManager::mGiveDeviceAllocation(UniformBuffer& uniformBuffer, vk
 				pageSize = uniformBuffer.m_Size;
 			}
 
-			page->m_pUniformBuffer = ngv::VulkanUniformBuffer::make(m_Device, pageSize, false);
-			page->m_pAllocator = AbstractFreeListAllocator::make(pageSize);
+			page->m_pUniformBuffer = ngv::VulkanUniformBuffer::Make(m_Device, pageSize, false);
+			page->m_pAllocator = AbstractFreeListAllocator::Make(pageSize);
 
 #ifndef NDEBUG
 			bool ok = page->allocate(uniformBuffer);
@@ -780,9 +780,9 @@ void ng::ResourceManager::mGiveDeviceAllocation(Texture2D& texture2D, vk::Comman
 		}
 		else {
 			// We were allowed to use more memory so let's create a new vulkan texture
-			texture2D.m_pVulkanTexture = ngv::VulkanTexture2D::make(m_Device,
+			texture2D.m_pVulkanTexture = ngv::VulkanTexture2D::Make(m_Device,
 				texture2D.m_Width, texture2D.m_Height, texture2D.m_MipLevels, texture2D.m_Format);
-			m_Allocator.giveImageAllocation(*texture2D.m_pVulkanTexture);
+			m_Allocator.GiveImageAllocation(*texture2D.m_pVulkanTexture);
 			//continue to final
 		}
 	}
@@ -944,43 +944,43 @@ void ng::ResourceManager::mSetStagingBufferNotRequired(Texture2D& texture2D)
 
 void ng::ResourceManager::mhUploadToStagingBuffer(StagingBuffer& buffer, uint8* data)
 {
-	void* mapped = buffer.m_pStagingPage->m_pStagingBuffer->map(
-		buffer.m_pAllocation->getOffset(), buffer.m_Size);
+	void* mapped = buffer.m_pStagingPage->m_pStagingBuffer->Map(
+		buffer.m_pAllocation->GetOffset(), buffer.m_Size);
 	memcpy(mapped, data, buffer.m_Size);
-	buffer.m_pStagingPage->m_pStagingBuffer->unmap();
+	buffer.m_pStagingPage->m_pStagingBuffer->Unmap();
 }
 
 void ng::ResourceManager::mhUploadToDevice(VertexBuffer& buffer, vk::CommandBuffer cb)
 {
 	vk::BufferCopy bc{};
-	bc.srcOffset = buffer.m_pStagingBuffer->m_pAllocation->getOffset();
-	bc.dstOffset = buffer.m_pAllocation->getOffset();
+	bc.srcOffset = buffer.m_pStagingBuffer->m_pAllocation->GetOffset();
+	bc.dstOffset = buffer.m_pAllocation->GetOffset();
 	bc.size = buffer.m_Size;
-	cb.copyBuffer(buffer.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->buffer(), buffer.m_pVertexPage->m_pVertexBuffer->buffer(), bc);
+	cb.copyBuffer(buffer.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->Buffer(), buffer.m_pVertexPage->m_pVertexBuffer->Buffer(), bc);
 }
 
 void ng::ResourceManager::mhUploadToDevice(IndexBuffer& buffer, vk::CommandBuffer cb)
 {
 	vk::BufferCopy bc{};
-	bc.srcOffset = buffer.m_pStagingBuffer->m_pAllocation->getOffset();
-	bc.dstOffset = buffer.m_pAllocation->getOffset();
+	bc.srcOffset = buffer.m_pStagingBuffer->m_pAllocation->GetOffset();
+	bc.dstOffset = buffer.m_pAllocation->GetOffset();
 	bc.size = buffer.m_Size;
-	cb.copyBuffer(buffer.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->buffer(), buffer.m_pIndexPage->m_pIndexBuffer->buffer(), bc);
+	cb.copyBuffer(buffer.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->Buffer(), buffer.m_pIndexPage->m_pIndexBuffer->Buffer(), bc);
 }
 
 void ng::ResourceManager::mhUploadToDevice(UniformBuffer& buffer, vk::CommandBuffer cb)
 {
 	vk::BufferCopy bc{};
-	bc.srcOffset = buffer.m_pStagingBuffer->m_pAllocation->getOffset();
-	bc.dstOffset = buffer.m_pAllocation->getOffset();
+	bc.srcOffset = buffer.m_pStagingBuffer->m_pAllocation->GetOffset();
+	bc.dstOffset = buffer.m_pAllocation->GetOffset();
 	bc.size = buffer.m_Size;
-	cb.copyBuffer(buffer.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->buffer(), buffer.m_pUniformPage->m_pUniformBuffer->buffer(), bc);
+	cb.copyBuffer(buffer.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->Buffer(), buffer.m_pUniformPage->m_pUniformBuffer->Buffer(), bc);
 }
 
 void ng::ResourceManager::mhUploadToDevice(Texture2D& texture2D, vk::CommandBuffer cb)
 {
 	std::vector<vk::BufferImageCopy> bcRs;
-	uint64 baseOffset = texture2D.m_pStagingBuffer->m_pAllocation->getOffset();
+	uint64 baseOffset = texture2D.m_pStagingBuffer->m_pAllocation->GetOffset();
 	for (int i = 0; i < texture2D.m_MipLevels; ++i) {
 		ktx_size_t offset;
 		KTX_error_code result = ktxTexture_GetImageOffset(texture2D.m_pKTXTexture, i, 0, 0, &offset);
@@ -1004,14 +1004,14 @@ void ng::ResourceManager::mhUploadToDevice(Texture2D& texture2D, vk::CommandBuff
 	subresourceRange.levelCount = texture2D.m_MipLevels;
 	subresourceRange.layerCount = 1;
 
-	ngv::setImageLayout(cb, texture2D.m_pVulkanTexture->image(), vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal, subresourceRange);
+	ngv::setImageLayout(cb, texture2D.m_pVulkanTexture->Image(), vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal, subresourceRange);
 
-	cb.copyBufferToImage(texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->buffer(), texture2D.m_pVulkanTexture->image(),
+	cb.copyBufferToImage(texture2D.m_pStagingBuffer->m_pStagingPage->m_pStagingBuffer->Buffer(), texture2D.m_pVulkanTexture->Image(),
 		vk::ImageLayout::eTransferDstOptimal, static_cast<uint32>(bcRs.size()), bcRs.data());
 
 
-	texture2D.m_pVulkanTexture->setImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
-	ngv::setImageLayout(cb, texture2D.m_pVulkanTexture->image(), vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal, subresourceRange);
+	texture2D.m_pVulkanTexture->SetImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
+	ngv::setImageLayout(cb, texture2D.m_pVulkanTexture->Image(), vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal, subresourceRange);
 }
 
 
@@ -1284,7 +1284,7 @@ bool ng::ResourceManager::mhShouldUseNewHostTexture2DMemory()
 bool ng::StagingBufferPage::allocate(StagingBuffer& stagingBuffer)
 {
 	//std::lock_guard<std::mutex> lock(m_Mutex);
-	stagingBuffer.m_pAllocation = m_pAllocator->allocate(stagingBuffer.m_Size, 1);
+	stagingBuffer.m_pAllocation = m_pAllocator->Allocate(stagingBuffer.m_Size, 1);
 	if (stagingBuffer.m_pAllocation == nullptr) {
 		return false;
 	}
@@ -1295,7 +1295,7 @@ bool ng::StagingBufferPage::allocate(StagingBuffer& stagingBuffer)
 void ng::StagingBufferPage::free(StagingBuffer& stagingBuffer)
 {
 	//std::lock_guard<std::mutex> lock(m_Mutex);
-	m_pAllocator->free(std::move(stagingBuffer.m_pAllocation));
+	m_pAllocator->Free(std::move(stagingBuffer.m_pAllocation));
 	stagingBuffer.m_pStagingPage = nullptr;
 }
 

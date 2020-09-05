@@ -14,7 +14,6 @@ namespace ngv {
 
 
 
-
 	struct VulkanMemoryStrategy {
 		vk::DeviceSize recommendedPageSize = 256 * 1024 * 1024LL; // 256 mb
 		vk::DeviceSize maxMemoryUsage = 3LL * 4LL * 256LL * 1024LL * 1024LL;
@@ -26,13 +25,13 @@ namespace ngv {
 		VulkanAllocator(VulkanDevice& device, const VulkanMemoryStrategy& memStrategy);
 
 		// BUFFER
-		void giveBufferAllocation(VulkanBuffer& buffer);
+		void GiveBufferAllocation(VulkanBuffer& buffer);
 
 		// IMAGE
-		void giveImageAllocation(VulkanImage& pImage);
+		void GiveImageAllocation(VulkanImage& pImage);
 
 
-		vk::DeviceSize getUsedMemory();
+		vk::DeviceSize GetUsedMemory();
 
 	private:
 
@@ -85,23 +84,23 @@ namespace ngv {
 
 
 		// Make Factory
-		static std::shared_ptr<VulkanMemoryPage> make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
+		static std::shared_ptr<VulkanMemoryPage> Make(VulkanDevice& device, vk::MemoryAllocateInfo allocInfo);
 
 		~VulkanMemoryPage() = default;
 
-		bool canAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
+		bool CanAllocate(vk::DeviceSize size, vk::DeviceSize alignment);
 
-		std::unique_ptr<VulkanMemoryAllocation> allocate(vk::DeviceSize size, vk::DeviceSize alignment);
+		std::unique_ptr<VulkanMemoryAllocation> Allocate(vk::DeviceSize size, vk::DeviceSize alignment);
 
-		void free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc);
+		void Free(std::unique_ptr<VulkanMemoryAllocation> pMemAlloc);
 
-		const VulkanDevice& vulkanDevice() const;
-		const vk::DeviceMemory memory() const;
+		const VulkanDevice& GetVulkanDevice() const;
+		const vk::DeviceMemory GetMemory() const;
 
-		vk::DeviceSize getUsedSize();
+		vk::DeviceSize GetUsedSize();
 		
-		void lockPageMutex();
-		void unlockPageMutex();
+		void LockPageMutex();
+		void UnlockPageMutex();
 
 	private:
 
@@ -148,10 +147,10 @@ namespace ngv {
 
 		~VulkanMemoryAllocation();
 
-		vk::DeviceSize getSize();
-		vk::DeviceSize getOffset();
+		vk::DeviceSize GetSize();
+		vk::DeviceSize GetOffset();
 
-		ng::raw_ptr<VulkanMemoryPage> getMemoryPage();
+		ng::raw_ptr<VulkanMemoryPage> GetMemoryPage();
 
 	private:
 		VulkanMemoryAllocation() = default;

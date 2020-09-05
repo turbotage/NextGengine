@@ -52,7 +52,7 @@ namespace ng {
 		~StagingBuffer();
 
 	private:
-		bool hasAllocation();
+		bool HasAllocation();
 	private:
 		friend class ResourceManager;
 		friend class StagingBufferPage;
@@ -141,11 +141,11 @@ namespace ng {
 	class IndexBuffer : public Resource {
 	public:
 
-		void giveDeviceAllocation(vk::CommandBuffer cb);
-		void giveStagingBuffer();
+		void GiveDeviceAllocation(vk::CommandBuffer cb);
+		void GiveStagingBuffer();
 
-		void setDeviceAllocationNotRequired();
-		void setStagingBufferNotRequired();
+		void GetDeviceAllocationNotRequired();
+		void GetStagingBufferNotRequired();
 
 
 		~IndexBuffer();
